@@ -1,0 +1,114 @@
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Page title="{i18n>titleMainPage}" titleAlignment="Center">
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <!-- Barra de herramientas principal -->
+                <Toolbar>
+                    <Title text="Gestión de Aves" level="H2"/>
+                    <ToolbarSpacer/>
+                    <Button text="Agregar Ave" type="Emphasized" icon="sap-icon://add" press="onAgregarAve"/>
+                    <Button text="Refrescar" icon="sap-icon://refresh" press="onRefrescar"/>
+                </Toolbar>
+
+                <!-- Panel de filtros -->
+                <Panel headerText="Filtros" expandable="true" expanded="false">
+                    <VBox class="sapUiMediumMargin">
+                        <HBox class="sapUiSmallMarginBottom">
+                            <SearchField id="searchField" placeholder="Buscar por nombre, propietario o raza..." width="300px" search="onBuscar"/>
+                            <ComboBox id="razaFilter" placeholder="Filtrar por raza" width="200px" items="{razas>/}" selectionChange="onFiltrarRaza">
+                                <core:Item key="{razas>id}" text="{razas>nombre}"/>
+                            </ComboBox>
+                            <ComboBox id="categoriaFilter" placeholder="Filtrar por categoría" width="200px" items="{categorias>/}" selectionChange="onFiltrarCategoria">
+                                <core:Item key="{categorias>id}" text="{categorias>nombre}"/>
+                            </ComboBox>
+                            <Button text="Limpiar Filtros" press="onLimpiarFiltros"/>
+                        </HBox>
+                    </VBox>
+                </Panel>
+
+                <!-- Tabla de aves -->
+                <Table id="avesTable" items="{aves>/}" mode="SingleSelect" class="sapUiMediumMarginTop" selectionChange="onSelectionChange">
+
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Aves Registradas ({= ${aves>/}.length})"/>
+                            <ToolbarSpacer/>
+                            <Button text="Editar Seleccionada" enabled="{= ${table>/selectedIndex} >= 0}" press="onEditarAve"/>
+                            <Button text="Eliminar Seleccionada" type="Reject" enabled="{= ${table>/selectedIndex} >= 0}" press="onEliminarAve"/>
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column width="10rem">
+                            <Text text="ID"/>
+                        </Column>
+                        <Column minScreenWidth="Tablet">
+                            <Text text="Nombre"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop">
+                            <Text text="Raza"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop">
+                            <Text text="Fecha Nacimiento"/>
+                        </Column>
+                        <Column minScreenWidth="Tablet" hAlign="Right">
+                            <Text text="Peso (kg)"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop">
+                            <Text text="Color"/>
+                        </Column>
+                        <Column minScreenWidth="Tablet">
+                            <Text text="Propietario"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop">
+                            <Text text="Categoría"/>
+                        </Column>
+                        <Column minScreenWidth="Tablet">
+                            <Text text="Estado"/>
+                        </Column>
+                        <Column width="8rem">
+                            <Text text="Acciones"/>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem press="onAvePress">
+                            <Text text="{aves>id}"/>
+                            <Text text="{aves>nombre}"/>
+                            <Text text="{aves>raza}"/>
+                            <Text text="{
+                                path: 'aves>fechaNacimiento',
+                                formatter: '.formatearFecha'
+                            }"/>
+                            <Text text="{
+                                path: 'aves>peso',
+                                formatter: '.formatearPeso'
+                            }"/>
+                            <Text text="{aves>color}"/>
+                            <Text text="{aves>propietario}"/>
+                            <Text text="{aves>categoria}"/>
+                            <ObjectStatus text="{
+                                    path: 'aves>estado',
+                                    formatter: '.formatearEstado'
+                                }" state="{= ${aves>estado} === 'ACTIVO' ? 'Success' : 
+                                         ${aves>estado} === 'ENTRENAMIENTO' ? 'Warning' :
+                                         ${aves>estado} === 'COMPETENCIA' ? 'Information' : 'Error'}"/>
+                            <HBox>
+                                <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press="onEditarAveInline"/>
+                                <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar" press="onEliminarAveInline"/>
+                                <Button icon="sap-icon://detail-view" type="Transparent" tooltip="Ver detalle" press="onAvePress"/>
+                            </HBox>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>
