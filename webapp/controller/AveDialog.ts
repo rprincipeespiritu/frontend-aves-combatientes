@@ -71,6 +71,18 @@ export default class AveDialog extends BaseObject {
         this.oDialog.setModel(new JSONModel(aEstados), "estados");
     }
 
+    public formatearEstado(estado: EstadoAve): string {
+        const estados = {
+            [EstadoAve.Activo]: "Activo",
+            [EstadoAve.Inactivo]: "Inactivo", 
+            [EstadoAve.Entrenamiento]: "En Entrenamiento",
+            [EstadoAve.Competencia]: "En Competencia",
+            [EstadoAve.Retirado]: "Retirado"
+        };
+        
+        return estados[estado] || estado;
+    }
+
     private createDialogData(): IRegistroDialogData {
         if (this.oContext) {
             // Modo edición
@@ -116,9 +128,9 @@ export default class AveDialog extends BaseObject {
         
         try {
             if (oData.mode === DialogMode.Create) {
-                this.crearAve(oData.ave);
+                //this.crearAve(oData.ave);
             } else {
-                this.actualizarAve(oData.ave);
+                // this.actualizarAve(oData.ave);
             }
         } catch (error) {
             console.error("Error guardando ave:", error);
@@ -144,5 +156,6 @@ export default class AveDialog extends BaseObject {
             MessageBox.error(ValidationMessages.PESO_INVALIDO);
             return false;
         }
+        return true;
     }    
 }
