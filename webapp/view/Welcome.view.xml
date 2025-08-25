@@ -1,0 +1,36 @@
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.Welcome" displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page title="Bienvenido al Sistema de Registro" titleAlignment="Center">
+        <content>
+            <!-- Contenido adicional -->
+            <VBox class="sapUiTinyMargin">
+                <!-- <Title text="Bienvenido al Sistema de Registro" level="H2"/> -->
+                <Text text="Gestiona el registro de tus aves de combate de manera fácil y eficiente." class="sapUiMediumMarginTop"/>
+
+                <!-- Botones de navegación -->
+                <HBox class="sapUiMediumMarginTop" justifyContent="Center">
+                    <Button text="Registrar Ave" type="Emphasized" icon="sap-icon://add" press="onNavToRegistro" class="sapUiSmallMarginEnd"/>
+                    <Button text="Ver Lista" type="Default" icon="sap-icon://list" press="onNavToLista"/>
+                </HBox>
+            </VBox>
+            <!-- Carrusel de Imágenes -->
+            <Carousel id="imageCarousel" height="400px" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
+
+                <!-- Imagen 1 -->
+                <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="400px" class="carouselImage"/>
+
+                <!-- Imagen 2 -->
+                <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="400px" class="carouselImage"/>
+
+                <!-- Imagen 3 -->
+                <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="400px" class="carouselImage"/>
+
+                <!-- Imagen 4 -->
+                <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="400px" class="carouselImage"/>
+            </Carousel>
+
+        </content>
+    </Page>
+</mvc:View>

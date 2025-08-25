@@ -74,17 +74,28 @@
       },
       "routes": [
         {
-          "name": "RouteMain",
-          "pattern": ":?query:",
+          "name": "RouteWelcome",
+          "pattern": "",
           "target": [
-            "TargetMain"
+            "TargetWelcome"
+          ]
+        },
+        {
+          "name": "RouteList",
+          "pattern": "List",
+          "target": [
+            "TargetList"
           ]
         }
       ],
       "targets": {
-        "TargetMain": {
-          "id": "Main",
-          "name": "Main"
+        "TargetWelcome": {
+          "id": "Welcome",
+          "name": "Welcome"
+        },
+        "TargetList": {
+          "id": "List",
+          "name": "List"
         }
       }
     },

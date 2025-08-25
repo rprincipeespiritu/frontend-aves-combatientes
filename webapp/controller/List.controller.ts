@@ -21,7 +21,7 @@ import {
 /**
  * @namespace com.rprincipees.registroavescombate.controller
  */
-export default class Main extends Controller {
+export default class List extends Controller {
   public onInit(): void {
     console.log("Main Controller initialized with TypeScript");
 
