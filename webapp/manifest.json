@@ -33,7 +33,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.139.0",
       "libs": {
@@ -74,21 +74,43 @@
       },
       "routes": [
         {
-          "name": "RouteWelcome",
+          "name": "RouteLogin",
           "pattern": "",
+          "target": [
+            "TargetLogin"
+          ]
+        },
+        {
+          "name": "RouteRegister",
+          "pattern": "register",
+          "target": [
+            "TargetRegister"
+          ]
+        },
+        {
+          "name": "RouteWelcome",
+          "pattern": "welcome",
           "target": [
             "TargetWelcome"
           ]
         },
         {
           "name": "RouteList",
-          "pattern": "List",
+          "pattern": "list",
           "target": [
             "TargetList"
           ]
         }
       ],
       "targets": {
+        "TargetLogin": {
+          "id": "Login",
+          "name": "Login"
+        },
+        "TargetRegister": {
+          "id": "Register",
+          "name": "Register"
+        },
         "TargetWelcome": {
           "id": "Welcome",
           "name": "Welcome"

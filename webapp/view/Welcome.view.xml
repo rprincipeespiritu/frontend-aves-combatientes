@@ -3,6 +3,22 @@
     xmlns="sap.m">
 
     <Page title="Bienvenido al Sistema de Registro" titleAlignment="Center">
+        <headerContent>
+            <!-- Información del usuario autenticado -->
+            <HBox visible="{user>/isAuthenticated}" alignItems="Center">
+                <Icon src="sap-icon://person-placeholder" size="1.5rem" class="sapUiTinyMarginEnd"/>
+                <VBox>
+                    <Text text="{user>/user/nombre} {user>/user/apellido}" class="sapMFontWeightBold"/>
+                    <Text text="{user>/user/rol}" class="sapMFontSizeSmall"/>
+                </VBox>
+                <Button 
+                    icon="sap-icon://log" 
+                    type="Transparent" 
+                    tooltip="Cerrar Sesión"
+                    press="onLogout"
+                    class="sapUiSmallMarginBegin"/>
+            </HBox>
+        </headerContent>
         <content>
             <!-- Contenido adicional -->
             <VBox class="sapUiTinyMargin">
@@ -16,7 +32,7 @@
                 </HBox>
             </VBox>
             <!-- Carrusel de Imágenes -->
-            <Carousel id="imageCarousel" height="400px" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
+            <Carousel id="imageCarousel" height="auto" width="auto" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
 
                 <!-- Imagen 1 -->
                 <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="400px" class="carouselImage"/>
