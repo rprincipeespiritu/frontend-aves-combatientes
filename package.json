@@ -20,10 +20,11 @@
   },
   "scripts": {
     "start": "node server.js",
-    "start:dev": "fiori run",
+    "dev": "fiori run",
     "build": "ui5 build",
     "deploy": "fiori deploy",
-    "lint": "eslint webapp"
+    "lint": "eslint webapp",
+    "postinstall": "npm run build"
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "dependencies": {

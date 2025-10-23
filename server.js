@@ -5,14 +5,21 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+// En producción, servir desde dist; en desarrollo, desde webapp
+const staticPath = isDevelopment 
+  ? path.join(__dirname, 'webapp')
+  : path.join(__dirname, 'dist');
+
+console.log(`📂 Serving from: ${staticPath}`);
+
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
-// Servir archivos estáticos de webapp
-app.use(express.static(path.join(__dirname, 'webapp')));
+// Servir archivos estáticos
+app.use(express.static(staticPath));
 
 // Servir recursos de UI5 desde node_modules
 app.use('/resources', express.static(path.join(__dirname, 'node_modules/@openui5')));
@@ -23,13 +30,14 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    serving: staticPath
   });
 });
 
 // Todas las rutas devuelven index.html (SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'webapp', 'index.html'));
+  res.sendFile(path.join(staticPath, 'index.html'));
 });
 
 // Manejo de errores
@@ -48,7 +56,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('╚═══════════════════════════════════════════════╝');
   console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📂 Serving from: ${path.join(__dirname, 'webapp')}`);
+  console.log(`📂 Serving from: ${staticPath}`);
   console.log(`🏥 Health check: http://0.0.0.0:${PORT}/health`);
   console.log('');
   console.log('Press Ctrl+C to stop the server');
