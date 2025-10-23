@@ -8,3 +8,12 @@ mta-*
 resources
 archive.zip
 .*_mta_build_tmp
+.railway/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+package-lock.json
+.tmp/
