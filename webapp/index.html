@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>App Title</title>
-    <style>
-        html, body, body > div, #container, #container-uiarea {
-            height: 100%;
-        }
-    </style>
+    <title>Registro de Aves Combatientes</title>
+    
+    <!-- Cargar UI5 desde CDN -->
     <script
         id="sap-ui-bootstrap"
-        src="resources/sap-ui-core.js"
+        src="https://openui5.hana.ondemand.com/1.139.0/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.layout"
         data-sap-ui-resourceroots='{
             "com.rprincipees.registroavescombate": "./"
         }'
@@ -21,15 +19,15 @@
         data-sap-ui-compatVersion="edge"
         data-sap-ui-async="true"
         data-sap-ui-frameOptions="trusted"
-    ></script>
+        data-sap-ui-preload="async">
+    </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
-    <div
-        data-sap-ui-component
-        data-name="com.rprincipees.registroavescombate"
-        data-id="container"
-        data-settings='{"id" : "com.rprincipees.registroavescombate"}'
-        data-handle-validation="true"
-    ></div>
+    <div 
+        data-sap-ui-component 
+        data-name="com.rprincipees.registroavescombate" 
+        data-id="container" 
+        data-settings='{"id" : "registroavescombate"}'>
+    </div>
 </body>
 </html>
