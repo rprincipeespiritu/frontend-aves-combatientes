@@ -29,12 +29,10 @@ export interface Usuario {
 
 export interface AuthResponse {
     success: boolean;
-    data?: {
-        usuario: Usuario;
-        token: string;
-    };
-    message?: string;
-    error?: string;
+    token: string;
+    user: Usuario;
+    // message?: string;
+    // error?: string;
 }
 
 export class AuthService {

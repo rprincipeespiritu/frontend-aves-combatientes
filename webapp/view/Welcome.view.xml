@@ -6,17 +6,12 @@
         <headerContent>
             <!-- Información del usuario autenticado -->
             <HBox visible="{user>/isAuthenticated}" alignItems="Center">
-                <Icon src="sap-icon://person-placeholder" size="1.5rem" class="sapUiTinyMarginEnd"/>
+                <!-- <Icon src="sap-icon://person-placeholder" size="1.5rem" class="sapUiTinyMarginEnd"/> -->
                 <VBox>
                     <Text text="{user>/user/nombre} {user>/user/apellido}" class="sapMFontWeightBold"/>
                     <Text text="{user>/user/rol}" class="sapMFontSizeSmall"/>
                 </VBox>
-                <Button 
-                    icon="sap-icon://log" 
-                    type="Transparent" 
-                    tooltip="Cerrar Sesión"
-                    press="onLogout"
-                    class="sapUiSmallMarginBegin"/>
+                <Button icon="sap-icon://log" type="Transparent" tooltip="Cerrar Sesión" press="onLogout" class="sapUiSmallMarginBegin"/>
             </HBox>
         </headerContent>
         <content>

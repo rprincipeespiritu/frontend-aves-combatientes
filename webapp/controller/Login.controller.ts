@@ -64,7 +64,7 @@ export default class Login extends Controller {
                     this.clearSavedCredentials();
                 }
 
-                MessageToast.show("Bienvenido " + result.data?.usuario.nombre);
+                MessageToast.show("Bienvenido " + result.user.nombre);
                 
                 // Navegar a la página principal
                 this.navigateToMain();
