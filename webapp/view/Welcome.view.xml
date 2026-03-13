@@ -18,8 +18,9 @@
             <!-- Contenido adicional -->
             <VBox class="sapUiTinyMargin">
                 <!-- <Title text="Bienvenido al Sistema de Registro" level="H2"/> -->
-                <Text text="Gestiona el registro de tus aves de combate de manera fácil y eficiente." class="sapUiMediumMarginTop"/>
-
+                <HBox class="sapUiMediumMarginTop" justifyContent="Center">
+                    <Text text="Gestiona el registro de tus aves de combate de manera fácil y eficiente." class="sapUiMediumMarginTop"/>
+                </HBox>
                 <!-- Botones de navegación -->
                 <HBox class="sapUiMediumMarginTop" justifyContent="Center">
                     <Button text="Registrar Ave" type="Emphasized" icon="sap-icon://add" press="onNavToRegistro" class="sapUiSmallMarginEnd"/>

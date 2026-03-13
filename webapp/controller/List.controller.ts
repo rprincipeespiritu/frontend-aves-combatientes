@@ -10,19 +10,29 @@ import SearchField from "sap/m/SearchField";
 import ComboBox from "sap/m/ComboBox";
 import Event from "sap/ui/base/Event";
 import ColumnListItem from "sap/m/ColumnListItem";
+import View from "sap/ui/core/mvc/View";
+import Fragment from "sap/ui/core/Fragment";
+import Dialog from "sap/m/Dialog";
+import Router from "sap/ui/core/routing/Router";
+import { AuthService } from "../services/AuthService";
 
 import {
   IAve,
   ITableModel,
   EstadoAve,
   ValidationMessages,
+  SexoAve,
 } from "../types/Models";
+
 
 /**
  * @namespace com.rprincipees.registroavescombate.controller
  */
 export default class List extends Controller {
+  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  private authService: AuthService;
   public onInit(): void {
+    this.authService = AuthService.getInstance();
     console.log("Main Controller initialized with TypeScript");
 
     // Crear modelo para el estado de la tabla
@@ -41,48 +51,20 @@ export default class List extends Controller {
     this.loadReferenceData();
   }
 
-  private initializeMockData(): void {
-    const mockAves: IAve[] = [
-      {
-        id: "1",
-        nombre: "El Campeón",
-        raza: "Asil",
-        fechaNacimiento: new Date("2022-01-15"),
-        peso: 2.5,
-        color: "Colorado",
-        propietario: "Juan Pérez",
-        categoria: "Peso Gallo",
-        estado: EstadoAve.Activo,
-        observaciones: "Ave en excelente condición",
-      },
-      {
-        id: "2",
-        nombre: "Relampago",
-        raza: "Shamo",
-        fechaNacimiento: new Date("2021-12-10"),
-        peso: 2.8,
-        color: "Negro",
-        propietario: "Carlos López",
-        categoria: "Peso Gallo",
-        estado: EstadoAve.Entrenamiento,
-        observaciones: "En preparación para competencia",
-      },
-      {
-        id: "3",
-        nombre: "El Guerrero",
-        raza: "Kelso",
-        fechaNacimiento: new Date("2022-03-20"),
-        peso: 2.3,
-        color: "Blanco",
-        propietario: "María González",
-        categoria: "Peso Pluma",
-        estado: EstadoAve.Competencia,
-        observaciones: "Participando en torneo regional",
-      },
-    ];
+  private async initializeMockData(): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/Aves`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-    const oAvesModel = new JSONModel(mockAves);
-    this.getView()?.setModel(oAvesModel, "aves");
+      const mockAves: IAve[] = await response.json();
+      const oAvesModel = new JSONModel(mockAves)
+      this.getView()?.setModel(oAvesModel, "aves");
+    } catch (error) { }
   }
 
   private loadReferenceData(): void {
@@ -115,9 +97,32 @@ export default class List extends Controller {
 
   // === OPERACIONES CRUD ===
 
-  public onAgregarAve(): void {
-    this.openAveDialog();
-  }
+  // public async onAgregarAve(): Promise<void> {
+  //   //this.openAveDialog();
+  //   const oView = this.getView() as View;
+
+  //   if (!this._oAddBirdDialog) {
+  //     try {
+  //       const oDialog = (await Fragment.load({
+  //         id: oView.getId(),
+  //         name: "com.rprincipees.registroavescombate.view.fragments.AddBirdDialog",
+  //         controller: this,
+  //       })) as Dialog;
+
+  //       this._oAddBirdDialog = oDialog;
+  //       oView.addDependent(this._oAddBirdDialog);
+  //       //this._resetForm();
+  //       this._oAddBirdDialog.open();
+  //     } catch (error) {
+  //       MessageBox.error(
+  //         "Error al cargar el diálogo: " + (error as Error).message
+  //       );
+  //     }
+  //   } else {
+  //     //this._resetForm();
+  //     this._oAddBirdDialog.open();
+  //   }
+  // }
 
   public onEditarAve(): void {
     const oTable = this.byId("avesTable") as Table;
@@ -188,9 +193,26 @@ export default class List extends Controller {
   }
 
   private openAveDialog(oContext?: any): void {
-    // Implementar dialog de ave (próximo paso)
-    console.log("Opening ave dialog...");
-    MessageToast.show("Dialog de ave - Por implementar");
+    var oView = this.getView();
+
+    // Crear el diálogo si no existe
+    if (!this._oAddBirdDialog) {
+      Fragment.load({
+        id: oView.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.AddBirdDialog",
+        controller: this,
+      }).then(
+        function (oDialog) {
+          this._oAddBirdDialog = oDialog;
+          oView.addDependent(this._oAddBirdDialog);
+          //this._resetForm();
+          this._oAddBirdDialog.open();
+        }.bind(this)
+      );
+    } else {
+      //this._resetForm();
+      this._oAddBirdDialog.open();
+    }
   }
 
   // === BÚSQUEDA Y FILTROS ===
@@ -274,18 +296,18 @@ export default class List extends Controller {
 
   // === NAVEGACIÓN ===
 
-  public onAvePress(oEvent: Event): void {
-    const oItem = oEvent.getSource();
-    const oContext = (oItem as any)?.getBindingContext("aves");
-    const oAve = oContext?.getObject() as IAve;
+  // public onAvePress(oEvent: Event): void {
+  //   const oItem = oEvent.getSource();
+  //   const oContext = (oItem as any)?.getBindingContext("aves");
+  //   const oAve = oContext?.getObject() as IAve;
 
-    if (oAve.id) {
-      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-      oRouter?.navTo("aveDetail", {
-        aveId: oAve.id,
-      });
-    }
-  }
+  //   if (oAve.id) {
+  //     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+  //     oRouter?.navTo("aveDetail", {
+  //       aveId: oAve.id,
+  //     });
+  //   }
+  // }
 
   // === UTILIDADES ===
 
@@ -301,6 +323,15 @@ export default class List extends Controller {
     const iSelectedIndex = oTable.getSelectedItems().length > 0 ? 0 : -1;
 
     oTableModel.setProperty("/selectedIndex", iSelectedIndex);
+  }
+
+  public formatearSexo(sexo: SexoAve): string {
+    const estados = {
+      [SexoAve.Hembra]: "Gallina",
+      [SexoAve.Macho]: "Gallo",
+    };
+
+    return estados[sexo] || sexo;
   }
 
   public formatearEstado(estado: EstadoAve): string {
@@ -333,4 +364,46 @@ export default class List extends Controller {
     }
     return `${peso} kg`;
   }
+
+  public onNavBack(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter?.navTo("RouteWelcome");
+  }
+
+  public async onLogout(): Promise<void> {
+    try {
+      await this.authService.logout();
+      MessageToast.show("Sesión cerrada exitosamente");
+
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+      oRouter?.navTo("RouteLogin");
+
+      // Verificar que el método existe antes de llamarlo
+      const oOwner = this.getOwnerComponent() as any;
+      if (oOwner && typeof oOwner.updateUserModel === 'function') {
+        oOwner.updateUserModel();
+      }
+
+    } catch (error) {
+      console.error("Error en logout:", error);
+      MessageToast.show("Error cerrando sesión");
+    }
+  }
+  // Cambia onAgregarAve para navegar a la vista
+  public onAgregarAve(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter?.navTo("RouteAveCreate");
+  }
+
+  // Cambia onAvePress para navegar al detalle
+  public onAvePress(oEvent: Event): void {
+    const oItem = oEvent.getSource();
+    const oContext = (oItem as any)?.getBindingContext("aves");
+    const oAve = oContext?.getObject() as any;
+    if (oAve?.ID) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteAveDetail", { aveId: oAve.ID });
+    }
+  }
+
 }

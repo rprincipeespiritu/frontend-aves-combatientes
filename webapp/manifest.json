@@ -76,30 +76,32 @@
         {
           "name": "RouteLogin",
           "pattern": "",
-          "target": [
-            "TargetLogin"
-          ]
+          "target": ["TargetLogin"]
         },
         {
           "name": "RouteRegister",
           "pattern": "register",
-          "target": [
-            "TargetRegister"
-          ]
+          "target": ["TargetRegister"]
         },
         {
           "name": "RouteWelcome",
           "pattern": "welcome",
-          "target": [
-            "TargetWelcome"
-          ]
+          "target": ["TargetWelcome"]
         },
         {
           "name": "RouteList",
           "pattern": "list",
-          "target": [
-            "TargetList"
-          ]
+          "target": ["TargetList"]
+        },
+        {
+          "name": "RouteAveCreate",
+          "pattern": "aves/crear",
+          "target": ["TargetAveCreate"]
+        },
+        {
+          "name": "RouteAveDetail",
+          "pattern": "aves/{aveId}",
+          "target": ["TargetAveDetail"]
         }
       ],
       "targets": {
@@ -118,6 +120,14 @@
         "TargetList": {
           "id": "List",
           "name": "List"
+        },
+        "TargetAveCreate": {
+          "id": "AveCreate",
+          "name": "AveCreate"
+        },
+        "TargetAveDetail": {
+          "id": "AveDetail",
+          "name": "AveDetail"
         }
       }
     },

@@ -6,6 +6,7 @@ import BusyIndicator from "sap/m/BusyIndicator";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/ui/core/routing/Router";
 import { AuthService, LoginData } from "../services/AuthService";
+import Button from "sap/m/Button";
 
 export default class Login extends Controller {
     private authService: AuthService;
@@ -27,12 +28,43 @@ export default class Login extends Controller {
 
         this.getView()?.setModel(oModel);
 
+        // Escuchar el TARGET, no la ruta
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        const oTarget = oRouter?.getTarget("TargetLogin") as any;
+        oTarget?.attachDisplay(this.onTargetDisplay, this);
+    }
+
+    // Se ejecuta CADA VEZ que navegas al login
+    private onTargetDisplay = (): void => {
         // Verificar si ya está autenticado
         if (this.authService.isAuthenticated()) {
             this.navigateToMain();
+            return;
         }
 
-        // Cargar credenciales recordadas si existen
+        const oModel = this.getView()?.getModel() as JSONModel;
+        oModel?.setData({
+            email: "",
+            password: "",
+            rememberMe: false,
+            loginEnabled: true,
+            emailState: "None",
+            emailStateText: "",
+            passwordState: "None",
+            passwordStateText: ""
+        });
+        // Forzar habilitación directa del botón
+        const oButton = this.byId("loginButton") as Button;
+        oButton?.setEnabled(true);
+
+        // Resetear BusyIndicator
+        this.setLoginBusy(false);
+
+        // Ocultar mensaje de error
+        const oMessageStrip = this.byId("loginErrorMessage") as MessageStrip;
+        oMessageStrip?.setVisible(false);
+
+        // Cargar credenciales recordadas
         this.loadRememberedCredentials();
     }
 
@@ -65,7 +97,7 @@ export default class Login extends Controller {
                 }
 
                 MessageToast.show("Bienvenido " + result.user.nombre);
-                
+
                 // Navegar a la página principal
                 this.navigateToMain();
 

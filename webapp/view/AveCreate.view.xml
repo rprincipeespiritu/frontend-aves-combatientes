@@ -1,0 +1,128 @@
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.AveCreate"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+
+    <Page title="Registrar Nueva Ave" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar"/>
+        </headerContent>
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <!-- Identificación -->
+                <Panel headerText="Identificación" expandable="false">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Placa" required="true"/>
+                            <Input id="placa" value="{create>/placa}" placeholder="Ej: GAL-001" valueState="{create>/placaState}" valueStateText="La placa es requerida"/>
+
+                            <Label text="Nombre"/>
+                            <Input value="{create>/nombre}" placeholder="Nombre del ave"/>
+
+                            <Label text="Apodo"/>
+                            <Input value="{create>/apodo}" placeholder="Apodo"/>
+
+                            <Label text="Sexo" required="true"/>
+                            <Select selectedKey="{create>/sexo}">
+                                <core:Item key="M" text="Macho"/>
+                                <core:Item key="H" text="Hembra"/>
+                            </Select>
+
+                            <Label text="Estado"/>
+                            <Select selectedKey="{create>/estado}">
+                                <core:Item key="ACTIVO" text="Activo"/>
+                                <core:Item key="VENDIDO" text="Vendido"/>
+                                <core:Item key="FALLECIDO" text="Fallecido"/>
+                                <core:Item key="PRESTADO" text="Prestado"/>
+                            </Select>
+
+                            <Label text="Ubicación"/>
+                            <Input value="{create>/ubicacion}" placeholder="Ubicación actual"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Características físicas -->
+                <Panel headerText="Características" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Raza"/>
+                            <Select id="razaSelect" selectedKey="{create>/raza_ID}" items="{razas>/}">
+                                <core:Item key="{razas>ID}" text="{razas>nombre}"/>
+                            </Select>
+
+                            <Label text="Color"/>
+                            <Select id="colorSelect" selectedKey="{create>/color_ID}" items="{colores>/}">
+                                <core:Item key="{colores>ID}" text="{colores>nombre}"/>
+                            </Select>
+
+                            <Label text="Tipo Ave"/>
+                            <Select id="tipoAveSelect" selectedKey="{create>/tipoAve_ID}" items="{tiposAve>/}">
+                                <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
+                            </Select>
+
+                            <Label text="Fecha Nacimiento"/>
+                            <DatePicker value="{create>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
+
+                            <Label text="Fecha Compra"/>
+                            <DatePicker value="{create>/fechaCompra}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Genealogía -->
+                <Panel headerText="Genealogía" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Padre"/>
+                            <Select id="padreSelect" selectedKey="{create>/padre_ID}" items="{avesMachos>/}">
+                                <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
+                            </Select>
+
+                            <Label text="Madre"/>
+                            <Select id="madreSelect" selectedKey="{create>/madre_ID}" items="{avesMachos>/}">
+                                <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
+                            </Select>
+
+                            <Label text="Procedencia"/>
+                            <Input value="{create>/procedencia}" placeholder="Lugar de procedencia"/>
+
+                            <Label text="Criador"/>
+                            <Input value="{create>/criador}" placeholder="Nombre del criador"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Información financiera -->
+                <Panel headerText="Información Financiera" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Valor Compra (S/.)"/>
+                            <Input value="{create>/valorCompra}" type="Number" placeholder="0.00"/>
+
+                            <Label text="Valor Actual (S/.)"/>
+                            <Input value="{create>/valorActual}" type="Number" placeholder="0.00"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Observaciones -->
+                <Panel headerText="Observaciones" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <TextArea value="{create>/observaciones}" rows="4" width="100%" placeholder="Observaciones adicionales..."/>
+                    </VBox>
+                </Panel>
+
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack"/>
+                <Button text="Guardar" type="Emphasized" press="onGuardar"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

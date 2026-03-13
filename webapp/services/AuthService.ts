@@ -37,7 +37,7 @@ export interface AuthResponse {
 
 export class AuthService {
     private static instance: AuthService;
-    private baseUrl: string = 'http://localhost:3000/api';
+    private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
     private token: string | null = null;
     private usuario: Usuario | null = null;
 
@@ -56,7 +56,7 @@ export class AuthService {
     // Login
     public async login(loginData: LoginData): Promise<AuthResponse> {
         try {
-            const response = await fetch(`${this.baseUrl}/auth/login`, {
+            const response = await fetch(`${this.baseUrl}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -66,9 +66,9 @@ export class AuthService {
 
             const result: AuthResponse = await response.json();
 
-            if (result.success && result.data) {
-                this.token = result.data.token;
-                this.usuario = result.data.usuario;
+            if (result.success && result.user) {
+                this.token = result.token;
+                this.usuario = result.user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
             }
@@ -87,7 +87,7 @@ export class AuthService {
     // Registro
     public async registrar(registerData: RegisterData): Promise<AuthResponse> {
         try {
-            const response = await fetch(`${this.baseUrl}/auth/registrar`, {
+            const response = await fetch(`${this.baseUrl}/registrar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,9 +97,9 @@ export class AuthService {
 
             const result: AuthResponse = await response.json();
 
-            if (result.success && result.data) {
-                this.token = result.data.token;
-                this.usuario = result.data.usuario;
+            if (result.success && result.user) {
+                this.token = result.token;
+                this.usuario = result.user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
             }
@@ -119,7 +119,7 @@ export class AuthService {
     public async logout(): Promise<void> {
         try {
             if (this.token) {
-                await fetch(`${this.baseUrl}/auth/logout`, {
+                await fetch(`${this.baseUrl}/logout`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${this.token}`
@@ -242,7 +242,28 @@ export class AuthService {
 
     // Verificar si está autenticado
     public isAuthenticated(): boolean {
-        return !!this.token && !!this.usuario;
+        if (!this.token || !this.usuario) return false;
+
+        // Verificar que el token no esté expirado
+        try {
+            const payload = JSON.parse(atob(this.token.split('.')[1]));
+            const ahora = Math.floor(Date.now() / 1000);
+            if (payload.exp && payload.exp < ahora) {
+                // Token expirado, limpiar
+                this.token = null;
+                this.usuario = null;
+                this.limpiarStorage();
+                return false;
+            }
+        } catch (error) {
+            // Token malformado
+            this.token = null;
+            this.usuario = null;
+            this.limpiarStorage();
+            return false;
+        }
+
+        return true;
     }
 
     // Obtener token

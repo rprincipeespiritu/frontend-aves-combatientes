@@ -1,0 +1,207 @@
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.AveDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+
+    <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button text="Editar" icon="sap-icon://edit" press="onEditar" visible="{= !${detail>/editMode}}"/>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar" visible="{detail>/editMode}"/>
+            <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="{detail>/editMode}"/>
+            <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="onEliminar"/>
+        </headerContent>
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <!-- Header con foto y datos básicos -->
+                <HBox class="sapUiMediumMarginBottom" alignItems="Center">
+                    <Avatar src="{detail>/fotoPrincipal}" displaySize="XL" class="sapUiMediumMarginEnd"/>
+                    <VBox>
+                        <Title text="{detail>/nombre}" level="H2"/>
+                        <Text text="Placa: {detail>/placa}"/>
+                        <ObjectStatus text="{detail>/estado}" state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
+                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
+                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Identificación -->
+                <Panel headerText="Identificación" expandable="false">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Placa"/>
+                            <Input value="{detail>/placa}" editable="{detail>/editMode}"/>
+
+                            <Label text="Nombre"/>
+                            <Input value="{detail>/nombre}" editable="{detail>/editMode}"/>
+
+                            <Label text="Apodo"/>
+                            <Input value="{detail>/apodo}" editable="{detail>/editMode}"/>
+
+                            <Label text="Sexo"/>
+                            <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
+                                <core:Item key="M" text="Macho"/>
+                                <core:Item key="H" text="Hembra"/>
+                            </Select>
+
+                            <Label text="Estado"/>
+                            <Select selectedKey="{detail>/estado}" enabled="{detail>/editMode}">
+                                <core:Item key="ACTIVO" text="Activo"/>
+                                <core:Item key="VENDIDO" text="Vendido"/>
+                                <core:Item key="FALLECIDO" text="Fallecido"/>
+                                <core:Item key="PRESTADO" text="Prestado"/>
+                            </Select>
+
+                            <Label text="Ubicación"/>
+                            <Input value="{detail>/ubicacion}" editable="{detail>/editMode}"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Estadísticas -->
+                <Panel headerText="Estadísticas" expandable="false" class="sapUiSmallMarginTop">
+                    <HBox justifyContent="SpaceAround" class="sapUiSmallMargin">
+                        <VBox alignItems="Center">
+                            <Title text="{detail>/totalPeleas}" level="H2"/>
+                            <Label text="Total Peleas"/>
+                        </VBox>
+                        <VBox alignItems="Center">
+                            <Title text="{detail>/peleasGanadas}" level="H2" class="sapThemePositiveText"/>
+                            <Label text="Victorias"/>
+                        </VBox>
+                        <VBox alignItems="Center">
+                            <Title text="{detail>/porcentajeVictorias}" level="H2"/>
+                            <Label text="% Victorias"/>
+                        </VBox>
+                        <VBox alignItems="Center">
+                            <Title text="{detail>/pesoActual}" level="H2"/>
+                            <Label text="Peso Actual (kg)"/>
+                        </VBox>
+                        <VBox alignItems="Center">
+                            <Title text="{detail>/edad}" level="H2"/>
+                            <Label text="Edad (años)"/>
+                        </VBox>
+                    </HBox>
+                </Panel>
+
+                <!-- Características -->
+                <Panel headerText="Características Físicas" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Raza"/>
+                            <Text text="{detail>/razaNombre}" visible="{= !${detail>/editMode}}"/>
+                            <Select selectedKey="{detail>/raza_ID}" enabled="{detail>/editMode}" visible="{detail>/editMode}" items="{razas>/}">
+                                <core:Item key="{razas>ID}" text="{razas>nombre}"/>
+                            </Select>
+
+                            <Label text="Color"/>
+                            <Text text="{detail>/colorNombre}" visible="{= !${detail>/editMode}}"/>
+                            <Select selectedKey="{detail>/color_ID}" enabled="{detail>/editMode}" visible="{detail>/editMode}" items="{colores>/}">
+                                <core:Item key="{colores>ID}" text="{colores>nombre}"/>
+                            </Select>
+
+                            <Label text="Fecha Nacimiento"/>
+                            <Text text="{detail>/fechaNacimiento}" visible="{= !${detail>/editMode}}"/>
+                            <DatePicker value="{detail>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" visible="{detail>/editMode}"/>
+
+                            <Label text="Procedencia"/>
+                            <Input value="{detail>/procedencia}" editable="{detail>/editMode}"/>
+
+                            <Label text="Criador"/>
+                            <Input value="{detail>/criador}" editable="{detail>/editMode}"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Genealogía -->
+                <Panel headerText="Genealogía" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Padre"/>
+                            <Link text="{detail>/padreNombre}" press="onVerPadre"/>
+
+                            <Label text="Madre"/>
+                            <Link text="{detail>/madreNombre}" press="onVerMadre"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <!-- Pesajes recientes -->
+                <Panel headerText="Pesajes Recientes" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="Pesajes Recientes"/>
+                            <ToolbarSpacer/>
+                            <Button text="Agregar Pesaje" icon="sap-icon://add" press="onAgregarPesaje"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <Table items="{detail>/pesajes}" noDataText="Sin pesajes registrados">
+                        <columns>
+                            <Column>
+                                <Text text="Fecha"/>
+                            </Column>
+                            <Column>
+                                <Text text="Peso (kg)"/>
+                            </Column>
+                            <Column>
+                                <Text text="Condición"/>
+                            </Column>
+                            <Column>
+                                <Text text="Observaciones"/>
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <Text text="{detail>fecha}"/>
+                                <Text text="{detail>peso}"/>
+                                <ObjectStatus text="{detail>condicionFisica}" state="{= ${detail>condicionFisica} === 'EXCELENTE' ? 'Success' :
+                                           ${detail>condicionFisica} === 'BUENA' ? 'Success' :
+                                           ${detail>condicionFisica} === 'REGULAR' ? 'Warning' : 'Error'}"/>
+                                <Text text="{detail>observaciones}"/>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
+                <!-- Peleas recientes -->
+                <Panel headerText="Peleas" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <Table items="{detail>/peleas}" noDataText="Sin peleas registradas">
+                        <columns>
+                            <Column>
+                                <Text text="Fecha"/>
+                            </Column>
+                            <Column>
+                                <Text text="Lugar"/>
+                            </Column>
+                            <Column>
+                                <Text text="Resultado"/>
+                            </Column>
+                            <Column>
+                                <Text text="Oponente"/>
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <Text text="{detail>fecha}"/>
+                                <Text text="{detail>lugar}"/>
+                                <ObjectStatus text="{detail>resultado}" state="{= ${detail>resultado} === 'VICTORIA' ? 'Success' :
+                                           ${detail>resultado} === 'DERROTA' ? 'Error' :
+                                           ${detail>resultado} === 'EMPATE' ? 'Warning' : 'None'}"/>
+                                <Text text="{detail>nombreOponente}"/>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
+                <!-- Observaciones -->
+                <Panel headerText="Observaciones" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <TextArea value="{detail>/observaciones}" rows="4" width="100%" editable="{detail>/editMode}"/>
+                    </VBox>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

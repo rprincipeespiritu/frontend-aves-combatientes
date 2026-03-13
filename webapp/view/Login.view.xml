@@ -1,22 +1,13 @@
-<mvc:View
-    controllerName="com.rprincipees.registroavescombate.controller.Login"
-    displayBlock="true"
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.Login" displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form">
+    xmlns="sap.m">
 
     <Page showHeader="false" class="loginPage">
         <content>
-            <FlexBox 
-                alignItems="Center" 
-                justifyContent="Center"
-                height="100vh"
-                class="loginContainer">
-                
-                <Panel 
-                    width="400px"
-                    class="loginPanel">
-                    
+            <FlexBox alignItems="Center" justifyContent="Center" height="100vh" class="loginContainer">
+
+                <Panel width="400px" class="loginPanel">
+
                     <headerToolbar>
                         <Toolbar class="loginHeader">
                             <ToolbarSpacer/>
@@ -24,91 +15,44 @@
                             <ToolbarSpacer/>
                         </Toolbar>
                     </headerToolbar>
-                    
+
                     <content>
                         <VBox class="sapUiMediumMargin">
-                            
+
                             <!-- Logo o imagen del sistema -->
                             <HBox justifyContent="Center" class="sapUiMediumMarginBottom">
-                                <Image 
-                                    src="./images/logo.png" 
-                                    alt="Logo"
-                                    width="80px"
-                                    height="80px"
-                                    mode="Contain"/>
+                                <Image src="./images/logo.png" alt="Logo" width="80px" height="80px" mode="Contain"/>
                             </HBox>
-                            
+
                             <!-- Mensaje de error -->
-                            <MessageStrip
-                                id="loginErrorMessage"
-                                text=""
-                                type="Error"
-                                visible="false"
-                                class="sapUiMediumMarginBottom"/>
-                            
+                            <MessageStrip id="loginErrorMessage" text="" type="Error" visible="false" class="sapUiMediumMarginBottom"/>
+
                             <!-- Formulario de login -->
-                            <f:SimpleForm
-                                layout="ResponsiveGridLayout"
-                                editable="true"
-                                columnsXL="1"
-                                columnsL="1"
-                                columnsM="1">
-                                
-                                <f:content>
-                                    <Label text="Email:" required="true"/>
-                                    <Input 
-                                        id="emailInput"
-                                        type="Email"
-                                        placeholder="usuario@ejemplo.com"
-                                        value="{/email}"
-                                        valueState="{/emailState}"
-                                        valueStateText="{/emailStateText}"
-                                        submit="onLoginSubmit"/>
-                                    
-                                    <Label text="Contraseña:" required="true"/>
-                                    <Input 
-                                        id="passwordInput"
-                                        type="Password"
-                                        placeholder="Ingrese su contraseña"
-                                        value="{/password}"
-                                        valueState="{/passwordState}"
-                                        valueStateText="{/passwordStateText}"
-                                        submit="onLoginSubmit"/>
-                                </f:content>
-                            </f:SimpleForm>
-                            
+                            <VBox class="sapUiSmallMarginBottom">
+                                <Label text="Email:" required="true"/>
+                                <Input id="emailInput" type="Email" placeholder="usuario@ejemplo.com" value="{/email}" valueState="{/emailState}" valueStateText="{/emailStateText}" width="100%" submit="onLoginSubmit"/>
+                            </VBox>
+
+                            <VBox class="sapUiSmallMarginBottom">
+                                <Label text="Contraseña:" required="true"/>
+                                <Input id="passwordInput" type="Password" placeholder="Ingrese su contraseña" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" width="100%" submit="onLoginSubmit"/>
+                            </VBox>
+
                             <!-- Recordar sesión -->
-                            <CheckBox 
-                                id="rememberMeCheckBox"
-                                text="Recordar sesión"
-                                selected="{/rememberMe}"
-                                class="sapUiSmallMarginTop"/>
-                            
+                            <CheckBox id="rememberMeCheckBox" text="Recordar sesión" selected="{/rememberMe}" class="sapUiSmallMarginTop"/>
+
                             <!-- Botones -->
                             <VBox class="sapUiMediumMarginTop">
-                                <Button 
-                                    id="loginButton"
-                                    text="Iniciar Sesión"
-                                    type="Emphasized"
-                                    width="100%"
-                                    press="onLogin"
-                                    enabled="{/loginEnabled}"/>
-                                
+                                <Button id="loginButton" text="Iniciar Sesión" type="Emphasized" width="100%" press="onLogin" enabled="{/loginEnabled}"/>
+
                                 <HBox class="sapUiSmallMarginTop" justifyContent="SpaceBetween">
-                                    <Link 
-                                        text="¿Olvidaste tu contraseña?"
-                                        press="onForgotPassword"/>
-                                    <Link 
-                                        text="Crear cuenta"
-                                        press="onGoToRegister"/>
+                                    <Link text="¿Olvidaste tu contraseña?" press="onForgotPassword"/>
+                                    <Link text="Crear cuenta" press="onGoToRegister"/>
                                 </HBox>
                             </VBox>
-                            
+
                             <!-- Loading indicator -->
-                            <BusyIndicator 
-                                id="loginBusyIndicator"
-                                visible="false"
-                                class="sapUiMediumMarginTop"/>
+                            <BusyIndicator id="loginBusyIndicator" visible="false" class="sapUiMediumMarginTop"/>
                         </VBox>
                     </content>
                 </Panel>

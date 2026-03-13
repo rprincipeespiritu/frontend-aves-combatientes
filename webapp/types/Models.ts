@@ -64,6 +64,11 @@ export interface IFiltros {
 }
 
 // Enums
+export enum SexoAve {
+    Hembra = "H",
+    Macho = "M"
+}
+
 export enum EstadoAve {
     Activo = "ACTIVO",
     Inactivo = "INACTIVO",

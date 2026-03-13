@@ -3,7 +3,10 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
 
-    <Page title="{i18n>titleListPage}" titleAlignment="Center">
+    <Page title="{i18n>titleListPage}" titleAlignment="Center" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://log" type="Transparent" tooltip="Cerrar Sesión" press="onLogout" class="sapUiSmallMarginBegin"/>
+        </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
 
@@ -32,35 +35,35 @@
                 </Panel>
 
                 <!-- Tabla de aves -->
-                <Table id="avesTable" items="{aves>/}" mode="SingleSelect" class="sapUiMediumMarginTop" selectionChange="onSelectionChange">
+                <Table id="avesTable" items="{aves>/value}" mode="MultiSelect" class="sapUiMediumMarginTop" selectionChange="onSelectionChange">
 
                     <headerToolbar>
                         <Toolbar>
-                            <Title text="Aves Registradas ({= ${aves>/}.length})"/>
+                            <Title text="Aves Registradas ({= ${aves>/value}.length})"/>
                             <ToolbarSpacer/>
-                            <Button text="Editar Seleccionada" enabled="{= ${table>/selectedIndex} >= 0}" press="onEditarAve"/>
+                            <Button text="Editar Seleccionada" enabled="{= ${table>/selectedIndex} >= 0}" press="onEditarAve" visible="false"/>
                             <Button text="Eliminar Seleccionada" type="Reject" enabled="{= ${table>/selectedIndex} >= 0}" press="onEliminarAve"/>
                         </Toolbar>
                     </headerToolbar>
 
                     <columns>
                         <Column width="10rem">
-                            <Text text="ID"/>
+                            <Text text="Placa"/>
                         </Column>
                         <Column minScreenWidth="Tablet">
                             <Text text="Nombre"/>
                         </Column>
-                        <Column minScreenWidth="Desktop">
+                        <!-- <Column minScreenWidth="Desktop">
                             <Text text="Raza"/>
-                        </Column>
+                        </Column> -->
                         <Column minScreenWidth="Desktop">
                             <Text text="Fecha Nacimiento"/>
                         </Column>
                         <Column minScreenWidth="Tablet" hAlign="Right">
-                            <Text text="Peso (kg)"/>
+                            <Text text="Edad"/>
                         </Column>
                         <Column minScreenWidth="Desktop">
-                            <Text text="Color"/>
+                            <Text text="Género"/>
                         </Column>
                         <Column minScreenWidth="Tablet">
                             <Text text="Propietario"/>
@@ -72,25 +75,30 @@
                             <Text text="Estado"/>
                         </Column>
                         <Column width="8rem">
+                            <Text text="Padre"/>
+                        </Column>
+                        <Column width="8rem">
+                            <Text text="Madre"/>
+                        </Column>
+                        <Column width="8rem">
                             <Text text="Acciones"/>
                         </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem press="onAvePress">
-                            <Text text="{aves>id}"/>
+                            <Text text="{aves>placa}"/>
                             <Text text="{aves>nombre}"/>
-                            <Text text="{aves>raza}"/>
+                            <!-- <Text text="{aves>raza}"/> -->
                             <Text text="{
                                 path: 'aves>fechaNacimiento',
                                 formatter: '.formatearFecha'
                             }"/>
+                            <Text text="{aves>edad}"/>
                             <Text text="{
-                                path: 'aves>peso',
-                                formatter: '.formatearPeso'
-                            }"/>
-                            <Text text="{aves>color}"/>
-                            <Text text="{aves>propietario}"/>
+                                path: 'aves>sexo',
+                                formatter: '.formatearSexo'}"/>
+                            <Text text="{aves>criador}"/>
                             <Text text="{aves>categoria}"/>
                             <ObjectStatus text="{
                                     path: 'aves>estado',
@@ -98,9 +106,11 @@
                                 }" state="{= ${aves>estado} === 'ACTIVO' ? 'Success' : 
                                          ${aves>estado} === 'ENTRENAMIENTO' ? 'Warning' :
                                          ${aves>estado} === 'COMPETENCIA' ? 'Information' : 'Error'}"/>
+                            <Link text="{aves>padre}" press="onPadreLinkPress"/>
+                            <Link text="{aves>madre}" press="onMadreLinkPress"/>
                             <HBox>
                                 <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press="onEditarAveInline"/>
-                                <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar" press="onEliminarAveInline"/>
+                                <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar" press="onEliminarAveInline" visible="false"/>
                                 <Button icon="sap-icon://detail-view" type="Transparent" tooltip="Ver detalle" press="onAvePress"/>
                             </HBox>
                         </ColumnListItem>
