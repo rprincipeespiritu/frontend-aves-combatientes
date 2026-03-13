@@ -8,7 +8,7 @@ import { AuthService } from "../services/AuthService";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
-    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private aveId: string = "";
 
     public onInit(): void {

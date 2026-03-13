@@ -29,7 +29,7 @@ import {
  * @namespace com.rprincipees.registroavescombate.controller
  */
 export default class List extends Controller {
-  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   private authService: AuthService;
   public onInit(): void {
     this.authService = AuthService.getInstance();

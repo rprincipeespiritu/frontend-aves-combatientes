@@ -37,7 +37,7 @@ export interface AuthResponse {
 
 export class AuthService {
     private static instance: AuthService;
-    private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private token: string | null = null;
     private usuario: Usuario | null = null;
 
