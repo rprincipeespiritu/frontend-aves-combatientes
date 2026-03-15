@@ -102,7 +102,7 @@ export default class Login extends Controller {
                 this.navigateToMain();
 
             } else {
-                this.showError(result.error || "Error de autenticación");
+                this.showError(result.error.message || "Error de autenticación");
             }
 
         } catch (error) {

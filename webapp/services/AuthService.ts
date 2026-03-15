@@ -31,8 +31,8 @@ export interface AuthResponse {
     success: boolean;
     token: string;
     user: Usuario;
-    // message?: string;
-    // error?: string;
+    message?: string;
+    error?: string;
 }
 
 export class AuthService {
