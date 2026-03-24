@@ -94,9 +94,9 @@ export default class Register extends Controller {
                     },
                     dependentOn: this.getView()
                 });
-                
+
             } else {
-                this.showError(result.error || "Error creando la cuenta");
+                this.showError(result.error.message || "Error creando la cuenta");
             }
 
         } catch (error) {
@@ -184,7 +184,7 @@ export default class Register extends Controller {
 
         this.updateRegisterButtonState();
     };
-    
+
     public onConfirmNombrehange = (): void => {
         const oModel = this.getView()?.getModel() as JSONModel;
         const nombre = oModel.getProperty("/nombre");
@@ -219,9 +219,9 @@ export default class Register extends Controller {
         const oModel = this.getView()?.getModel() as JSONModel;
         const acceptTerms = oModel.getProperty("/acceptTerms");
 
-        if (!acceptTerms) {            
+        if (!acceptTerms) {
             MessageBox.error("Debe aceptar los términos y condiciones");
-        } 
+        }
 
         this.updateRegisterButtonState();
     };
