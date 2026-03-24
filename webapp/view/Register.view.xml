@@ -1,6 +1,4 @@
-<mvc:View
-    controllerName="com.rprincipees.registroavescombate.controller.Register"
-    displayBlock="true"
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.Register" displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form">
@@ -9,7 +7,7 @@
         <content>
             <ScrollContainer height="100%" vertical="true">
                 <VBox class="sapUiMediumMargin">
-                    
+
                     <!-- Panel de registro -->
                     <Panel width="100%">
                         <headerToolbar>
@@ -17,142 +15,74 @@
                                 <Title text="Registro de Usuario" level="H2"/>
                             </Toolbar>
                         </headerToolbar>
-                        
+
                         <content>
                             <VBox class="sapUiMediumMargin">
-                                
+
                                 <!-- Mensaje de error -->
-                                <MessageStrip
-                                    id="registerErrorMessage"
-                                    text=""
-                                    type="Error"
-                                    visible="false"
-                                    class="sapUiMediumMarginBottom"/>
-                                
+                                <MessageStrip id="registerErrorMessage" text="" type="Error" visible="false" class="sapUiMediumMarginBottom"/>
+
                                 <!-- Formulario de registro -->
-                                <f:SimpleForm
-                                    layout="ResponsiveGridLayout"
-                                    editable="true"
-                                    columnsXL="2"
-                                    columnsL="2"
-                                    columnsM="1">
-                                    
+                                <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
+
                                     <f:content>
                                         <!-- Información básica -->
                                         <Title text="Información Básica"/>
-                                        
-                                        <Label text="Nombre de Usuario:" required="true"/>
-                                        <Input 
-                                            id="usernameInput"
-                                            placeholder="Usuario único"
-                                            value="{/username}"
-                                            valueState="{/usernameState}"
-                                            valueStateText="{/usernameStateText}"
-                                            liveChange="onUsernameChange"/>
-                                        
-                                        <Label text="Email:" required="true"/>
-                                        <Input 
-                                            id="emailInput"
-                                            type="Email"
-                                            placeholder="usuario@ejemplo.com"
-                                            value="{/email}"
-                                            valueState="{/emailState}"
-                                            valueStateText="{/emailStateText}"
-                                            liveChange="onEmailChange"/>
-                                        
-                                        <Label text="Contraseña:" required="true"/>
-                                        <Input 
-                                            id="passwordInput"
-                                            type="Password"
-                                            placeholder="Mínimo 8 caracteres"
-                                            value="{/password}"
-                                            valueState="{/passwordState}"
-                                            valueStateText="{/passwordStateText}"
-                                            liveChange="onPasswordChange"/>
-                                        
-                                        <Label text="Confirmar Contraseña:" required="true"/>
-                                        <Input 
-                                            id="confirmPasswordInput"
-                                            type="Password"
-                                            placeholder="Repite la contraseña"
-                                            value="{/confirmPassword}"
-                                            valueState="{/confirmPasswordState}"
-                                            valueStateText="{/confirmPasswordStateText}"
-                                            liveChange="onConfirmPasswordChange"/>
-                                        
-                                        <!-- Información personal -->
-                                        <Title text="Información Personal"/>
-                                        
-                                        <Label text="Nombre:" required="true"/>
-                                        <Input 
-                                            id="nombreInput"
-                                            placeholder="Tu nombre"
-                                            value="{/nombre}"
-                                            valueState="{/nombreState}"
-                                            valueStateText="{/nombreStateText}"/>
-                                        
-                                        <Label text="Apellido:" required="true"/>
-                                        <Input 
-                                            id="apellidoInput"
-                                            placeholder="Tu apellido"
-                                            value="{/apellido}"
-                                            valueState="{/apellidoState}"
-                                            valueStateText="{/apellidoStateText}"/>
-                                        
-                                        <Label text="Teléfono:"/>
-                                        <Input 
-                                            id="telefonoInput"
-                                            type="Tel"
-                                            placeholder="+51 999 999 999"
-                                            value="{/telefono}"/>
-                                        
-                                        <Label text="Dirección:"/>
-                                        <TextArea 
-                                            id="direccionInput"
-                                            placeholder="Tu dirección completa"
-                                            value="{/direccion}"
-                                            rows="3"/>
+
+                                        <Label text="Nombre de Usuario" required="true"/>
+                                        <Input id="usernameInput" placeholder="Usuario único" value="{/username}" valueState="{/usernameState}" valueStateText="{/usernameStateText}" change="onUsernameChange"/>
+
+                                        <Label text="Email" required="true"/>
+                                        <Input id="emailInput" type="Email" placeholder="usuario@ejemplo.com" value="{/email}" valueState="{/emailState}" valueStateText="{/emailStateText}" change="onEmailChange"/>
+
+                                        <Label text="Contraseña" required="true"/>
+                                        <Input id="passwordInput" type="Password" placeholder="Mínimo 8 caracteres" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" change="onPasswordChange"/>
+
+                                        <Label text="Confirmar Contraseña" required="true"/>
+                                        <Input id="confirmPasswordInput" type="Password" placeholder="Repite la contraseña" value="{/confirmPassword}" valueState="{/confirmPasswordState}" valueStateText="{/confirmPasswordStateText}" change="onConfirmPasswordChange"/>
+
                                     </f:content>
                                 </f:SimpleForm>
-                                
+
+                                <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
+
+                                    <f:content>
+                                        <!-- Información personal -->
+                                        <Title text="Información Personal"/>
+
+                                        <Label text="Nombre" required="true"/>
+                                        <Input id="nombreInput" placeholder="Tu nombre" value="{/nombre}" valueState="{/nombreState}" valueStateText="{/nombreStateText}" change="onConfirmNombrehange"/>
+
+                                        <Label text="Apellido" required="true"/>
+                                        <Input id="apellidoInput" placeholder="Tu apellido" value="{/apellido}" valueState="{/apellidoState}" valueStateText="{/apellidoStateText}" change="onConfirmApellidoChange"/>
+
+                                        <Label text="Teléfono"/>
+                                        <Input id="telefonoInput" type="Tel" placeholder="+51 999 999 999" value="{/telefono}"/>
+
+                                        <Label text="Dirección"/>
+                                        <TextArea id="direccionInput" placeholder="Tu dirección completa" value="{/direccion}" rows="3"/>
+                                    </f:content>
+                                </f:SimpleForm>
+
                                 <!-- Términos y condiciones -->
-                                <CheckBox 
-                                    id="termsCheckBox"
-                                    text="Acepto los términos y condiciones"
-                                    selected="{/acceptTerms}"
-                                    class="sapUiMediumMarginTop"/>
-                                
+                                <CheckBox id="termsCheckBox" text="Acepto los términos y condiciones" selected="{/acceptTerms}" class="sapUiMediumMarginTop" select="onConfirmTermsCheckBoxChange"/>
+
                                 <!-- Indicador de fortaleza de contraseña -->
                                 <VBox class="sapUiSmallMarginTop">
                                     <Text text="Fortaleza de la contraseña:"/>
-                                    <ProgressIndicator 
-                                        id="passwordStrengthIndicator"
-                                        percentValue="{/passwordStrength}"
-                                        state="{/passwordStrengthState}"
-                                        showValue="false"
-                                        width="100%"/>
+                                    <ProgressIndicator id="passwordStrengthIndicator" percentValue="{/passwordStrength}" state="{/passwordStrengthState}" showValue="false" width="100%"/>
                                     <Text text="{/passwordStrengthText}" class="sapUiTinyMarginTop"/>
                                 </VBox>
-                                
+
                                 <!-- Botones -->
                                 <HBox class="sapUiLargeMarginTop" justifyContent="SpaceBetween">
-                                    <Button 
-                                        text="Volver al Login"
-                                        press="onGoToLogin"/>
-                                    
-                                    <Button 
-                                        id="registerButton"
-                                        text="Crear Cuenta"
-                                        type="Emphasized"
-                                        press="onRegister"
-                                        enabled="{/registerEnabled}"/>
+                                    <Button text="Volver al Login" press="onGoToLogin"/>
+
+                                    <Button id="registerButton" text="Crear Cuenta" type="Emphasized" press="onRegister" enabled="{/registerEnabled}"/>
                                 </HBox>
-                                
+
                                 <!-- Loading indicator -->
-                                <BusyIndicator 
-                                    id="registerBusyIndicator"
-                                    visible="false"
-                                    class="sapUiMediumMarginTop"/>
+                                <BusyIndicator id="registerBusyIndicator" visible="false" class="sapUiMediumMarginTop"/>
                             </VBox>
                         </content>
                     </Panel>
