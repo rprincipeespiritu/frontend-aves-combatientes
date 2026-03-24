@@ -1,12 +1,14 @@
 import Controller from "sap/ui/core/mvc/Controller";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
+import MessageBox from "sap/m/MessageBox";
 import MessageStrip from "sap/m/MessageStrip";
 import BusyIndicator from "sap/m/BusyIndicator";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/ui/core/routing/Router";
 import CheckBox from "sap/m/CheckBox";
 import ProgressIndicator from "sap/m/ProgressIndicator";
+import { AuthService } from "../services/AuthService";
 
 // Interfaces para el registro
 interface RegisterData {
@@ -20,8 +22,10 @@ interface RegisterData {
 }
 
 export default class Register extends Controller {
+    private authService: AuthService;
 
     public onInit(): void {
+        this.authService = AuthService.getInstance();
         // Modelo para los datos del formulario
         const oModel = new JSONModel({
             username: "",
@@ -56,8 +60,9 @@ export default class Register extends Controller {
     }
 
     public onRegister = async (): Promise<void> => {
+        const oThat = this;
         const oModel = this.getView()?.getModel() as JSONModel;
-        
+
         if (!this.validateForm()) {
             return;
         }
@@ -76,19 +81,20 @@ export default class Register extends Controller {
         oModel.setProperty("/registerEnabled", false);
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/registrar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(registerData)
-            });
-
-            const result = await response.json();
+            const result = await this.authService.registrarUsuario(registerData);
 
             if (result.success) {
-                MessageToast.show("¡Cuenta creada exitosamente! Bienvenido " + result.data?.usuario.nombre);
-                this.navigateToMain();
+
+                MessageBox.success("¡Cuenta creada exitosamente! Bienvenido " + result.nombre + " " + result.apellido, {
+                    actions: [MessageBox.Action.OK],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                        // Navegar a la página principal
+                        oThat.navigateToMain();
+                    },
+                    dependentOn: this.getView()
+                });
+                
             } else {
                 this.showError(result.error || "Error creando la cuenta");
             }
@@ -178,6 +184,47 @@ export default class Register extends Controller {
 
         this.updateRegisterButtonState();
     };
+    
+    public onConfirmNombrehange = (): void => {
+        const oModel = this.getView()?.getModel() as JSONModel;
+        const nombre = oModel.getProperty("/nombre");
+
+        if (!nombre) {
+            oModel.setProperty("/nombreState", "Error");
+            oModel.setProperty("/nombreStateText", "El nombre es requerido");
+        } else {
+            oModel.setProperty("/nombreState", "Success");
+            oModel.setProperty("/nombreStateText", "Nombre válido");
+        }
+
+        this.updateRegisterButtonState();
+    };
+
+    public onConfirmApellidoChange = (): void => {
+        const oModel = this.getView()?.getModel() as JSONModel;
+        const apellido = oModel.getProperty("/apellido");
+
+        if (!apellido) {
+            oModel.setProperty("/apellidoState", "Error");
+            oModel.setProperty("/apellidoStateText", "El apellido es requerido");
+        } else {
+            oModel.setProperty("/apellidoState", "Success");
+            oModel.setProperty("/apellidoStateText", "Apellido válido");
+        }
+
+        this.updateRegisterButtonState();
+    };
+
+    public onConfirmTermsCheckBoxChange = (): void => {
+        const oModel = this.getView()?.getModel() as JSONModel;
+        const acceptTerms = oModel.getProperty("/acceptTerms");
+
+        if (!acceptTerms) {            
+            MessageBox.error("Debe aceptar los términos y condiciones");
+        } 
+
+        this.updateRegisterButtonState();
+    };
 
     private validatePassword(password: string): void {
         const oModel = this.getView()?.getModel() as JSONModel;
@@ -228,7 +275,7 @@ export default class Register extends Controller {
 
     private validateForm(): boolean {
         const oModel = this.getView()?.getModel() as JSONModel;
-        
+
         // Validar campos requeridos
         const requiredFields = [
             { field: "username", state: "usernameState" },
@@ -268,9 +315,9 @@ export default class Register extends Controller {
 
     private updateRegisterButtonState(): void {
         const oModel = this.getView()?.getModel() as JSONModel;
-        
+
         const allFieldsValid = [
-            "usernameState", "emailState", "passwordState", 
+            "usernameState", "emailState", "passwordState",
             "confirmPasswordState", "nombreState", "apellidoState"
         ].every(state => {
             const stateValue = oModel.getProperty(`/${state}`);

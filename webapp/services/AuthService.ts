@@ -21,16 +21,20 @@ export interface Usuario {
     apellido: string;
     telefono?: string;
     direccion?: string;
-    rol: 'Admin' | 'Usuario' | 'Veterinario';
+    rol: string;
     activo: boolean;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface AuthResponse {
     success: boolean;
     token: string;
-    user: Usuario;
+    userId: string;
+    username: string;
+    nombre: string;
+    apellido: string;
+    email: string;
+    rol: string;
+    activo: boolean;
     message?: string;
     error?: string;
 }
@@ -66,9 +70,19 @@ export class AuthService {
 
             const result: AuthResponse = await response.json();
 
-            if (result.success && result.user) {
+            if (result.success && result.nombre) {
                 this.token = result.token;
-                this.usuario = result.user;
+                let user = {
+                    _id: result.userId,
+                    username: result.username,
+                    nombre: result.nombre,
+                    apellido: result.apellido,
+                    email: result.email,
+                    rol: result.rol,
+                    activo: result.activo
+                };
+
+                this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
             }
@@ -85,9 +99,9 @@ export class AuthService {
     }
 
     // Registro
-    public async registrar(registerData: RegisterData): Promise<AuthResponse> {
+    public async registrarUsuario(registerData: RegisterData): Promise<AuthResponse> {
         try {
-            const response = await fetch(`${this.baseUrl}/registrar`, {
+            const response = await fetch(`${this.baseUrl}/registrarUsuario`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,9 +111,20 @@ export class AuthService {
 
             const result: AuthResponse = await response.json();
 
-            if (result.success && result.user) {
+            if (result.success && result.nombre) {
                 this.token = result.token;
-                this.usuario = result.user;
+                
+                let user = {
+                    _id: result.userId,
+                    username: result.username,
+                    nombre: result.nombre,
+                    apellido: result.apellido,
+                    email: result.email,
+                    rol: result.rol,
+                    activo: result.activo
+                };
+                
+                this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
             }

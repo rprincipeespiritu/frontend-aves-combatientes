@@ -1,6 +1,7 @@
 import Controller from "sap/ui/core/mvc/Controller";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
+import MessageBox from "sap/m/MessageBox";
 import MessageStrip from "sap/m/MessageStrip";
 import BusyIndicator from "sap/m/BusyIndicator";
 import UIComponent from "sap/ui/core/UIComponent";
@@ -69,6 +70,7 @@ export default class Login extends Controller {
     }
 
     public onLogin = async (): Promise<void> => {
+        const oThat = this;
         const oModel = this.getView()?.getModel() as JSONModel;
         const loginData: LoginData = {
             email: oModel.getProperty("/email"),
@@ -96,11 +98,16 @@ export default class Login extends Controller {
                     this.clearSavedCredentials();
                 }
 
-                MessageToast.show("Bienvenido " + result.user.nombre);
-
-                // Navegar a la página principal
-                this.navigateToMain();
-
+                MessageBox.success("Bienvenido " + result.nombre + " " + result.apellido, {
+                    actions: [MessageBox.Action.OK],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                        // Navegar a la página principal
+                        oThat.navigateToMain();
+                    },
+                    dependentOn: this.getView()
+                });
+             
             } else {
                 this.showError(result.error.message || "Error de autenticación");
             }
