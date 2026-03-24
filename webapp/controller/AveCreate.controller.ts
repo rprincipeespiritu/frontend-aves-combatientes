@@ -26,6 +26,26 @@ export default class AveCreate extends Controller {
         this.cargarCatalogos();
     }
 
+    public async onLogout(): Promise<void> {
+        try {
+            await this.authService.logout();
+            MessageToast.show("Sesión cerrada exitosamente");
+
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+            oRouter?.navTo("RouteLogin");
+
+            // Verificar que el método existe antes de llamarlo
+            const oOwner = this.getOwnerComponent() as any;
+            if (oOwner && typeof oOwner.updateUserModel === 'function') {
+                oOwner.updateUserModel();
+            }
+
+        } catch (error) {
+            console.error("Error en logout:", error);
+            MessageToast.show("Error cerrando sesión");
+        }
+    }
+
     private async cargarCatalogos(): Promise<void> {
         const token = this.authService.getToken();
         const headers = {
@@ -44,7 +64,7 @@ export default class AveCreate extends Controller {
             this.getView()?.setModel(new JSONModel(razas.value || []), "razas");
             this.getView()?.setModel(new JSONModel(colores.value || []), "colores");
             this.getView()?.setModel(new JSONModel(tiposAve.value || []), "tiposAve");
-            
+
             const machos = (aves.value || []).filter((a: any) => a.sexo === "M");
             const hembras = (aves.value || []).filter((a: any) => a.sexo === "H");
             this.getView()?.setModel(new JSONModel(machos), "avesMachos");

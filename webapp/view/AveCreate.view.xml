@@ -6,7 +6,7 @@
 
     <Page title="Registrar Nueva Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar"/>
+            <Button icon="sap-icon://log" type="Transparent" tooltip="Cerrar Sesión" press="onLogout" class="sapUiSmallMarginBegin"/>
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
@@ -34,12 +34,24 @@
                             <Select selectedKey="{create>/estado}">
                                 <core:Item key="ACTIVO" text="Activo"/>
                                 <core:Item key="VENDIDO" text="Vendido"/>
-                                <core:Item key="FALLECIDO" text="Fallecido"/>
                                 <core:Item key="PRESTADO" text="Prestado"/>
+                                <core:Item key="RETIRADO" text="Retirado"/>
+                                <core:Item key="FALLECIDO" text="Fallecido"/>
                             </Select>
 
                             <Label text="Ubicación"/>
                             <Input value="{create>/ubicacion}" placeholder="Ubicación actual"/>
+
+                            <Label text="Padrote"/>
+                            <CheckBox selected="{create>/padrote}"/>
+                            
+                            <Label text="Calificación"/>
+                            <Select selectedKey="{create>/categoria}">
+                                <core:Item key="BUENO" text="Bueno"/>
+                                <core:Item key="EXCELENTE" text="Excelente"/>
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>                                
+                            </Select>
+
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
@@ -49,19 +61,22 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Raza"/>
-                            <Select id="razaSelect" selectedKey="{create>/raza_ID}" items="{razas>/}">
+                            <Input value="{create>/raza}" placeholder="Raza"/>
+                            <!-- <Select id="razaSelect" selectedKey="{create>/raza_ID}" items="{razas>/}">
                                 <core:Item key="{razas>ID}" text="{razas>nombre}"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Color"/>
-                            <Select id="colorSelect" selectedKey="{create>/color_ID}" items="{colores>/}">
+                            <Input value="{create>/color}" placeholder="Color"/>
+                            <!-- <Select id="colorSelect" selectedKey="{create>/color_ID}" items="{colores>/}">
                                 <core:Item key="{colores>ID}" text="{colores>nombre}"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Tipo Ave"/>
-                            <Select id="tipoAveSelect" selectedKey="{create>/tipoAve_ID}" items="{tiposAve>/}">
+                            <Input value="{create>/tipoAve}" placeholder="Tipo Ave"/>
+                            <!-- <Select id="tipoAveSelect" selectedKey="{create>/tipoAve_ID}" items="{tiposAve>/}">
                                 <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Fecha Nacimiento"/>
                             <DatePicker value="{create>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>

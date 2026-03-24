@@ -24,8 +24,8 @@ export default class Welcome extends Controller {
 
     public onNavToRegistro(): void {
         console.log("Navegando a registro...");
-        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
-        oRouter?.navTo("RouteApp");
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteAveCreate");
     }
 
     public onNavToLista(): void {
