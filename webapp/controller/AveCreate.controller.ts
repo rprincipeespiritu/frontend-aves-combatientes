@@ -86,6 +86,13 @@ export default class AveCreate extends Controller {
         }
         oModel.setProperty("/placaState", "None");
 
+        const authUser = localStorage.getItem("auth_user");
+        if (!authUser) {
+            MessageToast.show("No se encontró la sesión del usuario");
+            return;
+        }
+        const usuario = JSON.parse(authUser);
+        const userId = usuario._id;
         // Construir payload
         const payload: any = {
             placa: data.placa,
@@ -93,6 +100,9 @@ export default class AveCreate extends Controller {
             apodo: data.apodo || null,
             sexo: data.sexo,
             estado: data.estado,
+            raza: data.raza || null,
+            color: data.color || null,
+            tipoAve: data.tipoAve || null,
             ubicacion: data.ubicacion || null,
             procedencia: data.procedencia || null,
             criador: data.criador || null,
@@ -101,11 +111,9 @@ export default class AveCreate extends Controller {
             fechaCompra: data.fechaCompra || null,
             valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
             valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
+            usuario_ID: userId
         };
 
-        if (data.raza_ID) payload.raza_ID = data.raza_ID;
-        if (data.color_ID) payload.color_ID = data.color_ID;
-        if (data.tipoAve_ID) payload.tipoAve_ID = data.tipoAve_ID;
         if (data.padre_ID) payload.padre_ID = data.padre_ID;
         if (data.madre_ID) payload.madre_ID = data.madre_ID;
 
