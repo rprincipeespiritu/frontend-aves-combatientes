@@ -106,6 +106,8 @@ export default class AveCreate extends Controller {
             ubicacion: data.ubicacion || null,
             procedencia: data.procedencia || null,
             criador: data.criador || null,
+            categoria: data.categoria || null,
+            padrote: data.padrote || null,
             observaciones: data.observaciones || null,
             fechaNacimiento: data.fechaNacimiento || null,
             fechaCompra: data.fechaCompra || null,
