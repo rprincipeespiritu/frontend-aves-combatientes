@@ -21,7 +21,8 @@
   "scripts": {
     "start": "fiori run --open \"index.html\"",
     "dev": "fiori run",
-    "build": "ui5 build",
+    "build": "ui5 build --all --clean-dest",
+    "build:prod": "ui5 build self-contained --all --clean-dest",
     "deploy": "fiori deploy",
     "lint": "eslint webapp",
     "postinstall": "npm run build"
