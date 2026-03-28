@@ -65,7 +65,7 @@ export default class AveCreate extends Controller {
     private async cargarCatalogos(): Promise<void> {
         try {
 
-            const response = await fetch(`${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,padrote`, {
+            const response = await fetch(`${this.baseUrl}/Aves`, {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -84,73 +84,75 @@ export default class AveCreate extends Controller {
     }
 
     public async onGuardar(): Promise<void> {
-        const oThat = this;
-        const oModel = this.getView()?.getModel("create") as JSONModel;
-        const data = oModel.getData();
-
-        // Validar placa
-        if (!data.placa) {
-            oModel.setProperty("/placaState", "Error");
-            MessageToast.show("La placa es requerida");
-            return;
-        }
-        oModel.setProperty("/placaState", "None");
-
-        const authUser = localStorage.getItem("auth_user");
-        if (!authUser) {
-            MessageToast.show("No se encontró la sesión del usuario");
-            return;
-        }
-        const usuario = JSON.parse(authUser);
-        const userId = usuario._id;
-        // Construir payload
-        const payload: any = {
-            placa: data.placa,
-            nombre: data.nombre || null,
-            apodo: data.apodo || null,
-            sexo: data.sexo,
-            estado: data.estado,
-            raza: data.raza || null,
-            color: data.color || null,
-            tipoAve: data.tipoAve || null,
-            ubicacion: data.ubicacion || null,
-            procedencia: data.procedencia || null,
-            criador: data.criador || null,
-            categoria: data.categoria || null,
-            padrote: data.padrote || null,
-            observaciones: data.observaciones || null,
-            fechaNacimiento: data.fechaNacimiento || null,
-            fechaCompra: data.fechaCompra || null,
-            valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
-            valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
-            usuario_ID: userId
-        };
-
-        const oInputPadre = oThat.byId("idPadre") as Input;
-        const placaPadre = oInputPadre.getSelectedKey();
-        const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
-        const aMachos = oMachosModel.getData() as any[];
-        const oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
-        if (oPadre.length < 1) {
-            return;
-        }
-        data.padre_ID = oPadre[0].ID;
-
-        const oInputMadre = oThat.byId("idMadre") as Input;
-        const placaMadre = oInputPadre.getSelectedKey();
-        const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
-        const aHembras = oHembrasModel.getData() as any[];
-        const oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
-        if (oMadre.length < 1) {
-            return;
-        }
-        data.madre_ID = oMadre[0].ID;
-
-
-        if (data.padre_ID) payload.padre_ID = data.padre_ID;
-        if (data.madre_ID) payload.madre_ID = data.madre_ID;
-
         try {
+            const oThat = this;
+            const oModel = this.getView()?.getModel("create") as JSONModel;
+            const data = oModel.getData();
+
+            // Validar placa
+            if (!data.placa) {
+                oModel.setProperty("/placaState", "Error");
+                MessageToast.show("La placa es requerida");
+                return;
+            }
+            oModel.setProperty("/placaState", "None");
+
+            const authUser = localStorage.getItem("auth_user");
+            if (!authUser) {
+                MessageToast.show("No se encontró la sesión del usuario");
+                return;
+            }
+            const usuario = JSON.parse(authUser);
+            const userId = usuario._id;
+            // Construir payload
+            const payload: any = {
+                placa: data.placa,
+                nombre: data.nombre || null,
+                apodo: data.apodo || null,
+                sexo: data.sexo,
+                estado: data.estado,
+                raza: data.raza || null,
+                color: data.color || null,
+                tipoAve: data.tipoAve || null,
+                ubicacion: data.ubicacion || null,
+                procedencia: data.procedencia || null,
+                criador: data.criador || null,
+                categoria: data.categoria || null,
+                padrote: data.padrote || null,
+                observaciones: data.observaciones || null,
+                fechaNacimiento: data.fechaNacimiento || null,
+                fechaCompra: data.fechaCompra || null,
+                valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
+                valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
+                usuario_ID: userId,
+                padre_ID: null,
+                madre_ID: null
+            };
+
+            const oInputPadre = oThat.byId("idPadre") as Input;
+            const placaPadre = oInputPadre.getSelectedKey();
+            const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
+            const aMachos = oMachosModel.getData() as any[];
+            let oPadre: IAve[];
+            if (aMachos.length > 0) {
+                oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
+                data.padre_ID = oPadre[0].id;
+            }
+
+            const oInputMadre = oThat.byId("idMadre") as Input;
+            const placaMadre = oInputPadre.getSelectedKey();
+            const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
+            const aHembras = oHembrasModel.getData() as any[];
+            let oMadre: IAve[];
+            if (aHembras.length > 0) {
+                oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
+                data.madre_ID = oMadre[0].id;
+            }
+
+            if (data.padre_ID) payload.padre_ID = data.padre_ID;
+            if (data.madre_ID) payload.madre_ID = data.madre_ID;
+
+
             const response = await fetch(`${this.baseUrl}/Aves`, {
                 method: "POST",
                 headers: {
@@ -168,7 +170,7 @@ export default class AveCreate extends Controller {
                 MessageBox.error(error.error?.message || "Error al crear el ave");
             }
         } catch (error) {
-            MessageBox.error("Error de conexión");
+            MessageBox.error(JSON.stringify(error));
         }
     }
 
