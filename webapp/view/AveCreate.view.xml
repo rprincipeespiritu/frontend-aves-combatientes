@@ -44,12 +44,12 @@
 
                             <Label text="Padrote"/>
                             <CheckBox selected="{create>/padrote}"/>
-                            
+
                             <Label text="Calificación"/>
                             <Select selectedKey="{create>/categoria}">
                                 <core:Item key="BUENO" text="Bueno"/>
                                 <core:Item key="EXCELENTE" text="Excelente"/>
-                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>                                
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
                             </Select>
 
                         </f:content>
@@ -92,14 +92,29 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Padre"/>
-                            <Select id="padreSelect" selectedKey="{create>/padre_ID}" items="{avesMachos>/}">
+                            <Input id="idPadre" valueState="{create>/placaPadreState}" textFormatMode="KeyValue" placeholder="Ingrese Padre" showSuggestion="true" suggestionItems="{avesMachos>/}" change=".onSuggestionItemSelectedPlacaPadre">
+                                <suggestionItems>
+                                    <core:ListItem key="{avesMachos>placa}" text="{avesMachos>nombre}" additionalText="{avesMachos>placa}" />
+                                </suggestionItems>
+                            </Input>
+                            <!-- <Input id="idPadre" placeholder="Ingrese Padre" showSuggestion="true" suggestionItems="{avesMachos>/}">
+                                <suggestionItems>
+                                    <core:ListItem text="{avesMachos>placa}" additionalText="{avesMachos>nombre}" />
+                                </suggestionItems>
+                            </Input> -->
+                            <!-- <Select id="padreSelect" selectedKey="{create>/padre_ID}" items="{avesMachos>/}">
                                 <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Madre"/>
-                            <Select id="madreSelect" selectedKey="{create>/madre_ID}" items="{avesMachos>/}">
+                            <Input id="idMadre" valueState="{create>/placaMadreState}" textFormatMode="KeyValue" placeholder="Ingrese Madre" showSuggestion="true" suggestionItems="{avesHembras>/}" change=".onSuggestionItemSelectedPlacaMadre">
+                                <suggestionItems>
+                                    <core:ListItem key="{avesHembras>placa}" text="{avesHembras>nombre}" additionalText="{avesHembras>placa}" />
+                                </suggestionItems>
+                            </Input>
+                            <!-- <Select id="madreSelect" selectedKey="{create>/madre_ID}" items="{avesMachos>/}">
                                 <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Procedencia"/>
                             <Input value="{create>/procedencia}" placeholder="Lugar de procedencia"/>

@@ -5,6 +5,8 @@ import MessageBox from "sap/m/MessageBox";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/ui/core/routing/Router";
 import { AuthService } from "../services/AuthService";
+import Input from "sap/m/Input";
+import Event from "sap/ui/base/Event";
 
 export default class AveCreate extends Controller {
     private authService: AuthService;
@@ -13,17 +15,30 @@ export default class AveCreate extends Controller {
     public onInit(): void {
         this.authService = AuthService.getInstance();
 
-        const oModel = new JSONModel({
-            placa: "", nombre: "", apodo: "", sexo: "M",
-            estado: "ACTIVO", ubicacion: "", raza_ID: "",
-            color_ID: "", tipoAve_ID: "", fechaNacimiento: "",
-            fechaCompra: "", padre_ID: "", madre_ID: "",
-            procedencia: "", criador: "", valorCompra: "",
-            valorActual: "", observaciones: "", placaState: "None"
-        });
-        this.getView()?.setModel(oModel, "create");
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        const oTarget = oRouter?.getTarget("TargetAveCreate") as any;
+        oTarget?.attachDisplay(this.onTargetDisplay, this);
+    }
 
-        this.cargarCatalogos();
+    private onTargetDisplay = (): void => {
+        if (!this.authService.isAuthenticated()) {
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+            oRouter?.navTo("RouteLogin");
+            return;
+        } else {
+            const oModel = new JSONModel({
+                placa: "", nombre: "", apodo: "", sexo: "M",
+                estado: "ACTIVO", ubicacion: "", raza: "",
+                color: "", tipoAve: "", fechaNacimiento: "",
+                fechaCompra: "", padre_ID: "", madre_ID: "",
+                procedencia: "", criador: "", valorCompra: "",
+                valorActual: "", observaciones: "", placaState: "None",
+                categoria: "BUENO"
+            });
+            this.getView()?.setModel(oModel, "create");
+
+            this.cargarCatalogos();
+        }
     }
 
     public async onLogout(): Promise<void> {
@@ -54,19 +69,12 @@ export default class AveCreate extends Controller {
         };
 
         try {
-            const [razas, colores, tiposAve, aves] = await Promise.all([
-                fetch(`${this.baseUrl}/Razas`, { headers }).then(r => r.json()),
-                fetch(`${this.baseUrl}/Colores`, { headers }).then(r => r.json()),
-                fetch(`${this.baseUrl}/TiposAve`, { headers }).then(r => r.json()),
-                fetch(`${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo`, { headers }).then(r => r.json())
+            const [aves] = await Promise.all([
+                fetch(`${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,padrote`, { headers }).then(r => r.json())
             ]);
 
-            this.getView()?.setModel(new JSONModel(razas.value || []), "razas");
-            this.getView()?.setModel(new JSONModel(colores.value || []), "colores");
-            this.getView()?.setModel(new JSONModel(tiposAve.value || []), "tiposAve");
-
-            const machos = (aves.value || []).filter((a: any) => a.sexo === "M");
-            const hembras = (aves.value || []).filter((a: any) => a.sexo === "H");
+            const machos = (aves.value || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
+            const hembras = (aves.value || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
             this.getView()?.setModel(new JSONModel(machos), "avesMachos");
             this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
         } catch (error) {
@@ -75,6 +83,7 @@ export default class AveCreate extends Controller {
     }
 
     public async onGuardar(): Promise<void> {
+        const oThat = this;
         const oModel = this.getView()?.getModel("create") as JSONModel;
         const data = oModel.getData();
 
@@ -116,6 +125,27 @@ export default class AveCreate extends Controller {
             usuario_ID: userId
         };
 
+        const oInputPadre = oThat.byId("idPadre") as Input;
+        const placaPadre = oInputPadre.getSelectedKey();
+        const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
+        const aMachos = oMachosModel.getData() as any[];
+        const oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
+        if (oPadre.length < 1) {
+            return;
+        }
+        data.padre_ID = oPadre[0].ID;
+
+        const oInputMadre = oThat.byId("idMadre") as Input;
+        const placaMadre = oInputPadre.getSelectedKey();
+        const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
+        const aHembras = oHembrasModel.getData() as any[];
+        const oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
+        if (oMadre.length < 1) {
+            return;
+        }
+        data.madre_ID = oMadre[0].ID;
+
+
         if (data.padre_ID) payload.padre_ID = data.padre_ID;
         if (data.madre_ID) payload.madre_ID = data.madre_ID;
 
@@ -144,5 +174,37 @@ export default class AveCreate extends Controller {
     public onNavBack(): void {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
         oRouter?.navTo("RouteList");
+    }
+
+    public onSuggestionItemSelectedPlacaPadre(oEvent: Event): void {
+        const oModel = this.getView()?.getModel("create") as JSONModel
+        let placa = oEvent.getSource().getSelectedKey();
+        let descripcion = oEvent.getSource().getValue();
+        // Validar placa
+        if (!placa && descripcion) {
+            oModel.setProperty("/placaPadreState", "Error");
+            MessageToast.show("La placa del padre es incorrecto");
+            return;
+        }
+        oModel.setProperty("/placaPadreState", "None");
+        // alert("idPadre: " + placa);
+        // this.byId("selectedKeyIndicator").setText(oText);
+
+    }
+
+    public onSuggestionItemSelectedPlacaMadre(oEvent: Event): void {
+        const oModel = this.getView()?.getModel("create") as JSONModel
+        let placa = oEvent.getSource().getSelectedKey();
+        let descripcion = oEvent.getSource().getValue();
+        // Validar placa
+        if (!placa && descripcion) {
+            oModel.setProperty("/placaMadreState", "Error");
+            MessageToast.show("La placa del madre es incorrecto");
+            return;
+        }
+        oModel.setProperty("/placaMadreState", "None");
+        // alert("idPadre: " + placa);
+        // this.byId("selectedKeyIndicator").setText(oText);
+
     }
 }
