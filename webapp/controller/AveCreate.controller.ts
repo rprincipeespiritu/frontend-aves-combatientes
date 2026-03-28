@@ -7,6 +7,7 @@ import Router from "sap/ui/core/routing/Router";
 import { AuthService } from "../services/AuthService";
 import Input from "sap/m/Input";
 import Event from "sap/ui/base/Event";
+import { IAve } from "../types/Models";
 
 export default class AveCreate extends Controller {
     private authService: AuthService;
@@ -62,19 +63,19 @@ export default class AveCreate extends Controller {
     }
 
     private async cargarCatalogos(): Promise<void> {
-        const token = this.authService.getToken();
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        };
-
         try {
-            const [aves] = await Promise.all([
-                fetch(`${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,padrote`, { headers }).then(r => r.json())
-            ]);
 
-            const machos = (aves.value || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
-            const hembras = (aves.value || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
+            const response = await fetch(`${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,padrote`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const aves: IAve[] = await response.json();
+            const machos = (aves || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
+            const hembras = (aves || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
             this.getView()?.setModel(new JSONModel(machos), "avesMachos");
             this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
         } catch (error) {
