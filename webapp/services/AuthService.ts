@@ -113,7 +113,7 @@ export class AuthService {
 
             if (result.success && result.nombre) {
                 this.token = result.token;
-                
+
                 let user = {
                     _id: result.userId,
                     username: result.username,
@@ -123,7 +123,7 @@ export class AuthService {
                     rol: result.rol,
                     activo: result.activo
                 };
-                
+
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
