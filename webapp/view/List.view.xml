@@ -47,37 +47,43 @@
                     </headerToolbar>
 
                     <columns>
-                        <Column width="10rem">
+                        <Column width="8rem" minScreenWidth="Phone">
                             <Text text="Placa"/>
                         </Column>
-                        <Column minScreenWidth="Tablet">
+                        <Column width="10rem" minScreenWidth="Phone">
                             <Text text="Nombre"/>
                         </Column>
                         <!-- <Column minScreenWidth="Desktop">
                             <Text text="Raza"/>
                         </Column> -->
-                        <Column minScreenWidth="Desktop">
-                            <Text text="Fecha Nacimiento"/>
+                        <Column width="8rem" minScreenWidth="Phone">
+                            <Text text="Fecha Nac."/>
                         </Column>
-                        <Column minScreenWidth="Tablet" hAlign="Right">
+                        <!-- <Column width="3rem" minScreenWidth="Phone">
                             <Text text="Edad"/>
-                        </Column>
-                        <Column minScreenWidth="Desktop">
+                        </Column> -->
+                        <Column width="5rem" minScreenWidth="Phone">
                             <Text text="Género"/>
                         </Column>
-                        <Column minScreenWidth="Tablet">
-                            <Text text="Propietario"/>
-                        </Column>
-                        <Column minScreenWidth="Desktop">
+                        <!-- <Column width="15rem" minScreenWidth="Phone">
+                            <Text text="Criador de Procedencia"/>
+                        </Column> -->
+                        <Column width="8rem" minScreenWidth="Phone">
                             <Text text="Categoría"/>
                         </Column>
-                        <Column minScreenWidth="Tablet">
+                        <Column width="5rem" minScreenWidth="Phone">
+                            <Text text="Cría"/>
+                        </Column>
+                        <Column width="5rem" minScreenWidth="Phone">
                             <Text text="Estado"/>
                         </Column>
-                        <Column width="8rem">
+                        <Column width="5rem" minScreenWidth="Phone">
+                            <Text text="Padrote"/>
+                        </Column>
+                        <Column width="7rem">
                             <Text text="Padre"/>
                         </Column>
-                        <Column width="8rem">
+                        <Column width="7rem">
                             <Text text="Madre"/>
                         </Column>
                         <Column width="8rem">
@@ -94,19 +100,24 @@
                                 path: 'aves>fechaNacimiento',
                                 formatter: '.formatearFecha'
                             }"/>
-                            <Text text="{aves>edad}"/>
+                            <!-- <Text text="{aves>edad}"/> -->
                             <Text text="{
                                 path: 'aves>sexo',
                                 formatter: '.formatearSexo'}"/>
-                            <Text text="{aves>criador}"/>
-                            <Text text="{aves>categoria}"/>
+                            <!-- <Text text="{aves>criador}"/> -->
+                            <Text text="{
+                                path: 'aves>categoria',
+                                formatter: '.formatearCategoria'}"/>
+                            <CheckBox selected="{aves>cria}" editable="false"/>
                             <ObjectStatus text="{
                                     path: 'aves>estado',
                                     formatter: '.formatearEstado'
                                 }" state="{= ${aves>estado} === 'ACTIVO' ? 'Success' : 
-                                         ${aves>estado} === 'ENTRENAMIENTO' ? 'Warning' :
-                                         ${aves>estado} === 'COMPETENCIA' ? 'Information' : 'Error'}"/>
-                            <Link text="{aves>padre}" press="onPadreLinkPress"/>
+                                         ${aves>estado} === 'PRESTADO' ? 'Information' :
+                                         ${aves>estado} === 'RETIRADO' ? 'Information' :
+                                         ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}"/>
+                            <CheckBox selected="{aves>padrote}" editable="false"/>
+                            <Link text="{aves>padre_ID}" press="onPadreLinkPress"/>
                             <Link text="{aves>madre}" press="onMadreLinkPress"/>
                             <HBox>
                                 <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press="onEditarAveInline"/>

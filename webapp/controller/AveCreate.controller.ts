@@ -118,6 +118,7 @@ export default class AveCreate extends Controller {
                 procedencia: data.procedencia || null,
                 criador: data.criador || null,
                 categoria: data.categoria || null,
+                cria: data.cria || null,
                 padrote: data.padrote || null,
                 observaciones: data.observaciones || null,
                 fechaNacimiento: data.fechaNacimiento || null,
@@ -167,7 +168,7 @@ export default class AveCreate extends Controller {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
                     onClose: function (sAction) {
-                        this.onNavBack();
+                        oThat.onNavBack();
                     },
                     dependentOn: this.getView()
                 });

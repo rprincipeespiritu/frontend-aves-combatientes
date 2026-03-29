@@ -40,7 +40,7 @@ export default class AveDetail extends Controller {
         const token = this.authService.getToken();
         try {
             const response = await fetch(
-                `${this.baseUrl}/Aves('${this.aveId}')?$expand=raza,color,pesajes,peleas,padre,madre`,
+                `${this.baseUrl}/Aves('${this.aveId}')?$expand=pesajes,peleas,padre,madre`,
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
 

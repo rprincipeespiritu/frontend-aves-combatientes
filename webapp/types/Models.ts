@@ -64,6 +64,12 @@ export interface IFiltros {
 }
 
 // Enums
+export enum CategoriaAve {
+    Bueno = "BUENO",
+    Excelente = "EXCELENTE",
+    Extraordinario = "EXTRAORDINARIO"
+}
+
 export enum SexoAve {
     Hembra = "H",
     Macho = "M"
