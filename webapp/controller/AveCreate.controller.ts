@@ -74,8 +74,8 @@ export default class AveCreate extends Controller {
             });
 
             const aves: IAve[] = await response.json();
-            const machos = (aves || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
-            const hembras = (aves || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
+            const machos = (aves.value || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
+            const hembras = (aves.value || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
             this.getView()?.setModel(new JSONModel(machos), "avesMachos");
             this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
         } catch (error) {
