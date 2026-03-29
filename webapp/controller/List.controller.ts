@@ -22,6 +22,7 @@ import {
   EstadoAve,
   ValidationMessages,
   SexoAve,
+  CategoriaAve,
 } from "../types/Models";
 
 
@@ -323,6 +324,16 @@ export default class List extends Controller {
     const iSelectedIndex = oTable.getSelectedItems().length > 0 ? 0 : -1;
 
     oTableModel.setProperty("/selectedIndex", iSelectedIndex);
+  }
+
+  public formatearCategoria(categoria: CategoriaAve): string {
+    const categorias = {
+      [CategoriaAve.Bueno]: "Bueno",
+      [CategoriaAve.Excelente]: "Excelente",
+      [CategoriaAve.Extraordinario]: "Extraordinario",
+    };
+
+    return categorias[categoria] || categoria;
   }
 
   public formatearSexo(sexo: SexoAve): string {

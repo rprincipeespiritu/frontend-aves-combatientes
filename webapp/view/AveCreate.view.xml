@@ -30,6 +30,9 @@
                                 <core:Item key="H" text="Hembra"/>
                             </Select>
 
+                            <Label text="Cría"/>
+                            <CheckBox selected="{create>/cria}"/>
+
                             <Label text="Estado"/>
                             <Select selectedKey="{create>/estado}">
                                 <core:Item key="ACTIVO" text="Activo"/>
@@ -116,10 +119,10 @@
                                 <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
                             </Select> -->
 
-                            <Label text="Procedencia"/>
+                            <Label text="Lugar de Procedencia"/>
                             <Input value="{create>/procedencia}" placeholder="Lugar de procedencia"/>
 
-                            <Label text="Criador"/>
+                            <Label text="Criador de Procedencia"/>
                             <Input value="{create>/criador}" placeholder="Nombre del criador"/>
                         </f:content>
                     </f:SimpleForm>
