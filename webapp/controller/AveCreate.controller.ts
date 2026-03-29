@@ -163,8 +163,14 @@ export default class AveCreate extends Controller {
             });
 
             if (response.ok) {
-                MessageToast.show("Ave creada exitosamente");
-                this.onNavBack();
+                MessageBox.success("¡Ave creada exitosamente!", {
+                    actions: [MessageBox.Action.OK],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                        this.onNavBack();
+                    },
+                    dependentOn: this.getView()
+                });
             } else {
                 const error = await response.json();
                 MessageBox.error(error.error?.message || "Error al crear el ave");
