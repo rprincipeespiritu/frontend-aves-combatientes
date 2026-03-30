@@ -13,6 +13,12 @@ export default class AveDetail extends Controller {
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.getRoute("RouteAveDetail")?.attachPatternMatched(this.onRouteMatched, this);
+    }
+
+    private onRouteMatched = (oEvent: any): void => {
+        this.aveId = oEvent.getParameter("arguments").aveId;
 
         this.getView()?.setModel(new JSONModel({
             editMode: false,
@@ -26,12 +32,6 @@ export default class AveDetail extends Controller {
             raza_ID: "", color_ID: "", fotoPrincipal: ""
         }), "detail");
 
-        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-        oRouter?.getRoute("RouteAveDetail")?.attachPatternMatched(this.onRouteMatched, this);
-    }
-
-    private onRouteMatched = (oEvent: any): void => {
-        this.aveId = oEvent.getParameter("arguments").aveId;
         this.cargarAve();
         this.cargarCatalogos();
     }
