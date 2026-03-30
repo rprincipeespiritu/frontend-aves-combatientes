@@ -34,6 +34,13 @@ export default class List extends Controller {
   private authService: AuthService;
   public onInit(): void {
     this.authService = AuthService.getInstance();
+
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter?.getRoute("RouteList")?.attachPatternMatched(this.onRouteMatched, this);
+  }
+
+  private onRouteMatched = (oEvent: any): void => {
+
     console.log("Main Controller initialized with TypeScript");
 
     // Crear modelo para el estado de la tabla
@@ -46,13 +53,10 @@ export default class List extends Controller {
     this.getView()?.setModel(oTableModel, "table");
 
     // Crear modelo de datos mock (reemplazar con OData)
-    this.initializeMockData();
-
-    // Cargar datos de referencia
-    this.loadReferenceData();
+    this.initializeData();
   }
 
-  private async initializeMockData(): Promise<void> {
+  private async initializeData(): Promise<void> {
     try {
       const response = await fetch(`${this.baseUrl}/Aves`, {
         method: "GET",
@@ -66,34 +70,6 @@ export default class List extends Controller {
       const oAvesModel = new JSONModel(mockAves)
       this.getView()?.setModel(oAvesModel, "aves");
     } catch (error) { }
-  }
-
-  private loadReferenceData(): void {
-    // Datos de referencia para combos
-    const razas = [
-      { id: "asil", nombre: "Asil" },
-      { id: "shamo", nombre: "Shamo" },
-      { id: "kelso", nombre: "Kelso" },
-      { id: "hatch", nombre: "Hatch" },
-      { id: "sweater", nombre: "Sweater" },
-    ];
-
-    const categorias = [
-      { id: "pluma", nombre: "Peso Pluma", pesoMin: 2.0, pesoMax: 2.4 },
-      { id: "gallo", nombre: "Peso Gallo", pesoMin: 2.5, pesoMax: 2.9 },
-      { id: "pesado", nombre: "Peso Pesado", pesoMin: 3.0, pesoMax: 3.5 },
-    ];
-
-    const propietarios = [
-      { id: "1", nombre: "Juan Pérez" },
-      { id: "2", nombre: "Carlos López" },
-      { id: "3", nombre: "María González" },
-      { id: "4", nombre: "Pedro Rodríguez" },
-    ];
-
-    this.getView()?.setModel(new JSONModel(razas), "razas");
-    this.getView()?.setModel(new JSONModel(categorias), "categorias");
-    this.getView()?.setModel(new JSONModel(propietarios), "propietarios");
   }
 
   // === OPERACIONES CRUD ===
