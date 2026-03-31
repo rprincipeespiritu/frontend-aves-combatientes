@@ -7,9 +7,9 @@
     <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button text="Editar" icon="sap-icon://edit" press="onEditar" visible="{= !${detail>/editMode}}"/>
-            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar" visible="{detail>/editMode}"/>
-            <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="{detail>/editMode}"/>
+            <!-- <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar" visible="{detail>/editMode}"/> -->
             <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="onEliminar"/>
+            <!-- <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="true"/> -->
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
@@ -45,6 +45,9 @@
                                 <core:Item key="H" text="Hembra"/>
                             </Select>
 
+                            <Label text="Cría"/>
+                            <CheckBox selected="{detail>/cria}" editable="false"/>
+
                             <Label text="Estado"/>
                             <Select selectedKey="{detail>/estado}" enabled="{detail>/editMode}">
                                 <core:Item key="ACTIVO" text="Activo"/>
@@ -55,6 +58,17 @@
 
                             <Label text="Ubicación"/>
                             <Input value="{detail>/ubicacion}" editable="{detail>/editMode}"/>
+
+                            <Label text="Padrote"/>
+                            <CheckBox selected="{detail>/padrote}" editable="false"/>
+
+                            <Label text="Calificación"/>
+                            <Select selectedKey="{detail>/categoria}" editable="false">
+                                <core:Item key="BUENO" text="Bueno"/>
+                                <core:Item key="EXCELENTE" text="Excelente"/>
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
+                            </Select>
+
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
@@ -90,26 +104,20 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Raza"/>
-                            <Text text="{detail>/razaNombre}" visible="{= !${detail>/editMode}}"/>
-                            <Select selectedKey="{detail>/raza_ID}" enabled="{detail>/editMode}" visible="{detail>/editMode}" items="{razas>/}">
-                                <core:Item key="{razas>ID}" text="{razas>nombre}"/>
-                            </Select>
+                            <Text text="{detail>/raza}" visible="true"/>
 
                             <Label text="Color"/>
-                            <Text text="{detail>/colorNombre}" visible="{= !${detail>/editMode}}"/>
-                            <Select selectedKey="{detail>/color_ID}" enabled="{detail>/editMode}" visible="{detail>/editMode}" items="{colores>/}">
-                                <core:Item key="{colores>ID}" text="{colores>nombre}"/>
-                            </Select>
+                            <Text text="{detail>/color}" visible="true"/>
+
+                            <Label text="Tipo de Ave"/>
+                            <Text text="{detail>/tipoAve}" visible="true"/>
 
                             <Label text="Fecha Nacimiento"/>
-                            <Text text="{detail>/fechaNacimiento}" visible="{= !${detail>/editMode}}"/>
-                            <DatePicker value="{detail>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" visible="{detail>/editMode}"/>
+                            <Text text="{detail>/fechaNacimiento}" visible="true"/>
 
-                            <Label text="Procedencia"/>
-                            <Input value="{detail>/procedencia}" editable="{detail>/editMode}"/>
+                            <Label text="Fecha Compra"/>
+                            <Text text="{detail>/fechaCompra}" visible="true"/>
 
-                            <Label text="Criador"/>
-                            <Input value="{detail>/criador}" editable="{detail>/editMode}"/>
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
@@ -123,12 +131,19 @@
 
                             <Label text="Madre"/>
                             <Link text="{detail>/madreNombre}" press="onVerMadre"/>
+
+                            <Label text="Procedencia"/>
+                            <Input value="{detail>/procedencia}" editable="false"/>
+
+                            <Label text="Criador"/>
+                            <Input value="{detail>/criador}" editable="false"/>
+
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
                 <!-- Pesajes recientes -->
-                <Panel headerText="Pesajes Recientes" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                <!-- <Panel headerText="Pesajes Recientes" expandable="true" expanded="false" class="sapUiSmallMarginTop">
                     <headerToolbar>
                         <Toolbar>
                             <Title text="Pesajes Recientes"/>
@@ -162,10 +177,10 @@
                             </ColumnListItem>
                         </items>
                     </Table>
-                </Panel>
+                </Panel>-->
 
                 <!-- Peleas recientes -->
-                <Panel headerText="Peleas" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                <!-- <Panel headerText="Peleas" expandable="true" expanded="false" class="sapUiSmallMarginTop">
                     <Table items="{detail>/peleas}" noDataText="Sin peleas registradas">
                         <columns>
                             <Column>
@@ -192,16 +207,23 @@
                             </ColumnListItem>
                         </items>
                     </Table>
-                </Panel>
+                </Panel>-->
 
                 <!-- Observaciones -->
                 <Panel headerText="Observaciones" expandable="true" expanded="false" class="sapUiSmallMarginTop">
                     <VBox class="sapUiSmallMargin">
-                        <TextArea value="{detail>/observaciones}" rows="4" width="100%" editable="{detail>/editMode}"/>
+                        <TextArea value="{detail>/observaciones}" rows="4" width="100%" editable="false"/>
                     </VBox>
                 </Panel>
 
             </VBox>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="true"/>
+                <!-- <Button text="Guardar" type="Emphasized" press="onGuardar"/> -->
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>

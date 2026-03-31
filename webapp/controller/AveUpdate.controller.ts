@@ -9,24 +9,28 @@ import Input from "sap/m/Input";
 import Event from "sap/ui/base/Event";
 import { IAve } from "../types/Models";
 
-export default class AveCreate extends Controller {
+export default class AveUpdate extends Controller {
     private authService: AuthService;
     private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private aveId: string = "";
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
 
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-        const oTarget = oRouter?.getTarget("TargetAveCreate") as any;
-        oTarget?.attachDisplay(this.onTargetDisplay, this);
+        oRouter?.getRoute("RouteAveUpdate")?.attachPatternMatched(this.onRouteMatched, this);
+        // const oTarget = oRouter?.getTarget("TargetAveUpdate") as any;
+        // oTarget?.attachDisplay(this.onTargetDisplay, this);
     }
 
-    private onTargetDisplay = (): void => {
+    private onRouteMatched = (oEvent: any): void => {
+        const oThat = this;
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
             oRouter?.navTo("RouteLogin");
             return;
         } else {
+            oThat.aveId = oEvent.getParameter("arguments").aveId;
             const oModel = new JSONModel({
                 placa: "", nombre: "", apodo: "", sexo: "M",
                 estado: "ACTIVO", ubicacion: "", raza: "",
@@ -36,13 +40,45 @@ export default class AveCreate extends Controller {
                 valorActual: "", observaciones: "", placaState: "None",
                 categoria: "BUENO"
             });
+            this.getView()?.setModel(oModel, "update");
 
-            let datos = this.cargarDatosFotos();
-            const oModelDocuments = new JSONModel(datos);
-            this.byId("table-uploadSet").setModel(oModelDocuments, "documents");
-            this.getView()?.setModel(oModel, "create");
-
+            this.cargarAve();
             this.cargarCatalogos();
+        }
+    }
+
+    private async cargarAve(): Promise<void> {
+        const token = this.authService.getToken();
+        try {
+            const response = await fetch(
+                `${this.baseUrl}/Aves('${this.aveId}')?$expand=pesajes,peleas,padre,madre`,
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+
+            if (!response.ok) {
+                MessageBox.error("Ave no encontrada");
+                this.onNavBack();
+                return;
+            }
+
+            const ave = await response.json();
+            const oModel = this.getView()?.getModel("update") as JSONModel;
+
+            oModel.setData({
+                ...oModel.getData(),
+                ...ave,
+                razaNombre: ave.raza?.nombre || "",
+                colorNombre: ave.color?.nombre || "",
+                padreNombre: ave.padre ? `${ave.padre.placa} - ${ave.padre.nombre || ""}` : "Sin registro",
+                madreNombre: ave.madre ? `${ave.madre.placa} - ${ave.madre.nombre || ""}` : "Sin registro",
+                fotoPrincipal: ave.fotos?.find((f: any) => f.esPrincipal)?.thumbnailUrl || "",
+                pesajes: ave.pesajes || [],
+                peleas: ave.peleas || [],
+                editMode: false
+            });
+
+        } catch (error) {
+            MessageBox.error("Error cargando el ave");
         }
     }
 
@@ -90,7 +126,7 @@ export default class AveCreate extends Controller {
     public async onGuardar(): Promise<void> {
         try {
             const oThat = this;
-            const oModel = this.getView()?.getModel("create") as JSONModel;
+            const oModel = this.getView()?.getModel("update") as JSONModel;
             const data = oModel.getData();
 
             // Validar placa
@@ -168,7 +204,7 @@ export default class AveCreate extends Controller {
             });
 
             if (response.ok) {
-                MessageBox.success("¡Ave creada exitosamente!", {
+                MessageBox.success("¡Ave actualizada exitosamente!", {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
                     onClose: function (sAction) {
@@ -178,7 +214,7 @@ export default class AveCreate extends Controller {
                 });
             } else {
                 const error = await response.json();
-                MessageBox.error(error.error?.message || "Error al crear el ave");
+                MessageBox.error(error.error?.message || "Error al actualizar el ave");
             }
         } catch (error) {
             MessageBox.error(JSON.stringify(error));
@@ -191,7 +227,7 @@ export default class AveCreate extends Controller {
     }
 
     public onSuggestionItemSelectedPlacaPadre(oEvent: Event): void {
-        const oModel = this.getView()?.getModel("create") as JSONModel
+        const oModel = this.getView()?.getModel("update") as JSONModel
         let placa = oEvent.getSource().getSelectedKey();
         let descripcion = oEvent.getSource().getValue();
         // Validar placa
@@ -207,7 +243,7 @@ export default class AveCreate extends Controller {
     }
 
     public onSuggestionItemSelectedPlacaMadre(oEvent: Event): void {
-        const oModel = this.getView()?.getModel("create") as JSONModel
+        const oModel = this.getView()?.getModel("update") as JSONModel
         let placa = oEvent.getSource().getSelectedKey();
         let descripcion = oEvent.getSource().getValue();
         // Validar placa
@@ -220,129 +256,5 @@ export default class AveCreate extends Controller {
         // alert("idPadre: " + placa);
         // this.byId("selectedKeyIndicator").setText(oText);
 
-    }
-
-    // UploadCompleted event handler
-    public onUploadCompleted(oEvent: Event) {
-        const oModel = this.byId("table-uploadSet").getModel("documents");
-        const iResponseStatus = oEvent.getParameter("status");
-
-        // check for upload is sucess
-        if (iResponseStatus === 201) {
-            oModel.refresh(true);
-            setTimeout(function () {
-                MessageToast.show("Document Added");
-            }, 1000);
-        }
-        // This code block is only for demonstration purpose to simulate XHR requests, hence restoring the server to not fake the xhr requests.
-        //this.oMockServer.restore();
-    }
-
-    public onBeforeUploadStarts(oEvent: any): void {
-        const oItem = oEvent.getParameter("item");
-        const oFileObject = oItem?.getFileObject?.();
-
-        debugger;
-        console.log("Antes de agregar:", oFileObject);
-
-        if (!oFileObject) {
-            return;
-        }
-
-        if (!oFileObject.type.startsWith("image/")) {
-            sap.m.MessageToast.show("Solo se permiten imágenes");
-            oEvent.preventDefault?.();
-            return;
-        }
-
-        if (!oFileObject) {
-            return;
-        }
-
-        const oReader = new FileReader();
-
-        oReader.onload = () => {
-            const sBase64 = oReader.result as string;
-
-            console.log("Imagen en base64:", sBase64);
-
-            // 👇 aquí viene lo importante
-            this._asignarContenidoAlItem(oItem, sBase64);
-        };
-
-        oReader.readAsDataURL(oFileObject);
-
-    }
-
-    private _asignarContenidoAlItem(oItem: any, sBase64: string): void {
-        const oThat = this;
-        const oFileObject = oItem?.getFileObject?.();
-        let authUser = localStorage.getItem("auth_user")
-        const usuario = JSON.parse(authUser);
-        const oNuevoDocumento = {
-            id: Date.now().toString(),
-            fileName: oFileObject.name,
-            mediaType: oFileObject.type,
-            fileSize: oFileObject.size,
-            lastModifiedBy: usuario.nombre + " " + usuario.apellido,
-            lastmodified: new Date(oFileObject.lastModified).toLocaleString(),
-            revision: "1",
-            status: "",
-            documentType: "Imagen",
-            previewable: true,
-            url: sBase64,
-            imageUrl: sBase64,
-            trustedSource: false
-        };
-
-        let datos = oThat.byId("table-uploadSet").getModel("documents")?.getData();
-        datos.items.unshift(oNuevoDocumento);
-        const oModelDocuments = new JSONModel(datos);
-        oThat.byId("table-uploadSet").setModel(oModelDocuments, "documents");
-        oModelDocuments.refresh();
-    }
-
-    public cargarDatosFotos(): { items: any[] } {
-        let obj = {
-            "items": []
-        }
-
-        return obj;;
-    }
-
-    public onSelectionChange(oEvent: Event) {
-        const oTable = oEvent.getSource();
-        const aSelectedItems = oTable?.getSelectedContexts();
-        const oDownloadBtn = this.byId("downloadSelectedButton");
-        const oEditUrlBtn = this.byId("editUrlButton");
-        const oRenameBtn = this.byId("renameButton");
-        const oRemoveDocumentBtn = this.byId("removeDocumentButton");
-
-        if (aSelectedItems.length > 0) {
-            oDownloadBtn.setEnabled(true);
-        } else {
-            oDownloadBtn.setEnabled(false);
-        }
-        if (aSelectedItems.length === 1) {
-            oEditUrlBtn.setEnabled(true);
-            oRenameBtn.setEnabled(true);
-            oRemoveDocumentBtn.setEnabled(true);
-        } else {
-            oRenameBtn.setEnabled(false);
-            oEditUrlBtn.setEnabled(false);
-            oRemoveDocumentBtn.setEnabled(false);
-        }
-    }
-
-    // Download files handler
-    public onDownloadFiles(oEvent: Event) {
-        const oContexts = this.byId("table-uploadSet").getSelectedContexts();
-        if (oContexts && oContexts.length) {
-            oContexts.forEach((oContext) => this.oUploadPluginInstance.download(oContext, true));
-        }
-    }
-
-    public onPluginActivated(oEvent: Event) {
-        this.oUploadPluginInstance = oEvent.getParameter("oPlugin");
     }
 }
