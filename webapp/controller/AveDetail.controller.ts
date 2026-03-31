@@ -86,15 +86,20 @@ export default class AveDetail extends Controller {
         }
     }
 
-    public onEditar(): void {
+    public onEditar(oEvent: Event): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
-        oModel.setProperty("/editMode", true);
+        const oAve = oModel.getData();
+        if (oAve?.ID) {
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+            oRouter?.navTo("RouteAveUpdate", { aveId: oAve.ID });
+        }
     }
 
     public onCancelarEdicion(): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
         oModel.setProperty("/editMode", false);
-        this.cargarAve(); // recargar datos originales
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteList");
     }
 
     public async onGuardar(): Promise<void> {

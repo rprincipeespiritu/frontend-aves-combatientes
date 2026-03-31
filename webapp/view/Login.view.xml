@@ -29,7 +29,7 @@
 
                             <!-- Formulario de login -->
                             <VBox class="sapUiSmallMarginBottom">
-                                <Label text="Email:" required="true"/>
+                                <Label text="Correo:" required="true"/>
                                 <Input id="emailInput" type="Email" placeholder="usuario@ejemplo.com" value="{/email}" valueState="{/emailState}" valueStateText="{/emailStateText}" width="100%" submit="onLoginSubmit"/>
                             </VBox>
 

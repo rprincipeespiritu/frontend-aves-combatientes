@@ -113,12 +113,6 @@ export default class List extends Controller {
     }
   }
 
-  public onEditarAveInline(oEvent: Event): void {
-    const oSource = oEvent.getSource();
-    const oContext = (oSource as any).getBindingContext("aves");
-    this.openAveDialog(oContext);
-  }
-
   public onEliminarAve(): void {
     const oTable = this.byId("avesTable") as Table;
     const oSelectedItem = oTable.getSelectedItem();
@@ -390,6 +384,16 @@ export default class List extends Controller {
     if (oAve?.ID) {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
       oRouter?.navTo("RouteAveDetail", { aveId: oAve.ID });
+    }
+  }
+
+  public onEditarAveInline(oEvent: Event): void {
+    const oSource = oEvent.getSource();
+    const oContext = (oSource as any).getBindingContext("aves");
+    const oAve = oContext?.getObject() as any;
+    if (oAve?.ID) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteAveUpdate", { aveId: oAve.ID });
     }
   }
 
