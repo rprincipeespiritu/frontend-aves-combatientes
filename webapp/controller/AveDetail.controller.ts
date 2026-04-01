@@ -102,49 +102,49 @@ export default class AveDetail extends Controller {
         oRouter?.navTo("RouteList");
     }
 
-    public async onGuardar(): Promise<void> {
-        const oModel = this.getView()?.getModel("detail") as JSONModel;
-        const data = oModel.getData();
+    // public async onGuardar(): Promise<void> {
+    //     const oModel = this.getView()?.getModel("detail") as JSONModel;
+    //     const data = oModel.getData();
 
-        const payload = {
-            placa: data.placa,
-            nombre: data.nombre,
-            apodo: data.apodo,
-            sexo: data.sexo,
-            estado: data.estado,
-            ubicacion: data.ubicacion,
-            procedencia: data.procedencia,
-            criador: data.criador,
-            observaciones: data.observaciones,
-            fechaNacimiento: data.fechaNacimiento || null,
-            valorCompra: data.valorCompra || null,
-            valorActual: data.valorActual || null,
-            raza_ID: data.raza_ID || null,
-            color_ID: data.color_ID || null,
-        };
+    //     const payload = {
+    //         placa: data.placa,
+    //         nombre: data.nombre,
+    //         apodo: data.apodo,
+    //         sexo: data.sexo,
+    //         estado: data.estado,
+    //         ubicacion: data.ubicacion,
+    //         procedencia: data.procedencia,
+    //         criador: data.criador,
+    //         observaciones: data.observaciones,
+    //         fechaNacimiento: data.fechaNacimiento || null,
+    //         valorCompra: data.valorCompra || null,
+    //         valorActual: data.valorActual || null,
+    //         raza_ID: data.raza_ID || null,
+    //         color_ID: data.color_ID || null,
+    //     };
 
-        try {
-            const response = await fetch(`${this.baseUrl}/Aves('${this.aveId}')`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${this.authService.getToken()}`
-                },
-                body: JSON.stringify(payload)
-            });
+    //     try {
+    //         const response = await fetch(`${this.baseUrl}/Aves('${this.aveId}')`, {
+    //             method: "PATCH",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${this.authService.getToken()}`
+    //             },
+    //             body: JSON.stringify(payload)
+    //         });
 
-            if (response.ok) {
-                MessageToast.show("Ave actualizada exitosamente");
-                oModel.setProperty("/editMode", false);
-                this.cargarAve();
-            } else {
-                const error = await response.json();
-                MessageBox.error(error.error?.message || "Error al actualizar");
-            }
-        } catch (error) {
-            MessageBox.error("Error de conexión");
-        }
-    }
+    //         if (response.ok) {
+    //             MessageToast.show("Ave actualizada exitosamente");
+    //             oModel.setProperty("/editMode", false);
+    //             this.cargarAve();
+    //         } else {
+    //             const error = await response.json();
+    //             MessageBox.error(error.error?.message || "Error al actualizar");
+    //         }
+    //     } catch (error) {
+    //         MessageBox.error("Error de conexión");
+    //     }
+    // }
 
     public onEliminar(): void {
         MessageBox.confirm("¿Deseas eliminar este ave permanentemente?", {

@@ -139,7 +139,7 @@ export default class AveCreate extends Controller {
             const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
             const aMachos = oMachosModel.getData() as any[];
             let oPadre: IAve[];
-            if (aMachos.length > 0) {
+            if (aMachos.length > 0 && !placaPadre) {
                 oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
                 data.padre_ID = oPadre[0].id;
             }
@@ -149,7 +149,7 @@ export default class AveCreate extends Controller {
             const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
             const aHembras = oHembrasModel.getData() as any[];
             let oMadre: IAve[];
-            if (aHembras.length > 0) {
+            if (aHembras.length > 0 && !placaMadre) {
                 oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
                 data.madre_ID = oMadre[0].id;
             }
