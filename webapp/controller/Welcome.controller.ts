@@ -9,6 +9,7 @@ import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import NavigationListItem from "sap/tnt/NavigationListItem";
 import Control from "sap/ui/mdc/Control";
+import Popover from "sap/m/Popover";
 
 export default class Welcome extends Controller {
     private authService: AuthService;
@@ -16,6 +17,7 @@ export default class Welcome extends Controller {
     private _bPhone: boolean;
     private _oMobileMenu?: ActionSheet;
     private _oUserMenuPopover: any;
+    private _oUserMenuSheet: any;
 
     public onAfterRendering(): void {
         const oCarousel = this.byId("imageCarousel") as any;
@@ -136,32 +138,36 @@ export default class Welcome extends Controller {
     }
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
-        const oSource = oEvent.getSource();
+        const oSource = oEvent.getSource() as Control;
 
-        // Si ya existe el popover
-        if (this._oUserMenuPopover) {
+        if (Device.system.phone) {
+            if (!this._oUserMenuSheet) {
+                const oFragment = await Fragment.load({
+                    id: this.getView()?.getId(),
+                    name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
+                    controller: this
+                });
 
-            // 🔥 TOGGLE: si está abierto → cerrar
-            if (this._oUserMenuPopover.isOpen()) {
-                this._oUserMenuPopover.close();
-                return;
+                this._oUserMenuSheet = oFragment as ActionSheet;
+                this.getView()?.addDependent(this._oUserMenuSheet);
             }
 
-            // Si está cerrado → abrir
-            this._oUserMenuPopover.openBy(oSource as any);
+            this._oUserMenuSheet.openBy(oSource);
             return;
         }
 
-        // Si no existe → crear
-        this._oUserMenuPopover = await Fragment.load({
-            id: this.getView()?.getId(),
-            name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
-            controller: this
-        }) as any;
+        if (!this._oUserMenuPopover) {
+            const oFragment = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+                controller: this
+            });
 
-        this.getView()?.addDependent(this._oUserMenuPopover);
+            this._oUserMenuPopover = oFragment as Popover;
+            this.getView()?.addDependent(this._oUserMenuPopover);
+        }
 
-        this._oUserMenuPopover.openBy(oSource as any);
+        this._oUserMenuPopover.openBy(oSource);
     }
 
     public onNavToRegistro(): void {
