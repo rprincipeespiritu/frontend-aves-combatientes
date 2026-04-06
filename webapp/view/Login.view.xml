@@ -35,7 +35,7 @@
 
                             <VBox class="sapUiSmallMarginBottom">
                                 <Label text="Contraseña:" required="true"/>
-                                <Input id="passwordInput" type="Password" placeholder="Ingrese su contraseña" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" width="100%" submit="onLoginSubmit"/>
+                                <Input id="passwordInput" type="Password" placeholder="Ingrese su contraseña" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" width="100%" submit="onLoginSubmit" showValueHelp="true" valueHelpIconSrc="sap-icon://show" valueHelpRequest="onTogglePassword"/>
                             </VBox>
 
                             <!-- Recordar sesión -->
