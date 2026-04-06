@@ -5,10 +5,17 @@ import MessageToast from "sap/m/MessageToast";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import Fragment from "sap/ui/core/Fragment";
 import { AuthService } from "../services/AuthService";
+import Device from "sap/ui/Device";
+import ActionSheet from "sap/m/ActionSheet";
+import NavigationListItem from "sap/tnt/NavigationListItem";
+import Control from "sap/ui/mdc/Control";
 
 export default class Welcome extends Controller {
     private authService: AuthService;
     private _carouselInterval: any;
+    private _bPhone: boolean;
+    private _oMobileMenu?: ActionSheet;
+    private _oUserMenuPopover: any;
 
     public onAfterRendering(): void {
         const oCarousel = this.byId("imageCarousel") as any;
@@ -34,6 +41,12 @@ export default class Welcome extends Controller {
             return;
         }
 
+        const oSideNavigation = this.byId("sideNavigation") as any;
+
+        if (oSideNavigation) {
+            oSideNavigation.setExpanded(!Device.system.phone);
+        }
+
         const sUserData = localStorage.getItem("auth_user");
 
         if (sUserData) {
@@ -42,6 +55,77 @@ export default class Welcome extends Controller {
             this.getView()?.setModel(oUserModel, "user");
         }
 
+    }
+
+    public async onToggleSideContent(oEvent: Event): Promise<void> {
+        if (Device.system.phone) {
+            if (!this._oMobileMenu) {
+                const oFragment = await Fragment.load({
+                    id: this.getView()?.getId(),
+                    name: "com.rprincipees.registroavescombate.view.fragments.MobileMenu",
+                    controller: this
+                });
+
+                this._oMobileMenu = oFragment as ActionSheet;
+                this.getView()?.addDependent(this._oMobileMenu);
+            }
+
+            const oSource = oEvent.getSource() as Control;
+            this._oMobileMenu.openBy(oSource);
+            return;
+        }
+
+        const oSideNavigation = this.byId("sideNavigation") as any;
+        if (oSideNavigation) {
+            oSideNavigation.setExpanded(!oSideNavigation.getExpanded());
+        }
+    }
+
+    public onMenuSelect(oEvent: Event): void {
+        const oItem = oEvent.getParameter("item") as NavigationListItem;
+        const sKey = oItem.getKey();
+
+        this._navigateByKey(sKey);
+
+        if (Device.system.phone && this._oMobileMenu) {
+            this._oMobileMenu.close();
+        }
+    }
+
+    private _navigateByKey(sKey: string): void {
+        const oRouter = this.getOwnerComponent()?.getRouter();
+
+        switch (sKey) {
+            case "aves":
+                oRouter.navTo("RouteAves");
+                break;
+
+            case "incubaciones":
+                oRouter.navTo("RouteIncubaciones");
+                break;
+
+            case "peleas":
+                oRouter.navTo("RoutePeleas");
+                break;
+
+            case "vacunacion":
+                oRouter.navTo("RouteVacunacion");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public onMobileMenuPress(oEvent: Event): void {
+        const oSource = oEvent.getSource() as Control;
+        const sKey = oSource.data("key") as string;
+
+        this._navigateByKey(sKey);
+
+        if (this._oMobileMenu) {
+            this._oMobileMenu.close();
+        }
     }
 
     public onCambiarCuenta(): void {
@@ -77,34 +161,6 @@ export default class Welcome extends Controller {
         this.getView()?.addDependent(this._oUserMenuPopover);
 
         this._oUserMenuPopover.openBy(oSource as any);
-    }
-
-    public onMenuSelect(oEvent: Event): void {
-        const oItem = oEvent.getParameter("item") as NavigationListItem;
-        const sKey = oItem.getKey();
-
-        const oRouter = (this.getOwnerComponent() as UIComponent).getRouter();
-
-        switch (sKey) {
-            case "aves":
-                oRouter.navTo("RouteList");
-                break;
-
-            case "incubaciones":
-                oRouter.navTo("RouteIncubaciones");
-                break;
-
-            case "peleas":
-                oRouter.navTo("RoutePeleas");
-                break;
-
-            case "vacunacion":
-                oRouter.navTo("RouteVacunacion");
-                break;
-
-            default:
-                console.warn("Ruta no definida para:", sKey);
-        }
     }
 
     public onNavToRegistro(): void {
