@@ -2,10 +2,10 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
 
-    <ActionSheet id="userMenuSheet" placement="Bottom">
+    <ActionSheet id="userMenuSheet" placement="Bottom" title="Datos del Usuario">
         <buttons>
-            <Button text="{user>/nombre} {user>/apellido}" enabled="false" />
-            <Button text="{user>/email}" enabled="false" />
+            <Button text="{user>/nombre} {user>/apellido}" icon="sap-icon://account" enabled="false" />
+            <Button text="{user>/email}" icon="sap-icon://email" enabled="false" />
             <Button text="Cerrar sesión" icon="sap-icon://log" press="onLogout" />
         </buttons>
     </ActionSheet>
