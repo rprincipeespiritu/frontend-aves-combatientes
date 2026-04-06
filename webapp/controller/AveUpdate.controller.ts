@@ -8,6 +8,7 @@ import { AuthService } from "../services/AuthService";
 import Input from "sap/m/Input";
 import Event from "sap/ui/base/Event";
 import { IAve } from "../types/Models";
+import Fragment from "sap/ui/core/Fragment";
 
 export default class AveUpdate extends Controller {
     private authService: AuthService;
@@ -30,6 +31,15 @@ export default class AveUpdate extends Controller {
             oRouter?.navTo("RouteLogin");
             return;
         } else {
+
+            const sUserData = localStorage.getItem("auth_user");
+
+            if (sUserData) {
+                const oUser = JSON.parse(sUserData);
+                const oUserModel = new JSONModel(oUser);
+                this.getView()?.setModel(oUserModel, "user");
+            }
+
             oThat.aveId = oEvent.getParameter("arguments").aveId;
             const oModel = new JSONModel({
                 placa: "", nombre: "", apodo: "", sexo: "M",
@@ -45,6 +55,35 @@ export default class AveUpdate extends Controller {
             this.cargarAve();
             this.cargarCatalogos();
         }
+    }
+
+    public async onUserMenuPress(oEvent: Event): Promise<void> {
+        const oSource = oEvent.getSource();
+
+        // Si ya existe el popover
+        if (this._oUserMenuPopover) {
+
+            // 🔥 TOGGLE: si está abierto → cerrar
+            if (this._oUserMenuPopover.isOpen()) {
+                this._oUserMenuPopover.close();
+                return;
+            }
+
+            // Si está cerrado → abrir
+            this._oUserMenuPopover.openBy(oSource as any);
+            return;
+        }
+
+        // Si no existe → crear
+        this._oUserMenuPopover = await Fragment.load({
+            id: this.getView().getId(),
+            name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+            controller: this
+        }) as any;
+
+        this.getView()?.addDependent(this._oUserMenuPopover);
+
+        this._oUserMenuPopover.openBy(oSource as any);
     }
 
     private async cargarAve(): Promise<void> {

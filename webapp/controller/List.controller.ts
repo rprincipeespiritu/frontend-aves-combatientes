@@ -8,6 +8,7 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import Table from "sap/m/Table";
 import SearchField from "sap/m/SearchField";
 import ComboBox from "sap/m/ComboBox";
+import CheckBox from "sap/m/CheckBox";
 import Event from "sap/ui/base/Event";
 import ColumnListItem from "sap/m/ColumnListItem";
 import View from "sap/ui/core/mvc/View";
@@ -42,6 +43,19 @@ export default class List extends Controller {
   private onRouteMatched = (oEvent: any): void => {
 
     console.log("Main Controller initialized with TypeScript");
+    if (!this.authService.isAuthenticated()) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteLogin");
+      return;
+    }
+
+    const sUserData = localStorage.getItem("auth_user");
+
+    if (sUserData) {
+      const oUser = JSON.parse(sUserData);
+      const oUserModel = new JSONModel(oUser);
+      this.getView()?.setModel(oUserModel, "user");
+    }
 
     // Crear modelo para el estado de la tabla
     const oTableModel = new JSONModel({
@@ -54,6 +68,37 @@ export default class List extends Controller {
 
     // Crear modelo de datos mock (reemplazar con OData)
     this.initializeData();
+
+
+  }
+
+  public async onUserMenuPress(oEvent: Event): Promise<void> {
+    const oSource = oEvent.getSource();
+
+    // Si ya existe el popover
+    if (this._oUserMenuPopover) {
+
+      // 🔥 TOGGLE: si está abierto → cerrar
+      if (this._oUserMenuPopover.isOpen()) {
+        this._oUserMenuPopover.close();
+        return;
+      }
+
+      // Si está cerrado → abrir
+      this._oUserMenuPopover.openBy(oSource as any);
+      return;
+    }
+
+    // Si no existe → crear
+    this._oUserMenuPopover = await Fragment.load({
+      id: this.getView().getId(),
+      name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+      controller: this
+    }) as any;
+
+    this.getView()?.addDependent(this._oUserMenuPopover);
+
+    this._oUserMenuPopover.openBy(oSource as any);
   }
 
   private async initializeData(): Promise<void> {
@@ -188,81 +233,95 @@ export default class List extends Controller {
 
   // === BÚSQUEDA Y FILTROS ===
 
-  public onBuscar(oEvent: Event): void {
-    const oSearchField = oEvent.getSource() as SearchField;
-    const sQuery = oSearchField?.getValue() || "";
-    this.filtrarTabla(sQuery);
+  public onBuscar(): void {
+    this.aplicarFiltros();
   }
 
-  public onFiltrarRaza(oEvent: Event): void {
-    const oComboBox = oEvent.getSource() as ComboBox;
-    const sSelectedKey = oComboBox?.getSelectedKey() || "";
-    this.filtrarTablaPorRaza(sSelectedKey);
+  public onBuscar2(): void {
+    this.aplicarFiltros();
   }
 
-  public onFiltrarCategoria(oEvent: Event): void {
-    const oComboBox = oEvent.getSource() as ComboBox;
-    const sSelectedKey = oComboBox?.getSelectedKey() || "";
-
-    this.filtrarTablaPorCategoria(sSelectedKey);
+  public onFiltrarGenero(): void {
+    this.aplicarFiltros();
   }
 
-  private filtrarTabla(terminoBusqueda: string): void {
+  public onFiltrarCategoria(): void {
+    this.aplicarFiltros();
+  }
+
+  public onSelectPadrote(): void {
+    this.aplicarFiltros();
+  }
+
+  private aplicarFiltros(): void {
     const oTable = this.byId("avesTable") as Table;
     const oBinding = oTable.getBinding("items");
 
     const aFilters: Filter[] = [];
-    if (terminoBusqueda) {
-      const oFilter = new Filter({
-        filters: [
-          new Filter("nombre", FilterOperator.Contains, terminoBusqueda),
-          new Filter("propietario", FilterOperator.Contains, terminoBusqueda),
-          new Filter("raza", FilterOperator.Contains, terminoBusqueda),
-        ],
-        and: false,
-      });
-      aFilters.push(oFilter);
+
+    // BÚSQUEDA
+    const sBusqueda = (this.byId("searchField") as SearchField)?.getValue();
+    if (sBusqueda) {
+      aFilters.push(
+          new Filter({
+            filters: [
+              new Filter("nombre", FilterOperator.Contains, sBusqueda),
+              new Filter("placa", FilterOperator.Contains, sBusqueda)
+            ],
+            and: false
+          })
+      );
     }
 
-    (oBinding as any)?.filter(aFilters);
-  }
-
-  private filtrarTablaPorRaza(razaId: string): void {
-    const oTable = this.byId("avesTable") as Table;
-    const oBinding = oTable.getBinding("items");
-
-    const aFilters: Filter[] = [];
-    if (razaId) {
-      aFilters.push(new Filter("raza", FilterOperator.EQ, razaId));
+    // BÚSQUEDA
+    const sBusqueda2 = (this.byId("searchFieldPadres") as SearchField)?.getValue();
+    if (sBusqueda2) {
+      aFilters.push(
+          new Filter({
+            filters: [
+              new Filter("placaPadre", FilterOperator.Contains, sBusqueda),
+              new Filter("placaMadre", FilterOperator.Contains, sBusqueda)
+            ],
+            and: false
+          })
+      );
     }
 
-    (oBinding as any)?.filter(aFilters);
-  }
+    // GÉNERO
+    const sGenero = (this.byId("generoFilter") as ComboBox)?.getSelectedKey();
+    if (sGenero) {
+      aFilters.push(new Filter("sexo", FilterOperator.EQ, sGenero));
+    }
 
-  private filtrarTablaPorCategoria(categoriaId: string): void {
-    const oTable = this.byId("avesTable") as Table;
-    const oBinding = oTable.getBinding("items");
+    // CATEGORÍA
+    const sCategoria = (this.byId("categoriaFilter") as ComboBox)?.getSelectedKey();
+    if (sCategoria) {
+      aFilters.push(new Filter("categoria", FilterOperator.EQ, sCategoria));
+    }
 
-    const aFilters: Filter[] = [];
-    if (categoriaId) {
-      aFilters.push(new Filter("categoria", FilterOperator.EQ, categoriaId));
+    // ESTADO
+    const sEstado = (this.byId("estadoFilter") as ComboBox)?.getSelectedKey();
+    if (sEstado) {
+      aFilters.push(new Filter("estado", FilterOperator.EQ, sEstado));
+    }
+
+    // PADROTE
+    const bPadrote = (this.byId("padroteFilter") as CheckBox)?.getSelected();
+    if (bPadrote) {
+      aFilters.push(new Filter("padrote", FilterOperator.EQ, true));
     }
 
     (oBinding as any)?.filter(aFilters);
   }
 
   public onLimpiarFiltros(): void {
-    const oSearchField = this.byId("searchField") as SearchField;
-    const oRazaFilter = this.byId("razaFilter") as ComboBox;
-    const oCategoriaFilter = this.byId("categoriaFilter") as ComboBox;
+    (this.byId("searchField") as SearchField).setValue("");
+    (this.byId("generoFilter") as ComboBox).setSelectedKey("");
+    (this.byId("categoriaFilter") as ComboBox).setSelectedKey("");
+    (this.byId("estadoFilter") as ComboBox).setSelectedKey("");
+    (this.byId("padroteFilter") as CheckBox).setSelected(false);
 
-    oSearchField?.setValue("");
-    oRazaFilter?.setSelectedKey("");
-    oCategoriaFilter?.setSelectedKey("");
-
-    const oTable = this.byId("avesTable") as Table;
-    const oBinding = oTable.getBinding("items");
-    (oBinding as any)?.filter([]);
+    this.aplicarFiltros();
   }
 
   // === NAVEGACIÓN ===

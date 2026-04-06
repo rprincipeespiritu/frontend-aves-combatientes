@@ -2,11 +2,17 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
-    xmlns:core="sap.ui.core">
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.f">
 
     <Page title="Actualizar Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button icon="sap-icon://log" type="Transparent" tooltip="Cerrar Sesión" press="onLogout" class="sapUiSmallMarginBegin"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
@@ -153,8 +159,8 @@
         <footer>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Button text="Cancelar" press="onNavBack"/>
                 <Button text="Guardar" type="Emphasized" press="onGuardar"/>
+                <Button text="Cancelar" press="onNavBack"/>
             </Toolbar>
         </footer>
     </Page>
