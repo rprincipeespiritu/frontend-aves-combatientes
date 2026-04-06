@@ -5,6 +5,7 @@ import MessageBox from "sap/m/MessageBox";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/ui/core/routing/Router";
 import { AuthService } from "../services/AuthService";
+import Fragment from "sap/ui/core/Fragment";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
@@ -18,6 +19,19 @@ export default class AveDetail extends Controller {
     }
 
     private onRouteMatched = (oEvent: any): void => {
+        if (!this.authService.isAuthenticated()) {
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+            oRouter?.navTo("RouteLogin");
+            return;
+        }
+        const sUserData = localStorage.getItem("auth_user");
+
+        if (sUserData) {
+            const oUser = JSON.parse(sUserData);
+            const oUserModel = new JSONModel(oUser);
+            this.getView()?.setModel(oUserModel, "user");
+        }
+
         this.aveId = oEvent.getParameter("arguments").aveId;
 
         this.getView()?.setModel(new JSONModel({
@@ -33,7 +47,36 @@ export default class AveDetail extends Controller {
         }), "detail");
 
         this.cargarAve();
-        this.cargarCatalogos();
+        //this.cargarCatalogos();
+    }
+
+    public async onUserMenuPress(oEvent: Event): Promise<void> {
+        const oSource = oEvent.getSource();
+
+        // Si ya existe el popover
+        if (this._oUserMenuPopover) {
+
+            // 🔥 TOGGLE: si está abierto → cerrar
+            if (this._oUserMenuPopover.isOpen()) {
+                this._oUserMenuPopover.close();
+                return;
+            }
+
+            // Si está cerrado → abrir
+            this._oUserMenuPopover.openBy(oSource as any);
+            return;
+        }
+
+        // Si no existe → crear
+        this._oUserMenuPopover = await Fragment.load({
+            id: this.getView().getId(),
+            name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+            controller: this
+        }) as any;
+
+        this.getView()?.addDependent(this._oUserMenuPopover);
+
+        this._oUserMenuPopover.openBy(oSource as any);
     }
 
     private async cargarAve(): Promise<void> {
@@ -71,6 +114,7 @@ export default class AveDetail extends Controller {
         }
     }
 
+    /*
     private async cargarCatalogos(): Promise<void> {
         const token = this.authService.getToken();
         const headers = { "Authorization": `Bearer ${token}` };
@@ -85,6 +129,7 @@ export default class AveDetail extends Controller {
             console.error("Error cargando catálogos:", error);
         }
     }
+    */
 
     public onEditar(oEvent: Event): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
@@ -194,4 +239,25 @@ export default class AveDetail extends Controller {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
         oRouter?.navTo("RouteList");
     }
+
+    public onLogout = async (): Promise<void> => {
+        try {
+            await this.authService.logout();
+            MessageToast.show("Sesión cerrada exitosamente");
+
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+            oRouter?.navTo("RouteLogin");
+
+            // Verificar que el método existe antes de llamarlo
+            const oOwner = this.getOwnerComponent() as any;
+            if (oOwner && typeof oOwner.updateUserModel === 'function') {
+                oOwner.updateUserModel();
+            }
+
+        } catch (error) {
+            console.error("Error en logout:", error);
+            MessageToast.show("Error cerrando sesión");
+        }
+    }
+
 }

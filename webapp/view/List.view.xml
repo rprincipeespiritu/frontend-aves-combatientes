@@ -1,11 +1,17 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.List"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:core="sap.ui.core">
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f">
 
     <Page title="{i18n>titleListPage}" titleAlignment="Center" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button icon="sap-icon://log" type="Transparent" tooltip="Cerrar Sesión" press="onLogout" class="sapUiSmallMarginBegin"/>
+            <f:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
@@ -22,13 +28,29 @@
                 <Panel headerText="Filtros" expandable="true" expanded="false">
                     <VBox class="sapUiMediumMargin">
                         <HBox class="sapUiSmallMarginBottom">
-                            <SearchField id="searchField" placeholder="Buscar por nombre, propietario o raza..." width="300px" search="onBuscar"/>
-                            <ComboBox id="razaFilter" placeholder="Filtrar por raza" width="200px" items="{razas>/}" selectionChange="onFiltrarRaza">
-                                <core:Item key="{razas>id}" text="{razas>nombre}"/>
+                            <SearchField id="searchField" tooltip="Buscar por nombre y placa del individuo" placeholder="Buscar por nombre y placa del individuo" width="300px" search="onBuscar"/>
+                            <ComboBox id="generoFilter" placeholder="Filtrar por Género" width="200px" selectionChange="onFiltrarGenero">
+                                <core:Item key="M" text="Gallo"/>
+                                <core:Item key="H" text="Gallina"/>
                             </ComboBox>
-                            <ComboBox id="categoriaFilter" placeholder="Filtrar por categoría" width="200px" items="{categorias>/}" selectionChange="onFiltrarCategoria">
-                                <core:Item key="{categorias>id}" text="{categorias>nombre}"/>
+                            <ComboBox id="categoriaFilter" placeholder="Filtrar por Categoria" width="200px" selectionChange="onFiltrarCategoria">
+                                <core:Item key="BUENO" text="Bueno"/>
+                                <core:Item key="EXCELENTE" text="Excelente"/>
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
                             </ComboBox>
+                        </HBox>
+                        <HBox class="sapUiSmallMarginBottom">
+                            <SearchField id="searchFieldPadres" tooltip="Buscar por nombre y placa de los padres" placeholder="Buscar por nombre y placa de los padres" width="300px" search="onBuscar2"/>
+                            <ComboBox id="estadoFilter" placeholder="Filtrar por Estado" width="200px" selectionChange="onFiltrarEstado">
+                                <core:Item key="ACTIVO" text="Activo"/>
+                                <core:Item key="VENDIDO" text="Vendido"/>
+                                <core:Item key="PRESTADO" text="Prestado"/>
+                                <core:Item key="RETIRADO" text="Retirado"/>
+                                <core:Item key="FALLECIDO" text="Fallecido"/>
+                            </ComboBox>
+                            <CheckBox id="padroteFilter" text="Padrote" select="onSelectPadrote"/>
+                        </HBox>
+                        <HBox class="sapUiSmallMarginBottom">
                             <Button text="Limpiar Filtros" press="onLimpiarFiltros"/>
                         </HBox>
                     </VBox>
@@ -117,7 +139,7 @@
                                          ${aves>estado} === 'RETIRADO' ? 'Information' :
                                          ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}"/>
                             <CheckBox selected="{aves>padrote}" editable="false"/>
-                            <Link text="{aves>padre_ID}" press="onPadreLinkPress"/>
+                            <Link text="{aves>padre}" press="onPadreLinkPress"/>
                             <Link text="{aves>madre}" press="onMadreLinkPress"/>
                             <HBox>
                                 <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press="onEditarAveInline"/>

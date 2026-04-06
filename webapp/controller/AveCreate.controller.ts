@@ -8,6 +8,7 @@ import { AuthService } from "../services/AuthService";
 import Input from "sap/m/Input";
 import Event from "sap/ui/base/Event";
 import { IAve } from "../types/Models";
+import Fragment from "sap/ui/core/Fragment";
 
 export default class AveCreate extends Controller {
     private authService: AuthService;
@@ -27,6 +28,14 @@ export default class AveCreate extends Controller {
             oRouter?.navTo("RouteLogin");
             return;
         } else {
+            const sUserData = localStorage.getItem("auth_user");
+
+            if (sUserData) {
+                const oUser = JSON.parse(sUserData);
+                const oUserModel = new JSONModel(oUser);
+                this.getView()?.setModel(oUserModel, "user");
+            }
+
             const oModel = new JSONModel({
                 placa: "", nombre: "", apodo: "", sexo: "M",
                 estado: "ACTIVO", ubicacion: "", raza: "",
@@ -44,6 +53,35 @@ export default class AveCreate extends Controller {
 
             this.cargarCatalogos();
         }
+    }
+
+    public async onUserMenuPress(oEvent: Event): Promise<void> {
+        const oSource = oEvent.getSource();
+
+        // Si ya existe el popover
+        if (this._oUserMenuPopover) {
+
+            // 🔥 TOGGLE: si está abierto → cerrar
+            if (this._oUserMenuPopover.isOpen()) {
+                this._oUserMenuPopover.close();
+                return;
+            }
+
+            // Si está cerrado → abrir
+            this._oUserMenuPopover.openBy(oSource as any);
+            return;
+        }
+
+        // Si no existe → crear
+        this._oUserMenuPopover = await Fragment.load({
+            id: this.getView().getId(),
+            name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+            controller: this
+        }) as any;
+
+        this.getView()?.addDependent(this._oUserMenuPopover);
+
+        this._oUserMenuPopover.openBy(oSource as any);
     }
 
     public async onLogout(): Promise<void> {
@@ -139,7 +177,7 @@ export default class AveCreate extends Controller {
             const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
             const aMachos = oMachosModel.getData() as any[];
             let oPadre: IAve[];
-            if (aMachos.length > 0 && !placaPadre) {
+            if (aMachos.length > 0 && placaPadre) {
                 oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
                 data.padre_ID = oPadre[0].id;
             }
@@ -149,7 +187,7 @@ export default class AveCreate extends Controller {
             const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
             const aHembras = oHembrasModel.getData() as any[];
             let oMadre: IAve[];
-            if (aHembras.length > 0 && !placaMadre) {
+            if (aHembras.length > 0 && placaMadre) {
                 oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
                 data.madre_ID = oMadre[0].id;
             }

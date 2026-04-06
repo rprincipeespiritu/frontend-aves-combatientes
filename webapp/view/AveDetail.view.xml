@@ -2,14 +2,17 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
-    xmlns:core="sap.ui.core">
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.f">
 
     <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button text="Editar" icon="sap-icon://edit" press="onEditar" visible="{= !${detail>/editMode}}"/>
-            <!-- <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press="onGuardar" visible="{detail>/editMode}"/> -->
-            <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="onEliminar"/>
-            <!-- <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="true"/> -->
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
@@ -221,7 +224,9 @@
         <footer>
             <Toolbar>
                 <ToolbarSpacer/>
-                <Button text="Cancelar" icon="sap-icon://cancel" press="onCancelarEdicion" visible="true"/>
+                <Button text="Editar" icon="sap-icon://edit" press="onEditar" visible="{= !${detail>/editMode}}"/>
+                <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="onEliminar"/>
+                <Button text="Cancelar" press="onCancelarEdicion" visible="true"/>
                 <!-- <Button text="Guardar" type="Emphasized" press="onGuardar"/> -->
             </Toolbar>
         </footer>

@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.f">
+
+    <ResponsivePopover
+            id="userMenuPopover"
+            showHeader="false"
+            placement="Bottom"
+            contentWidth="320px">
+
+        <VBox class="sapUiMediumMargin">
+            <HBox justifyContent="Center" class="sapUiSmallMarginBottom">
+                <f:Avatar
+                        src="{user>/foto}"
+                        displaySize="L"
+                        displayShape="Circle" />
+            </HBox>
+
+            <VBox alignItems="Center" class="sapUiSmallMarginBottom">
+                <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" />
+                <Text text="{user>/email}" />
+            </VBox>
+
+            <!--<Button
+                    text="Administrar perfil"
+                    type="Transparent"
+                    icon="sap-icon://employee"
+                    press="onMiPerfil"
+                    class="sapUiSmallMarginBottom" />-->
+
+            <VBox justifyContent="SpaceBetween">
+                <!--<Button
+                        text="Cambiar cuenta"
+                        icon="sap-icon://person-placeholder"
+                        press="onCambiarCuenta" />-->
+
+                <Button
+                        text="Cerrar sesión"
+                        type="Emphasized"
+                        icon="sap-icon://log"
+                        press="onLogout" />
+            </VBox>
+        </VBox>
+    </ResponsivePopover>
+</core:FragmentDefinition>
