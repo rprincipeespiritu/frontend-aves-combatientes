@@ -70,17 +70,18 @@
 
             <Carousel id="imageCarousel" height="auto" width="auto" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
 
-            <!-- Imagen 1 -->
-            <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="20rem" class="carouselImage"/>
+                <!-- Imagen 1 -->
+                <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="20rem" class="carouselImage"/>
 
-            <!-- Imagen 2 -->
-            <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="20rem" class="carouselImage"/>
+                <!-- Imagen 2 -->
+                <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="20rem" class="carouselImage"/>
 
-            <!-- Imagen 3 -->
-            <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="20rem" class="carouselImage"/>
+                <!-- Imagen 3 -->
+                <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="20rem" class="carouselImage"/>
 
-            <!-- Imagen 4 -->
-            <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="20rem" class="carouselImage"/>
+                <!-- Imagen 4 -->
+                <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="20rem" class="carouselImage"/>
+            </Carousel>
         </tnt:mainContents>
     </tnt:ToolPage>
 </mvc:View>
