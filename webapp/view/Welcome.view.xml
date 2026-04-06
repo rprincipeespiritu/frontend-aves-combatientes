@@ -3,74 +3,84 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns="sap.m"
         xmlns:tnt="sap.tnt"
-        displayBlock="true"
+        xmlns:core="sap.ui.core"
         xmlns:f="sap.f">
 
     <tnt:ToolPage id="toolPage">
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button
+                        id="menuButton"
+                        icon="sap-icon://menu2"
+                        type="Transparent"
+                        press="onToggleSideContent" />
+
+                <Title
+                        text="Bienvenido al Sistema de Gestión de Aves Combatientes"
+                        level="H2" />
+                <ToolbarSpacer />
+
+                <f:Avatar
+                        id="userAvatar"
+                        src="{user>/foto}"
+                        displaySize="XS"
+                        press="onUserMenuPress"
+                        class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+            </tnt:ToolHeader>
+        </tnt:header>
+
         <tnt:sideContent>
-            <tnt:SideNavigation id="sideNavigation">
+            <tnt:SideNavigation
+                    id="sideNavigation"
+                    expanded="false"
+                    selectedKey="aves">
+
                 <tnt:NavigationList itemSelect="onMenuSelect">
                     <tnt:NavigationListItem
                             text="Aves combatientes"
-                            key="aves"
-                            icon="sap-icon://add-product" />
+                            icon="sap-icon://add-product"
+                            key="aves" />
+
                     <tnt:NavigationListItem
                             text="Incubaciones"
-                            key="incubaciones"
-                            icon="sap-icon://inventory" />
+                            icon="sap-icon://shipping-status"
+                            key="incubaciones" />
+
                     <tnt:NavigationListItem
                             text="Peleas"
-                            key="peleas"
-                            icon="sap-icon://activity-items" />
+                            icon="sap-icon://activity-items"
+                            key="peleas" />
+
                     <tnt:NavigationListItem
                             text="Vacunación"
-                            key="vacunacion"
-                            icon="sap-icon://doctor" />
+                            icon="sap-icon://activity-individual"
+                            key="vacunacion" />
                 </tnt:NavigationList>
             </tnt:SideNavigation>
         </tnt:sideContent>
 
         <tnt:mainContents>
-            <Page title="Bienvenido al Sistema de Gestión de Aves Combatientes" titleAlignment="Center">
-                <headerContent>
-                    <f:Avatar
-                            id="userAvatar"
-                            src="{user>/foto}"
-                            displaySize="XS"
-                            press="onUserMenuPress"
-                            class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
-                </headerContent>
-                <content>
-                    <!-- Contenido adicional -->
-                    <VBox class="sapUiTinyMargin">
-                        <!-- <Title text="Bienvenido al Sistema de Registro" level="H2"/> -->
-                        <HBox class="sapUiMediumMarginTop" justifyContent="Center">
-                            <Text text="Gestiona el registro de tus aves de combate de manera fácil y eficiente." class="sapUiMediumMarginTop"/>
-                        </HBox>
-                        <!-- Botones de navegación -->
-                        <!--<HBox class="sapUiMediumMarginTop" justifyContent="Center">
-                            <Button text="Registrar Ave" type="Emphasized" icon="sap-icon://add" press="onNavToRegistro" class="sapUiSmallMarginEnd"/>
-                            <Button text="Ver Lista" type="Default" icon="sap-icon://list" press="onNavToLista"/>
-                        </HBox>-->
-                    </VBox>
-                    <!-- Carrusel de Imágenes -->
-                    <Carousel id="imageCarousel" height="auto" width="auto" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
+            <VBox class="sapUiTinyMargin">
+                <HBox class="sapUiMediumMarginTop" justifyContent="Center">
+                    <Text
+                            text="Gestiona el registro de tus aves de combate de manera fácil y eficiente."
+                            class="sapUiMediumMarginTop" />
+                </HBox>
+            </VBox>
 
-                        <!-- Imagen 1 -->
-                        <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="400px" class="carouselImage"/>
+            <Carousel id="imageCarousel" height="auto" width="auto" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
 
-                        <!-- Imagen 2 -->
-                        <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="400px" class="carouselImage"/>
+            <!-- Imagen 1 -->
+            <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="20rem" class="carouselImage"/>
 
-                        <!-- Imagen 3 -->
-                        <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="400px" class="carouselImage"/>
+            <!-- Imagen 2 -->
+            <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="20rem" class="carouselImage"/>
 
-                        <!-- Imagen 4 -->
-                        <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="400px" class="carouselImage"/>
-                    </Carousel>
+            <!-- Imagen 3 -->
+            <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="20rem" class="carouselImage"/>
 
-                </content>
-            </Page>
+            <!-- Imagen 4 -->
+            <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="20rem" class="carouselImage"/>
         </tnt:mainContents>
     </tnt:ToolPage>
 </mvc:View>

@@ -1,0 +1,44 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core">
+
+    <ActionSheet id="mobileMenu" placement="Bottom">
+        <buttons>
+            <Button
+                    text="Aves combatientes"
+                    icon="sap-icon://add-product"
+                    press=".onMobileMenuPress">
+                <customData>
+                    <core:CustomData key="key" value="aves" />
+                </customData>
+            </Button>
+
+            <Button
+                    text="Incubaciones"
+                    icon="sap-icon://shipping-status"
+                    press=".onMobileMenuPress">
+                <customData>
+                    <core:CustomData key="key" value="incubaciones" />
+                </customData>
+            </Button>
+
+            <Button
+                    text="Peleas"
+                    icon="sap-icon://activity-items"
+                    press=".onMobileMenuPress">
+                <customData>
+                    <core:CustomData key="key" value="peleas" />
+                </customData>
+            </Button>
+
+            <Button
+                    text="Vacunación"
+                    icon="sap-icon://activity-individual"
+                    press=".onMobileMenuPress">
+                <customData>
+                    <core:CustomData key="key" value="vacunacion" />
+                </customData>
+            </Button>
+        </buttons>
+    </ActionSheet>
+</core:FragmentDefinition>
