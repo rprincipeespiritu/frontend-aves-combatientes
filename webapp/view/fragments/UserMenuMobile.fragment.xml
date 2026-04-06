@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core">
+
+    <ActionSheet id="userMenuSheet" placement="Bottom">
+        <buttons>
+            <Button text="{user>/nombre} {user>/apellido}" enabled="false" />
+            <Button text="{user>/email}" enabled="false" />
+            <Button text="Cerrar sesión" icon="sap-icon://log" press="onLogout" />
+        </buttons>
+    </ActionSheet>
+</core:FragmentDefinition>
