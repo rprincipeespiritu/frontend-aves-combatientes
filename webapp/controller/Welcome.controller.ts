@@ -93,23 +93,24 @@ export default class Welcome extends Controller {
     }
 
     private _navigateByKey(sKey: string): void {
-        const oRouter = this.getOwnerComponent()?.getRouter();
+
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
 
         switch (sKey) {
             case "aves":
-                oRouter.navTo("RouteAves");
+                oRouter?.navTo("RouteList");
                 break;
 
             case "incubaciones":
-                oRouter.navTo("RouteIncubaciones");
+                oRouter?.navTo("RouteIncubaciones");
                 break;
 
             case "peleas":
-                oRouter.navTo("RoutePeleas");
+                oRouter?.navTo("RoutePeleas");
                 break;
 
             case "vacunacion":
-                oRouter.navTo("RouteVacunacion");
+                oRouter?.navTo("RouteVacunacion");
                 break;
 
             default:
@@ -153,7 +154,7 @@ export default class Welcome extends Controller {
 
         // Si no existe → crear
         this._oUserMenuPopover = await Fragment.load({
-            id: this.getView().getId(),
+            id: this.getView()?.getId(),
             name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
             controller: this
         }) as any;
