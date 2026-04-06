@@ -7,7 +7,7 @@
             id="userMenuPopover"
             showHeader="false"
             placement="Bottom"
-            contentWidth="15rem">
+            contentWidth="auto">
 
         <VBox class="sapUiMediumMargin">
             <HBox justifyContent="Center" class="sapUiSmallMarginBottom">
