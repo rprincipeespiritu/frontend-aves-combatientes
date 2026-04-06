@@ -152,7 +152,13 @@ export default class Welcome extends Controller {
                 this.getView()?.addDependent(this._oUserMenuSheet);
             }
 
-            this._oUserMenuSheet.openBy(oSource);
+            // TOGGLE
+            if (this._oUserMenuSheet.isOpen()) {
+                this._oUserMenuSheet.close();
+            } else {
+                this._oUserMenuSheet.openBy(oSource);
+            }
+
             return;
         }
 
@@ -167,7 +173,12 @@ export default class Welcome extends Controller {
             this.getView()?.addDependent(this._oUserMenuPopover);
         }
 
+        // TOGGLE
+        if (this._oUserMenuPopover.isOpen()) {
+        this._oUserMenuPopover.close();
+        } else {
         this._oUserMenuPopover.openBy(oSource);
+        }
     }
 
     public onNavToRegistro(): void {

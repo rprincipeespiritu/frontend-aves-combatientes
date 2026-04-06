@@ -69,6 +69,18 @@ export default class Login extends Controller {
         this.loadRememberedCredentials();
     }
 
+    public onTogglePassword(): void {
+        const oInput = this.getView()?.byId("passwordInput") as any;
+
+        if (oInput.getType() === "Password") {
+            oInput.setType("Text");
+            oInput.setValueHelpIconSrc("sap-icon://hide");
+        } else {
+            oInput.setType("Password");
+            oInput.setValueHelpIconSrc("sap-icon://show");
+        }
+    }
+
     public onLogin = async (): Promise<void> => {
         const oThat = this;
         const oModel = this.getView()?.getModel() as JSONModel;
