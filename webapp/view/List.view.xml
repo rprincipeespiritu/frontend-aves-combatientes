@@ -152,7 +152,7 @@
                             <Text text="Nombre"/>
                         </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem" visible="{= ${device>/system/phone} ? false : true}">
                             <Text text="Fecha Nac."/>
                         </Column>
 
@@ -160,19 +160,19 @@
                             <Text text="Género"/>
                         </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem" visible="{= ${device>/system/phone} ? false : true}">
                             <Text text="Categoría"/>
                         </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="5rem">
+                        <Column minScreenWidth="Desktop" demandPopin="true" width="5rem" visible="{= ${device>/system/phone} ? false : true}">
                             <Text text="Cría"/>
                         </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="7rem">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="7rem" visible="{= ${device>/system/phone} ? false : true}">
                             <Text text="Estado"/>
                         </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="6rem">
+                        <Column minScreenWidth="Desktop" demandPopin="true" width="6rem" visible="{= ${device>/system/phone} ? false : true}">
                             <Text text="Padrote"/>
                         </Column>
 
