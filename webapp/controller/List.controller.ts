@@ -109,7 +109,7 @@ export default class List extends Controller {
       this._oPadresDialog.open();
 
     } catch (error) {
-      console.error("Error cargando catálogos:", error);
+      console.error("Error :", error);
     }
 
   }
@@ -279,15 +279,15 @@ export default class List extends Controller {
     const sNombreAve = oAve.nombre;
 
     MessageBox.confirm(
-      `¿Estás seguro de que quieres eliminar el ave '${sNombreAve}'?`,
-      {
-        title: "Eliminar Ave",
-        onClose: (oAction: string) => {
-          if (oAction === MessageBox.Action.OK) {
-            this.performEliminar(oAve);
-          }
-        },
-      }
+        `¿Estás seguro de que quieres eliminar el ave '${sNombreAve}'?`,
+        {
+          title: "Eliminar Ave",
+          onClose: (oAction: string) => {
+            if (oAction === MessageBox.Action.OK) {
+              this.performEliminar(oAve);
+            }
+          },
+        }
     );
   }
 
@@ -316,12 +316,12 @@ export default class List extends Controller {
         name: "com.rprincipees.registroavescombate.view.fragments.AddBirdDialog",
         controller: this,
       }).then(
-        function (oDialog) {
-          this._oAddBirdDialog = oDialog;
-          oView.addDependent(this._oAddBirdDialog);
-          //this._resetForm();
-          this._oAddBirdDialog.open();
-        }.bind(this)
+          function (oDialog) {
+            this._oAddBirdDialog = oDialog;
+            oView.addDependent(this._oAddBirdDialog);
+            //this._resetForm();
+            this._oAddBirdDialog.open();
+          }.bind(this)
       );
     } else {
       //this._resetForm();

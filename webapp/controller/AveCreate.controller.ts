@@ -13,12 +13,18 @@ import Control from "sap/ui/mdc/Control";
 import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
+import Dialog from "sap/m/Dialog";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
 
 export default class AveCreate extends Controller {
     private authService: AuthService;
     private baseUrl: string = "http://localhost:4004/api/avecombatiente";
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
+    private _oPadresDialog: Dialog;
+    private helpSelected: any;
+    private oUploadPluginInstance: any;
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -144,6 +150,106 @@ export default class AveCreate extends Controller {
             this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
         } catch (error) {
             console.error("Error cargando catálogos:", error);
+        }
+    }
+
+    private onValueHelpPadre = (): void => {
+
+        const oThat = this;
+        oThat.helpSelected = "valueHelpPadre";
+        oThat.onAbrirPopupPadres(oThat.helpSelected);
+
+    }
+
+    private onValueHelpMadre = (): void => {
+        const oThat = this;
+        oThat.helpSelected = "valueHelpMadre";
+        oThat.onAbrirPopupPadres(oThat.helpSelected);
+    }
+
+    public async onAbrirPopupPadres(helpSelected: string): Promise<void> {
+        try {
+
+            const response = await fetch(`${this.baseUrl}/Aves`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const aves: IAve[] = await response.json();
+            let padres: any[]= [];
+            if (helpSelected === "valueHelpPadre"){
+                padres = (aves.value || []).filter((a: any) => a.sexo === 'M' && a.padrote === true);
+            } else if(helpSelected === "valueHelpMadre"){
+                padres = (aves.value || []).filter((a: any) => a.sexo === 'H' && a.padrote === true);
+            }
+            this.getView()?.setModel(new JSONModel(padres), "avesPadres");
+
+            if (!this._oPadresDialog) {
+                this._oPadresDialog = await Fragment.load({
+                    id: this.getView()?.getId(),
+                    name: "com.rprincipees.registroavescombate.view.fragments.PadresDialog",
+                    controller: this
+                }) as Dialog;
+
+                this.getView()?.addDependent(this._oPadresDialog);
+            }
+
+            this._oPadresDialog.open();
+
+        } catch (error) {
+            console.error("Error :", error);
+        }
+
+    }
+
+    public onSeleccionarPadre(oEvent: Event): void {
+        const oThat = this;
+        const oSelectedItem = oEvent.getParameter("listItem");
+
+        if (oSelectedItem) {
+            const sNombre = oSelectedItem.getTitle();
+            const sPlaca = oSelectedItem.getDescription();
+            let oInput: Input | undefined;
+            if(oThat.helpSelected === "valueHelpPadre") {
+                oInput = this.byId("inputPadre") as Input;
+            } else if(oThat.helpSelected === "valueHelpMadre"){
+                oInput = this.byId("inputMadre") as Input;
+            }
+            if (oInput) {
+                oInput.setValue(sPlaca);
+            }
+        }
+
+        this._oPadresDialog?.close();
+
+    }
+
+    public onCerrarPopupPadres(): void {
+        this._oPadresDialog?.close();
+    }
+
+    public onSearchPadres(oEvent: Event): void {
+        const sValue = oEvent.getParameter("newValue") || "";
+        const oList = this.byId("listaPadres") as List;
+        const oBinding = oList.getBinding("items");
+
+        if (!oBinding) return;
+
+        if (sValue) {
+            const oFilter = new Filter({
+                filters: [
+                    new Filter("nombre", FilterOperator.Contains, sValue),
+                    new Filter("placa", FilterOperator.Contains, sValue)
+                ],
+                and: false // OR
+            });
+
+            oBinding.filter([oFilter]);
+        } else {
+            oBinding.filter([]); // limpia filtro
         }
     }
 
