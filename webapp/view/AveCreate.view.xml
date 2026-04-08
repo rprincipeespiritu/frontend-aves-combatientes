@@ -225,6 +225,8 @@
                             <Input
                                     id="inputPadre"
                                     placeholder="Seleccionar Padre"
+                                    value="{create>/placaPadre}"
+                                    description="{create>/nombrePadre}"
                                     showValueHelp="true"
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpPadre"
@@ -240,6 +242,8 @@
                             <Input
                                     id="inputMadre"
                                     placeholder="Seleccionar Madre"
+                                    value="{create>/placaMadre}"
+                                    description="{create>/nombreMadre}"
                                     showValueHelp="true"
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpMadre"

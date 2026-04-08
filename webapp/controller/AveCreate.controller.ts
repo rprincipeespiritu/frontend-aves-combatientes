@@ -220,6 +220,8 @@ export default class AveCreate extends Controller {
             }
             if (oInput) {
                 oInput.setValue(sPlaca);
+                oInput.setDescription(sNombre);
+
             }
         }
 
@@ -300,8 +302,8 @@ export default class AveCreate extends Controller {
                 madre_ID: null
             };
 
-            const oInputPadre = oThat.byId("idPadre") as Input;
-            const placaPadre = oInputPadre.getSelectedKey();
+            //const oInputPadre = oThat.byId("inputPadre") as Input;
+            const placaPadre = data.placaPadre;
             const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
             const aMachos = oMachosModel.getData() as any[];
             let oPadre: IAve[];
@@ -310,8 +312,8 @@ export default class AveCreate extends Controller {
                 data.padre_ID = oPadre[0].ID;
             }
 
-            const oInputMadre = oThat.byId("idMadre") as Input;
-            const placaMadre = oInputPadre.getSelectedKey();
+            //const oInputMadre = oThat.byId("inputMadre") as Input;
+            const placaMadre = data.placaMadre;
             const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
             const aHembras = oHembrasModel.getData() as any[];
             let oMadre: IAve[];
