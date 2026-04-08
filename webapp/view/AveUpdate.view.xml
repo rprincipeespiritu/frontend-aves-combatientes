@@ -101,29 +101,26 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Padre"/>
-                            <Input id="idPadre" valueState="{update>/placaPadreState}" textFormatMode="KeyValue" placeholder="Ingrese Padre" showSuggestion="true" suggestionItems="{avesMachos>/}" change=".onSuggestionItemSelectedPlacaPadre">
-                                <suggestionItems>
-                                    <core:ListItem key="{avesMachos>placa}" text="{avesMachos>nombre}" additionalText="{avesMachos>placa}" />
-                                </suggestionItems>
-                            </Input>
-                            <!-- <Input id="idPadre" placeholder="Ingrese Padre" showSuggestion="true" suggestionItems="{avesMachos>/}">
-                                <suggestionItems>
-                                    <core:ListItem text="{avesMachos>placa}" additionalText="{avesMachos>nombre}" />
-                                </suggestionItems>
-                            </Input> -->
-                            <!-- <Select id="padreSelect" selectedKey="{update>/padre_ID}" items="{avesMachos>/}">
-                                <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
-                            </Select> -->
+                            <Input
+                                    id="inputPadre"
+                                    placeholder="Seleccionar Padre"
+                                    value="{update>/padre/placa}"
+                                    description="{update>/padre/nombre}"
+                                    showValueHelp="true"
+                                    valueHelpOnly="true"
+                                    valueHelpRequest="onValueHelpPadre"
+                                    width="100%"/>
 
                             <Label text="Madre"/>
-                            <Input id="idMadre" valueState="{update>/placaMadreState}" textFormatMode="KeyValue" placeholder="Ingrese Madre" showSuggestion="true" suggestionItems="{avesHembras>/}" change=".onSuggestionItemSelectedPlacaMadre">
-                                <suggestionItems>
-                                    <core:ListItem key="{avesHembras>placa}" text="{avesHembras>nombre}" additionalText="{avesHembras>placa}" />
-                                </suggestionItems>
-                            </Input>
-                            <!-- <Select id="madreSelect" selectedKey="{update>/madre_ID}" items="{avesMachos>/}">
-                                <core:Item key="{avesMachos>ID}" text="{avesMachos>placa} - {avesMachos>nombre}"/>
-                            </Select> -->
+                            <Input
+                                    id="inputMadre"
+                                    placeholder="Seleccionar Madre"
+                                    value="{update>/madre/placa}"
+                                    description="{update>/madre/nombre}"
+                                    showValueHelp="true"
+                                    valueHelpOnly="true"
+                                    valueHelpRequest="onValueHelpMadre"
+                                    width="100%"/>
 
                             <Label text="Lugar de Procedencia"/>
                             <Input value="{update>/procedencia}" placeholder="Lugar de procedencia"/>
