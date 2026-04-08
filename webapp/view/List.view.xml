@@ -20,7 +20,7 @@
         </headerContent>
 
         <content>
-            <VBox width="100%" class="sapUiSmallMargin">
+            <VBox width="100%">
 
                 <!-- Barra principal responsiva -->
                 <OverflowToolbar width="100%">
@@ -45,22 +45,24 @@
                         width="100%">
 
                     <content>
-                        <VBox width="100%" class="sapUiSmallMargin">
+                        <VBox>
 
-                            <FlexBox wrap="Wrap" width="100%" class="sapUiSmallMarginBottom" renderType="Div">
+                            <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
                                 <items>
                                     <SearchField
                                             id="searchField"
-                                            tooltip="Buscar por nombre y placa del individuo"
-                                            placeholder="Buscar por nombre y placa del individuo"
+                                            tooltip="Buscar por Nombre y Placa del Ave"
+                                            placeholder="Nombre y Placa del Ave"
                                             width="100%"
-                                            search="onBuscar" />
+                                            search="onBuscar"
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
 
                                     <ComboBox
                                             id="generoFilter"
                                             placeholder="Filtrar por Género"
                                             width="100%"
-                                            selectionChange="onFiltrarGenero">
+                                            selectionChange="onFiltrarGenero"
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
                                         <core:Item key="M" text="Gallo"/>
                                         <core:Item key="H" text="Gallina"/>
                                     </ComboBox>
@@ -69,7 +71,8 @@
                                             id="categoriaFilter"
                                             placeholder="Filtrar por Categoría"
                                             width="100%"
-                                            selectionChange="onFiltrarCategoria">
+                                            selectionChange="onFiltrarCategoria"
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
                                         <core:Item key="BUENO" text="Bueno"/>
                                         <core:Item key="EXCELENTE" text="Excelente"/>
                                         <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
@@ -77,20 +80,23 @@
                                 </items>
                             </FlexBox>
 
-                            <FlexBox wrap="Wrap" width="100%" class="sapUiSmallMarginBottom" renderType="Div">
+                            <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
                                 <items>
-                                    <SearchField
-                                            id="searchFieldPadres"
-                                            tooltip="Buscar por nombre y placa de los padres"
-                                            placeholder="Buscar por nombre y placa de los padres"
+                                    <Input
+                                            id="inputPadres"
+                                            placeholder="Seleccionar Padre/Madre"
+                                            showValueHelp="true"
+                                            valueHelpOnly="true"
+                                            valueHelpRequest="onAbrirPopupPadres"
                                             width="100%"
-                                            search="onBuscar2"/>
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
 
                                     <ComboBox
                                             id="estadoFilter"
                                             placeholder="Filtrar por Estado"
                                             width="100%"
-                                            selectionChange="onFiltrarEstado">
+                                            selectionChange="onFiltrarEstado"
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
                                         <core:Item key="ACTIVO" text="Activo"/>
                                         <core:Item key="VENDIDO" text="Vendido"/>
                                         <core:Item key="PRESTADO" text="Prestado"/>
@@ -101,9 +107,10 @@
                                     <CheckBox
                                             id="padroteFilter"
                                             text="Padrote"
-                                            select="onSelectPadrote"/>
+                                            select="onSelectPadrote"
+                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom sapUiTinyMarginTop"/>
 
-                                    <Button text="Limpiar Filtros" press="onLimpiarFiltros"/>
+                                    <Button text="Limpiar Filtros" press="onLimpiarFiltros" class="sapUiTinyMarginBottom"/>
 
                                 </items>
                             </FlexBox>
@@ -224,8 +231,17 @@
 
                                 <CheckBox selected="{aves>padrote}" editable="false"/>
 
-                                <Link text="{aves>padre}" press="onPadreLinkPress"/>
-                                <Link text="{aves>madre}" press="onMadreLinkPress"/>
+                                <!--<Link text="{aves>padre/placa}" press="onPadreLinkPress"/>
+                                <Link text="{aves>madre/placa}" press="onMadreLinkPress"/>-->
+                                <VBox>
+                                    <Text text="{aves>padre/placa}" class="sapUiTinyMarginTop"/>
+                                    <Text text="{aves>padre/nombre}"/>
+                                </VBox>
+
+                                <VBox>
+                                    <Text text="{aves>madre/placa}" class="sapUiTinyMarginTop"/>
+                                    <Text text="{aves>madre/nombre}"/>
+                                </VBox>
 
                                 <HBox justifyContent="Center" width="100%" renderType="Bare">
                                     <Button

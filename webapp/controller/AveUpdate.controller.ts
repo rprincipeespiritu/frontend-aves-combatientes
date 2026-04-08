@@ -235,7 +235,7 @@ export default class AveUpdate extends Controller {
             let oPadre: IAve[];
             if (aMachos.length > 0 && placaPadre) {
                 oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
-                data.padre_ID = oPadre[0].id;
+                data.padre_ID = oPadre[0].ID;
             }
 
             const oInputMadre = oThat.byId("idMadre") as Input;
@@ -245,7 +245,7 @@ export default class AveUpdate extends Controller {
             let oMadre: IAve[];
             if (aHembras.length > 0 && placaMadre) {
                 oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
-                data.madre_ID = oMadre[0].id;
+                data.madre_ID = oMadre[0].ID;
             }
 
             if (data.padre_ID) payload.padre_ID = data.padre_ID;
