@@ -28,6 +28,7 @@ import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Control from "sap/ui/mdc/Control";
 import Popover from "sap/m/Popover";
+import Input from "sap/m/Input";
 
 
 /**
@@ -38,6 +39,7 @@ export default class List extends Controller {
   private authService: AuthService;
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
+  private _oPadresDialog: Dialog;
 
   public onInit(): void {
     this.authService = AuthService.getInstance();
@@ -76,6 +78,80 @@ export default class List extends Controller {
     this.initializeData();
 
 
+  }
+
+  public async onAbrirPopupPadres(_oEvent: Event): Promise<void> {
+    try {
+
+      const response = await fetch(`${this.baseUrl}/Aves`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const aves: IAve[] = await response.json();
+      const padres = (aves.value || []).filter((a: any) => a.padrote === true);
+
+      this.getView()?.setModel(new JSONModel(padres), "avesPadres");
+
+      if (!this._oPadresDialog) {
+        this._oPadresDialog = await Fragment.load({
+          id: this.getView()?.getId(),
+          name: "com.rprincipees.registroavescombate.view.fragments.PadresDialog",
+          controller: this
+        }) as Dialog;
+
+        this.getView()?.addDependent(this._oPadresDialog);
+      }
+
+      this._oPadresDialog.open();
+
+    } catch (error) {
+      console.error("Error cargando catálogos:", error);
+    }
+
+  }
+
+  public onSeleccionarPadre(oEvent: Event): void {
+    const oSelectedItem = oEvent.getParameter("listItem");
+
+    if (oSelectedItem) {
+      const sNombre = oSelectedItem.getTitle();
+      const sPlaca = oSelectedItem.getDescription();
+      const oInput = this.byId("inputPadres") as Input;
+      oInput.setValue(sPlaca);
+    }
+
+    this._oPadresDialog?.close();
+    this.aplicarFiltros();
+  }
+
+  public onCerrarPopupPadres(): void {
+    this._oPadresDialog?.close();
+  }
+
+  public onSearchPadres(oEvent: Event): void {
+    const sValue = oEvent.getParameter("newValue") || "";
+    const oList = this.byId("listaPadres") as List;
+    const oBinding = oList.getBinding("items");
+
+    if (!oBinding) return;
+
+    if (sValue) {
+      const oFilter = new Filter({
+        filters: [
+          new Filter("nombre", FilterOperator.Contains, sValue),
+          new Filter("placa", FilterOperator.Contains, sValue)
+        ],
+        and: false // OR
+      });
+
+      oBinding.filter([oFilter]);
+    } else {
+      oBinding.filter([]); // limpia filtro
+    }
   }
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
@@ -125,7 +201,7 @@ export default class List extends Controller {
 
   private async initializeData(): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/Aves`, {
+      const response = await fetch(`${this.baseUrl}/Aves?$expand=padre,madre`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -296,13 +372,13 @@ export default class List extends Controller {
     }
 
     // BÚSQUEDA
-    const sBusqueda2 = (this.byId("searchFieldPadres") as SearchField)?.getValue();
-    if (sBusqueda2) {
+    const placaPadres = (this.byId("inputPadres") as Input)?.getValue();
+    if (placaPadres) {
       aFilters.push(
           new Filter({
             filters: [
-              new Filter("placaPadre", FilterOperator.Contains, sBusqueda),
-              new Filter("placaMadre", FilterOperator.Contains, sBusqueda)
+              new Filter("padre/placa", FilterOperator.Contains, placaPadres),
+              new Filter("madre/placa", FilterOperator.Contains, placaPadres)
             ],
             and: false
           })
@@ -338,6 +414,7 @@ export default class List extends Controller {
 
   public onLimpiarFiltros(): void {
     (this.byId("searchField") as SearchField).setValue("");
+    (this.byId("inputPadres") as Input).setValue("");
     (this.byId("generoFilter") as ComboBox).setSelectedKey("");
     (this.byId("categoriaFilter") as ComboBox).setSelectedKey("");
     (this.byId("estadoFilter") as ComboBox).setSelectedKey("");
@@ -365,7 +442,7 @@ export default class List extends Controller {
 
   public onRefrescar(): void {
     // Recargar datos
-    this.initializeMockData();
+    this.initializeData();
     MessageToast.show("Datos actualizados");
   }
 
