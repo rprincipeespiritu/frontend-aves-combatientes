@@ -157,17 +157,17 @@ export default class AveCreate extends Controller {
 
         const oThat = this;
         oThat.helpSelected = "valueHelpPadre";
-        oThat.onAbrirPopupPadres(oThat.helpSelected);
+        oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Padre");
 
     }
 
     private onValueHelpMadre = (): void => {
         const oThat = this;
         oThat.helpSelected = "valueHelpMadre";
-        oThat.onAbrirPopupPadres(oThat.helpSelected);
+        oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Madre");
     }
 
-    public async onAbrirPopupPadres(helpSelected: string): Promise<void> {
+    public async onAbrirPopupPadres(helpSelected: string, sTitulo: string): Promise<void> {
         try {
 
             const response = await fetch(`${this.baseUrl}/Aves`, {
@@ -197,6 +197,7 @@ export default class AveCreate extends Controller {
                 this.getView()?.addDependent(this._oPadresDialog);
             }
 
+            this._oPadresDialog.setTitle(sTitulo);
             this._oPadresDialog.open();
 
         } catch (error) {

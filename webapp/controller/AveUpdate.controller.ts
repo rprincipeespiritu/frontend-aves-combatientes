@@ -13,6 +13,9 @@ import Device from "sap/ui/Device";
 import Dialog from "sap/m/Dialog";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
+import ActionSheet from "sap/m/ActionSheet";
+import Control from "sap/ui/mdc/Control";
+import Popover from "sap/m/Popover";
 
 export default class AveUpdate extends Controller {
     private authService: AuthService;
@@ -20,6 +23,8 @@ export default class AveUpdate extends Controller {
     private aveId: string = "";
     private _oUserMenuSheet: any;
     private _oUserMenuPopover: any;
+    private _oPadresDialog: Dialog;
+    private helpSelected: any;
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -188,17 +193,17 @@ export default class AveUpdate extends Controller {
 
         const oThat = this;
         oThat.helpSelected = "valueHelpPadre";
-        oThat.onAbrirPopupPadres(oThat.helpSelected);
+        oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Padre");
 
     }
 
     private onValueHelpMadre = (): void => {
         const oThat = this;
         oThat.helpSelected = "valueHelpMadre";
-        oThat.onAbrirPopupPadres(oThat.helpSelected);
+        oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Madre");
     }
 
-    public async onAbrirPopupPadres(helpSelected: string): Promise<void> {
+    public async onAbrirPopupPadres(helpSelected: string, sTitulo: string): Promise<void> {
         try {
 
             const response = await fetch(`${this.baseUrl}/Aves`, {
@@ -228,6 +233,7 @@ export default class AveUpdate extends Controller {
                 this.getView()?.addDependent(this._oPadresDialog);
             }
 
+            this._oPadresDialog.setTitle(sTitulo);
             this._oPadresDialog.open();
 
         } catch (error) {
