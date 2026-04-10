@@ -2,6 +2,7 @@
 
 export interface IAve {
     id?: string;
+    placa?: string;
     nombre: string;
     raza: string;
     fechaNacimiento: Date;
