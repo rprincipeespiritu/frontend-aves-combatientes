@@ -58,11 +58,12 @@ export default class AveCreate extends Controller {
                 categoria: "BUENO"
             });
 
+            /*
             let datos = this.cargarDatosFotos();
             const oModelDocuments = new JSONModel(datos);
             this.byId("table-uploadSet").setModel(oModelDocuments, "documents");
+            */
             this.getView()?.setModel(oModel, "create");
-
             this.cargarCatalogos();
         }
     }
