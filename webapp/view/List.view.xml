@@ -129,7 +129,6 @@
                         width="100%"
                         inset="false"
                         items="{aves>/value}"
-                        mode="MultiSelect"
                         class="sapUiMediumMarginTop"
                         selectionChange="onSelectionChange">
 
@@ -146,7 +145,8 @@
                                     text="{= ${device>/system/phone} ? 'Eliminar' : 'Eliminar Seleccionada'}"
                                     type="Reject"
                                     enabled="{= ${table>/selectedIndex} >= 0}"
-                                    press="onEliminarAve"/>
+                                    press="onEliminarAve"
+                                    visible="false"/>
                         </OverflowToolbar>
                     </headerToolbar>
 
@@ -254,7 +254,7 @@
                                             type="Transparent"
                                             tooltip="Eliminar"
                                             press="onEliminarAveInline"
-                                            visible="false"/>
+                                            visible="true"/>
                                     <Button
                                             icon="sap-icon://detail-view"
                                             type="Transparent"

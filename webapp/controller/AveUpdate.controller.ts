@@ -340,7 +340,7 @@ export default class AveUpdate extends Controller {
             };
 
             //const oInputPadre = oThat.byId("idPadre") as Input;
-            const placaPadre = data.padre.placa;
+            const placaPadre = data.padre ? data.padre.placa : null;
             const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
             const aMachos = oMachosModel.getData() as any[];
             let oPadre: IAve[];
@@ -350,7 +350,7 @@ export default class AveUpdate extends Controller {
             }
 
            //const oInputMadre = oThat.byId("idMadre") as Input;
-            const placaMadre = data.madre.placa
+            const placaMadre = data.madre ? data.madre.placa : null
             const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
             const aHembras = oHembrasModel.getData() as any[];
             let oMadre: IAve[];

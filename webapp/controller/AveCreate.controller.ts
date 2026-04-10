@@ -55,7 +55,7 @@ export default class AveCreate extends Controller {
                 fechaCompra: "", padre_ID: "", madre_ID: "",
                 procedencia: "", criador: "", valorCompra: "",
                 valorActual: "", observaciones: "", placaState: "None",
-                categoria: "BUENO"
+                categoria: "BUENO", placaPadre: "", placaMadre: ""
             });
 
             /*

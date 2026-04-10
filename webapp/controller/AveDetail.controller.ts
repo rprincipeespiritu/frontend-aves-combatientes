@@ -11,6 +11,7 @@ import Control from "sap/ui/mdc/Control";
 import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
+import {IAve} from "com/rprincipees/registroavescombate/types/Models";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
@@ -214,26 +215,64 @@ export default class AveDetail extends Controller {
     //     }
     // }
 
-    public onEliminar(): void {
-        MessageBox.confirm("¿Deseas eliminar este ave permanentemente?", {
-            title: "Confirmar eliminación",
-            onClose: async (action: string) => {
-                if (action === MessageBox.Action.OK) {
-                    try {
-                        const response = await fetch(`${this.baseUrl}/Aves('${this.aveId}')`, {
-                            method: "DELETE",
-                            headers: { "Authorization": `Bearer ${this.authService.getToken()}` }
-                        });
-                        if (response.ok) {
-                            MessageToast.show("Ave eliminada");
-                            this.onNavBack();
-                        }
-                    } catch (error) {
-                        MessageBox.error("Error eliminando el ave");
+
+    private eliminarAve(oEvent: Event): void {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const oAve = oModel.getData();
+        const sNombreAve = oAve.nombre ? oAve.nombre : oAve.placa;
+
+        MessageBox.confirm(
+            `¿Estás seguro que quieres eliminar el ave '${sNombreAve}'?`,
+            {
+                title: "Eliminar Ave",
+                onClose: (oAction: string) => {
+                    if (oAction === MessageBox.Action.OK) {
+                        this.performEliminar(oAve);
                     }
-                }
+                },
             }
-        });
+        );
+    }
+
+    private async performEliminar(ave: IAve): Promise<void> {
+        try {
+            const oRouter = (this.getOwnerComponent() as any).getRouter();
+            const response = await fetch(`${this.baseUrl}/eliminarAve`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify({
+                    aveId: ave.ID
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const oResult = await response.json();
+
+            if (oResult?.success) {
+                MessageBox.success("¡Ave eliminada exitosamente!", {
+                    actions: [MessageBox.Action.OK],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                        oRouter.navTo("RouteList");
+                    },
+                    dependentOn: this.getView()
+                });
+
+            } else {
+                MessageToast.show(oResult?.message || "No se pudo eliminar");
+            }
+
+
+        } catch (error) {
+            console.error("Error eliminando ave:", error);
+            MessageBox.error("Error al eliminar el ave");
+        }
     }
 
     public onVerPadre(): void {
@@ -262,7 +301,6 @@ export default class AveDetail extends Controller {
         );
 
     }
-
 
     public onVerMadre(): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;

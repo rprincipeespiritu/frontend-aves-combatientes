@@ -74,7 +74,6 @@ export default class List extends Controller {
 
     this.getView()?.setModel(oTableModel, "table");
 
-    // Crear modelo de datos mock (reemplazar con OData)
     this.initializeData();
 
 
@@ -201,7 +200,7 @@ export default class List extends Controller {
 
   private async initializeData(): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/Aves?$expand=padre,madre`, {
+      const response = await fetch(`${this.baseUrl}/AvesActivas?$expand=padre,madre`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -276,10 +275,10 @@ export default class List extends Controller {
 
   private eliminarAve(oContext: any): void {
     const oAve = oContext.getObject() as IAve;
-    const sNombreAve = oAve.nombre;
+    const sNombreAve = oAve.nombre ? oAve.nombre : oAve.placa;
 
     MessageBox.confirm(
-        `¿Estás seguro de que quieres eliminar el ave '${sNombreAve}'?`,
+        `¿Estás seguro que quieres eliminar el ave '${sNombreAve}'?`,
         {
           title: "Eliminar Ave",
           onClose: (oAction: string) => {
@@ -291,15 +290,41 @@ export default class List extends Controller {
     );
   }
 
-  private performEliminar(ave: IAve): void {
+  private async performEliminar(ave: IAve): Promise<void> {
     try {
-      const oAvesModel = this.getView()?.getModel("aves") as JSONModel;
-      const aAves = oAvesModel.getData() as IAve[];
 
-      const updatedAves = aAves.filter((a) => a.id !== ave.id);
-      oAvesModel.setData(updatedAves);
+      const response = await fetch(`${this.baseUrl}/eliminarAve`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.authService.getToken()}`
+        },
+        body: JSON.stringify({
+          aveId: ave.ID
+        })
+      });
 
-      MessageToast.show("Ave eliminada exitosamente");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const oResult = await response.json();
+
+      if (oResult?.success) {
+        MessageToast.show("Ave eliminada exitosamente");
+        /*const oTable = this.byId("avesTable") as any;
+        oTable?.removeSelections?.(true);
+        const oTableModel = this.getView()?.getModel("table") as JSONModel;
+        oTableModel?.setProperty("/selectedIndex", -1);
+        oTableModel?.setProperty("/selected", false);
+        oTableModel?.setProperty("/selectedItem", null);
+         */
+        this.initializeData();
+      } else {
+        MessageToast.show(oResult?.message || "No se pudo eliminar");
+      }
+
+
     } catch (error) {
       console.error("Error eliminando ave:", error);
       MessageBox.error("Error al eliminar el ave");

@@ -44,17 +44,20 @@
                     <tnt:NavigationListItem
                             text="Incubaciones"
                             icon="sap-icon://shipping-status"
-                            key="incubaciones" />
+                            key="incubaciones"
+                            enabled="false" />
 
                     <tnt:NavigationListItem
                             text="Peleas"
                             icon="sap-icon://activity-items"
-                            key="peleas" />
+                            key="peleas"
+                            visible="false" />
 
                     <tnt:NavigationListItem
                             text="Vacunación"
                             icon="sap-icon://activity-individual"
-                            key="vacunacion" />
+                            key="vacunacion"
+                            enabled="false" />
                 </tnt:NavigationList>
             </tnt:SideNavigation>
         </tnt:sideContent>

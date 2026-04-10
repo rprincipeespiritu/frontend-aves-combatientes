@@ -16,7 +16,8 @@
             <Button
                     text="Incubaciones"
                     icon="sap-icon://shipping-status"
-                    press=".onMobileMenuPress">
+                    press=".onMobileMenuPress"
+                    enabled="false">
                 <customData>
                     <core:CustomData key="key" value="incubaciones" />
                 </customData>
@@ -25,7 +26,8 @@
             <Button
                     text="Peleas"
                     icon="sap-icon://activity-items"
-                    press=".onMobileMenuPress">
+                    press=".onMobileMenuPress"
+                    visible="false">
                 <customData>
                     <core:CustomData key="key" value="peleas" />
                 </customData>
@@ -34,7 +36,8 @@
             <Button
                     text="Vacunación"
                     icon="sap-icon://activity-individual"
-                    press=".onMobileMenuPress">
+                    press=".onMobileMenuPress"
+                    enabled="false">
                 <customData>
                     <core:CustomData key="key" value="vacunacion" />
                 </customData>

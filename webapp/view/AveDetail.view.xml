@@ -225,7 +225,7 @@
             <Toolbar>
                 <ToolbarSpacer/>
                 <Button text="Editar" icon="sap-icon://edit" press="onEditar" visible="{= !${detail>/editMode}}"/>
-                <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="onEliminar"/>
+                <Button icon="sap-icon://delete" type="Reject" tooltip="Eliminar" press="eliminarAve"/>
                 <Button text="Cancelar" press="onCancelarEdicion" visible="true"/>
                 <!-- <Button text="Guardar" type="Emphasized" press="onGuardar"/> -->
             </Toolbar>
