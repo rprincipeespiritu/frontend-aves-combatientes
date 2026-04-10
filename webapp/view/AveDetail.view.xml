@@ -42,7 +42,7 @@
                             <Label text="Apodo"/>
                             <Input value="{detail>/apodo}" editable="{detail>/editMode}"/>
 
-                            <Label text="Sexo"/>
+                            <Label text="Género"/>
                             <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
                                 <core:Item key="M" text="Macho"/>
                                 <core:Item key="H" text="Hembra"/>
@@ -130,10 +130,10 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Padre"/>
-                            <Link text="{detail>/padreNombre}" press="onVerPadre"/>
+                            <Link text="{detail>/padre/placa} {detail>/padre/nombre}" press="onVerPadre"/>
 
                             <Label text="Madre"/>
-                            <Link text="{detail>/madreNombre}" press="onVerMadre"/>
+                            <Link text="{detail>/madre/placa} {detail>/madre/nombre}" press="onVerMadre"/>
 
                             <Label text="Procedencia"/>
                             <Input value="{detail>/procedencia}" editable="false"/>

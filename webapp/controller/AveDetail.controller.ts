@@ -238,20 +238,56 @@ export default class AveDetail extends Controller {
 
     public onVerPadre(): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
-        const padreId = oModel.getProperty("/padre_ID");
-        if (padreId) {
-            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
-            oRouter?.navTo("RouteAveDetail", { aveId: padreId });
-        }
+        let sNombreAve = oModel.getProperty("/padre/nombre");
+        MessageBox.confirm(
+            `¿Estás seguro que deseas navegar a los detalles del Padre '${sNombreAve}'?`,
+            {
+                title: "Navegar detalle Padre",
+                onClose: (oAction: string) => {
+                    if (oAction === MessageBox.Action.OK) {
+                        const padreId: any = oModel.getProperty("/padre/ID");
+
+                        if (padreId) {
+                            const oRouter = (this.getOwnerComponent() as UIComponent).getRouter();
+
+                            const sHash = oRouter.getURL("RouteAveDetail", {
+                                aveId: padreId
+                            });
+
+                            window.open("#" + sHash, "_blank"); //abre en nueva pestaña
+                        }
+                    }
+                },
+            }
+        );
+
     }
+
 
     public onVerMadre(): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
-        const madreId = oModel.getProperty("/madre_ID");
-        if (madreId) {
-            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
-            oRouter?.navTo("RouteAveDetail", { aveId: madreId });
-        }
+        let sNombreAve = oModel.getProperty("/madre/nombre");
+        MessageBox.confirm(
+            `¿Estás seguro que deseas navegar a los detalles de la Madre '${sNombreAve}'?`,
+            {
+                title: "Navegar detalle Madre",
+                onClose: (oAction: string) => {
+                    if (oAction === MessageBox.Action.OK) {
+                        const madreId: any = oModel.getProperty("/madre/ID");
+
+                        if (madreId) {
+                            const oRouter = (this.getOwnerComponent() as UIComponent).getRouter();
+
+                            const sHash = oRouter.getURL("RouteAveDetail", {
+                                aveId: madreId
+                            });
+
+                            window.open("#" + sHash, "_blank"); //abre en nueva pestaña
+                        }
+                    }
+                },
+            }
+        );
     }
 
     public onAgregarPesaje(): void {

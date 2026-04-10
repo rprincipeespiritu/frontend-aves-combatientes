@@ -63,8 +63,8 @@
                                             width="100%"
                                             selectionChange="onFiltrarGenero"
                                             class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="M" text="Gallo"/>
-                                        <core:Item key="H" text="Gallina"/>
+                                        <core:Item key="M" text="Macho"/>
+                                        <core:Item key="H" text="Hembra"/>
                                     </ComboBox>
 
                                     <ComboBox

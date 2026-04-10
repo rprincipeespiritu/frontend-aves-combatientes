@@ -466,8 +466,8 @@ export default class List extends Controller {
 
   public formatearSexo(sexo: SexoAve): string {
     const estados = {
-      [SexoAve.Hembra]: "Gallina",
-      [SexoAve.Macho]: "Gallo",
+      [SexoAve.Hembra]: "Hembra",
+      [SexoAve.Macho]: "Macho",
     };
 
     return estados[sexo] || sexo;

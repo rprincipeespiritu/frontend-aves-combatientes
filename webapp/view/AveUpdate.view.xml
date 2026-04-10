@@ -30,7 +30,7 @@
                             <Label text="Apodo"/>
                             <Input value="{update>/apodo}" placeholder="Apodo"/>
 
-                            <Label text="Sexo" required="true"/>
+                            <Label text="Género" required="true"/>
                             <Select selectedKey="{update>/sexo}">
                                 <core:Item key="M" text="Macho"/>
                                 <core:Item key="H" text="Hembra"/>
