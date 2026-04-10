@@ -64,7 +64,7 @@ export default class AveUpdate extends Controller {
             this.getView()?.setModel(oModel, "update");
 
             this.cargarAve();
-            this.cargarCatalogos();
+            //this.cargarCatalogos();
         }
     }
 
@@ -117,7 +117,7 @@ export default class AveUpdate extends Controller {
         const token = this.authService.getToken();
         try {
             const response = await fetch(
-                `${this.baseUrl}/Aves('${this.aveId}')?$expand=pesajes,peleas,padre,madre`,
+                `${this.baseUrl}/AvesActivas('${this.aveId}')?$expand=padre,madre`,
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
 
@@ -167,7 +167,7 @@ export default class AveUpdate extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
-
+    /*
     private async cargarCatalogos(): Promise<void> {
         try {
 
@@ -188,7 +188,7 @@ export default class AveUpdate extends Controller {
             console.error("Error cargando catálogos:", error);
         }
     }
-
+    */
     private onValueHelpPadre = (): void => {
 
         const oThat = this;
@@ -206,7 +206,7 @@ export default class AveUpdate extends Controller {
     public async onAbrirPopupPadres(helpSelected: string, sTitulo: string): Promise<void> {
         try {
 
-            const response = await fetch(`${this.baseUrl}/Aves`, {
+            const response = await fetch(`${this.baseUrl}/AvesActivas`, {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
