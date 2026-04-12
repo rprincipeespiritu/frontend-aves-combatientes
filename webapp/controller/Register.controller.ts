@@ -85,18 +85,18 @@ export default class Register extends Controller {
 
             if (result.success) {
 
-                MessageBox.success("¡Cuenta creada exitosamente! Bienvenido " + result.nombre + " " + result.apellido, {
+                MessageBox.success("¡Tu cuenta fue creada correctamente. Revisa tu correo para activarla.!", {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
                     onClose: function (sAction) {
-                        // Navegar a la página principal
-                        oThat.navigateToMain();
+                        // Navegar a la página Login
+                        oThat.onGoToLogin();
                     },
                     dependentOn: this.getView()
                 });
 
             } else {
-                this.showError(result.error.message || "Error creando la cuenta");
+                this.showError(result?.error?.message || "Error creando la cuenta");
             }
 
         } catch (error) {

@@ -84,6 +84,7 @@ export default class Login extends Controller {
     public onLogin = async (): Promise<void> => {
         const oThat = this;
         const oModel = this.getView()?.getModel() as JSONModel;
+        let sEmail = oModel.getProperty("/email");
         const loginData: LoginData = {
             email: oModel.getProperty("/email"),
             password: oModel.getProperty("/password")
@@ -113,7 +114,7 @@ export default class Login extends Controller {
                 MessageBox.success("Bienvenido " + result.nombre + " " + result.apellido, {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
-                    onClose: function (sAction) {
+                    onClose: function (sAction : any) : void {
                         // Navegar a la página principal
                         oThat.navigateToMain();
                     },
@@ -121,7 +122,11 @@ export default class Login extends Controller {
                 });
              
             } else {
-                this.showError(result.error.message || "Error de autenticación");
+                if (result.error?.code === "403") {
+                    this._mostrarDialogoCuentaPendiente(sEmail);
+                    return;
+                }
+                throw new Error(result.error?.message || result.message || "Credenciales inválidas");
             }
 
         } catch (error) {
@@ -132,6 +137,50 @@ export default class Login extends Controller {
             oModel.setProperty("/loginEnabled", true);
         }
     };
+
+    private _mostrarDialogoCuentaPendiente(email: string): void {
+        MessageBox.warning(
+            "Tu cuenta aún no ha sido activada. Revisa tu correo. Si no recibiste el mensaje, puedes reenviar el enlace.",
+            {
+                title: "Cuenta pendiente",
+                actions: ["Reenviar correo", MessageBox.Action.CLOSE],
+                emphasizedAction: "Reenviar correo",
+                onClose: async (sAction: string) => {
+                    if (sAction === "Reenviar correo") {
+                        await this.reenviarActivacion(email);
+                    }
+                }
+            }
+        );
+    }
+
+    public async onReenviarActivacionDirecto(): Promise<void> {
+        const oEmailInput = this.byId("inputEmail") as Input;
+        const email = oEmailInput.getValue().trim().toLowerCase();
+
+        if (!email) {
+            MessageBox.warning("Ingresa tu correo electrónico");
+            return;
+        }
+
+        await this.reenviarActivacion(email);
+    }
+
+    private async reenviarActivacion(email: string): Promise<void> {
+        try {
+
+            const response = await this.authService.reenviarActivacion(email);
+
+            if (!response.success) {
+                MessageBox.error(response?.error?.message || response?.message || "No se pudo reenviar el correo");
+                return;
+            }
+
+            MessageBox.success(response?.message || "Se ha reenviado el correo de activación.");
+        } catch (error) {
+            MessageBox.error("No se pudo conectar con el servidor");
+        }
+    }
 
     public onLoginSubmit = (): void => {
         // Llamar login cuando presione Enter
