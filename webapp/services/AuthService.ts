@@ -140,6 +140,28 @@ export class AuthService {
         }
     }
 
+    // reenviarActivacion
+    public async reenviarActivacion(email: String): Promise<AuthResponse> {
+        try {
+            const response = await fetch(`${this.baseUrl}/reenviarActivacion`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email })
+            });
+
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error en reenviarActivacion:', error);
+            return {
+                success: false,
+                error: 'Error de conexión'
+            };
+        }
+    }
+
     // Logout
     public async logout(): Promise<void> {
         try {
