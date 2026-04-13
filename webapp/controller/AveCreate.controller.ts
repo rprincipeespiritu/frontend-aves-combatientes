@@ -64,7 +64,7 @@ export default class AveCreate extends Controller {
             this.byId("table-uploadSet").setModel(oModelDocuments, "documents");
             */
             this.getView()?.setModel(oModel, "create");
-            //this.cargarCatalogos();
+            this.cargarCatalogos();
         }
     }
 
@@ -132,7 +132,7 @@ export default class AveCreate extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
-    /*
+
     private async cargarCatalogos(): Promise<void> {
         try {
 
@@ -153,7 +153,7 @@ export default class AveCreate extends Controller {
             console.error("Error cargando catálogos:", error);
         }
     }
-    */
+
     private onValueHelpPadre = (): void => {
 
         const oThat = this;

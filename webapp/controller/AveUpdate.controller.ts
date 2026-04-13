@@ -64,7 +64,7 @@ export default class AveUpdate extends Controller {
             this.getView()?.setModel(oModel, "update");
 
             this.cargarAve();
-            //this.cargarCatalogos();
+            this.cargarCatalogos();
         }
     }
 
@@ -167,7 +167,7 @@ export default class AveUpdate extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
-    /*
+
     private async cargarCatalogos(): Promise<void> {
         try {
 
@@ -188,7 +188,7 @@ export default class AveUpdate extends Controller {
             console.error("Error cargando catálogos:", error);
         }
     }
-    */
+
     private onValueHelpPadre = (): void => {
 
         const oThat = this;
