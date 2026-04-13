@@ -193,8 +193,8 @@ export default class Login extends Controller {
     };
 
     public onForgotPassword = (): void => {
-        MessageToast.show("Funcionalidad de recuperación de contraseña próximamente");
-        // Implementar lógica de recuperación de contraseña
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteForgotPassword");
     };
 
     // Validación del formulario

@@ -77,7 +77,7 @@
                 </Panel>
 
                 <!-- Estadísticas -->
-                <Panel headerText="Estadísticas" expandable="false" class="sapUiSmallMarginTop">
+                <Panel headerText="Estadísticas" expandable="false" class="sapUiSmallMarginTop" visible="false">
                     <HBox justifyContent="SpaceAround" class="sapUiSmallMargin">
                         <VBox alignItems="Center">
                             <Title text="{detail>/totalPeleas}" level="H2"/>

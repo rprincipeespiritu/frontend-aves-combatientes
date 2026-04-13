@@ -123,6 +123,20 @@
           "target": [
             "TargetAveUpdate"
           ]
+        },
+        {
+          "pattern": "forgot-password",
+          "name": "RouteForgotPassword",
+          "target": [
+            "TargetForgotPassword"
+            ]
+        },
+        {
+          "pattern": "reset-password/{token}",
+          "name": "RouteResetPassword",
+          "target": [
+            "TargetResetPassword"
+            ]
         }
       ],
       "targets": {
@@ -153,6 +167,14 @@
         "TargetAveUpdate": {
           "id": "AveUpdate",
           "name": "AveUpdate"
+        },
+        "TargetForgotPassword": {
+          "id": "ForgotPassword",
+          "name": "ForgotPassword"
+        },
+        "TargetResetPassword": {
+          "id": "ResetPassword",
+          "name": "ResetPassword"
         }
       }
     },
