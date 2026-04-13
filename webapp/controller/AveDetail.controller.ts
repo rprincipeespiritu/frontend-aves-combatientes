@@ -55,7 +55,7 @@ export default class AveDetail extends Controller {
         }), "detail");
 
         this.cargarAve();
-        //this.cargarCatalogos();
+        this.cargarCatalogos();
     }
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
@@ -138,7 +138,6 @@ export default class AveDetail extends Controller {
         }
     }
 
-    /*
     private async cargarCatalogos(): Promise<void> {
         const token = this.authService.getToken();
         const headers = { "Authorization": `Bearer ${token}` };
@@ -153,7 +152,6 @@ export default class AveDetail extends Controller {
             console.error("Error cargando catálogos:", error);
         }
     }
-    */
 
     public onEditar(oEvent: Event): void {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
