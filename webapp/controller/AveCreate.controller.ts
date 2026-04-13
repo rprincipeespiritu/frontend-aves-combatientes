@@ -30,11 +30,11 @@ export default class AveCreate extends Controller {
         this.authService = AuthService.getInstance();
 
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-        const oTarget = oRouter?.getTarget("TargetAveCreate") as any;
-        oTarget?.attachDisplay(this.onTargetDisplay, this);
+        oRouter?.getRoute("RouteAveCreate")?.attachPatternMatched(this.onRouteMatched, this);
+
     }
 
-    private onTargetDisplay = (): void => {
+    private onRouteMatched = (oEvent: any): void => {
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
             oRouter?.navTo("RouteLogin");
