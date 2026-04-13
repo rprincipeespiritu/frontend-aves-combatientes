@@ -41,6 +41,7 @@ export interface AuthResponse {
 
 export class AuthService {
     private static instance: AuthService;
+    private _token: string = "";
     private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
     private token: string | null = null;
     private usuario: Usuario | null = null;
@@ -133,6 +134,53 @@ export class AuthService {
 
         } catch (error) {
             console.error('Error en registro:', error);
+            return {
+                success: false,
+                error: 'Error de conexión'
+            };
+        }
+    }
+
+    // resetPassword
+    public async resetPassword(token: String, newPassword: String): Promise<AuthResponse> {
+        try {
+            const response = await fetch(`${this.baseUrl}/restablecerPassword`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token: token,
+                    newPassword
+                })
+            });
+
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error en restablecerPassword:', error);
+            return {
+                success: false,
+                error: 'Error de conexión'
+            };
+        }
+    }
+
+    // ForgotPassword
+    public async forgotPassword(email: String): Promise<AuthResponse> {
+        try {
+            const response = await fetch(`${this.baseUrl}/solicitarRecuperacionPassword`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email })
+            });
+
+            return await response.json();
+
+        } catch (error) {
+            console.error('Error en solicitarRecuperacionPassword:', error);
             return {
                 success: false,
                 error: 'Error de conexión'
