@@ -142,11 +142,10 @@
                                     press="onEditarAve"
                                     visible="false"/>
                             <Button
-                                    text="{= ${device>/system/phone} ? 'Eliminar' : 'Eliminar Seleccionada'}"
-                                    type="Reject"
-                                    enabled="{= ${table>/selectedIndex} >= 0}"
-                                    press="onEliminarAve"
-                                    visible="false"/>
+                                    text="{= ${device>/system/phone} ? '' : 'Exportar a Excel'}"
+                                    icon="sap-icon://excel-attachment"
+                                    press="onExportarExcel"
+                                    type="Emphasized" />
                         </OverflowToolbar>
                     </headerToolbar>
 

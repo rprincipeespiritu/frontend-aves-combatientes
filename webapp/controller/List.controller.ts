@@ -15,6 +15,7 @@ import View from "sap/ui/core/mvc/View";
 import Fragment from "sap/ui/core/Fragment";
 import Dialog from "sap/m/Dialog";
 import Router from "sap/ui/core/routing/Router";
+import Spreadsheet from "sap/ui/export/Spreadsheet";
 import { AuthService } from "../services/AuthService";
 import {
   IAve,
@@ -578,6 +579,54 @@ export default class List extends Controller {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
       oRouter?.navTo("RouteAveUpdate", { aveId: oAve.ID });
     }
+  }
+
+  public onExportarExcel = (): void => {
+    const oTable = this.byId("avesTable") as any;
+    const oBinding = oTable.getBinding("items");
+
+    const aData = oBinding.getContexts().map((oContext: any) => {
+      const o = oContext.getObject();
+
+      return {
+        placa: o.placa,
+        nombre: o.nombre,
+        fechaNacimiento: o.fechaNacimiento,
+        sexo: o.sexo,
+        categoria: o.categoria,
+        cria: o.cria,
+        estado: o.estado,
+        padrote: o.padrote,
+        padre: o.padre ? o.padre.placa + " " + o.padre?.nombre : "",
+        madre: o.madre ? o.madre.placa + " " + o.madre?.nombre : ""
+      };
+    });
+
+    const aCols = [
+      { label: "Placa", property: "placa" },
+      { label: "Nombre", property: "nombre" },
+      { label: "Fecha Nacimiento", property: "fechaNacimiento" },
+      { label: "Sexo", property: "sexo" },
+      { label: "Categoria", property: "categoria" },
+      { label: "Estado", property: "estado" },
+      { label: "Cria", property: "cria" },
+      { label: "Padre", property: "padre" },
+      { label: "Madre", property: "madre" }
+    ];
+
+    const oSettings = {
+      workbook: {
+        columns: aCols
+      },
+      dataSource: aData,
+      fileName: "Aves adultas.xlsx"
+    };
+
+    const oSheet = new Spreadsheet(oSettings);
+
+    oSheet.build().finally(() => {
+      oSheet.destroy();
+    });
   }
 
 }

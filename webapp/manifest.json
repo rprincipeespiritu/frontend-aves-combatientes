@@ -40,7 +40,8 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.f": {},
-        "sap.tnt": {}
+        "sap.tnt": {},
+        "sap.ui.export": {}
       }
     },
     "contentDensities": {
