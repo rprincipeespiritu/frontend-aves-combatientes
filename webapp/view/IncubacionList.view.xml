@@ -3,13 +3,21 @@
     xmlns="sap.m">
 
     <Page title="Incubaciones" showNavButton="true" navButtonPress="onNavBack">
-        <headerContent>
+        <!-- <headerContent>
             <Button text="Actualizar" icon="sap-icon://refresh" press="onRefresh" />
             <Button text="Nueva Incubación" type="Emphasized" icon="sap-icon://add" press="onCreate" />
-        </headerContent>
+        </headerContent> -->
 
         <content>
             <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title text="Incubaciones Registradas ({= ${aves>/incubaciones}.length})"/>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://refresh" enabled="{= ${table>/selectedIndex} >= 0}" press="onRefresh"/>
+                        <Button con="sap-icon://add" type="Emphasized" press="onCreate" />
+                    </OverflowToolbar>
+                </headerToolbar>
                 <columns>
                     <Column>
                         <Text text="Código" />
