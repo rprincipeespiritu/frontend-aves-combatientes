@@ -14,7 +14,7 @@ export default class IncubacionForm extends Controller {
   private incubacionId: string | null = null;
   private _oPadresDialog: Dialog;
   private helpSelected: any;
-  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
 
   public onInit(): void {
     const oModel = new JSONModel({
