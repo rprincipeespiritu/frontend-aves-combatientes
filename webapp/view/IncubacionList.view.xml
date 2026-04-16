@@ -1,5 +1,4 @@
-<mvc:View
-    controllerName="com.rprincipees.registroavescombate.controller.IncubacionList"
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionList"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
 
@@ -10,18 +9,29 @@
         </headerContent>
 
         <content>
-            <Table
-                id="tblIncubaciones"
-                items="{view>/incubaciones}"
-                busy="{view>/busy}">
+            <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
                 <columns>
-                    <Column><Text text="Código" /></Column>
-                    <Column><Text text="Fecha Inicio" /></Column>
-                    <Column><Text text="Padre" /></Column>
-                    <Column><Text text="Madre" /></Column>
-                    <Column hAlign="End"><Text text="Huevos" /></Column>
-                    <Column><Text text="Estado" /></Column>
-                    <Column><Text text="Acciones" /></Column>
+                    <Column>
+                        <Text text="Código" />
+                    </Column>
+                    <Column>
+                        <Text text="Fecha Inicio" />
+                    </Column>
+                    <Column>
+                        <Text text="Padre" />
+                    </Column>
+                    <Column>
+                        <Text text="Madre" />
+                    </Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Huevos" />
+                    </Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Estado" />
+                    </Column>
+                    <Column>
+                        <Text text="Acciones" />
+                    </Column>
                 </columns>
 
                 <items>
