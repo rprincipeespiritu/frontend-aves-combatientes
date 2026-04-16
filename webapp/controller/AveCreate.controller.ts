@@ -136,7 +136,7 @@ export default class AveCreate extends Controller {
     private async cargarCatalogos(): Promise<void> {
         try {
 
-            const response = await fetch(`${this.baseUrl}/Aves`, {
+            const response = await fetch(`${this.baseUrl}/AvesActivas`, {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

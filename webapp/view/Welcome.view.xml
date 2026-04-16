@@ -45,7 +45,7 @@
                             text="Incubaciones"
                             icon="sap-icon://shipping-status"
                             key="incubaciones"
-                            enabled="false" />
+                            enabled="true" />
 
                     <tnt:NavigationListItem
                             text="Peleas"

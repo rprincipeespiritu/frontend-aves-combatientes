@@ -83,7 +83,7 @@ export default class List extends Controller {
   public async onAbrirPopupPadres(_oEvent: Event): Promise<void> {
     try {
 
-      const response = await fetch(`${this.baseUrl}/Aves`, {
+      const response = await fetch(`${this.baseUrl}/AvesActivas`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
