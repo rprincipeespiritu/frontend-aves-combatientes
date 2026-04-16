@@ -79,65 +79,62 @@
         {
           "name": "RouteLogin",
           "pattern": "",
-          "target": [
-            "TargetLogin"
-          ]
+          "target": ["TargetLogin"]
         },
         {
           "name": "RouteRegister",
           "pattern": "register",
-          "target": [
-            "TargetRegister"
-          ]
+          "target": ["TargetRegister"]
         },
         {
           "name": "RouteWelcome",
           "pattern": "welcome",
-          "target": [
-            "TargetWelcome"
-          ]
+          "target": ["TargetWelcome"]
         },
         {
           "name": "RouteList",
           "pattern": "list",
-          "target": [
-            "TargetList"
-          ]
+          "target": ["TargetList"]
         },
         {
           "name": "RouteAveCreate",
           "pattern": "aves/crear",
-          "target": [
-            "TargetAveCreate"
-          ]
+          "target": ["TargetAveCreate"]
         },
         {
           "name": "RouteAveDetail",
           "pattern": "aves/{aveId}",
-          "target": [
-            "TargetAveDetail"
-          ]
+          "target": ["TargetAveDetail"]
         },
         {
           "name": "RouteAveUpdate",
           "pattern": "aves/{aveId}/editar",
-          "target": [
-            "TargetAveUpdate"
-          ]
+          "target": ["TargetAveUpdate"]
         },
         {
           "pattern": "forgot-password",
           "name": "RouteForgotPassword",
-          "target": [
-            "TargetForgotPassword"
-            ]
+          "target": ["TargetForgotPassword"]
         },
         {
           "pattern": "reset-password/{token}",
           "name": "RouteResetPassword",
-          "target": [
-            "TargetResetPassword"
-            ]
+          "target": ["TargetResetPassword"]
+        },
+        {
+          "pattern": "incubaciones",
+          "name": "RouteIncubacionList",
+          "target": "TargetIncubacionList"
+        },
+        {
+          "pattern": "incubaciones/create",
+          "name": "RouteIncubacionCreate",
+          "target": "TargetIncubacionForm"
+        },
+        {
+          "pattern": "incubaciones/edit/{id}",
+          "name": "RouteIncubacionEdit",
+          "target": "TargetIncubacionForm"
         }
       ],
       "targets": {
@@ -176,6 +173,14 @@
         "TargetResetPassword": {
           "id": "ResetPassword",
           "name": "ResetPassword"
+        },
+        "TargetIncubacionList": {
+          "id": "IncubacionList",
+          "name": "IncubacionList"
+        },
+        "TargetIncubacionForm": {
+          "id": "IncubacionForm",
+          "name": "IncubacionForm"
         }
       }
     },

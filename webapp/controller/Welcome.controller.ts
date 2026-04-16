@@ -104,7 +104,7 @@ export default class Welcome extends Controller {
                 break;
 
             case "incubaciones":
-                oRouter?.navTo("RouteIncubaciones");
+                oRouter?.navTo("RouteIncubacionList");
                 break;
 
             case "peleas":

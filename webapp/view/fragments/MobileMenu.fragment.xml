@@ -17,7 +17,7 @@
                     text="Incubaciones"
                     icon="sap-icon://shipping-status"
                     press=".onMobileMenuPress"
-                    enabled="false">
+                    enabled="true">
                 <customData>
                     <core:CustomData key="key" value="incubaciones" />
                 </customData>

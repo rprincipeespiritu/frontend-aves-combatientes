@@ -98,9 +98,10 @@ export default class Login extends Controller {
         // Mostrar loading
         this.setLoginBusy(true);
         oModel.setProperty("/loginEnabled", false);
+        let result = null;
 
         try {
-            const result = await this.authService.login(loginData);
+            result = await this.authService.login(loginData);
 
             if (result.success) {
                 // Guardar credenciales si está marcado "recordar"
@@ -131,7 +132,7 @@ export default class Login extends Controller {
 
         } catch (error) {
             console.error("Error en login:", error);
-            this.showError("Error de conexión. Verifica tu conexión a internet.");
+            this.showError(result?.error?.message);
         } finally {
             this.setLoginBusy(false);
             oModel.setProperty("/loginEnabled", true);

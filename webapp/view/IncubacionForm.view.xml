@@ -1,0 +1,62 @@
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionForm"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form">
+
+    <Page title="{= ${view>/editMode} ? 'Editar Incubación' : 'Nueva Incubación' }" showNavButton="true" navButtonPress="onNavBack">
+
+        <content>
+            <VBox class="sapUiMediumMargin" busy="{view>/busy}">
+                <f:SimpleForm editable="true" layout="ResponsiveGridLayout">
+                    <f:content>
+                        <Label text="Fecha Inicio" />
+                        <DatePicker value="{view>/form/fechaInicio}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" />
+
+                        <Label text="Fecha Fin Estimada" />
+                        <DatePicker value="{view>/form/fechaFinEstimada}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" />
+
+                        <Label text="Padre" />
+                        <Input id="inputPadre" placeholder="Seleccionar Padre" value="{view>/placaPadre}" description="{view>/nombrePadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpPadre" width="100%"/>
+                        <!-- <Select selectedKey="{view>/form/padre_ID}" items="{view>/aves}">
+                            <core:Item xmlns:core="sap.ui.core" key="{view>ID}" text="{= ${view>nombre} + (${view>placa} ? ' - ' + ${view>placa} : '') }" />
+                        </Select> -->
+
+                        <Label text="Madre" />
+                        <Input id="inputMadre" placeholder="Seleccionar Madre" value="{view>/placaMadre}" description="{view>/nombreMadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpMadre" width="100%"/>
+                        <!-- <Select selectedKey="{view>/form/madre_ID}" items="{view>/aves}">
+                            <core:Item xmlns:core="sap.ui.core" key="{view>ID}" text="{= ${view>nombre} + (${view>placa} ? ' - ' + ${view>placa} : '') }" />
+                        </Select> -->
+
+                        <Label text="Cantidad de Huevos" />
+                        <Input value="{view>/form/cantidadHuevos}" type="Number" />
+
+                        <Label text="Cantidad Fértiles" />
+                        <Input value="{view>/form/cantidadFertiles}" type="Number" />
+
+                        <Label text="Cantidad Nacidos" />
+                        <Input value="{view>/form/cantidadNacidos}" type="Number" />
+
+                        <Label text="Cantidad No Eclosión" />
+                        <Input value="{view>/form/cantidadNoEclosion}" type="Number" />
+
+                        <Label text="Estado" />
+                        <Select selectedKey="{view>/form/estado}">
+                            <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="PROGRAMADA" />
+                            <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="EN_PROCESO" />
+                            <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="FINALIZADA" />
+                            <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="CANCELADA" />
+                        </Select>
+
+                        <Label text="Observación" />
+                        <TextArea value="{view>/form/observacion}" rows="4" />
+                    </f:content>
+                </f:SimpleForm>
+
+                <HBox class="sapUiMediumMarginTop">
+                    <Button text="Guardar" type="Emphasized" press="onSave" />
+                    <Button text="Cancelar" class="sapUiTinyMarginBegin" press="onNavBack" />
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

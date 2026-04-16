@@ -1,0 +1,46 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.IncubacionList"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page title="Incubaciones" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button text="Actualizar" icon="sap-icon://refresh" press="onRefresh" />
+            <Button text="Nueva Incubación" type="Emphasized" icon="sap-icon://add" press="onCreate" />
+        </headerContent>
+
+        <content>
+            <Table
+                id="tblIncubaciones"
+                items="{view>/incubaciones}"
+                busy="{view>/busy}">
+                <columns>
+                    <Column><Text text="Código" /></Column>
+                    <Column><Text text="Fecha Inicio" /></Column>
+                    <Column><Text text="Padre" /></Column>
+                    <Column><Text text="Madre" /></Column>
+                    <Column hAlign="End"><Text text="Huevos" /></Column>
+                    <Column><Text text="Estado" /></Column>
+                    <Column><Text text="Acciones" /></Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{view>codigo}" />
+                            <Text text="{view>fechaInicio}" />
+                            <Text text="{view>padre/nombre}" />
+                            <Text text="{view>madre/nombre}" />
+                            <ObjectNumber number="{view>cantidadHuevos}" />
+                            <ObjectStatus text="{view>estado}" />
+                            <HBox>
+                                <Button icon="sap-icon://edit" type="Transparent" press="onEdit" />
+                                <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
