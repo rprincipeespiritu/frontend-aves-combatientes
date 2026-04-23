@@ -17,7 +17,7 @@ export default class IncubacionDetail extends Controller {
   public formatter = formatter;
   private service = new IncubacionService();
   private incubacionId: string = "";
-  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
 
   public onInit(): void {
     const oModel = new JSONModel({
