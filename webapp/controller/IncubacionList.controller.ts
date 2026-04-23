@@ -108,6 +108,7 @@ export default class IncubacionList extends Controller {
   }
 
   public onRefresh(): void {
+    localStorage.setItem('filterIncProceso', "");
     void this._loadData();
   }
 

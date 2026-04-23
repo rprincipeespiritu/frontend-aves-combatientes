@@ -48,7 +48,7 @@
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="En proceso" subheader="Activas" press="onNavIncubationListProcess">
+                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones en proceso" subheader="" press="onNavIncubationListProcess">
                             <TileContent>
                                 <NumericContent value="{dashboard>/incubacionesActivas}" icon="sap-icon://process"/>
                             </TileContent>
@@ -92,7 +92,7 @@
                                             <Text text="Estado"/>
                                         </Column>
                                         <Column>
-                                            <Text text="Fecha"/>
+                                            <Text text="Fecha Incub."/>
                                         </Column>
                                     </columns>
 
