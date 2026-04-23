@@ -10,8 +10,10 @@ import ActionSheet from "sap/m/ActionSheet";
 import NavigationListItem from "sap/tnt/NavigationListItem";
 import Control from "sap/ui/mdc/Control";
 import Popover from "sap/m/Popover";
+import {IAve} from "com/rprincipees/registroavescombate/types/Models";
 
 export default class Welcome extends Controller {
+    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
     private authService: AuthService;
     private _carouselInterval: any;
     private _bPhone: boolean;
@@ -20,13 +22,13 @@ export default class Welcome extends Controller {
     private _oUserMenuSheet: any;
 
     public onAfterRendering(): void {
-        const oCarousel = this.byId("imageCarousel") as any;
+        /*const oCarousel = this.byId("imageCarousel") as any;
 
         if (oCarousel) {
             this._carouselInterval = setInterval(() => {
                 oCarousel.next();
             }, 5000); // cada 3 segundos
-        }
+        }*/
     }
 
     public onInit(): void {
@@ -57,8 +59,143 @@ export default class Welcome extends Controller {
             this.getView()?.setModel(oUserModel, "user");
         }
 
+        const oDashboardModel = new JSONModel({
+            totalAves: 0,
+            totalIncubaciones: 0,
+            incubacionesActivas: 0,
+            incubacionesProgramadas: 0,
+            totalAvesActivas: 0,
+            totalNacidos: 0,
+            alertaIncubaciones: "",
+            alertaEclosion: "",
+            incubacionesRecientes: []
+        });
+
+        this.getView()?.setModel(oDashboardModel, "dashboard");
+        this._cargarDashboard();
+
     }
 
+    private async _cargarDashboard(): Promise<void> {
+        try {
+
+            const oResponse = await fetch(`${this.baseUrl}/obtenerDashboard`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({})
+            });
+
+            const oData = await oResponse.json();
+
+            if (!oResponse.ok) {
+                throw new Error(oData?.error?.message || "No se pudo cargar el dashboard");
+            }
+
+            const oModel = this.getView()?.getModel("dashboard") as JSONModel;
+
+            const aIncubacionesRecientes = (oData.incubacionesRecientes || []).map((item: any) => {
+                return {
+                    ...item,
+                    estadoTexto: this._mapEstadoTexto(item.estado),
+                    estadoState: this._mapEstadoState(item.estado),
+                    fechaIncubacionFmt: this._formatearFecha(item.fechaIncubacion)
+                };
+            });
+
+            oModel.setData({
+                totalAves: oData.totalAves || 0,
+                totalIncubaciones: oData.totalIncubaciones || 0,
+                incubacionesActivas: oData.incubacionesActivas || 0,
+                incubacionesProgramadas: oData.incubacionesProgramadas || 0,
+                totalAvesActivas: oData.totalAvesActivas || 0,
+                totalNacidos: oData.totalNacidos || 0,
+                alertaIncubaciones: oData.alertaIncubaciones || "",
+                alertaEclosion: oData.alertaEclosion || "",
+                incubacionesRecientes: aIncubacionesRecientes
+            });
+        } catch (error: any) {
+            MessageToast.show(error.message || "Error al cargar dashboard");
+        }
+    }
+
+    private _mapEstadoTexto(sEstado: string): string {
+        switch (sEstado) {
+            case "PROGRAMADA":
+                return "Programada";
+            case "EN_PROCESO":
+                return "En proceso";
+            case "COMPLETADA":
+                return "Completada";
+            case "CANCELADA":
+                return "Cancelada";
+            default:
+                return sEstado || "";
+        }
+    }
+
+    private _mapEstadoState(sEstado: string): string {
+        switch (sEstado) {
+            case "PROGRAMADA":
+                return "Information";
+            case "EN_PROCESO":
+                return "Success";
+            case "COMPLETADA":
+                return "Success";
+            case "CANCELADA":
+                return "Error";
+            default:
+                return "None";
+        }
+    }
+
+    private _formatearFecha(sFecha: string): string {
+        if (!sFecha) {
+            return "";
+        }
+
+        const oDate = new Date(sFecha);
+
+        if (isNaN(oDate.getTime())) {
+            return sFecha;
+        }
+
+        const dd = String(oDate.getDate()).padStart(2, "0");
+        const mm = String(oDate.getMonth() + 1).padStart(2, "0");
+        const yyyy = oDate.getFullYear();
+
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    public onNuevaAve(): void {
+        this.getOwnerComponent().getRouter().navTo("aveCreate");
+    }
+
+    public onNuevaIncubacion(): void {
+        this.getOwnerComponent().getRouter().navTo("incubacionCreate");
+    }
+
+    public onVerIncubaciones(): void {
+        this.getOwnerComponent().getRouter().navTo("incubacionList");
+    }
+
+    public onIrAves(): void {
+        this.getOwnerComponent().getRouter().navTo("list");
+    }
+
+    public onAbrirIncubacionDetalle(oEvent: any): void {
+        const oItem = oEvent.getSource();
+        const oCtx = oItem.getBindingContext("dashboard");
+        const oObj = oCtx?.getObject();
+
+        if (oObj?.ID) {
+            this.getOwnerComponent().getRouter().navTo("incubacionDetail", {
+                id: oObj.ID
+            });
+        }
+    }
     public async onToggleSideContent(oEvent: Event): Promise<void> {
         if (Device.system.phone) {
             if (!this._oMobileMenu) {
@@ -212,4 +349,25 @@ export default class Welcome extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
+
+    public onNavNewBird(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteAveCreate");
+    }
+
+    public onNavNewIncubation(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteIncubacionCreate");
+    }
+
+    public onNavIncubationList(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteIncubacionList");
+    }
+
+    public onNavBirdList(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteList");
+    }
+
 }
