@@ -4,22 +4,39 @@ export interface IAveOption {
   placa?: string;
 }
 
-export interface IIncubacion {
+export interface IIncubacionDetalle {
   ID?: string;
-  codigo?: string;
-  fechaInicio: string;
-  fechaFinEstimada?: string;
-  fechaFinReal?: string;
-  cantidadHuevos: number;
-  cantidadFertiles?: number;
-  cantidadNacidos?: number;
-  cantidadNoEclosion?: number;
-  estado?: string;
-  observacion?: string;
+  incubacion_ID?: string;
   padre_ID: string;
   madre_ID: string;
-  padre?: IAveOption;
-  madre?: IAveOption;
+  totalHuevos: number;
+  huevosFertiles: number;
+  huevosEclosionados: number;
+  huevosNoEclosionados: number;
+  padre?: any;
+  madre?: any;
+}
+
+export interface IIncubacion {  
+  ID?: string;
+  codigo?: string;
+  fechaIncubacion: string;
+  fechaEclosion: string;
+  fechaPreNacimiento: string;
+  fechaFinIncubacion: string;
+  fechaFinReal?: string;
+  totalHuevos: number;
+  huevosFertiles?: number;
+  huevosEclosionados?: number;
+  huevosNoFertiles?: number;
+  estado?: string;
+  observaciones?: string;
+  motivoCancelacion?: string;
+  padre_ID: string;
+  placaPadre?: string;
+  madre_ID: string;  
+  placaMadre?: string;
+  detalles?: IIncubacionDetalle[];
 }
 
 export default class IncubacionService {
@@ -51,12 +68,12 @@ export default class IncubacionService {
   }
 
   private buildEntityUrl(id: string): string {
-    return `${this.baseUrl}/Incubaciones(ID=guid'${id}')`;
+    return `${this.baseUrl}/Incubaciones(ID='${id}')`;
   }
 
   public async list(): Promise<IIncubacion[]> {
     const response = await fetch(
-      `${this.baseUrl}/Incubaciones?$expand=padre($select=ID,nombre,placa),madre($select=ID,nombre,placa)&$orderby=createdAt desc`,
+      `${this.baseUrl}/IncubacionesActivas?$orderby=createdAt desc`,
       {
         method: "GET",
         headers: this.buildHeaders(),
@@ -78,7 +95,7 @@ export default class IncubacionService {
 
   public async getById(id: string): Promise<IIncubacion> {
     const response = await fetch(
-      `${this.buildEntityUrl(id)}?$expand=padre($select=ID,nombre,placa),madre($select=ID,nombre,placa)`,
+      `${this.buildEntityUrl(id)}?$expand=detalles($expand=padre,madre)`,
       {
         method: "GET",
         headers: this.buildHeaders(),
@@ -155,7 +172,7 @@ export default class IncubacionService {
 
   public async listAves(): Promise<IAveOption[]> {
     const response = await fetch(
-      `${this.baseUrl}/Aves?$select=ID,nombre,placa&$orderby=nombre asc`,
+      `${this.baseUrl}/AvesActivas`,
       {
         method: "GET",
         headers: this.buildHeaders(),

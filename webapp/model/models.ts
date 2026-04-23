@@ -6,3 +6,4 @@ export function createDeviceModel () {
     model.setDefaultBindingMode("OneWay");
     return model;
 }
+

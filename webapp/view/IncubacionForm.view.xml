@@ -9,54 +9,97 @@
             <VBox class="sapUiMediumMargin" busy="{view>/busy}">
                 <f:SimpleForm editable="true" layout="ResponsiveGridLayout">
                     <f:content>
-                        <Label text="Fecha Inicio" />
-                        <DatePicker value="{view>/form/fechaInicio}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" />
+                        <Label text="Código" />
+                        <Text text="{view>/form/codigo}" />
+                        
+                        <Label text="Fecha Incubación" />
+                        <DateTimePicker id="DTP1" change="onfechaIncubacionChange" value="{ path:'view>/form/fechaIncubacion', type:'sap.ui.model.type.DateTime', 'formatOptions': { 'pattern': 'dd/MM/yyyy HH:mm:ss' } }" editable="{= ${view>/form/estado} === 'PROGRAMADA' }" class="sapUiSmallMarginBottom"/>
+                        <!-- <DatePicker value="{view>/form/fechaIncubacion}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueHelpOnly="true" /> -->
 
-                        <Label text="Fecha Fin Estimada" />
-                        <DatePicker value="{view>/form/fechaFinEstimada}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" />
+                        <Label text="Fecha Pre Nacimiento" />
+                        <DateTimePicker id="DTP2" editable="false" value="{ path:'view>/form/fechaPreNacimiento', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }" class="sapUiSmallMarginBottom"/>
+                        <!-- <DatePicker value="{view>/form/fechaPreNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" /> -->
 
-                        <Label text="Padre" />
-                        <Input id="inputPadre" placeholder="Seleccionar Padre" value="{view>/placaPadre}" description="{view>/nombrePadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpPadre" width="100%"/>
-                        <!-- <Select selectedKey="{view>/form/padre_ID}" items="{view>/aves}">
-                            <core:Item xmlns:core="sap.ui.core" key="{view>ID}" text="{= ${view>nombre} + (${view>placa} ? ' - ' + ${view>placa} : '') }" />
-                        </Select> -->
-
-                        <Label text="Madre" />
-                        <Input id="inputMadre" placeholder="Seleccionar Madre" value="{view>/placaMadre}" description="{view>/nombreMadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpMadre" width="100%"/>
-                        <!-- <Select selectedKey="{view>/form/madre_ID}" items="{view>/aves}">
-                            <core:Item xmlns:core="sap.ui.core" key="{view>ID}" text="{= ${view>nombre} + (${view>placa} ? ' - ' + ${view>placa} : '') }" />
-                        </Select> -->
-
-                        <Label text="Cantidad de Huevos" />
-                        <Input value="{view>/form/cantidadHuevos}" type="Number" />
-
-                        <Label text="Cantidad Fértiles" />
-                        <Input value="{view>/form/cantidadFertiles}" type="Number" />
-
-                        <Label text="Cantidad Nacidos" />
-                        <Input value="{view>/form/cantidadNacidos}" type="Number" />
-
-                        <Label text="Cantidad No Eclosión" />
-                        <Input value="{view>/form/cantidadNoEclosion}" type="Number" />
+                        <Label text="Fecha Eclosión Estimada" />
+                        <DateTimePicker id="DTP3" editable="false" value="{ path:'view>/form/fechaEclosion', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }" class="sapUiSmallMarginBottom"/>
+                        <!-- <DatePicker value="{view>/form/fechaEclosion}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" /> -->
 
                         <Label text="Estado" />
-                        <Select selectedKey="{view>/form/estado}">
-                            <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="PROGRAMADA" />
-                            <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="EN_PROCESO" />
-                            <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="FINALIZADA" />
-                            <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="CANCELADA" />
+                        <Select selectedKey="{view>/form/estado}" editable="false">
+                            <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="Programada" />
+                            <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="En proceso" />
+                            <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="Finalizada" />
+                            <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="Cancelada" />
                         </Select>
 
                         <Label text="Observación" />
-                        <TextArea value="{view>/form/observacion}" rows="4" />
+                        <TextArea value="{view>/form/observaciones}" rows="4" editable="{= ${view>/form/estado} !== 'COMPLETADA' &amp;&amp;  ${view>/form/estado} !== 'CANCELADA'}"/>
+
+                        <Label text="Detalle" />
+                        <Table id="tblIncubacionesDetalle" items="{view>/form/detalles}" busy="{view>/busy}">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <!-- <Title text="Incubaciones Registradas ({= ${view>/incubaciones}.length})"/> -->
+                                    <ToolbarSpacer/>
+                                    <!-- <Button icon="sap-icon://refresh" enabled="{= ${table>/selectedIndex} >= 0}" press="onRefresh"/> -->
+                                    <Button icon="sap-icon://add" type="Emphasized" press="onAddDetalle" visible="{= ${view>/form/estado} === 'PROGRAMADA' }"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
+                                    <Text text="Padre" />
+                                </Column>
+                                <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
+                                    <Text text="Madre"/>
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                                    <Text text="Total huevos" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                                    <Text text="Fértiles" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                                    <Text text="Nacidos" />
+                                </Column>
+                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                                    <Text text="No eclosionados" />
+                                </Column>
+                                <Column  demandPopin="true" minScreenWidth="Tablet" width="12%" visible="{= ${view>/form/estado} === 'PROGRAMADA' }" >
+                                    <Text text="Acciones" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <!-- <Text text="{view>padre/placa} {view>padre/nombre}" /> -->
+                                        <Input id="inputPadre" placeholder="Seleccionar Padre" value="{view>placaPadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpPadre" width="100%" editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                        <!-- <Text text="{view>madre/placa} {view>madre/nombre}" /> -->
+                                        <Input id="inputMadre" placeholder="Seleccionar Madre" value="{view>placaMadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpMadre" width="100%" editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                        <Input value="{view>totalHuevos}" type="Number" editable="{= ${view>/form/estado} === 'PROGRAMADA' }"/>
+                                        <Input value="{view>huevosFertiles}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
+                                        <Input value="{view>huevosEclosionados}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
+                                        <Input value="{view>huevosNoEclosionados}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
+                                        <Button icon="sap-icon://delete" type="Transparent" press=".onDeleteDetalle" visible="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
                     </f:content>
                 </f:SimpleForm>
 
-                <HBox class="sapUiMediumMarginTop">
+                <!-- <HBox class="sapUiMediumMarginTop">
                     <Button text="Guardar" type="Emphasized" press="onSave" />
                     <Button text="Cancelar" class="sapUiTinyMarginBegin" press="onNavBack" />
-                </HBox>
+                </HBox> -->
             </VBox>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Guardar" type="Emphasized" press="onSave" />
+                <Button text="Cancelar" class="sapUiTinyMarginBegin" press="onNavBack" />
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>
