@@ -5,7 +5,7 @@
         xmlns:f="sap.f"
         xmlns:core="sap.ui.core">
 
-    <Page title="Sistema de Gestión de Aves Combatientes">
+    <Page>
         <headerContent>
             <f:Avatar
                     id="userAvatar"
@@ -17,12 +17,13 @@
         <content>
             <ScrollContainer height="100%" vertical="true">
                 <VBox class="sapUiMediumMargin">
-
+                    <HBox width="100%" wrap="Wrap" justifyContent="Center" alignItems="Center">
+                        <Title text="Gestión de Aves Combatientes" level="H1" class="homeMainTitle"/>
+                    </HBox>
                     <!-- HERO / BIENVENIDA -->
                     <Panel class="sapUiResponsiveMargin sapUiNoContentPadding">
                         <content>
                             <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
-                                <Title text="Bienvenido!!!" level="2"/>
                                 <Text text="Gestiona tu criadero de forma inteligente" level="H2" design="Bold"/>
                                 <Text text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar." class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap">
