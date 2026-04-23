@@ -13,7 +13,7 @@ import Popover from "sap/m/Popover";
 import {IAve} from "com/rprincipees/registroavescombate/types/Models";
 
 export default class Welcome extends Controller {
-    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private _carouselInterval: any;
     private _bPhone: boolean;
