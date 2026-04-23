@@ -4,11 +4,17 @@ import MessageBox from "sap/m/MessageBox";
 import MessageToast from "sap/m/MessageToast";
 import UIComponent from "sap/ui/core/UIComponent";
 import IncubacionService from "../services/IncubacionService";
+import { AuthService } from "../services/AuthService";
+import { EstadoIncubacion } from "../types/Models";
+import formatter from "../model/formatter";
 
 export default class IncubacionList extends Controller {
-  service: IncubacionService;  
+  public formatter = formatter;
+  service: IncubacionService;
+  authService: AuthService;
 
   public onInit(): void {
+    this.authService = AuthService.getInstance();
     this.service = IncubacionService.getInstance();
 
     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
@@ -18,6 +24,11 @@ export default class IncubacionList extends Controller {
   }
 
   private onRouteMatched = (oEvent: any): void => {
+    if (!this.authService.isAuthenticated()) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteLogin");
+      return;
+    }
     const oModel = new JSONModel({
       busy: false,
       incubaciones: [],
@@ -27,6 +38,16 @@ export default class IncubacionList extends Controller {
     void this._loadData();
   };
 
+  public onDetail(oEvent: Event): void {
+    const oItem = oEvent.getSource();
+    const oContext = (oItem as any)?.getBindingContext("view");
+    const oInc = oContext?.getObject() as any;
+    if (oInc?.ID) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteIncubacionDetail", { id: oInc.ID });
+    }
+  }
+ 
   private async _loadData(): Promise<void> {
     const oModel = this.getView()?.getModel("view") as JSONModel;
     oModel.setProperty("/busy", true);
@@ -68,7 +89,13 @@ export default class IncubacionList extends Controller {
         }
 
         try {
-          await this.service.remove(oItem.ID!);
+
+          delete oItem.padre;
+          delete oItem.madre;
+
+          oItem.estado = "ELIMINADO";
+
+          await this.service.update(oItem.ID, oItem);
           MessageToast.show("Incubación eliminada");
           await this._loadData();
         } catch (error) {
@@ -88,4 +115,16 @@ export default class IncubacionList extends Controller {
     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
     oRouter?.navTo("RouteWelcome");
   }
+
+  public formatearEstado(estado: EstadoIncubacion): string {
+    const estados = {
+      [EstadoIncubacion.Proceso]: "En proceso",
+      [EstadoIncubacion.Programada]: "Programada",
+      [EstadoIncubacion.Completada]: "Completada",
+      [EstadoIncubacion.Cancelada]: "Cancelada"
+    };
+
+    return estados[estado] || estado;
+  }
+
 }

@@ -8,36 +8,56 @@ import IncubacionService, {
 } from "../services/IncubacionService";
 import Dialog from "sap/m/Dialog";
 import Fragment from "sap/ui/core/Fragment";
+import { AuthService } from "../services/AuthService";
+import UIComponent from "sap/ui/core/UIComponent";
+import DatePicker from "sap/m/DatePicker";
+import DateTimePicker from "sap/m/DateTimePicker";
+import Input from "sap/m/Input";
+import { IAve } from "../types/Models";
+import formatter from "../model/formatter";
 
 export default class IncubacionForm extends Controller {
+  public formatter = formatter;
   private service = new IncubacionService();
   private incubacionId: string | null = null;
   private _oPadresDialog: Dialog;
   private helpSelected: any;
-  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
+  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  authService: AuthService;
+  private _sDetallePath: string | null = null;
 
   public onInit(): void {
-    const oModel = new JSONModel({
-      busy: false,
-      editMode: false,
-      aves: [],
-      form: {
-        fechaInicio: "",
-        fechaFinEstimada: "",
-        cantidadHuevos: 0,
-        cantidadFertiles: 0,
-        cantidadNacidos: 0,
-        cantidadNoEclosion: 0,
-        estado: "PROGRAMADA",
-        observacion: "",
-        padre_ID: "",
-        madre_ID: "",
-      },
-    });
+    this.authService = AuthService.getInstance();
 
-    this.getView()?.setModel(oModel, "view");
+    const oViewModel = new JSONModel();
 
-    const oRouter = this.getOwnerComponent()?.getRouter();
+    let form = {
+      fechaIncubacion: null,
+      fechaPreNacimiento: null,
+      fechaEclosion: null,
+      estado: "Programada",
+      observacion: "",
+      detalles: []
+    };
+
+    oViewModel.setProperty("/form", form);
+    this.getView()?.setModel(oViewModel, "view");
+
+    const oPicker = this.byId("DTP1") as DateTimePicker | undefined;
+
+    oPicker?.addEventDelegate({
+      onAfterRendering: () => {
+        const sInnerId = `${oPicker.getId()}-inner`;
+        const oInner = document.getElementById(sInnerId) as HTMLInputElement | null;
+
+        if (oInner) {
+          oInner.readOnly = true;
+          oInner.setAttribute("readonly", "readonly");
+        }
+      }
+    })
+
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();;
     oRouter
       ?.getRoute("RouteIncubacionCreate")
       ?.attachPatternMatched(this._onCreateMatched, this);
@@ -46,14 +66,91 @@ export default class IncubacionForm extends Controller {
       ?.attachPatternMatched(this._onEditMatched, this);
   }
 
-  private onValueHelpPadre = (): void => {
+  public onSeleccionarPadre(oEvent: Event): void {
     const oThat = this;
+    const oSelectedItem = oEvent.getParameter("listItem");
+
+    if (oSelectedItem) {
+      const sNombre = oSelectedItem.getTitle();
+      const sPlaca = oSelectedItem.getDescription();
+
+      const oContext = oSelectedItem.getBindingContext("avesPadres");
+      if (!oContext) {
+        return;
+      }
+
+      const oAve = oContext.getObject();
+      const oModel = this.getView()?.getModel("view");
+
+      if (!oModel) {
+        return;
+      }
+
+      let oInput: Input | undefined;
+      if (oThat.helpSelected === "valueHelpPadre") {
+        oModel.setProperty(`${this._sDetallePath}/padre_ID`, oAve.ID);
+        oModel.setProperty(`${this._sDetallePath}/placaPadre`, oAve.placa);
+        oModel.setProperty(`${this._sDetallePath}/nombrePadre`, oAve.nombre);
+      } else if (oThat.helpSelected === "valueHelpMadre") {
+        oModel.setProperty(`${this._sDetallePath}/madre_ID`, oAve.ID);
+        oModel.setProperty(`${this._sDetallePath}/placaMadre`, oAve.placa);
+        oModel.setProperty(`${this._sDetallePath}/nombreMadre`, oAve.nombre);
+      }
+      this._sDetallePath = null;
+      oModel.refresh();
+    }
+
+    this._oPadresDialog?.close();
+
+  }
+
+  public onfechaIncubacionChange = (oEvent: any): void => {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+
+    const fechaIncubacion: Date = oEvent.getSource().getDateValue();
+
+    if (!fechaIncubacion) {
+      return;
+    }
+
+    // Pre-nacimiento = +18 días
+    const fechaPreNacimiento = new Date(fechaIncubacion);
+    fechaPreNacimiento.setDate(fechaPreNacimiento.getDate() + 18);
+
+    // Eclosión = +21 días
+    const fechaEclosion = new Date(fechaIncubacion);
+    fechaEclosion.setDate(fechaEclosion.getDate() + 21);
+
+    // Formatear a yyyy-MM-dd
+    const format = (d: Date) => d.toISOString().split("T")[0];
+
+    oModel.setProperty("/form/fechaPreNacimiento", fechaPreNacimiento);
+    oModel.setProperty("/form/fechaEclosion", fechaEclosion);
+  }
+
+  private onValueHelpPadre = (oEvent: Event): void => {
+    const oThat = this;
+    const oSource = oEvent.getSource();
+    const oContext = oSource.getBindingContext("view");
+    if (!oContext) {
+      return;
+    }
+
+    this._sDetallePath = oContext.getPath();
+
     oThat.helpSelected = "valueHelpPadre";
     oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Padre");
   };
 
-  private onValueHelpMadre = (): void => {
+  private onValueHelpMadre = (oEvent: Event): void => {
     const oThat = this;
+    const oSource = oEvent.getSource();
+    const oContext = oSource.getBindingContext("view");
+    if (!oContext) {
+      return;
+    }
+
+    this._sDetallePath = oContext.getPath();
     oThat.helpSelected = "valueHelpMadre";
     oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Madre");
   }
@@ -105,32 +202,43 @@ export default class IncubacionForm extends Controller {
     this._oPadresDialog?.close();
   }
 
-  private async _loadAves(): Promise<void> {
-    const oModel = this.getView().getModel("view") as JSONModel;
+  private async _loadAvesPadrotes(): Promise<void> {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
     const aves = await this.service.listAves();
-    oModel.setProperty("/aves", aves);
+
+    const machos = (aves || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
+    const hembras = (aves || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
+    this.getView()?.setModel(new JSONModel(machos), "avesMachos");
+    this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
+
   }
 
   private async _onCreateMatched(): Promise<void> {
-    const oModel = this.getView().getModel("view") as JSONModel;
-    this.incubacionId = null;
-
-    oModel.setProperty("/editMode", false);
-    oModel.setProperty("/form", {
-      fechaInicio: "",
-      fechaFinEstimada: "",
-      cantidadHuevos: 0,
-      cantidadFertiles: 0,
-      cantidadNacidos: 0,
-      cantidadNoEclosion: 0,
-      estado: "PROGRAMADA",
-      observacion: "",
-      padre_ID: "",
-      madre_ID: "",
-    });
 
     try {
-      await this._loadAves();
+      if (!this.authService.isAuthenticated()) {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteLogin");
+        return;
+      }
+
+      const oModel = this.getView()?.getModel("view") as JSONModel;
+
+      // oModel.setProperty("/busy", true);
+      oModel.setProperty("/editMode", false);
+      this.incubacionId = null;
+
+      oModel.setProperty("/form", {
+        fechaIncubacion: null,
+        fechaPreNacimiento: null,
+        fechaEclosion: null,
+        estado: "PROGRAMADA",
+        observacion: "",
+        detalles: []
+      });
+
+      await this._loadAvesPadrotes();
+
     } catch (error) {
       MessageBox.error(
         error instanceof Error ? error.message : "No se pudo cargar aves",
@@ -139,28 +247,41 @@ export default class IncubacionForm extends Controller {
   }
 
   private async _onEditMatched(oEvent: any): Promise<void> {
-    const oModel = this.getView().getModel("view") as JSONModel;
+    if (!this.authService.isAuthenticated()) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteLogin");
+      return;
+    }
+    const oModel = this.getView()?.getModel("view") as JSONModel;
     this.incubacionId = oEvent.getParameter("arguments").id;
 
     oModel.setProperty("/busy", true);
     oModel.setProperty("/editMode", true);
 
     try {
-      await this._loadAves();
+      await this._loadAvesPadrotes();
       const incubacion = await this.service.getById(this.incubacionId!);
 
+      let detalles = incubacion.detalles;
+      for (let index = 0; index < detalles.length; index++) {
+        const element = detalles[index];
+        element.placaPadre = element.padre.placa;
+        element.nombrePadre = element.padre.nombre;
+        element.placaMadre = element.madre.placa;
+        element.nombreMadre = element.madre.nombre;
+
+      }
+
       oModel.setProperty("/form", {
-        fechaInicio: incubacion.fechaInicio || "",
-        fechaFinEstimada: incubacion.fechaFinEstimada || "",
-        cantidadHuevos: incubacion.cantidadHuevos || 0,
-        cantidadFertiles: incubacion.cantidadFertiles || 0,
-        cantidadNacidos: incubacion.cantidadNacidos || 0,
-        cantidadNoEclosion: incubacion.cantidadNoEclosion || 0,
+        codigo: incubacion.codigo,
+        fechaIncubacion: new Date(incubacion.fechaIncubacion) || "",
+        fechaPreNacimiento: new Date(incubacion.fechaPreNacimiento) || "",
+        fechaEclosion: new Date(incubacion.fechaEclosion) || "",
         estado: incubacion.estado || "PROGRAMADA",
-        observacion: incubacion.observacion || "",
-        padre_ID: incubacion.padre_ID || incubacion.padre?.ID || "",
-        madre_ID: incubacion.madre_ID || incubacion.madre?.ID || "",
+        observaciones: incubacion.observaciones || "",
+        detalles: incubacion.detalles
       });
+
     } catch (error) {
       MessageBox.error(
         error instanceof Error
@@ -176,48 +297,166 @@ export default class IncubacionForm extends Controller {
     this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
   }
 
-  public async onSave(): Promise<void> {
-    const oModel = this.getView().getModel("view") as JSONModel;
-    const form = oModel.getProperty("/form") as IIncubacion;
+  private _validarDetalles(aDetalles: any[]): boolean {
 
-    if (!form.fechaInicio) {
-      MessageBox.warning("La fecha de inicio es obligatoria");
-      return;
-    }
+    for (let i = 0; i < aDetalles.length; i++) {
+      const d = aDetalles[i];
 
-    if (!form.padre_ID) {
-      MessageBox.warning("Selecciona el padre");
-      return;
-    }
+      const totalHuevos = Number(d.totalHuevos || 0);
+      const fertiles = Number(d.fertiles || 0);
+      const nacidos = Number(d.nacidos || 0);
+      const noEclosionados = Number(d.noEclosionados || 0);
 
-    if (!form.madre_ID) {
-      MessageBox.warning("Selecciona la madre");
-      return;
-    }
-
-    if (form.padre_ID === form.madre_ID) {
-      MessageBox.warning("El padre y la madre no pueden ser el mismo registro");
-      return;
-    }
-
-    try {
-      oModel.setProperty("/busy", true);
-
-      if (this.incubacionId) {
-        await this.service.update(this.incubacionId, form);
-        MessageToast.show("Incubación actualizada");
-      } else {
-        await this.service.create(form);
-        MessageToast.show("Incubación creada");
+      if (!d.padre_ID || !d.madre_ID) {
+        MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
+        return false;
       }
 
-      this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
-    } catch (error) {
-      MessageBox.error(
-        error instanceof Error ? error.message : "No se pudo guardar",
-      );
-    } finally {
-      oModel.setProperty("/busy", false);
+      if (d.padre_ID === d.madre_ID) {
+        MessageBox.error(`Padre y madre no pueden ser iguales en la fila ${i + 1}`);
+        return false;
+      }
+
+      if (fertiles > totalHuevos) {
+        MessageBox.error(`Fértiles no puede ser mayor a Total Huevos en la fila ${i + 1}`);
+        return false;
+      }
+
+      if (nacidos > fertiles) {
+        MessageBox.error(`Nacidos no puede ser mayor a Fértiles en la fila ${i + 1}`);
+        return false;
+      }
+
+      if ((nacidos + noEclosionados) > fertiles) {
+        MessageBox.error(`Nacidos + No eclosionados no puede ser mayor a Fértiles en la fila ${i + 1}`);
+        return false;
+      }
     }
+
+    return true;
   }
+
+  public async onSave(): Promise<void> {
+    const oThat = this;
+    const oView = this.getView();
+    const oModelLocal = oView?.getModel("view");
+    const oODataModel = oView?.getModel(); // OData principal
+
+    try {
+
+      const oData = oModelLocal?.getProperty("/form");
+
+      if (!oData.fechaIncubacion) {
+        MessageBox.warning("La fecha de inicio es obligatoria");
+        return;
+      }
+
+      oData.codigo = `INC-${Date.now()}`;
+
+      if (!this._validarDetalles(oData.detalles || [])) {
+        return;
+      }
+
+      const oPayload = {
+        codigo: oData.codigo,
+        fechaIncubacion: oData.fechaIncubacion ? new Date(oData.fechaIncubacion).toISOString() : null,
+        fechaPreNacimiento: oData.fechaPreNacimiento ? new Date(oData.fechaPreNacimiento).toISOString() : null,
+        fechaEclosion: oData.fechaEclosion ? new Date(oData.fechaEclosion).toISOString() : null,
+        estado: oData.estado,
+        observaciones: oData.observaciones,
+        detalles: (oData.detalles || []).map(function (d) {
+          return {
+            padre_ID: d.padre_ID || null,
+            madre_ID: d.madre_ID || null,
+            totalHuevos: Number(d.totalHuevos || 0),
+            huevosFertiles: Number(d.huevosFertiles || 0),
+            huevosEclosionados: Number(d.huevosEclosionados || 0),
+            huevosNoEclosionados: Number(d.huevosNoEclosionados || 0)
+          };
+        })
+      };
+
+
+      if (this.incubacionId) {
+        MessageBox.information("¿Está seguro que desea actualizar el registro?", {
+          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+          emphasizedAction: MessageBox.Action.OK,
+          onClose: async function (sAction) {
+            if (sAction === "OK") {
+              await oThat.service.update(oThat.incubacionId, oPayload);
+              MessageBox.success("¡Incubación actualizada exitosamente!", {
+                actions: [MessageBox.Action.OK],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: function (sAction) {
+                  oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
+                },
+                dependentOn: oThat.getView()
+              });
+            }
+          },
+          dependentOn: this.getView()
+        });
+
+      } else {
+
+        MessageBox.information("¿Está seguro que desea crear el registro?", {
+          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+          emphasizedAction: MessageBox.Action.OK,
+          onClose: async function (sAction) {
+            if (sAction === "OK") {
+              await oThat.service.create(oPayload);
+              MessageBox.success("¡Incubación creada exitosamente!", {
+                actions: [MessageBox.Action.OK],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: function (sAction) {
+                  oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
+                },
+                dependentOn: oThat.getView()
+              });
+            }
+          },
+          dependentOn: this.getView()
+        });        
+       
+      }
+
+    } catch (oError) {
+      MessageBox.error("Error al guardar la incubación");
+      console.error(oError);
+    }
+
+  }
+
+  public onAddDetalle(): void {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    const aDetalles = oModel.getProperty("/form/detalles") || [];
+
+    aDetalles.push({
+      padre_ID: "",
+      placaPadre: "",
+      nombrePadre: "",
+      madre_ID: "",
+      placaMadre: "",
+      nombreMadre: "",
+      totalHuevos: 0,
+      huevosFertiles: 0,
+      huevosEclosionados: 0,
+      huevosNoEclosionados: 0
+    });
+
+    oModel.setProperty("/form/detalles", aDetalles);
+  }
+
+  public onDeleteDetalle(oEvent: Event): void {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    const aDetalles = oModel.getProperty("/form/detalles") || [];
+
+    const oContext = oEvent.getSource().getBindingContext("view");
+    const sPath = oContext.getPath(); // /detalles/0
+    const iIndex = parseInt(sPath.split("/")[2], 10);
+
+    aDetalles.splice(iIndex, 1);
+    oModel.setProperty("/form/detalles", aDetalles);
+  }
+
 }

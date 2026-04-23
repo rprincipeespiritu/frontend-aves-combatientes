@@ -12,48 +12,65 @@
             <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
                 <headerToolbar>
                     <OverflowToolbar>
-                        <Title text="Incubaciones Registradas ({= ${aves>/incubaciones}.length})"/>
+                        <Title text="Incubaciones Registradas ({= ${view>/incubaciones}.length})"/>
                         <ToolbarSpacer/>
                         <Button icon="sap-icon://refresh" enabled="{= ${table>/selectedIndex} >= 0}" press="onRefresh"/>
-                        <Button con="sap-icon://add" type="Emphasized" press="onCreate" />
+                        <Button icon="sap-icon://add" type="Emphasized" press="onCreate" />
                     </OverflowToolbar>
                 </headerToolbar>
                 <columns>
-                    <Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="Código" />
                     </Column>
-                    <Column>
-                        <Text text="Fecha Inicio" />
-                    </Column>
-                    <Column>
-                        <Text text="Padre" />
-                    </Column>
-                    <Column>
-                        <Text text="Madre" />
+                    <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Fecha Incubación" />
                     </Column>
                     <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Huevos" />
+                        <Text text="Fecha Pre-Nacimiento" />
                     </Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Fecha Eclosión" />
+                    </Column>
+                    <!-- <Column>
+                        <Text text="Padre" />
+                    </Column> -->
+                    <!-- <Column>
+                        <Text text="Madre" />
+                    </Column> -->
+                    <!-- <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Total huevos" />
+                    </Column> -->
                     <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="Estado" />
                     </Column>
-                    <Column>
+                    <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="Acciones" />
                     </Column>
                 </columns>
 
                 <items>
-                    <ColumnListItem>
+                    <ColumnListItem type="Active" press="onDetail">
                         <cells>
                             <Text text="{view>codigo}" />
-                            <Text text="{view>fechaInicio}" />
-                            <Text text="{view>padre/nombre}" />
-                            <Text text="{view>madre/nombre}" />
-                            <ObjectNumber number="{view>cantidadHuevos}" />
-                            <ObjectStatus text="{view>estado}" />
+                            <!-- <Text text="{view>fechaIncubacion}" /> -->
+                            <Text text="{ path: 'view>fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
+                            <Text text="{ path: 'view>fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
+                            <Text text="{ path: 'view>fechaEclosion', formatter: '.formatter.formatDateTime' }" />
+                            <!-- <Text text="{view>padre/placa} {view>padre/nombre}" />
+                            <Text text="{view>madre/placa} {view>madre/nombre}" /> -->
+                            <!-- <ObjectNumber number="{view>totalHuevos}" /> -->
+                            <!-- <ObjectStatus text="{view>estado}" /> -->
+                            <ObjectStatus text="{
+                                        path: 'view>estado',
+                                        formatter: '.formatearEstado'
+                                    }" state="{= ${view>estado} === 'EN_PROCESO' ? 'Success' :
+                                             ${view>estado} === 'PROGRAMADA' ? 'Information' :
+                                             ${view>estado} === 'COMPLETADA' ? 'Warning' :
+                                             ${view>estado} === 'CANCELADA' ? 'Error' : 'Error'}"/>
                             <HBox>
-                                <Button icon="sap-icon://edit" type="Transparent" press="onEdit" />
-                                <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
+                                <Button icon="sap-icon://edit" type="Transparent" press="onEdit" enabled="{= ${view>estado} !== 'COMPLETADA' &amp;&amp; ${view>estado} !== 'CANCELADA' }" />
+                                <Button icon="sap-icon://detail-view" type="Transparent" press="onDetail"/>
+                                <Button icon="sap-icon://delete" type="Reject" press="onDelete" />
                             </HBox>
                         </cells>
                     </ColumnListItem>

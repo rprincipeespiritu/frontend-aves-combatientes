@@ -84,6 +84,13 @@ export enum EstadoAve {
     Retirado = "RETIRADO"
 }
 
+export enum EstadoIncubacion {
+    Proceso = "EN_PROCESO",
+    Programada = "PROGRAMADA",
+    Completada = "COMPLETADA",
+    Cancelada = "CANCELADA"
+}
+
 export enum TipoValidacion {
     Requerido = "REQUERIDO",
     FormatoInvalido = "FORMATO_INVALIDO",
