@@ -2,89 +2,142 @@
         controllerName="com.rprincipees.registroavescombate.controller.Welcome"
         xmlns:mvc="sap.ui.core.mvc"
         xmlns="sap.m"
-        xmlns:tnt="sap.tnt"
-        xmlns:core="sap.ui.core"
-        xmlns:f="sap.f">
+        xmlns:f="sap.f"
+        xmlns:core="sap.ui.core">
 
-    <tnt:ToolPage id="toolPage">
-        <tnt:header>
-            <tnt:ToolHeader>
-                <Button
-                        id="menuButton"
-                        icon="sap-icon://menu2"
-                        type="Transparent"
-                        press="onToggleSideContent" />
+    <Page title="Sistema de Gestión de Aves Combatientes">
+        <headerContent>
+            <f:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+        <content>
+            <ScrollContainer height="100%" vertical="true">
+                <VBox class="sapUiMediumMargin">
 
-                <Title
-                        text="Bienvenido al Sistema de Gestión de Aves Combatientes"
-                        level="H2" />
-                <ToolbarSpacer />
+                    <!-- HERO / BIENVENIDA -->
+                    <Panel class="sapUiResponsiveMargin sapUiNoContentPadding">
+                        <content>
+                            <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
+                                <Title text="Bienvenido!!!" level="2"/>
+                                <Text text="Gestiona tu criadero de forma inteligente" level="H2" design="Bold"/>
+                                <Text text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar." class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
+                                <HBox class="sapUiSmallMarginTop" wrap="Wrap">
+                                    <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add" press="onNavNewBird"/>
+                                    <Button text="Nueva Incubación" icon="sap-icon://add" press="onNavNewIncubation" class="sapUiTinyMarginBegin"/>
+                                    <Button text="Ver Incubaciones" icon="sap-icon://table-view" press="onNavIncubationList" class="sapUiTinyMarginBegin"/>
+                                </HBox>
+                            </VBox>
+                        </content>
+                    </Panel>
 
-                <f:Avatar
-                        id="userAvatar"
-                        src="{user>/foto}"
-                        displaySize="XS"
-                        press="onUserMenuPress"
-                        class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
-            </tnt:ToolHeader>
-        </tnt:header>
+                    <!-- KPIS -->
+                    <HBox wrap="Wrap" justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
+                        <GenericTile class="sapUiSmallMarginTop" header="Aves" subheader="Registradas" press="onNavBirdList">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalAves}" icon="sap-icon://activate"/>
+                            </TileContent>
+                        </GenericTile>
 
-        <tnt:sideContent>
-            <tnt:SideNavigation
-                    id="sideNavigation"
-                    expanded="false"
-                    selectedKey="aves">
+                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones" subheader="Totales" press="onNavIncubationList">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalIncubaciones}" icon="sap-icon://nutrition-activity"/>
+                            </TileContent>
+                        </GenericTile>
 
-                <tnt:NavigationList itemSelect="onMenuSelect">
-                    <tnt:NavigationListItem
-                            text="Aves combatientes"
-                            icon="sap-icon://add-product"
-                            key="aves" />
+                        <GenericTile class="sapUiSmallMarginTop" header="En proceso" subheader="Activas" press="onNavIncubationListProcess">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/incubacionesActivas}" icon="sap-icon://process"/>
+                            </TileContent>
+                        </GenericTile>
 
-                    <tnt:NavigationListItem
-                            text="Incubaciones"
-                            icon="sap-icon://shipping-status"
-                            key="incubaciones"
-                            enabled="true" />
+                        <GenericTile class="sapUiSmallMarginTop" header="Nacidos" subheader="Acumulado" press="onVerIncubaciones">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalNacidos}" icon="sap-icon://favorite"/>
+                            </TileContent>
+                        </GenericTile>
+                    </HBox>
 
-                    <tnt:NavigationListItem
-                            text="Peleas"
-                            icon="sap-icon://activity-items"
-                            key="peleas"
-                            visible="false" />
+                    <!-- ALERTAS -->
+                    <VBox class="sapUiSmallMarginTop">
+                        <MessageStrip
+                                text="{dashboard>/alertaIncubaciones}"
+                                type="Warning"
+                                visible="{= !!${dashboard>/alertaIncubaciones} }"
+                                showIcon="true"
+                                class="sapUiSmallMarginBottom"/>
 
-                    <tnt:NavigationListItem
-                            text="Vacunación"
-                            icon="sap-icon://activity-individual"
-                            key="vacunacion"
-                            enabled="false" />
-                </tnt:NavigationList>
-            </tnt:SideNavigation>
-        </tnt:sideContent>
+                        <MessageStrip
+                                text="{dashboard>/alertaEclosion}"
+                                type="Information"
+                                visible="{= !!${dashboard>/alertaEclosion} }"
+                                showIcon="true"/>
+                    </VBox>
 
-        <tnt:mainContents>
-            <VBox class="sapUiTinyMargin">
-                <HBox class="sapUiMediumMarginTop" justifyContent="Center">
-                    <Text
-                            text="Gestiona el registro de tus aves de combate de manera fácil y eficiente."
-                            class="sapUiMediumMarginTop" />
-                </HBox>
-            </VBox>
+                    <!-- BLOQUE CENTRAL -->
+                    <HBox wrap="Wrap" class="sapUiMediumMarginTop" justifyContent="SpaceBetween">
 
-            <Carousel id="imageCarousel" height="auto" width="auto" showPageIndicator="true" pageIndicatorPlacement="Bottom" loop="true" class="sapUiMediumMargin">
+                        <!-- INCUBACIONES RECIENTES -->
+                        <Panel headerText="Incubaciones recientes" width="auto" class="panelSpacing">
+                            <content>
+                                <Table items="{dashboard>/incubacionesRecientes}" noDataText="Sin incubaciones recientes">
+                                    <columns>
+                                        <Column>
+                                            <Text text="Código"/>
+                                        </Column>
+                                        <Column>
+                                            <Text text="Estado"/>
+                                        </Column>
+                                        <Column>
+                                            <Text text="Fecha"/>
+                                        </Column>
+                                    </columns>
 
-                <!-- Imagen 1 -->
-                <Image src="../images/gallo1.jpg" alt="Gallo de Combate 1" width="auto" height="20rem" class="carouselImage"/>
+                                    <items>
+                                        <ColumnListItem type="Navigation" press="onAbrirIncubacionDetalle">
+                                            <cells>
+                                                <Text text="{dashboard>codigo}"/>
+                                                <ObjectStatus
+                                                        text="{dashboard>estadoTexto}"
+                                                        state="{dashboard>estadoState}"/>
+                                                <Text text="{dashboard>fechaIncubacionFmt}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </content>
+                        </Panel>
 
-                <!-- Imagen 2 -->
-                <Image src="../images/gallo2.jpg" alt="Gallo de Combate 2" width="auto" height="20rem" class="carouselImage"/>
+                        <!-- RESUMEN / ATAJOS -->
+                        <Panel headerText="Resumen rápido" width="auto" class="panelSpacing">
+                            <content>
+                                <List>
+                                    <StandardListItem
+                                            title="Aves activas"
+                                            info="{dashboard>/totalAvesActivas}"
+                                            icon="sap-icon://activate"/>
+                                    <StandardListItem
+                                            title="Incubaciones programadas"
+                                            info="{dashboard>/incubacionesProgramadas}"
+                                            icon="sap-icon://calendar"/>
+                                    <StandardListItem
+                                            title="Incubaciones en proceso"
+                                            info="{dashboard>/incubacionesActivas}"
+                                            icon="sap-icon://process"/>
+                                    <StandardListItem
+                                            title="Nacimientos acumulados"
+                                            info="{dashboard>/totalNacidos}"
+                                            icon="sap-icon://favorite"/>
+                                </List>
+                            </content>
+                        </Panel>
+                    </HBox>
 
-                <!-- Imagen 3 -->
-                <Image src="../images/gallo3.jpg" alt="Gallo de Combate 3" width="auto" height="20rem" class="carouselImage"/>
-
-                <!-- Imagen 4 -->
-                <Image src="../images/gallo4.jpg" alt="Gallo de Combate 4" width="auto" height="20rem" class="carouselImage"/>
-            </Carousel>
-        </tnt:mainContents>
-    </tnt:ToolPage>
+                </VBox>
+            </ScrollContainer>
+        </content>
+    </Page>
 </mvc:View>

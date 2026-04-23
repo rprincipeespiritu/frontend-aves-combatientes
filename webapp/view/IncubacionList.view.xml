@@ -68,14 +68,20 @@
                                              ${view>estado} === 'COMPLETADA' ? 'Warning' :
                                              ${view>estado} === 'CANCELADA' ? 'Error' : 'Error'}"/>
                             <HBox>
-                                <Button icon="sap-icon://edit" type="Transparent" press="onEdit" enabled="{= ${view>estado} !== 'COMPLETADA' &amp;&amp; ${view>estado} !== 'CANCELADA' }" />
-                                <Button icon="sap-icon://detail-view" type="Transparent" press="onDetail"/>
-                                <Button icon="sap-icon://delete" type="Reject" press="onDelete" />
+                                <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" enabled="{= ${view>estado} !== 'COMPLETADA' &amp;&amp; ${view>estado} !== 'CANCELADA' }" />
+                                <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
+                                <Button icon="sap-icon://detail-view" type="Emphasized" press="onDetail"/>
                             </HBox>
                         </cells>
                     </ColumnListItem>
                 </items>
             </Table>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack" visible="true"/>
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>

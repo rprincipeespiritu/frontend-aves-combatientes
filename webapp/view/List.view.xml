@@ -245,7 +245,7 @@
                                 <HBox justifyContent="Center" width="100%" renderType="Bare">
                                     <Button
                                             icon="sap-icon://edit"
-                                            type="Transparent"
+                                            type="Emphasized"
                                             tooltip="Editar"
                                             press="onEditarAveInline"/>
                                     <Button
@@ -256,7 +256,7 @@
                                             visible="true"/>
                                     <Button
                                             icon="sap-icon://detail-view"
-                                            type="Transparent"
+                                            type="Emphasized"
                                             tooltip="Ver detalle"
                                             press="onAvePress"/>
                                 </HBox>
@@ -267,5 +267,11 @@
 
             </VBox>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack" visible="true"/>
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>
