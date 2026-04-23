@@ -1,7 +1,7 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionDetail"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form">
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+          xmlns:f="sap.ui.layout.form">
 
     <Page title="Detalle de Incubación" showNavButton="true" navButtonPress="onNavBack">
 
@@ -116,6 +116,7 @@
                 <Button text="Iniciar Incubación" type="Emphasized" visible="{= ${view>/incubacion/estado} === 'PROGRAMADA' }" press=".onConfirmarIniciar" />
                 <Button text="Finalizar Incubación" type="Accept" visible="{= ${view>/incubacion/estado} === 'EN_PROCESO' }" press=".onConfirmarFinalizar" />
                 <Button text="Cancelar Incubación" type="Reject" visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" press=".onConfirmarCancelar" />
+                <Button text="Cancelar" press="onNavBack"/>
             </Toolbar>
         </footer>
     </Page>

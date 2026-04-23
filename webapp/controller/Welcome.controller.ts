@@ -187,15 +187,14 @@ export default class Welcome extends Controller {
 
     public onAbrirIncubacionDetalle(oEvent: any): void {
         const oItem = oEvent.getSource();
-        const oCtx = oItem.getBindingContext("dashboard");
-        const oObj = oCtx?.getObject();
-
-        if (oObj?.ID) {
-            this.getOwnerComponent().getRouter().navTo("incubacionDetail", {
-                id: oObj.ID
-            });
+        const oContext = oItem.getBindingContext("dashboard");
+        const oInc = oContext?.getObject() as any;
+        if (oInc?.ID) {
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+            oRouter?.navTo("RouteIncubacionDetail", {id: oInc.ID});
         }
     }
+
     public async onToggleSideContent(oEvent: Event): Promise<void> {
         if (Device.system.phone) {
             if (!this._oMobileMenu) {
@@ -361,6 +360,7 @@ export default class Welcome extends Controller {
     }
 
     public onNavIncubationList(): void {
+        localStorage.setItem('filterIncProceso', "");
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.navTo("RouteIncubacionList");
     }
@@ -368,6 +368,12 @@ export default class Welcome extends Controller {
     public onNavBirdList(): void {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.navTo("RouteList");
+    }
+
+    public onNavIncubationListProcess(): void {
+        localStorage.setItem('filterIncProceso', "EN_PROCESO");
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteIncubacionList");
     }
 
 }
