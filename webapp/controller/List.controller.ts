@@ -373,6 +373,10 @@ export default class List extends Controller {
     this.aplicarFiltros();
   }
 
+  public onFiltrarEstado(): void {
+    this.aplicarFiltros();
+  }
+
   public onSelectPadrote(): void {
     this.aplicarFiltros();
   }
