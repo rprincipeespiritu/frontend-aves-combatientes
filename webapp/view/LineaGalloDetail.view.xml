@@ -1,0 +1,110 @@
+<mvc:View
+        controllerName="com.rprincipees.registroavescombate.controller.LineaGalloDetail"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:form="sap.f">
+
+    <Page
+            title="Detalle de Línea"
+            showNavButton="true"
+            navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <ObjectHeader
+                        title="{detalle>/linea/nombre}"
+                        number="{
+                                        path: 'detalle>/linea/estado',
+                                        formatter: '.formatearEstado'
+                                    }" numberState="{= ${detalle>/linea/estado} === 'ACTIVA' ? 'Success' :
+                                             ${detalle>/linea/estado} === 'INACTIVA' ? 'Warning' : 'Error'}" >
+                    <attributes>
+                        <ObjectAttribute
+                                title="Objetivo"
+                                text="{detalle>/linea/objetivo}"/>
+                        <ObjectAttribute
+                                title="Descripción"
+                                text="{detalle>/linea/descripcion}"/>
+                        <ObjectAttribute
+                                title="Padre Fundador"
+                                text="{detalle>/linea/aveFundador/placa}"/>
+                        <ObjectAttribute
+                                title="Madre Fundadora"
+                                text="{detalle>/linea/aveFundadora/placa}"/>
+                    </attributes>
+                </ObjectHeader>
+
+                <Table
+                        items="{detalle>/planes}"
+                        growing="true">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Planes de Cruce ({= ${detalle>/planes}.length})"/>
+                            <ToolbarSpacer/>
+                            <Button
+                                    text=""
+                                    type="Emphasized"
+                                    icon="sap-icon://add"
+                                    press=".onNuevoCruce"/>
+                            <Button icon="sap-icon://refresh" press="onRefresh"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Macho"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Hembra"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Parentesco"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Riesgo"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Fecha"/>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{detalle>macho/placa}"/>
+                                <Text text="{detalle>hembra/placa}"/>
+                                <Text text="{detalle>tipoParentesco}"/>
+                                <ObjectStatus
+                                        text="{detalle>nivelRiesgo}"
+                                        state="{
+                                        = ${detalle>nivelRiesgo} === 'ALTO' ? 'Error' :
+                                          ${detalle>nivelRiesgo} === 'MODERADO' ? 'Warning' :
+                                          'Success'
+                                    }"/>
+                                <Text text="{detalle>fechaPropuesta}"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

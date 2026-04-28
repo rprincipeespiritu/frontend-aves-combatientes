@@ -84,6 +84,11 @@ export enum EstadoAve {
     Retirado = "RETIRADO"
 }
 
+export enum EstadoLinea {
+    Activa = "ACTIVA",
+    Inactiva = "INACTIVA"
+}
+
 export enum EstadoIncubacion {
     Proceso = "EN_PROCESO",
     Programada = "PROGRAMADA",

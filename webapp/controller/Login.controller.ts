@@ -112,7 +112,9 @@ export default class Login extends Controller {
                     this.clearSavedCredentials();
                 }
 
-                MessageBox.success("Bienvenido " + result.nombre + " " + result.apellido, {
+                await MessageToast.show("Bienvenido " + result.nombre + " " + result.apellido);
+                oThat.navigateToMain();
+               /* MessageBox.success("Bienvenido " + result.nombre + " " + result.apellido, {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
                     onClose: function (sAction : any) : void {
@@ -120,7 +122,7 @@ export default class Login extends Controller {
                         oThat.navigateToMain();
                     },
                     dependentOn: this.getView()
-                });
+                });*/
              
             } else {
                 if (result.error?.code === "403") {

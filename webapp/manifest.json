@@ -158,6 +158,36 @@
           "pattern": "incubaciones/detail/{id}",
           "name": "RouteIncubacionDetail",
           "target": "TargetIncubacionDetail"
+        },
+        {
+          "pattern": "planes-cruce",
+          "name": "RoutePlanesCruce",
+          "target": "TargetPlanesCruce"
+        },
+        {
+          "pattern": "lineas",
+          "name": "RouteLineaGallos",
+          "target": "TargetLineaGallos"
+        },
+        {
+          "pattern": "lineas/create",
+          "name": "RouteLineaGalloCreate",
+          "target": "TargetLineaGalloForm"
+        },
+        {
+          "pattern": "lineas/edit/{id}",
+          "name": "RouteLineaGalloEdit",
+          "target": "TargetLineaGalloForm"
+        },
+        {
+          "pattern": "lineas/detail/{id}",
+          "name": "RouteLineaGalloDetail",
+          "target": "TargetLineaGalloDetail"
+        },
+        {
+          "pattern": "lineas-gallos/{lineaId}/nuevo-cruce",
+          "name": "RoutelineaGallosCruceCreate",
+          "target": "TargetLineaGallosCruceCreate"
         }
       ],
       "targets": {
@@ -208,6 +238,26 @@
         "TargetIncubacionDetail": {
           "id": "IncubacionDetail",
           "name": "IncubacionDetail"
+        },
+        "TargetPlanesCruce": {
+          "id": "PlanesCruce",
+          "viewName": "PlanesCruce"
+        },
+        "TargetLineaGallos": {
+          "id": "LineaGallos",
+          "viewName": "LineaGallos"
+        },
+        "TargetLineaGalloForm": {
+          "id": "LineaGalloForm",
+          "viewName": "LineaGalloForm"
+        },
+        "TargetLineaGalloDetail": {
+          "id": "LineaGalloDetail",
+          "viewName": "LineaGalloDetail"
+        },
+        "TargetLineaGallosCruceCreate": {
+          "id": "CruceCreate",
+          "viewName": "CruceCreate"
         }
       }
     },

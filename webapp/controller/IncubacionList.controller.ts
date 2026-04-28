@@ -7,11 +7,22 @@ import IncubacionService from "../services/IncubacionService";
 import { AuthService } from "../services/AuthService";
 import { EstadoIncubacion } from "../types/Models";
 import formatter from "../model/formatter";
+import Router from "sap/ui/core/routing/Router";
+import Event from "sap/ui/base/Event";
+import Control from "sap/ui/mdc/Control";
+import Device from "sap/ui/Device";
+import Fragment from "sap/ui/core/Fragment";
+import ActionSheet from "sap/m/ActionSheet";
+import Popover from "sap/m/Popover";
+import {IIncubacion} from "../services/IncubacionService";
 
 export default class IncubacionList extends Controller {
   public formatter = formatter;
   service: IncubacionService;
   authService: AuthService;
+  private _oUserMenuSheet: any;
+  private _oUserMenuPopover: any;
+  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
 
   public onInit(): void {
     this.authService = AuthService.getInstance();
@@ -29,6 +40,14 @@ export default class IncubacionList extends Controller {
       oRouter?.navTo("RouteLogin");
       return;
     }
+
+    const sUserData = localStorage.getItem("auth_user");
+    if (sUserData) {
+      const oUser = JSON.parse(sUserData);
+      const oUserModel = new JSONModel(oUser);
+      this.getView()?.setModel(oUserModel, "user");
+    }
+
     const oModel = new JSONModel({
       busy: false,
       incubaciones: [],
@@ -72,7 +91,7 @@ export default class IncubacionList extends Controller {
 
   public onEdit(oEvent: any): void {
     const oContext = oEvent.getSource().getBindingContext("view");
-    const oItem = oContext.getObject() as IIncubacion;
+    const oItem = oContext.getObject();
     this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionEdit", {
       id: oItem.ID,
     });
@@ -81,6 +100,11 @@ export default class IncubacionList extends Controller {
   public onDelete(oEvent: any): void {
     const oContext = oEvent.getSource().getBindingContext("view");
     const oItem = oContext.getObject() as IIncubacion;
+
+    if(oItem.estado !== 'CANCELADA'){
+      MessageBox.error("Solo se puede eliminar el registro en estado 'Cancelada'" );
+      return
+    }
 
     MessageBox.confirm(`¿Eliminar la incubación ${oItem.codigo}?`, {
       onClose: async (sAction: string) => {
@@ -93,10 +117,24 @@ export default class IncubacionList extends Controller {
           delete oItem.padre;
           delete oItem.madre;
 
-          oItem.estado = "ELIMINADO";
+          const response = await fetch(`${this.baseUrl}/eliminarIncubacion`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${this.authService.getToken()}`
+            },
+            body: JSON.stringify({
+              incubacionId: oItem.ID
+            })
+          });
 
-          await this.service.update(oItem.ID, oItem);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const oResult = await response.json();
           MessageToast.show("Incubación eliminada");
+
           await this._loadData();
         } catch (error) {
           MessageBox.error(
@@ -107,9 +145,10 @@ export default class IncubacionList extends Controller {
     });
   }
 
-  public onRefresh(): void {
-    localStorage.setItem('filterIncProceso', "");
-    void this._loadData();
+  public async onRefresh(): Promise<void> {
+    //localStorage.setItem('filterIncProceso', "");
+    await this._loadData();
+    MessageToast.show("Datos actualizados");
   }
 
   public onNavBack(): void {
@@ -126,6 +165,56 @@ export default class IncubacionList extends Controller {
     };
 
     return estados[estado] || estado;
+  }
+
+  public onNavWelcome(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+    oRouter?.navTo("RouteWelcome");
+  }
+
+  public async onUserMenuPress(oEvent: Event): Promise<void> {
+    const oSource = oEvent.getSource() as Control;
+
+    if (Device.system.phone) {
+      if (!this._oUserMenuSheet) {
+        const oFragment = await Fragment.load({
+          id: this.getView()?.getId(),
+          name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
+          controller: this
+        });
+
+        this._oUserMenuSheet = oFragment as ActionSheet;
+        this.getView()?.addDependent(this._oUserMenuSheet);
+      }
+
+      // TOGGLE
+      if (this._oUserMenuSheet.isOpen()) {
+        this._oUserMenuSheet.close();
+      } else {
+        this._oUserMenuSheet.openBy(oSource);
+      }
+
+      return;
+    }
+
+    if (!this._oUserMenuPopover) {
+      const oFragment = await Fragment.load({
+        id: this.getView()?.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+        controller: this
+      });
+
+      this._oUserMenuPopover = oFragment as Popover;
+      this.getView()?.addDependent(this._oUserMenuPopover);
+    }
+
+    // TOGGLE
+    if (this._oUserMenuPopover.isOpen()) {
+      this._oUserMenuPopover.close();
+    } else {
+      this._oUserMenuPopover.openBy(oSource);
+    }
+
   }
 
 }

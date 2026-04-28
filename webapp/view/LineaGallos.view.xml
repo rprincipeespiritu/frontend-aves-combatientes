@@ -1,0 +1,91 @@
+<mvc:View
+        controllerName="com.rprincipees.registroavescombate.controller.LineaGallos"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:form="sap.f">
+
+    <Page
+            title="Líneas de Gallos"
+            showNavButton="true"
+            navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Table
+                        items="{lineas>/data}"
+                        growing="true"
+                        growingScrollToLoad="true">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Familias / Líneas registradas ({= ${lineas>/data}.length})"/>
+                            <ToolbarSpacer/>
+                            <Button
+                                    text=""
+                                    icon="sap-icon://add"
+                                    type="Emphasized"
+                                    press=".onNuevaLinea"/>
+                            <Button icon="sap-icon://refresh" press="onRefresh"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column >
+                            <Text text="Nombre"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Descripción"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Objetivo"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Estado"/>
+                        </Column>
+                        <Column >
+                            <Text text="Acciones" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem
+                                type="Navigation"
+                                press=".onVerDetalleLinea">
+                            <cells>
+                                <ObjectIdentifier title="{lineas>nombre}" />
+                                <Text text="{lineas>descripcion}"/>
+                                <!--<TextArea value="{lineas>descripcion}" rows="3" editable="false"/>-->
+                                <Text text="{lineas>objetivo}"/>
+                                <ObjectStatus text="{
+                                        path: 'lineas>estado',
+                                        formatter: '.formatearEstado'
+                                    }" state="{= ${lineas>estado} === 'ACTIVA' ? 'Success' :
+                                             ${lineas>estado} === 'INACTIVA' ? 'Warning' : 'Error'}"/>
+                                <HBox>
+                                    <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" enabled="{= ${lineas>estado} !== 'INACTIVA' &amp;&amp; ${view>estado} !== 'ELIMINADA' }" />
+                                    <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
+                                    <Button icon="sap-icon://detail-view" type="Emphasized" press="onDetail"/>
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

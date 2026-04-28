@@ -191,6 +191,15 @@ export default class IncubacionDetail extends Controller {
 
     public onConfirmarFinalizar(oEvent: Event): void {
         const oThat = this;
+        const oData = oThat.getView()?.getModel("view").getProperty("/incubacion");
+
+        const oFechaEclosion = new Date(oData.fechaEclosion || 0);
+        const oFechaActual = new Date();
+
+        if (oFechaEclosion > oFechaActual) {
+            MessageBox.error("Aún no se alcanza la fecha de eclosión estimada");
+            return;
+        }
 
         const oTextAreaObservacion = new TextArea({
             width: "100%",

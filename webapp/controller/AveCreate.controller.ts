@@ -515,4 +515,10 @@ export default class AveCreate extends Controller {
     public onPluginActivated(oEvent: Event) {
         this.oUploadPluginInstance = oEvent.getParameter("oPlugin");
     }
+
+    public onNavWelcome(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteWelcome");
+    }
+
 }

@@ -1,0 +1,72 @@
+<mvc:View
+        controllerName="com.rprincipees.registroavescombate.controller.PlanesCruce"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core">
+
+    <Page
+            title="Planes de Cruce"
+            showNavButton="true"
+            navButtonPress=".onNavBack">
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <!-- Toolbar -->
+                <Toolbar>
+                    <Title text="Historial de Cruces"/>
+                    <ToolbarSpacer/>
+                    <Button
+                            text="Nuevo Plan"
+                            icon="sap-icon://add"
+                            press=".onNuevoPlan"/>
+                </Toolbar>
+
+                <!-- Tabla -->
+                <Table
+                        items="{planes>/data}"
+                        mode="SingleSelectMaster"
+                        selectionChange=".onSelectPlan">
+
+                    <columns>
+                        <Column>
+                            <Text text="Macho"/>
+                        </Column>
+                        <Column>
+                            <Text text="Hembra"/>
+                        </Column>
+                        <Column>
+                            <Text text="Parentesco"/>
+                        </Column>
+                        <Column>
+                            <Text text="Riesgo"/>
+                        </Column>
+                        <Column>
+                            <Text text="Fecha"/>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem type="Navigation">
+                            <cells>
+                                <Text text="{planes>macho/placa}"/>
+                                <Text text="{planes>hembra/placa}"/>
+                                <Text text="{planes>tipoParentesco}"/>
+                                <ObjectStatus
+                                        text="{planes>nivelRiesgo}"
+                                        state="{
+                                        = ${planes>nivelRiesgo} === 'ALTO' ? 'Error' :
+                                          ${planes>nivelRiesgo} === 'MODERADO' ? 'Warning' :
+                                          'Success'
+                                    }"/>
+                                <Text text="{planes>fechaPropuesta}"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

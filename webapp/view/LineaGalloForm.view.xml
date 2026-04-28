@@ -1,0 +1,76 @@
+<mvc:View
+        controllerName="com.rprincipees.registroavescombate.controller.LineaGalloForm"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+        xmlns:form="sap.f">
+
+    <Page
+            title="{= ${linea>/editMode} ? 'Editar Línea de Gallos' : 'Nueva Línea de Gallos' }"
+            showNavButton="true"
+            navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+
+            <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                <f:content>
+                    <Label text="Nombre de la línea"/>
+                    <Input
+                            value="{linea>/nombre}"
+                            placeholder="Ejemplo: Línea Trueno"/>
+
+                    <Label text="Descripción" class="sapUiSmallMarginTop"/>
+                    <TextArea
+                            value="{linea>/descripcion}"
+                            rows="3" width="auto"/>
+
+                    <Label text="Objetivo de la línea" class="sapUiSmallMarginTop"/>
+                    <TextArea
+                            value="{linea>/objetivo}"
+                            rows="4"
+                            placeholder="Ejemplo: fijar velocidad, casta, resistencia, fertilidad..."/>
+
+                    <Label text="Padre Fundador"/>
+                    <Input
+                            id="inputPadreLinea"
+                            placeholder="Seleccionar Padre Fundador"
+                            value="{linea>/aveFundadorPlaca}"
+                            description="{linea>/aveFundadorNombre}"
+                            showValueHelp="true"
+                            valueHelpOnly="true"
+                            valueHelpRequest="onValueHelpPadre"
+                            width="100%"/>
+
+                    <Label text="Madre Fundadora"/>
+                    <Input
+                            id="inputMadreLinea"
+                            placeholder="Seleccionar Madre Fundadora"
+                            value="{linea>/aveFundadoraPlaca}"
+                            description="{linea>/aveFundadoraNombre}"
+                            showValueHelp="true"
+                            valueHelpOnly="true"
+                            valueHelpRequest="onValueHelpMadre"
+                            width="100%"/>
+
+                </f:content>
+            </f:SimpleForm>
+
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press=".onGuardar" />
+                <Button text="Cancelar" press="onNavBack"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

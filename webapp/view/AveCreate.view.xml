@@ -8,6 +8,7 @@
 
     <Page title="Registrar Nueva Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
             <form:Avatar
                     id="userAvatar"
                     src="{user>/foto}"

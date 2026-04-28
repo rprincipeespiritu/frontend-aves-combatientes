@@ -30,7 +30,7 @@ import ActionSheet from "sap/m/ActionSheet";
 import Control from "sap/ui/mdc/Control";
 import Popover from "sap/m/Popover";
 import Input from "sap/m/Input";
-
+import formatter from "../model/formatter";
 
 /**
  * @namespace com.rprincipees.registroavescombate.controller
@@ -41,6 +41,7 @@ export default class List extends Controller {
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
   private _oPadresDialog: Dialog;
+  public formatter = formatter;
 
   public onInit(): void {
     this.authService = AuthService.getInstance();
@@ -470,9 +471,9 @@ export default class List extends Controller {
 
   // === UTILIDADES ===
 
-  public onRefrescar(): void {
+  public async onRefrescar(): Promise<void> {
     // Recargar datos
-    this.initializeData();
+    await this.initializeData();
     MessageToast.show("Datos actualizados");
   }
 
@@ -631,6 +632,11 @@ export default class List extends Controller {
     oSheet.build().finally(() => {
       oSheet.destroy();
     });
+  }
+
+  public onNavWelcome(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+    oRouter?.navTo("RouteWelcome");
   }
 
 }

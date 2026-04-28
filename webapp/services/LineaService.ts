@@ -1,47 +1,15 @@
-export interface IAveOption {
+import {AuthResponse} from "com/rprincipees/registroavescombate/services/AuthService";
+
+export interface Linea {
   ID: string;
   nombre: string;
-  placa?: string;
+  descripcion: string;
+  objetivo: string;
+  estado: string;
 }
 
-export interface IIncubacionDetalle {
-  ID?: string;
-  incubacion_ID?: string;
-  padre_ID: string;
-  madre_ID: string;
-  totalHuevos: number;
-  huevosFertiles: number;
-  huevosEclosionados: number;
-  huevosNoEclosionados: number;
-  padre?: any;
-  madre?: any;
-}
-
-export interface IIncubacion {
-  eInputNacNoEcl: boolean;
-  ID?: string;
-  codigo?: string;
-  fechaIncubacion: string;
-  fechaEclosion: string;
-  fechaPreNacimiento: string;
-  fechaFinIncubacion: string;
-  fechaFinReal?: string;
-  totalHuevos: number;
-  huevosFertiles?: number;
-  huevosEclosionados?: number;
-  huevosNoFertiles?: number;
-  estado?: string;
-  observaciones?: string;
-  motivoCancelacion?: string;
-  padre_ID: string;
-  placaPadre?: string;
-  madre_ID: string;  
-  placaMadre?: string;
-  detalles?: IIncubacionDetalle[];
-}
-
-export default class IncubacionService {
-  private static instance: IncubacionService;
+export default class LineaService {
+  private static instance: LineaService;
   private baseUrl = "http://localhost:4004/api/avecombatiente";
   // Reemplaza por la misma estrategia que ya usas en AuthService
 
@@ -54,11 +22,11 @@ export default class IncubacionService {
     }
   }
 
-  public static getInstance(): IncubacionService {
-    if (!IncubacionService.instance) {
-      IncubacionService.instance = new IncubacionService();
+  public static getInstance(): LineaService {
+    if (!LineaService.instance) {
+      LineaService.instance = new LineaService();
     }
-    return IncubacionService.instance;
+    return LineaService.instance;
   }
 
   private buildHeaders(): HeadersInit {
@@ -69,10 +37,10 @@ export default class IncubacionService {
   }
 
   private buildEntityUrl(id: string): string {
-    return `${this.baseUrl}/Incubaciones(ID='${id}')`;
+    return `${this.baseUrl}/LineasAves(ID='${id}')`;
   }
 
-  public async list(): Promise<IIncubacion[]> {
+  public async list(): Promise<Linea[]> {
 
     let url = `${this.baseUrl}/IncubacionesActivas?$orderby=createdAt desc`;
     let proceso = localStorage.getItem('filterIncProceso');
@@ -141,8 +109,10 @@ export default class IncubacionService {
     return data;
   }
 
-  public async update(id: string, payload: IIncubacion): Promise<void> {
-    const response = await fetch(this.buildEntityUrl(id), {
+  public async update(id: string, payload: Linea): Promise<Linea> {
+
+    let url = this.buildEntityUrl(id);
+    const response = await fetch(url, {
       method: "PATCH",
       headers: this.buildHeaders(),
       body: JSON.stringify(payload),
@@ -152,11 +122,14 @@ export default class IncubacionService {
 
     if (!response.ok) {
       throw new Error(
-        data?.error?.message ||
+          data?.error?.message ||
           data?.message ||
-          "No se pudo actualizar la incubación",
+          "No se pudo actualizar la línea",
       );
     }
+
+    return data;
+
   }
 
   public async remove(id: string): Promise<void> {

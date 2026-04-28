@@ -32,23 +32,19 @@ export default class Welcome extends Controller {
     }
 
     public onInit(): void {
+
         this.authService = AuthService.getInstance();
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-        const oTarget = oRouter?.getTarget("TargetWelcome") as any;
-        oTarget?.attachDisplay(this.onTargetDisplay, this);
+        oRouter?.getRoute("RouteWelcome")?.attachPatternMatched(this.onRouteMatched, this);
+
     }
 
-    private onTargetDisplay = (): void => {
+    private onRouteMatched = (oEvent: any): void => {
+
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
             oRouter?.navTo("RouteLogin");
             return;
-        }
-
-        const oSideNavigation = this.byId("sideNavigation") as any;
-
-        if (oSideNavigation) {
-            oSideNavigation.setExpanded(!Device.system.phone);
         }
 
         const sUserData = localStorage.getItem("auth_user");
@@ -114,7 +110,8 @@ export default class Welcome extends Controller {
                 totalNacidos: oData.totalNacidos || 0,
                 alertaIncubaciones: oData.alertaIncubaciones || "",
                 alertaEclosion: oData.alertaEclosion || "",
-                incubacionesRecientes: aIncubacionesRecientes
+                incubacionesRecientes: aIncubacionesRecientes,
+                totalLineas: oData.totalLineas
             });
         } catch (error: any) {
             MessageToast.show(error.message || "Error al cargar dashboard");
@@ -374,6 +371,16 @@ export default class Welcome extends Controller {
         localStorage.setItem('filterIncProceso', "EN_PROCESO");
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.navTo("RouteIncubacionList");
+    }
+
+    public onNavLineasGallosList(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteLineaGallos");
+    }
+
+    public onVerPlanesCruce(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RoutePlanesCruce");
     }
 
 }

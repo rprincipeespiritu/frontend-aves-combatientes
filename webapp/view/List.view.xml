@@ -11,6 +11,7 @@
             navButtonPress="onNavBack">
 
         <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
             <f:Avatar
                     id="userAvatar"
                     src="{user>/foto}"

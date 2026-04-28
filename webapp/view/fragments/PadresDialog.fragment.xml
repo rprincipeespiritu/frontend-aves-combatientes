@@ -5,7 +5,7 @@
     <Dialog title="Seleccionar padre/madre" contentWidth="20%">
 
         <content>
-            <VBox width="100%">
+            <VBox class="sapUiMediumMargin">
 
                 <SearchField
                         width="100%"
