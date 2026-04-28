@@ -29,7 +29,7 @@
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap">
                                     <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add" press="onNavNewBird"/>
                                     <Button text="Nueva Incubación" icon="sap-icon://add" press="onNavNewIncubation" class="sapUiTinyMarginBegin"/>
-                                    <Button text="Ver Incubaciones" icon="sap-icon://table-view" press="onNavIncubationList" class="sapUiTinyMarginBegin"/>
+                                    <Button text="Nueva Línea" icon="sap-icon://add" press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin"/>
                                 </HBox>
                             </VBox>
                         </content>
@@ -43,19 +43,31 @@
                             </TileContent>
                         </GenericTile>
 
+                        <GenericTile class="sapUiSmallMarginTop" header="Linea de Gallos" subheader="Registradas" press="onNavLineasGallosList">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalLineas}" icon="sap-icon://tree"/>
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce" subheader="Ver historial" press=".onVerPlanesCruce">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalPlanes}" icon="sap-icon://table-view"/>
+                            </TileContent>
+                        </GenericTile>
+
                         <GenericTile class="sapUiSmallMarginTop" header="Incubaciones" subheader="Totales" press="onNavIncubationList">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalIncubaciones}" icon="sap-icon://nutrition-activity"/>
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones en proceso" subheader="" press="onNavIncubationListProcess">
+                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones" subheader="En proceso" press="onNavIncubationListProcess">
                             <TileContent>
                                 <NumericContent value="{dashboard>/incubacionesActivas}" icon="sap-icon://process"/>
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Nacidos" subheader="Acumulado" press="onVerIncubaciones">
+                        <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader="" press="onVerReportes" visible="true">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalNacidos}" icon="sap-icon://favorite"/>
                             </TileContent>

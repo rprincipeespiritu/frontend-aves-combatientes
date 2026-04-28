@@ -1,12 +1,18 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionList"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:form="sap.f">
 
     <Page title="Incubaciones" showNavButton="true" navButtonPress="onNavBack">
-        <!-- <headerContent>
-            <Button text="Actualizar" icon="sap-icon://refresh" press="onRefresh" />
-            <Button text="Nueva Incubación" type="Emphasized" icon="sap-icon://add" press="onCreate" />
-        </headerContent> -->
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
 
         <content>
             <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
@@ -14,8 +20,8 @@
                     <OverflowToolbar>
                         <Title text="Incubaciones Registradas ({= ${view>/incubaciones}.length})"/>
                         <ToolbarSpacer/>
-                        <Button icon="sap-icon://refresh" enabled="{= ${table>/selectedIndex} >= 0}" press="onRefresh"/>
                         <Button icon="sap-icon://add" type="Emphasized" press="onCreate" />
+                        <Button icon="sap-icon://refresh" press="onRefresh"/>
                     </OverflowToolbar>
                 </headerToolbar>
                 <columns>

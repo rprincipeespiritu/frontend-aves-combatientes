@@ -1,9 +1,19 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionForm"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form">
+    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.f">
 
     <Page title="{= ${view>/editMode} ? 'Editar Incubación' : 'Nueva Incubación' }" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
 
         <content>
             <VBox class="sapUiMediumMargin" busy="{view>/busy}">
@@ -25,12 +35,16 @@
                         <!-- <DatePicker value="{view>/form/fechaEclosion}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" /> -->
 
                         <Label text="Estado" />
-                        <Select selectedKey="{view>/form/estado}" editable="false">
+                        <Text text="{
+                                    path: 'view>/form/estado',
+                                    formatter: '.formatearEstado'
+                                }"/>
+                       <!-- <Select selectedKey="{view>/form/estado}" editable="false">
                             <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="Programada" />
                             <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="En proceso" />
                             <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="Finalizada" />
                             <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="Cancelada" />
-                        </Select>
+                        </Select> -->
 
                         <Label text="Observación" />
                         <TextArea value="{view>/form/observaciones}" rows="4" editable="{= ${view>/form/estado} !== 'COMPLETADA' &amp;&amp;  ${view>/form/estado} !== 'CANCELADA'}"/>
@@ -77,8 +91,8 @@
                                         <Input id="inputMadre" placeholder="Seleccionar Madre" value="{view>placaMadre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpMadre" width="100%" editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
                                         <Input value="{view>totalHuevos}" type="Number" editable="{= ${view>/form/estado} === 'PROGRAMADA' }"/>
                                         <Input value="{view>huevosFertiles}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
-                                        <Input value="{view>huevosEclosionados}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
-                                        <Input value="{view>huevosNoEclosionados}" type="Number" editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
+                                        <Input value="{view>huevosEclosionados}" type="Number" editable="{view>/form/eInputNacNoEcl}" />
+                                        <Input value="{view>huevosNoEclosionados}" type="Number" editable="{view>/form/eInputNacNoEcl}" />
                                         <Button icon="sap-icon://delete" type="Transparent" press=".onDeleteDetalle" visible="{= ${view>/form/estado} === 'PROGRAMADA' }" />
                                     </cells>
                                 </ColumnListItem>

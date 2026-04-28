@@ -1,0 +1,114 @@
+<mvc:View
+        controllerName="com.rprincipees.registroavescombate.controller.CruceCreate"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:form="sap.f">
+
+    <Page
+            title="Nuevo Plan de Cruce"
+            showNavButton="true"
+            navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <form:Avatar
+                    id="userAvatar"
+                    src="{user>/foto}"
+                    displaySize="XS"
+                    press="onUserMenuPress"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <Panel headerText="Selección de reproductores">
+                    <VBox class="sapUiMediumMargin">
+
+                        <Label text="Macho" required="true"/>
+                        <Input
+                                id="inputPadreLinea"
+                                placeholder="Seleccionar Macho"
+                                value="{cruce>/padrePlaca}"
+                                description="{cruce>/padreNombre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpPadre"
+                                width="100%"
+                                chage="onCambioAves"/>
+
+                        <Label text="Hembra" class="sapUiSmallMarginTop" required="true"/>
+                        <Input
+                                id="inputMadreLinea"
+                                placeholder="Seleccionar Hembra"
+                                value="{cruce>/madrePlaca}"
+                                description="{cruce>/madreNombre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpMadre"
+                                width="100%"
+                                chage="onCambioAves"/>
+
+                        <Label text="Parentesco" class="sapUiSmallMarginTop" required="true"/>
+                        <Input
+                                value="{cruce>/tipoParentesco}"
+                                editable="false"
+                                placeholder="Se calculará automáticamente"/>
+
+                        <Label text="Objetivo del cruce" class="sapUiSmallMarginTop"/>
+                        <TextArea
+                                width="100%"
+                                rows="3"
+                                value="{cruce>/objetivoCruce}"
+                                placeholder="Ejemplo: fijar velocidad, corte, casta, tamaño, fertilidad..." />
+
+                        <Button
+                                text="Analizar cruce"
+                                type="Emphasized"
+                                icon="sap-icon://decision"
+                                press=".onAnalizarCruce"
+                                class="sapUiMediumMarginTop"/>
+
+                    </VBox>
+                </Panel>
+
+                <Panel
+                        headerText="Resultado del análisis"
+                        visible="{cruce>/resultadoVisible}"
+                        class="sapUiMediumMarginTop">
+
+                    <VBox class="sapUiMediumMargin">
+
+                        <ObjectStatus
+                                title="Nivel de riesgo"
+                                text="{cruce>/resultado/nivelRiesgo}"
+                                state="{cruce>/resultado/state}" />
+
+                        <Text text="{cruce>/resultado/descripcion}" />
+
+                        <MessageStrip
+                                text="{cruce>/resultado/recomendacion}"
+                                type="{cruce>/resultado/messageType}"
+                                showIcon="true"
+                                class="sapUiSmallMarginTop"/>
+
+                        <Button
+                                text="Guardar Plan de Cruce"
+                                type="Accept"
+                                icon="sap-icon://save"
+                                press=".onGuardarPlanCruce"
+                                class="sapUiMediumMarginTop"/>
+
+                    </VBox>
+                </Panel>
+
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button text="Cancelar" press="onNavBack"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

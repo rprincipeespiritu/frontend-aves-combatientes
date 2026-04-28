@@ -11,7 +11,8 @@ import Control from "sap/ui/mdc/Control";
 import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
-import {IAve} from "com/rprincipees/registroavescombate/types/Models";
+import {CategoriaAve, EstadoAve, IAve, SexoAve} from "com/rprincipees/registroavescombate/types/Models";
+import formatter from "../model/formatter";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
@@ -19,6 +20,7 @@ export default class AveDetail extends Controller {
     private aveId: string = "";
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
+    public formatter = formatter;
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -353,6 +355,42 @@ export default class AveDetail extends Controller {
             console.error("Error en logout:", error);
             MessageToast.show("Error cerrando sesión");
         }
+    }
+
+    public onNavWelcome(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteWelcome");
+    }
+
+    public formatearSexo(sexo: SexoAve): string {
+        const estados = {
+            [SexoAve.Hembra]: "Hembra",
+            [SexoAve.Macho]: "Macho",
+        };
+
+        return estados[sexo] || sexo;
+    }
+
+    public formatearEstado(estado: EstadoAve): string {
+        const estados = {
+            [EstadoAve.Activo]: "Activo",
+            [EstadoAve.Inactivo]: "Inactivo",
+            [EstadoAve.Entrenamiento]: "En Entrenamiento",
+            [EstadoAve.Competencia]: "En Competencia",
+            [EstadoAve.Retirado]: "Retirado",
+        };
+
+        return estados[estado] || estado;
+    }
+
+    public formatearCategoria(categoria: CategoriaAve): string {
+        const categorias = {
+            [CategoriaAve.Bueno]: "Bueno",
+            [CategoriaAve.Excelente]: "Excelente",
+            [CategoriaAve.Extraordinario]: "Extraordinario",
+        };
+
+        return categorias[categoria] || categoria;
     }
 
 }

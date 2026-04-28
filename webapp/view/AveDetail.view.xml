@@ -7,6 +7,7 @@
 
     <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
             <form:Avatar
                     id="userAvatar"
                     src="{user>/foto}"
@@ -34,43 +35,55 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Placa"/>
-                            <Input value="{detail>/placa}" editable="{detail>/editMode}"/>
+                            <Text text="{detail>/placa}"/>
 
                             <Label text="Nombre"/>
-                            <Input value="{detail>/nombre}" editable="{detail>/editMode}"/>
+                            <Text text="{detail>/nombre}"/>
 
                             <Label text="Apodo"/>
-                            <Input value="{detail>/apodo}" editable="{detail>/editMode}"/>
+                            <Text text="{detail>/apodo}"/>
 
                             <Label text="Género"/>
-                            <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
+                            <Text text="{
+                                    path: 'detail>/sexo',
+                                    formatter: '.formatearSexo'
+                                }"/>
+                           <!-- <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
                                 <core:Item key="M" text="Macho"/>
                                 <core:Item key="H" text="Hembra"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Cría"/>
                             <CheckBox selected="{detail>/cria}" editable="false"/>
 
                             <Label text="Estado"/>
-                            <Select selectedKey="{detail>/estado}" enabled="{detail>/editMode}">
+                            <Text text="{
+                                    path: 'detail>/estado',
+                                    formatter: '.formatearEstado'
+                                }"/>
+                           <!-- <Select selectedKey="{detail>/estado}" enabled="{detail>/editMode}">
                                 <core:Item key="ACTIVO" text="Activo"/>
                                 <core:Item key="VENDIDO" text="Vendido"/>
                                 <core:Item key="FALLECIDO" text="Fallecido"/>
                                 <core:Item key="PRESTADO" text="Prestado"/>
-                            </Select>
+                            </Select> -->
 
                             <Label text="Ubicación"/>
-                            <Input value="{detail>/ubicacion}" editable="{detail>/editMode}"/>
+                            <Text text="{detail>/ubicacion}" editable="{detail>/editMode}"/>
 
                             <Label text="Padrote"/>
                             <CheckBox selected="{detail>/padrote}" editable="false"/>
 
                             <Label text="Calificación"/>
-                            <Select selectedKey="{detail>/categoria}" editable="false">
+                            <Text text="{
+                                    path: 'detail>/categoria',
+                                    formatter: '.formatearCategoria'
+                                }"/>
+                           <!-- <Select selectedKey="{detail>/categoria}" editable="false">
                                 <core:Item key="BUENO" text="Bueno"/>
                                 <core:Item key="EXCELENTE" text="Excelente"/>
                                 <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
-                            </Select>
+                            </Select> -->
 
                         </f:content>
                     </f:SimpleForm>

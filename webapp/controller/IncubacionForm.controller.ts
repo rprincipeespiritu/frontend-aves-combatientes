@@ -13,8 +13,14 @@ import UIComponent from "sap/ui/core/UIComponent";
 import DatePicker from "sap/m/DatePicker";
 import DateTimePicker from "sap/m/DateTimePicker";
 import Input from "sap/m/Input";
-import { IAve } from "../types/Models";
+import {EstadoAve, EstadoIncubacion, IAve} from "../types/Models";
 import formatter from "../model/formatter";
+import Router from "sap/ui/core/routing/Router";
+import Event from "sap/ui/base/Event";
+import Control from "sap/ui/mdc/Control";
+import Device from "sap/ui/Device";
+import ActionSheet from "sap/m/ActionSheet";
+import Popover from "sap/m/Popover";
 
 export default class IncubacionForm extends Controller {
   public formatter = formatter;
@@ -25,6 +31,8 @@ export default class IncubacionForm extends Controller {
   private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   authService: AuthService;
   private _sDetallePath: string | null = null;
+  private _oUserMenuPopover: any;
+  private _oUserMenuSheet: any;
 
   public onInit(): void {
     this.authService = AuthService.getInstance();
@@ -215,6 +223,7 @@ export default class IncubacionForm extends Controller {
 
   private async _onCreateMatched(): Promise<void> {
 
+    const oModel = this.getView()?.getModel("view") as JSONModel;
     try {
       if (!this.authService.isAuthenticated()) {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
@@ -222,9 +231,14 @@ export default class IncubacionForm extends Controller {
         return;
       }
 
-      const oModel = this.getView()?.getModel("view") as JSONModel;
+      const sUserData = localStorage.getItem("auth_user");
+      if (sUserData) {
+        const oUser = JSON.parse(sUserData);
+        const oUserModel = new JSONModel(oUser);
+        this.getView()?.setModel(oUserModel, "user");
+      }
 
-      // oModel.setProperty("/busy", true);
+      oModel.setProperty("/busy", true);
       oModel.setProperty("/editMode", false);
       this.incubacionId = null;
 
@@ -243,6 +257,8 @@ export default class IncubacionForm extends Controller {
       MessageBox.error(
         error instanceof Error ? error.message : "No se pudo cargar aves",
       );
+    } finally {
+      oModel.setProperty("/busy", false);
     }
   }
 
@@ -252,6 +268,14 @@ export default class IncubacionForm extends Controller {
       oRouter?.navTo("RouteLogin");
       return;
     }
+
+    const sUserData = localStorage.getItem("auth_user");
+    if (sUserData) {
+      const oUser = JSON.parse(sUserData);
+      const oUserModel = new JSONModel(oUser);
+      this.getView()?.setModel(oUserModel, "user");
+    }
+
     const oModel = this.getView()?.getModel("view") as JSONModel;
     this.incubacionId = oEvent.getParameter("arguments").id;
 
@@ -261,6 +285,14 @@ export default class IncubacionForm extends Controller {
     try {
       await this._loadAvesPadrotes();
       const incubacion = await this.service.getById(this.incubacionId!);
+      incubacion.eInputNacNoEcl = false;
+
+      const oFechaEclosion = new Date(incubacion.fechaEclosion || 0);
+      const oFechaActual = new Date();
+
+      if ( oFechaActual >= oFechaEclosion ) {
+        incubacion.eInputNacNoEcl = true;
+      }
 
       let detalles = incubacion.detalles;
       for (let index = 0; index < detalles.length; index++) {
@@ -279,6 +311,7 @@ export default class IncubacionForm extends Controller {
         fechaEclosion: new Date(incubacion.fechaEclosion) || "",
         estado: incubacion.estado || "PROGRAMADA",
         observaciones: incubacion.observaciones || "",
+        eInputNacNoEcl: incubacion.eInputNacNoEcl,
         detalles: incubacion.detalles
       });
 
@@ -357,6 +390,15 @@ export default class IncubacionForm extends Controller {
         return;
       }
 
+      const authUser = localStorage.getItem("auth_user");
+      if (!authUser) {
+        MessageToast.show("No se encontró la sesión del usuario");
+        return;
+      }
+      const usuario = JSON.parse(authUser);
+      const userId = usuario._id;
+
+
       const oPayload = {
         codigo: oData.codigo,
         fechaIncubacion: oData.fechaIncubacion ? new Date(oData.fechaIncubacion).toISOString() : null,
@@ -364,6 +406,7 @@ export default class IncubacionForm extends Controller {
         fechaEclosion: oData.fechaEclosion ? new Date(oData.fechaEclosion).toISOString() : null,
         estado: oData.estado,
         observaciones: oData.observaciones,
+        usuario_ID: userId,
         detalles: (oData.detalles || []).map(function (d) {
           return {
             padre_ID: d.padre_ID || null,
@@ -371,7 +414,8 @@ export default class IncubacionForm extends Controller {
             totalHuevos: Number(d.totalHuevos || 0),
             huevosFertiles: Number(d.huevosFertiles || 0),
             huevosEclosionados: Number(d.huevosEclosionados || 0),
-            huevosNoEclosionados: Number(d.huevosNoEclosionados || 0)
+            huevosNoEclosionados: Number(d.huevosNoEclosionados || 0),
+            usuario_ID: d.usuario_ID || userId
           };
         })
       };
@@ -457,6 +501,67 @@ export default class IncubacionForm extends Controller {
 
     aDetalles.splice(iIndex, 1);
     oModel.setProperty("/form/detalles", aDetalles);
+  }
+
+  public onNavWelcome(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+    oRouter?.navTo("RouteWelcome");
+  }
+
+  public async onUserMenuPress(oEvent: Event): Promise<void> {
+    const oSource = oEvent.getSource() as Control;
+
+    if (Device.system.phone) {
+      if (!this._oUserMenuSheet) {
+        const oFragment = await Fragment.load({
+          id: this.getView()?.getId(),
+          name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
+          controller: this
+        });
+
+        this._oUserMenuSheet = oFragment as ActionSheet;
+        this.getView()?.addDependent(this._oUserMenuSheet);
+      }
+
+      // TOGGLE
+      if (this._oUserMenuSheet.isOpen()) {
+        this._oUserMenuSheet.close();
+      } else {
+        this._oUserMenuSheet.openBy(oSource);
+      }
+
+      return;
+    }
+
+    if (!this._oUserMenuPopover) {
+      const oFragment = await Fragment.load({
+        id: this.getView()?.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+        controller: this
+      });
+
+      this._oUserMenuPopover = oFragment as Popover;
+      this.getView()?.addDependent(this._oUserMenuPopover);
+    }
+
+    // TOGGLE
+    if (this._oUserMenuPopover.isOpen()) {
+      this._oUserMenuPopover.close();
+    } else {
+      this._oUserMenuPopover.openBy(oSource);
+    }
+
+  }
+
+  public formatearEstado(estado: EstadoIncubacion): string {
+    const estados = {
+      [EstadoIncubacion.Proceso]: "En proceso",
+      [EstadoIncubacion.Programada]: "Programada",
+      [EstadoIncubacion.Completada]: "Completada",
+      [EstadoIncubacion.Cancelada]: "Cancelada"
+    };
+
+    return estados[estado] || estado;
   }
 
 }

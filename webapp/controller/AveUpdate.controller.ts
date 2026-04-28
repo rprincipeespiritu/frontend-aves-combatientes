@@ -140,7 +140,7 @@ export default class AveUpdate extends Controller {
                 fotoPrincipal: ave.fotos?.find((f: any) => f.esPrincipal)?.thumbnailUrl || "",
                 pesajes: ave.pesajes || [],
                 peleas: ave.peleas || [],
-                editMode: false
+                editMode: true
             });
 
         } catch (error) {
@@ -426,4 +426,10 @@ export default class AveUpdate extends Controller {
         // this.byId("selectedKeyIndicator").setText(oText);
 
     }
+
+    public onNavWelcome(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteWelcome");
+    }
+
 }
