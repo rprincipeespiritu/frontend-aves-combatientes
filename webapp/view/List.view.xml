@@ -130,8 +130,7 @@
                         width="100%"
                         inset="false"
                         items="{aves>/value}"
-                        class="sapUiMediumMarginTop"
-                        selectionChange="onSelectionChange">
+                        class="sapUiMediumMarginTop">
 
                     <headerToolbar>
                         <OverflowToolbar>

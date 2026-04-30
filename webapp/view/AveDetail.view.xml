@@ -138,6 +138,41 @@
                     </f:SimpleForm>
                 </Panel>
 
+                <Panel headerText="Evaluacion reproductiva" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                    <Table items="{detail>/evaluaciones}" noDataText="Sin evaluaciones registradas">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <ToolbarSpacer/>
+                                <Button text="Nueva evaluacion" type="Emphasized" icon="sap-icon://add" press=".onAbrirEvaluacionDialog"/>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column width="10%"><Text text="Fecha" /></Column>
+                            <Column width="10%"><Text text="Vigor"/></Column>
+                            <Column width="10%"><Text text="Salud"/></Column>
+                            <Column width="10%"><Text text="Fertilidad"/></Column>
+                            <Column width="10%"><Text text="Apto"/></Column>
+                            <Column width="20%"><Text text="Defectos observados"/></Column>
+                            <Column width="20%"><Text text="Recomendacion"/></Column>
+                            <Column width="10%"><Text text="Acciones"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{detail>fecha}"/>
+                                    <ObjectNumber number="{detail>vigor}"/>
+                                    <ObjectNumber number="{detail>saludGeneral}"/>
+                                    <ObjectNumber number="{detail>fertilidad}"/>
+                                    <ObjectStatus text="{= ${detail>aptoReproduccion} ? 'Si' : 'No'}" state="{= ${detail>aptoReproduccion} ? 'Success' : 'Error'}"/>
+                                    <Text text="{detail>defectosObservados}"/>
+                                    <Text text="{detail>recomendacion}"/>
+                                    <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press=".onEditarEvaluacion"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
                 <!-- Genealogía -->
                 <Panel headerText="Genealogía" expandable="true" expanded="true" class="sapUiSmallMarginTop">
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">

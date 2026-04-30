@@ -1,0 +1,57 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog title="{detail>/evaluacionDialogTitle}" contentWidth="40%">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <f:SimpleForm                    
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    columnsL="1"
+                    columnsM="1">
+                    <f:content>
+                        <Label text="Vigor" />
+                        <Input value="{detail>/nuevaEvaluacion/vigor}" type="Number"
+                            placeholder="1 - 10" />
+
+                        <Label text="Salud general" />
+                        <Input value="{detail>/nuevaEvaluacion/saludGeneral}" type="Number"
+                            placeholder="1 - 10" />
+
+                        <Label text="Fertilidad" />
+                        <Input value="{detail>/nuevaEvaluacion/fertilidad}" type="Number"
+                            placeholder="1 - 10" />
+
+                        <Label text="Desarrollo" />
+                        <Select selectedKey="{detail>/nuevaEvaluacion/desarrollo}">
+                            <core:Item key="EXCELENTE" text="Excelente" />
+                            <core:Item key="BUENO" text="Bueno" />
+                            <core:Item key="REGULAR" text="Regular" />
+                            <core:Item key="DEFICIENTE" text="Deficiente" />
+                        </Select>
+
+                        <Label text="Apto reproduccion" />
+                        <CheckBox selected="{detail>/nuevaEvaluacion/aptoReproduccion}" />
+
+                        <Label text="Defectos observados" />
+                        <Input value="{detail>/nuevaEvaluacion/defectosObservados}" />
+
+                        <Label text="Recomendacion" />
+                        <TextArea value="{detail>/nuevaEvaluacion/recomendacion}" rows="3" />
+                    </f:content>
+                </f:SimpleForm>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save"
+                press=".onRegistrarEvaluacion" />
+        </beginButton>
+
+        <endButton>
+            <Button text="Cancelar" press=".onCerrarEvaluacionDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

@@ -21,12 +21,16 @@ import Control from "sap/ui/mdc/Control";
 import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
+import List from "sap/m/List";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
 
 export default class IncubacionForm extends Controller {
   public formatter = formatter;
   private service = new IncubacionService();
   private incubacionId: string | null = null;
   private _oPadresDialog: Dialog;
+  private _oPlanesCruceDialog: Dialog;
   private helpSelected: any;
   private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   authService: AuthService;
@@ -221,6 +225,32 @@ export default class IncubacionForm extends Controller {
 
   }
 
+  private async _loadPlanesCruce(): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/PlanesCruces?$expand=macho,hembra,linea&$orderby=createdAt desc`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error?.message || data?.message || "No se pudo cargar planes de cruce");
+    }
+
+    const planes = (data.value || []).filter((plan: any) =>
+      ["PROPUESTO", "APROBADO", "EJECUTADO"].includes(plan.estado)
+    ).map((plan: any) => ({
+      ...plan,
+      codigoVisual: plan.codigo || `PC-${plan.macho?.placa || "M"}-${plan.hembra?.placa || "H"}`,
+      descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""} | ${plan.decision || ""} | ${plan.nivelRiesgo || ""}`
+    }));
+
+    this.getView()?.setModel(new JSONModel(planes), "planesCruce");
+  }
+
   private async _onCreateMatched(): Promise<void> {
 
     const oModel = this.getView()?.getModel("view") as JSONModel;
@@ -240,7 +270,7 @@ export default class IncubacionForm extends Controller {
 
       oModel.setProperty("/busy", true);
       oModel.setProperty("/editMode", false);
-      this.incubacionId = null;
+      this.incubacionId = null;      
 
       oModel.setProperty("/form", {
         fechaIncubacion: null,
@@ -248,10 +278,12 @@ export default class IncubacionForm extends Controller {
         fechaEclosion: null,
         estado: "PROGRAMADA",
         observacion: "",
+        eInputNacNoEcl: false,
         detalles: []
       });
 
       await this._loadAvesPadrotes();
+      await this._loadPlanesCruce();
 
     } catch (error) {
       MessageBox.error(
@@ -284,6 +316,7 @@ export default class IncubacionForm extends Controller {
 
     try {
       await this._loadAvesPadrotes();
+      await this._loadPlanesCruce();
       const incubacion = await this.service.getById(this.incubacionId!);
       incubacion.eInputNacNoEcl = false;
 
@@ -301,6 +334,9 @@ export default class IncubacionForm extends Controller {
         element.nombrePadre = element.padre.nombre;
         element.placaMadre = element.madre.placa;
         element.nombreMadre = element.madre.nombre;
+        element.planCruce_ID = element.planCruce_ID || element.planCruce?.ID || "";
+        element.planCruceCodigo = element.planCruce?.codigo || "";
+        element.decision = element.decision || element.planCruce?.decision || "";
 
       }
 
@@ -341,7 +377,7 @@ export default class IncubacionForm extends Controller {
       const noEclosionados = Number(d.noEclosionados || 0);
 
       if (!d.padre_ID || !d.madre_ID) {
-        MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
+        MessageBox.error(`Debe seleccionar un plan de cruce en la fila ${i + 1}`);
         return false;
       }
 
@@ -411,6 +447,10 @@ export default class IncubacionForm extends Controller {
           return {
             padre_ID: d.padre_ID || null,
             madre_ID: d.madre_ID || null,
+            planCruce_ID: d.planCruce_ID || null,
+            tipoParentesco: d.tipoParentesco || null,
+            nivelRiesgo: d.nivelRiesgo || null,
+            porcentaje: d.porcentaje === undefined || d.porcentaje === null ? null : Number(d.porcentaje),
             totalHuevos: Number(d.totalHuevos || 0),
             huevosFertiles: Number(d.huevosFertiles || 0),
             huevosEclosionados: Number(d.huevosEclosionados || 0),
@@ -482,6 +522,12 @@ export default class IncubacionForm extends Controller {
       madre_ID: "",
       placaMadre: "",
       nombreMadre: "",
+      planCruce_ID: "",
+      planCruceCodigo: "",
+      tipoParentesco: "",
+      nivelRiesgo: "",
+      porcentaje: null,
+      decision: "",
       totalHuevos: 0,
       huevosFertiles: 0,
       huevosEclosionados: 0,
@@ -489,6 +535,109 @@ export default class IncubacionForm extends Controller {
     });
 
     oModel.setProperty("/form/detalles", aDetalles);
+  }
+
+  private aplicarPlanCruceEnDetalle(sPath: string, plan: any): void {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+
+    oModel.setProperty(`${sPath}/planCruce_ID`, plan.ID);
+    oModel.setProperty(`${sPath}/planCruceCodigo`, plan.codigoVisual || plan.codigo || "");
+    oModel.setProperty(`${sPath}/padre_ID`, plan.macho_ID || plan.macho?.ID || "");
+    oModel.setProperty(`${sPath}/placaPadre`, plan.macho?.placa || "");
+    oModel.setProperty(`${sPath}/nombrePadre`, plan.macho?.nombre || "");
+    oModel.setProperty(`${sPath}/madre_ID`, plan.hembra_ID || plan.hembra?.ID || "");
+    oModel.setProperty(`${sPath}/placaMadre`, plan.hembra?.placa || "");
+    oModel.setProperty(`${sPath}/nombreMadre`, plan.hembra?.nombre || "");
+    oModel.setProperty(`${sPath}/tipoParentesco`, plan.tipoParentesco || "");
+    oModel.setProperty(`${sPath}/nivelRiesgo`, plan.nivelRiesgo || "");
+    oModel.setProperty(`${sPath}/porcentaje`, plan.porcentaje ?? null);
+    oModel.setProperty(`${sPath}/decision`, plan.decision || "");
+    oModel.refresh();
+  }
+
+  public async onValueHelpPlanCruce(oEvent: Event): Promise<void> {
+    const oSource = oEvent.getSource();
+    const oContext = oSource.getBindingContext("view");
+    if (!oContext) {
+      return;
+    }
+
+    this._sDetallePath = oContext.getPath();
+
+    try {
+      await this._loadPlanesCruce();
+
+      if (!this._oPlanesCruceDialog) {
+        this._oPlanesCruceDialog = (await Fragment.load({
+          id: this.getView()?.getId(),
+          name: "com.rprincipees.registroavescombate.view.fragments.PlanesCruceDialog",
+          controller: this,
+        })) as Dialog;
+
+        this.getView()?.addDependent(this._oPlanesCruceDialog);
+      }
+
+      this._oPlanesCruceDialog.open();
+    } catch (error) {
+      MessageBox.error(error instanceof Error ? error.message : "No se pudo cargar planes de cruce");
+    }
+  }
+
+  public onSeleccionarPlanCruceDialog(oEvent: Event): void {
+    const oSelectedItem = oEvent.getParameter("listItem");
+    const oContext = oSelectedItem?.getBindingContext("planesCruce");
+
+    if (!oContext || !this._sDetallePath) {
+      return;
+    }
+
+    this.aplicarPlanCruceEnDetalle(this._sDetallePath, oContext.getObject());
+    this._sDetallePath = null;
+    this._oPlanesCruceDialog?.close();
+  }
+
+  public onCerrarPopupPlanesCruce(): void {
+    this._oPlanesCruceDialog?.close();
+  }
+
+  public onSearchPlanesCruce(oEvent: Event): void {
+    const sValue = oEvent.getParameter("newValue") || "";
+    const oList = this.byId("listaPlanesCruce") as List;
+    const oBinding = oList.getBinding("items");
+
+    if (!oBinding) return;
+
+    if (sValue) {
+      oBinding.filter([
+        new Filter({
+          filters: [
+            new Filter("codigoVisual", FilterOperator.Contains, sValue),
+            new Filter("descripcionVisual", FilterOperator.Contains, sValue),
+            new Filter("tipoParentesco", FilterOperator.Contains, sValue),
+            new Filter("nivelRiesgo", FilterOperator.Contains, sValue),
+            new Filter("decision", FilterOperator.Contains, sValue)
+          ],
+          and: false
+        })
+      ]);
+    } else {
+      oBinding.filter([]);
+    }
+  }
+
+  public onSeleccionarPlanCruce(oEvent: Event): void {
+    const oSelectedItem = oEvent.getParameter("selectedItem");
+    const oSource = oEvent.getSource();
+    const oDetalleContext = oSource.getBindingContext("view");
+    const oPlanContext = oSelectedItem?.getBindingContext("planesCruce");
+
+    if (!oDetalleContext || !oPlanContext) {
+      return;
+    }
+
+    const sPath = oDetalleContext.getPath();
+    const plan = oPlanContext.getObject();
+    this.aplicarPlanCruceEnDetalle(sPath, plan);
   }
 
   public onDeleteDetalle(oEvent: Event): void {

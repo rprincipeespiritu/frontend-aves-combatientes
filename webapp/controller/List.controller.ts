@@ -477,14 +477,6 @@ export default class List extends Controller {
     MessageToast.show("Datos actualizados");
   }
 
-  public onSelectionChange(): void {
-    const oTable = this.byId("avesTable") as Table;
-    const oTableModel = this.getView()?.getModel("table") as JSONModel;
-    const iSelectedIndex = oTable.getSelectedItems().length > 0 ? 0 : -1;
-
-    oTableModel.setProperty("/selectedIndex", iSelectedIndex);
-  }
-
   public formatearCategoria(categoria: CategoriaAve): string {
     const categorias = {
       [CategoriaAve.Bueno]: "Bueno",

@@ -55,8 +55,10 @@ export default class CruceCreate extends Controller {
             macho_ID: "",
             hembra_ID: "",
             tipoParentesco: "",
+            parentescoTexto: "",
             objetivoCruce: "",
             resultadoVisible: false,
+            analisisEnCurso: false,
             machos: [],
             hembras: [],
             tiposParentesco: [
@@ -100,7 +102,7 @@ export default class CruceCreate extends Controller {
     }*/
 
     public onCambioAves(): void {
-        this.calcularParentesco();
+        void this.analizarParentescoAutomatico(false);
     }
 
     private calcularParentesco(): void {
@@ -162,16 +164,75 @@ export default class CruceCreate extends Controller {
         oModel.setProperty("/tipoParentesco", tipo);
     }
 
-    public async onAnalizarCruce(): Promise<void> {
+    private obtenerTextoParentesco(tipoParentesco: string): string {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        const tiposParentesco = oModel.getProperty("/tiposParentesco") || [];
+        const item = tiposParentesco.find((tipoItem: any) => tipoItem.key === tipoParentesco);
+        return item?.text || tipoParentesco || "";
+    }
 
-        const oThat = this;
+    private limpiarAnalisis(): void {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        oModel.setProperty("/tipoParentesco", "");
+        oModel.setProperty("/parentescoTexto", "");
+        oModel.setProperty("/resultado", {});
+        oModel.setProperty("/resultadoVisible", false);
+    }
+
+    private async analizarParentescoAutomatico(mostrarMensajes: boolean): Promise<boolean> {
         const oModel = this.getView()?.getModel("cruce") as JSONModel;
         const data = oModel.getData();
 
-        if (!data.tipoParentesco) {
-            MessageBox.warning("Selecciona parentesco.");
-            return;
+        if (!data.macho_ID || !data.hembra_ID) {
+            this.limpiarAnalisis();
+            return false;
         }
+
+        oModel.setProperty("/analisisEnCurso", true);
+
+        try {
+            const response = await fetch(`${this.baseUrl}/analizarCruceAutomatico`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    macho_ID: data.macho_ID,
+                    hembra_ID: data.hembra_ID,
+                    generaciones: 5
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("No se pudo analizar el parentesco.");
+            }
+
+            const resultado = await response.json();
+            const parentescoTexto = this.obtenerTextoParentesco(resultado.tipoParentesco);
+
+            oModel.setProperty("/tipoParentesco", resultado.tipoParentesco);
+            oModel.setProperty("/parentescoTexto", parentescoTexto);
+            oModel.setProperty("/resultado", resultado);
+            oModel.setProperty("/resultadoVisible", true);
+            return true;
+
+        } catch (error) {
+            this.limpiarAnalisis();
+            if (mostrarMensajes) {
+                MessageBox.error("No se pudo analizar el parentesco entre los reproductores.");
+            }
+            return false;
+
+        } finally {
+            oModel.setProperty("/analisisEnCurso", false);
+        }
+    }
+
+    public async onAnalizarCruce(): Promise<void> {
+
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        const data = oModel.getData();
 
         if (!data.padrePlaca) {
             MessageBox.warning("Selecciona macho.");
@@ -183,63 +244,26 @@ export default class CruceCreate extends Controller {
             return;
         }
 
-        const body = {
-            tipoParentesco: data.tipoParentesco
-        };
-
-        const placaPadre = data.padrePlaca;
-        const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
-        const aMachos = oMachosModel.getData() as any[];
-        let oPadre: IAve[];
-        if (aMachos.length > 0 && placaPadre) {
-            oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
-            data.macho_ID = oPadre[0].ID;
+        if (!data.macho_ID || !data.hembra_ID) {
+            MessageBox.warning("No se pudo identificar los reproductores seleccionados.");
+            return;
         }
 
-        //const oInputMadre = oThat.byId("idMadre") as Input;
-        const placaMadre = data.madrePlaca;
-        const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
-        const aHembras = oHembrasModel.getData() as any[];
-        let oMadre: IAve[];
-        if (aHembras.length > 0 && placaMadre) {
-            oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
-            data.hembra_ID = oMadre[0].ID;
-        }
-
-        if (data.macho_ID) body.macho_ID = data.macho_ID;
-        if (data.hembra_ID) body.hembra_ID = data.hembra_ID;
-
-
-
-
-
-        try {
-            const response = await fetch(`${this.baseUrl}/analizarCrucePorParentesco`, {
-                method: "POST",
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                throw new Error("No se pudo analizar el cruce.");
-            }
-
-            const resultado = await response.json();
-
-            oModel.setProperty("/resultado", resultado);
-            oModel.setProperty("/resultadoVisible", true);
-
-        } catch (error) {
-            MessageBox.error("No se pudo analizar el cruce.");
+        const analizado = await this.analizarParentescoAutomatico(true);
+        if (analizado) {
+            MessageToast.show("Parentesco calculado correctamente.");
         }
     }
 
     public async onGuardarPlanCruce(): Promise<void> {
-        const oModel = this.getView()?.getModel("cruce") as JSONModel;
-        const token = localStorage.getItem("token");
+        const authUser = localStorage.getItem("auth_user");
+        if (!authUser) {
+            MessageToast.show("No se encontró la sesión del usuario");
+            return;
+        }
+        const usuario = JSON.parse(authUser);
+
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;        
         const resultado = oModel.getProperty("/resultado");
 
         if (!resultado || !resultado.nivelRiesgo) {
@@ -255,9 +279,13 @@ export default class CruceCreate extends Controller {
             objetivoCruce: oModel.getProperty("/objetivoCruce"),
             nivelRiesgo: resultado.nivelRiesgo,
             porcentaje: resultado.porcentaje,
+            ancestrosComunes: resultado.ancestrosComunes,
+            generacionesAnalizadas: 5,
+            decision: resultado.decision,
             recomendacion: resultado.recomendacion,
-            estado: "PROPUESTO",
-            fechaPropuesta: new Date().toISOString().split("T")[0]
+            estado: resultado.decision === "APROBADO" ? "APROBADO" : "PROPUESTO",
+            fechaPropuesta: new Date().toISOString().split("T")[0],
+            usuario_ID: usuario._id            
         };
 
         try {
@@ -277,7 +305,7 @@ export default class CruceCreate extends Controller {
             MessageToast.show("Plan de cruce guardado correctamente.");
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
             oRouter?.navTo("RouteLineaGalloDetail", {
-                lineaId: this.lineaId
+                id: this.lineaId
             });
 
         } catch (error) {
@@ -422,11 +450,20 @@ export default class CruceCreate extends Controller {
         if (oSelectedItem) {
             const sNombre = oSelectedItem.getTitle();
             const sPlaca = oSelectedItem.getDescription();
+            const oContext = oSelectedItem.getBindingContext("avesPadres");
+            const oAve = oContext?.getObject();
+            const oModel = this.getView()?.getModel("cruce") as JSONModel;
             let oInput: Input | undefined;
             if(oThat.helpSelected === "valueHelpPadre") {
                 oInput = this.getView()?.byId("inputPadreLinea") as Input;
+                oModel?.setProperty("/macho_ID", oAve?.ID || "");
+                oModel?.setProperty("/padrePlaca", sPlaca);
+                oModel?.setProperty("/padreNombre", sNombre);
             } else if(oThat.helpSelected === "valueHelpMadre"){
                 oInput = this.getView()?.byId("inputMadreLinea") as Input;
+                oModel?.setProperty("/hembra_ID", oAve?.ID || "");
+                oModel?.setProperty("/madrePlaca", sPlaca);
+                oModel?.setProperty("/madreNombre", sNombre);
             }
             if (oInput) {
                 oInput.setValue(sPlaca);
@@ -435,6 +472,7 @@ export default class CruceCreate extends Controller {
         }
 
         this._oPadresDialog?.close();
+        //void this.analizarParentescoAutomatico(false);
 
     }
 

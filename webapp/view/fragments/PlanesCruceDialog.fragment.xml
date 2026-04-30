@@ -1,0 +1,39 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core">
+
+    <Dialog title="Seleccionar plan de cruce" contentWidth="42rem">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <SearchField
+                        width="100%"
+                        placeholder="Buscar por codigo, placas, riesgo o decision"
+                        liveChange=".onSearchPlanesCruce" />
+
+                <List
+                        id="listaPlanesCruce"
+                        items="{planesCruce>/}"
+                        mode="SingleSelectMaster"
+                        selectionChange=".onSeleccionarPlanCruceDialog">
+
+                    <ObjectListItem
+                            title="{planesCruce>codigoVisual}"
+                            number="{planesCruce>porcentaje}"
+                            numberUnit="%"
+                            intro="{planesCruce>decision}">
+                        <attributes>
+                            <ObjectAttribute text="{planesCruce>descripcionVisual}" />
+                            <ObjectAttribute text="{= 'Parentesco: ' + (${planesCruce>tipoParentesco} || 'Sin dato') }" />
+                            <ObjectAttribute text="{= 'Riesgo: ' + (${planesCruce>nivelRiesgo} || 'Sin dato') }" />
+                        </attributes>
+                    </ObjectListItem>
+
+                </List>
+            </VBox>
+        </content>
+
+        <endButton>
+            <Button text="Cerrar" press=".onCerrarPopupPlanesCruce" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
