@@ -34,8 +34,7 @@
                                 showValueHelp="true"
                                 valueHelpOnly="true"
                                 valueHelpRequest="onValueHelpPadre"
-                                width="100%"
-                                chage="onCambioAves"/>
+                                width="100%" />
 
                         <Label text="Hembra" class="sapUiSmallMarginTop" required="true"/>
                         <Input
@@ -46,21 +45,7 @@
                                 showValueHelp="true"
                                 valueHelpOnly="true"
                                 valueHelpRequest="onValueHelpMadre"
-                                width="100%"
-                                chage="onCambioAves"/>
-
-                        <Label text="Parentesco" class="sapUiSmallMarginTop" required="true"/>
-                        <Input
-                                value="{cruce>/tipoParentesco}"
-                                editable="false"
-                                placeholder="Se calculará automáticamente"/>
-
-                        <Label text="Objetivo del cruce" class="sapUiSmallMarginTop"/>
-                        <TextArea
-                                width="100%"
-                                rows="3"
-                                value="{cruce>/objetivoCruce}"
-                                placeholder="Ejemplo: fijar velocidad, corte, casta, tamaño, fertilidad..." />
+                                width="100%" />
 
                         <Button
                                 text="Analizar cruce"
@@ -68,6 +53,20 @@
                                 icon="sap-icon://decision"
                                 press=".onAnalizarCruce"
                                 class="sapUiMediumMarginTop"/>
+
+                        <Label text="Parentesco calculado" class="sapUiSmallMarginTop"/>
+                        <Input
+                                value="{cruce>/parentescoTexto}"
+                                editable="false"
+                                busy="{cruce>/analisisEnCurso}"
+                                placeholder="Se calculará automáticamente"/>
+
+                        <Label text="Objetivo del cruce" class="sapUiSmallMarginTop"/>
+                        <TextArea
+                                width="100%"
+                                rows="3"
+                                value="{cruce>/objetivoCruce}"
+                                placeholder="Ejemplo: fijar velocidad, corte, casta, tamaño, fertilidad..." />                        
 
                     </VBox>
                 </Panel>
@@ -84,20 +83,23 @@
                                 text="{cruce>/resultado/nivelRiesgo}"
                                 state="{cruce>/resultado/state}" />
 
+                        <ObjectStatus
+                                title="Decision sugerida"
+                                text="{cruce>/resultado/decision}"
+                                state="{= ${cruce>/resultado/decision} === 'NO_RECOMENDADO' ? 'Error' :
+                                          ${cruce>/resultado/decision} === 'OBSERVAR' ? 'Warning' : 'Success'}" />
+
+                        <ObjectNumber
+                                number="{cruce>/resultado/porcentaje}"
+                                unit="% consanguinidad"/>
+
                         <Text text="{cruce>/resultado/descripcion}" />
 
                         <MessageStrip
                                 text="{cruce>/resultado/recomendacion}"
                                 type="{cruce>/resultado/messageType}"
                                 showIcon="true"
-                                class="sapUiSmallMarginTop"/>
-
-                        <Button
-                                text="Guardar Plan de Cruce"
-                                type="Accept"
-                                icon="sap-icon://save"
-                                press=".onGuardarPlanCruce"
-                                class="sapUiMediumMarginTop"/>
+                                class="sapUiSmallMarginTop"/>                        
 
                     </VBox>
                 </Panel>
@@ -107,6 +109,12 @@
         <footer>
             <Toolbar>
                 <ToolbarSpacer/>
+                <Button
+                                visible="{cruce>/resultadoVisible}"
+                                text="Guardar Plan de Cruce"
+                                type="Emphasized"
+                                icon="sap-icon://save"
+                                press=".onGuardarPlanCruce"/>
                 <Button text="Cancelar" press="onNavBack"/>
             </Toolbar>
         </footer>

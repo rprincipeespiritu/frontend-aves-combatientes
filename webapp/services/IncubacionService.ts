@@ -13,8 +13,13 @@ export interface IIncubacionDetalle {
   huevosFertiles: number;
   huevosEclosionados: number;
   huevosNoEclosionados: number;
+  planCruce_ID?: string;
+  tipoParentesco?: string;
+  nivelRiesgo?: string;
+  porcentaje?: number;
   padre?: any;
   madre?: any;
+  planCruce?: any;
 }
 
 export interface IIncubacion {
@@ -101,7 +106,7 @@ export default class IncubacionService {
 
   public async getById(id: string): Promise<IIncubacion> {
     const response = await fetch(
-      `${this.buildEntityUrl(id)}?$expand=detalles($expand=padre,madre)`,
+      `${this.buildEntityUrl(id)}?$expand=detalles($expand=padre,madre,planCruce)`,
       {
         method: "GET",
         headers: this.buildHeaders(),

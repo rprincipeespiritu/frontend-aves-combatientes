@@ -24,11 +24,22 @@
 
                 <!-- Tabla -->
                 <Table
+                        id="planesTable"
+                        width="100%"
+                        inset="false"
                         items="{planes>/data}"
-                        mode="SingleSelectMaster"
-                        selectionChange=".onSelectPlan">
+                        class="sapUiMediumMarginTop">
+
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Planes de Cruce ({= ${planes>/data}.length})"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
 
                     <columns>
+                        <Column>
+                            <Text text="Codigo"/>
+                        </Column>
                         <Column>
                             <Text text="Macho"/>
                         </Column>
@@ -42,13 +53,17 @@
                             <Text text="Riesgo"/>
                         </Column>
                         <Column>
+                            <Text text="Decision"/>
+                        </Column>
+                        <Column>
                             <Text text="Fecha"/>
                         </Column>
                     </columns>
 
                     <items>
-                        <ColumnListItem type="Navigation">
+                        <ColumnListItem type="Active" press=".onSelectPlan">
                             <cells>
+                                <Text text="{= ${planes>codigo} || 'Sin codigo' }"/>
                                 <Text text="{planes>macho/placa}"/>
                                 <Text text="{planes>hembra/placa}"/>
                                 <Text text="{planes>tipoParentesco}"/>
@@ -57,6 +72,13 @@
                                         state="{
                                         = ${planes>nivelRiesgo} === 'ALTO' ? 'Error' :
                                           ${planes>nivelRiesgo} === 'MODERADO' ? 'Warning' :
+                                          'Success'
+                                    }"/>
+                                <ObjectStatus
+                                        text="{planes>decision}"
+                                        state="{
+                                        = ${planes>decision} === 'NO_RECOMENDADO' ? 'Error' :
+                                          ${planes>decision} === 'OBSERVAR' ? 'Warning' :
                                           'Success'
                                     }"/>
                                 <Text text="{planes>fechaPropuesta}"/>

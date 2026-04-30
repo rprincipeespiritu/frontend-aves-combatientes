@@ -20,6 +20,7 @@ export default class AveDetail extends Controller {
     private aveId: string = "";
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
+    private _oEvaluacionDialog: any;
     public formatter = formatter;
 
     public onInit(): void {
@@ -53,7 +54,19 @@ export default class AveDetail extends Controller {
             totalPeleas: 0, peleasGanadas: 0, porcentajeVictorias: "0%",
             pesoActual: 0, edad: 0, pesajes: [], peleas: [],
             padreNombre: "", madreNombre: "", padre_ID: "", madre_ID: "",
-            raza_ID: "", color_ID: "", fotoPrincipal: ""
+            raza_ID: "", color_ID: "", fotoPrincipal: "",
+            evaluaciones: [],
+            evaluacionDialogTitle: "Registrar evaluacion",
+            evaluacionEditId: "",
+            nuevaEvaluacion: {
+                vigor: "",
+                saludGeneral: "",
+                fertilidad: "",
+                desarrollo: "BUENO",
+                aptoReproduccion: true,
+                defectosObservados: "",
+                recomendacion: ""
+            }
         }), "detail");
 
         this.cargarAve();
@@ -135,9 +148,22 @@ export default class AveDetail extends Controller {
                 editMode: false
             });
 
+            await this.cargarEvaluaciones();
+
         } catch (error) {
             MessageBox.error("Error cargando el ave");
         }
+    }
+
+    private async cargarEvaluaciones(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const response = await fetch(
+            `${this.baseUrl}/EvaluacionesAves?$filter=ave_ID eq ${this.aveId}&$orderby=fecha desc`,
+            { headers: { "Authorization": `Bearer ${this.authService.getToken()}` } }
+        );
+
+        const data = await response.json();
+        oModel.setProperty("/evaluaciones", data.value || []);
     }
 
     private async cargarCatalogos(): Promise<void> {
@@ -330,6 +356,124 @@ export default class AveDetail extends Controller {
 
     public onAgregarPesaje(): void {
         MessageToast.show("Próximamente: agregar pesaje");
+    }
+
+    private resetEvaluacionForm(): void {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        oModel.setProperty("/evaluacionDialogTitle", "Registrar evaluacion");
+        oModel.setProperty("/evaluacionEditId", "");
+        oModel.setProperty("/nuevaEvaluacion", {
+            vigor: "",
+            saludGeneral: "",
+            fertilidad: "",
+            desarrollo: "BUENO",
+            aptoReproduccion: true,
+            defectosObservados: "",
+            recomendacion: ""
+        });
+    }
+
+    public async onAbrirEvaluacionDialog(): Promise<void> {
+        this.resetEvaluacionForm();
+
+        if (!this._oEvaluacionDialog) {
+            this._oEvaluacionDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.EvaluacionAveDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oEvaluacionDialog);
+        }
+
+        this._oEvaluacionDialog.open();
+    }
+
+    public async onEditarEvaluacion(oEvent: Event): Promise<void> {
+        const oContext = oEvent.getSource().getBindingContext("detail");
+        if (!oContext) {
+            MessageBox.warning("No se pudo obtener la evaluacion seleccionada.");
+            return;
+        }
+
+        const evaluacion = oContext.getObject();
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+
+        oModel.setProperty("/evaluacionDialogTitle", "Editar evaluacion");
+        oModel.setProperty("/evaluacionEditId", evaluacion.ID || "");
+        oModel.setProperty("/nuevaEvaluacion", {
+            vigor: evaluacion.vigor ?? "",
+            saludGeneral: evaluacion.saludGeneral ?? "",
+            fertilidad: evaluacion.fertilidad ?? "",
+            desarrollo: evaluacion.desarrollo || "BUENO",
+            aptoReproduccion: evaluacion.aptoReproduccion !== false,
+            defectosObservados: evaluacion.defectosObservados || "",
+            recomendacion: evaluacion.recomendacion || ""
+        });
+
+        if (!this._oEvaluacionDialog) {
+            this._oEvaluacionDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.EvaluacionAveDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oEvaluacionDialog);
+        }
+
+        this._oEvaluacionDialog.open();
+    }
+
+    public onCerrarEvaluacionDialog(): void {
+        this._oEvaluacionDialog?.close();
+    }
+
+    public async onRegistrarEvaluacion(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const evaluacion = oModel.getProperty("/nuevaEvaluacion");
+        const evaluacionEditId = oModel.getProperty("/evaluacionEditId");
+        const authUser = localStorage.getItem("auth_user");
+
+        if (!authUser) {
+            MessageToast.show("No se encontró la sesión del usuario");
+            return;
+        }
+
+        const usuario = JSON.parse(authUser);
+        const payload = {
+            ave_ID: this.aveId,
+            fecha: new Date().toISOString().split("T")[0],
+            vigor: evaluacion.vigor ? Number(evaluacion.vigor) : null,
+            saludGeneral: evaluacion.saludGeneral ? Number(evaluacion.saludGeneral) : null,
+            fertilidad: evaluacion.fertilidad ? Number(evaluacion.fertilidad) : null,
+            desarrollo: evaluacion.desarrollo || "BUENO",
+            defectosObservados: evaluacion.defectosObservados || null,
+            aptoReproduccion: evaluacion.aptoReproduccion,
+            recomendacion: evaluacion.recomendacion || null,
+            usuario_ID: usuario._id
+        };
+
+        try {
+            const response = await fetch(evaluacionEditId
+                ? `${this.baseUrl}/EvaluacionesAves('${evaluacionEditId}')`
+                : `${this.baseUrl}/EvaluacionesAves`, {
+                method: evaluacionEditId ? "PATCH" : "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("No se pudo registrar la evaluación");
+            }
+
+            MessageToast.show(evaluacionEditId ? "Evaluacion actualizada" : "Evaluacion registrada");
+            this.resetEvaluacionForm();
+            this._oEvaluacionDialog?.close();
+            await this.cargarEvaluaciones();
+        } catch (error) {
+            MessageBox.error("No se pudo registrar la evaluación");
+        }
     }
 
     public onNavBack(): void {

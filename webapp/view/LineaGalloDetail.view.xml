@@ -74,6 +74,9 @@
                             <Text text="Riesgo"/>
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Decision"/>
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
                             <Text text="Fecha"/>
                         </Column>
                     </columns>
@@ -89,6 +92,13 @@
                                         state="{
                                         = ${detalle>nivelRiesgo} === 'ALTO' ? 'Error' :
                                           ${detalle>nivelRiesgo} === 'MODERADO' ? 'Warning' :
+                                          'Success'
+                                    }"/>
+                                <ObjectStatus
+                                        text="{detalle>decision}"
+                                        state="{
+                                        = ${detalle>decision} === 'NO_RECOMENDADO' ? 'Error' :
+                                          ${detalle>decision} === 'OBSERVAR' ? 'Warning' :
                                           'Success'
                                     }"/>
                                 <Text text="{detalle>fechaPropuesta}"/>

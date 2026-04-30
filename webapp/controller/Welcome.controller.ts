@@ -64,7 +64,8 @@ export default class Welcome extends Controller {
             totalNacidos: 0,
             alertaIncubaciones: "",
             alertaEclosion: "",
-            incubacionesRecientes: []
+            incubacionesRecientes: [],
+            totalCruces: 0
         });
 
         this.getView()?.setModel(oDashboardModel, "dashboard");
@@ -111,7 +112,8 @@ export default class Welcome extends Controller {
                 alertaIncubaciones: oData.alertaIncubaciones || "",
                 alertaEclosion: oData.alertaEclosion || "",
                 incubacionesRecientes: aIncubacionesRecientes,
-                totalLineas: oData.totalLineas
+                totalLineas: oData.totalLineas,
+                totalPlanes: oData.totalPlanes || 0
             });
         } catch (error: any) {
             MessageToast.show(error.message || "Error al cargar dashboard");
