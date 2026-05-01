@@ -5,6 +5,8 @@ import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/m/routing/Router";
 
 export default class PlanesCruce extends Controller {
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
+
   public onInit(): void {
     const oModel = new JSONModel({
       data: [],
@@ -22,20 +24,26 @@ export default class PlanesCruce extends Controller {
       const token = localStorage.getItem("auth_token");
 
       const response = await fetch(
-        "http://localhost:4004/api/avecombatiente/PlanesCruces?$expand=macho,hembra,linea",
+        `${this.baseUrl}/PlanesCruces?$expand=macho,hembra,linea`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+            "Content-Type": "application/json",
           },
         },
       );
 
       const data = await response.json();
 
-      oModel.setProperty("/data", (data.value || []).map((plan: any) => ({
-        ...plan,
-        codigo: plan.codigo || `PC-${plan.macho?.placa || "M"}-${plan.hembra?.placa || "H"}`
-      })));
+      oModel.setProperty(
+        "/data",
+        (data.value || []).map((plan: any) => ({
+          ...plan,
+          codigo:
+            plan.codigo ||
+            `PC-${plan.macho?.placa || "M"}-${plan.hembra?.placa || "H"}`,
+        })),
+      );
     } catch (error) {
       MessageBox.error("Error al cargar planes de cruce.");
     }
@@ -46,7 +54,9 @@ export default class PlanesCruce extends Controller {
     const oContext = oItem?.getBindingContext("planes");
 
     if (!oContext) {
-      MessageBox.warning("No se pudo obtener el detalle del plan seleccionado.");
+      MessageBox.warning(
+        "No se pudo obtener el detalle del plan seleccionado.",
+      );
       return;
     }
 
@@ -64,7 +74,7 @@ Detalle del cruce:
         Riesgo: ${oPlan.nivelRiesgo}
 
         Recomendación:
-        ${oPlan.recomendacion}`
+        ${oPlan.recomendacion}`,
     );
   }
 
