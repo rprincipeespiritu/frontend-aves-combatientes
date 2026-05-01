@@ -1,35 +1,41 @@
 <mvc:View
-        controllerName="com.rprincipees.registroavescombate.controller.Welcome"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns="sap.m"
-        xmlns:f="sap.f"
-        xmlns:core="sap.ui.core">
+    controllerName="com.rprincipees.registroavescombate.controller.Welcome"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core">
 
     <Page>
         <headerContent>
             <f:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <ScrollContainer height="100%" vertical="true">
                 <VBox class="sapUiMediumMargin">
                     <HBox width="100%" wrap="Wrap" justifyContent="Center" alignItems="Center">
-                        <Title text="Gestión de Aves Combatientes" level="H1" class="homeMainTitle"/>
+                        <Title text="Gestión de Aves Combatientes" level="H1" class="homeMainTitle" />
                     </HBox>
                     <!-- HERO / BIENVENIDA -->
                     <Panel class="sapUiResponsiveMargin sapUiNoContentPadding">
                         <content>
                             <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
-                                <Text text="Gestiona tu criadero de forma inteligente" level="H2" design="Bold"/>
-                                <Text text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar." class="sapUiSmallMarginTop sapUiSmallMarginBottom"/>
+                                <Text text="Gestiona tu criadero de forma inteligente" level="H2"
+                                    design="Bold" />
+                                <Text
+                                    text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar."
+                                    class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap">
-                                    <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add" press="onNavNewBird"/>
-                                    <Button text="Nueva Incubación" icon="sap-icon://add" press="onNavNewIncubation" class="sapUiTinyMarginBegin"/>
-                                    <Button text="Nueva Línea" icon="sap-icon://add" press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin"/>
+                                    <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add"
+                                        press="onNavNewBird" />
+                                    <Button text="Nueva Incubación" icon="sap-icon://add"
+                                        press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
+                                    <Button text="Nueva Línea" icon="sap-icon://add"
+                                        press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin" />
                                 </HBox>
                             </VBox>
                         </content>
@@ -37,39 +43,50 @@
 
                     <!-- KPIS -->
                     <HBox wrap="Wrap" justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
-                        <GenericTile class="sapUiSmallMarginTop" header="Aves" subheader="Registradas" press="onNavBirdList">
+                        <GenericTile class="sapUiSmallMarginTop" header="Aves"
+                            subheader="Registradas" press="onNavBirdList">
                             <TileContent>
-                                <NumericContent value="{dashboard>/totalAves}" icon="sap-icon://activate"/>
+                                <NumericContent value="{dashboard>/totalAves}"
+                                    icon="sap-icon://activate" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Linea de Gallos" subheader="Registradas" press="onNavLineasGallosList">
+                        <GenericTile class="sapUiSmallMarginTop" header="Linea de Gallos"
+                            subheader="Registradas" press="onNavLineasGallosList">
                             <TileContent>
-                                <NumericContent value="{dashboard>/totalLineas}" icon="sap-icon://tree"/>
+                                <NumericContent value="{dashboard>/totalLineas}"
+                                    icon="sap-icon://tree" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce" subheader="Ver historial" press=".onVerPlanesCruce">
+                        <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce"
+                            subheader="Ver historial" press=".onVerPlanesCruce">
                             <TileContent>
-                                <NumericContent value="{dashboard>/totalPlanes}" icon="sap-icon://table-view"/>
+                                <NumericContent value="{dashboard>/totalPlanes}"
+                                    icon="sap-icon://table-view" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones" subheader="Totales" press="onNavIncubationList">
+                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones"
+                            subheader="Totales" press="onNavIncubationList">
                             <TileContent>
-                                <NumericContent value="{dashboard>/totalIncubaciones}" icon="sap-icon://nutrition-activity"/>
+                                <NumericContent value="{dashboard>/totalIncubaciones}"
+                                    icon="sap-icon://nutrition-activity" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones" subheader="En proceso" press="onNavIncubationListProcess">
+                        <GenericTile class="sapUiSmallMarginTop" header="Incubaciones"
+                            subheader="En proceso" press="onNavIncubationListProcess">
                             <TileContent>
-                                <NumericContent value="{dashboard>/incubacionesActivas}" icon="sap-icon://process"/>
+                                <NumericContent value="{dashboard>/incubacionesActivas}"
+                                    icon="sap-icon://process" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader="" press="onVerReportes" visible="true">
+                        <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader=""
+                            press="onVerReportes" visible="true">
                             <TileContent>
-                                <NumericContent value="{dashboard>/totalNacidos}" icon="sap-icon://favorite"/>
+                                <ImageContent src="sap-icon://business-objects-experience" />
                             </TileContent>
                         </GenericTile>
                     </HBox>
@@ -77,17 +94,17 @@
                     <!-- ALERTAS -->
                     <VBox class="sapUiSmallMarginTop">
                         <MessageStrip
-                                text="{dashboard>/alertaIncubaciones}"
-                                type="Warning"
-                                visible="{= !!${dashboard>/alertaIncubaciones} }"
-                                showIcon="true"
-                                class="sapUiSmallMarginBottom"/>
+                            text="{dashboard>/alertaIncubaciones}"
+                            type="Warning"
+                            visible="{= !!${dashboard>/alertaIncubaciones} }"
+                            showIcon="true"
+                            class="sapUiSmallMarginBottom" />
 
                         <MessageStrip
-                                text="{dashboard>/alertaEclosion}"
-                                type="Information"
-                                visible="{= !!${dashboard>/alertaEclosion} }"
-                                showIcon="true"/>
+                            text="{dashboard>/alertaEclosion}"
+                            type="Information"
+                            visible="{= !!${dashboard>/alertaEclosion} }"
+                            showIcon="true" />
                     </VBox>
 
                     <!-- BLOQUE CENTRAL -->
@@ -96,27 +113,29 @@
                         <!-- INCUBACIONES RECIENTES -->
                         <Panel headerText="Incubaciones recientes" width="auto" class="panelSpacing">
                             <content>
-                                <Table items="{dashboard>/incubacionesRecientes}" noDataText="Sin incubaciones recientes">
+                                <Table items="{dashboard>/incubacionesRecientes}"
+                                    noDataText="Sin incubaciones recientes">
                                     <columns>
                                         <Column>
-                                            <Text text="Código"/>
+                                            <Text text="Código" />
                                         </Column>
                                         <Column>
-                                            <Text text="Estado"/>
+                                            <Text text="Estado" />
                                         </Column>
                                         <Column>
-                                            <Text text="Fecha Incub."/>
+                                            <Text text="Fecha Incub." />
                                         </Column>
                                     </columns>
 
                                     <items>
-                                        <ColumnListItem type="Navigation" press="onAbrirIncubacionDetalle">
+                                        <ColumnListItem type="Navigation"
+                                            press="onAbrirIncubacionDetalle">
                                             <cells>
-                                                <Text text="{dashboard>codigo}"/>
+                                                <Text text="{dashboard>codigo}" />
                                                 <ObjectStatus
-                                                        text="{dashboard>estadoTexto}"
-                                                        state="{dashboard>estadoState}"/>
-                                                <Text text="{dashboard>fechaIncubacionFmt}"/>
+                                                    text="{dashboard>estadoTexto}"
+                                                    state="{dashboard>estadoState}" />
+                                                <Text text="{dashboard>fechaIncubacionFmt}" />
                                             </cells>
                                         </ColumnListItem>
                                     </items>
@@ -129,21 +148,21 @@
                             <content>
                                 <List>
                                     <StandardListItem
-                                            title="Aves activas"
-                                            info="{dashboard>/totalAvesActivas}"
-                                            icon="sap-icon://activate"/>
+                                        title="Aves activas"
+                                        info="{dashboard>/totalAvesActivas}"
+                                        icon="sap-icon://activate" />
                                     <StandardListItem
-                                            title="Incubaciones programadas"
-                                            info="{dashboard>/incubacionesProgramadas}"
-                                            icon="sap-icon://calendar"/>
+                                        title="Incubaciones programadas"
+                                        info="{dashboard>/incubacionesProgramadas}"
+                                        icon="sap-icon://calendar" />
                                     <StandardListItem
-                                            title="Incubaciones en proceso"
-                                            info="{dashboard>/incubacionesActivas}"
-                                            icon="sap-icon://process"/>
+                                        title="Incubaciones en proceso"
+                                        info="{dashboard>/incubacionesActivas}"
+                                        icon="sap-icon://process" />
                                     <StandardListItem
-                                            title="Nacimientos acumulados"
-                                            info="{dashboard>/totalNacidos}"
-                                            icon="sap-icon://favorite"/>
+                                        title="Nacimientos acumulados"
+                                        info="{dashboard>/totalNacidos}"
+                                        icon="sap-icon://favorite" />
                                 </List>
                             </content>
                         </Panel>

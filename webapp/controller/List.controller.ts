@@ -508,16 +508,24 @@ export default class List extends Controller {
     return estados[estado] || estado;
   }
 
-  public formatearFecha(fecha: Date): string {
+  public formatearFecha(fecha: string | Date): string {
     if (!fecha) {
       return "";
     }
 
-    return new Intl.DateTimeFormat("es-ES", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date(fecha));
+    if (typeof fecha === "string") {
+      const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        return `${match[3]}/${match[2]}/${match[1]}`;
+      }
+    }
+
+    const date = fecha instanceof Date ? fecha : new Date(fecha);
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+
+    return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
   }
 
   public formatearPeso(peso: number): string {
@@ -588,7 +596,7 @@ export default class List extends Controller {
       return {
         placa: o.placa,
         nombre: o.nombre,
-        fechaNacimiento: o.fechaNacimiento,
+        fechaNacimiento: this.formatearFecha(o.fechaNacimiento),
         sexo: o.sexo,
         categoria: o.categoria,
         cria: o.cria,

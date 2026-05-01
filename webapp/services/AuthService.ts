@@ -42,6 +42,11 @@ export interface AuthResponse {
 export class AuthService {
     private static instance: AuthService;
     private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
+    private readonly inactivityTimeoutMs: number = 5 * 60 * 1000;
+    private inactivityTimer: number | null = null;
+    private inactivityStarted: boolean = false;
+    private onInactivityTimeout?: () => void;
+    private _token: string = "";    
     private token: string | null = null;
     private usuario: Usuario | null = null;
 
@@ -85,6 +90,7 @@ export class AuthService {
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
+                this.resetInactivityTimer();
             }
 
             return result;
@@ -127,6 +133,7 @@ export class AuthService {
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
+                this.resetInactivityTimer();
             }
 
             return result;
@@ -225,6 +232,7 @@ export class AuthService {
         } finally {
             this.token = null;
             this.usuario = null;
+            this.stopInactivityTimer();
             this.limpiarStorage();
         }
     }
@@ -346,6 +354,7 @@ export class AuthService {
                 // Token expirado, limpiar
                 this.token = null;
                 this.usuario = null;
+                this.stopInactivityTimer();
                 this.limpiarStorage();
                 return false;
             }
@@ -353,6 +362,7 @@ export class AuthService {
             // Token malformado
             this.token = null;
             this.usuario = null;
+            this.stopInactivityTimer();
             this.limpiarStorage();
             return false;
         }
@@ -437,7 +447,66 @@ export class AuthService {
         if (typeof Storage !== "undefined") {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_user');
+            localStorage.removeItem('auth_last_activity');
         }
+    }
+
+    public iniciarTimeoutInactividad(onTimeout?: () => void): void {
+        this.onInactivityTimeout = onTimeout;
+
+        if (this.inactivityStarted || typeof window === "undefined") {
+            this.resetInactivityTimer();
+            return;
+        }
+
+        this.inactivityStarted = true;
+        const eventos = ["click", "keydown", "mousemove", "mousedown", "scroll", "touchstart"];
+        eventos.forEach((evento) => {
+            window.addEventListener(evento, this.registrarActividad, { passive: true });
+        });
+
+        this.resetInactivityTimer();
+    }
+
+    private registrarActividad = (): void => {
+        if (!this.isAuthenticated()) {
+            this.stopInactivityTimer();
+            return;
+        }
+
+        localStorage.setItem("auth_last_activity", String(Date.now()));
+        this.resetInactivityTimer();
+    };
+
+    private resetInactivityTimer(): void {
+        if (this.inactivityTimer) {
+            window.clearTimeout(this.inactivityTimer);
+            this.inactivityTimer = null;
+        }
+
+        if (!this.isAuthenticated() || typeof window === "undefined") {
+            return;
+        }
+
+        const lastActivity = Number(localStorage.getItem("auth_last_activity") || Date.now());
+        const elapsed = Date.now() - lastActivity;
+        const remaining = Math.max(this.inactivityTimeoutMs - elapsed, 0);
+
+        this.inactivityTimer = window.setTimeout(() => {
+            void this.cerrarPorInactividad();
+        }, remaining);
+    }
+
+    private stopInactivityTimer(): void {
+        if (this.inactivityTimer && typeof window !== "undefined") {
+            window.clearTimeout(this.inactivityTimer);
+        }
+        this.inactivityTimer = null;
+    }
+
+    private async cerrarPorInactividad(): Promise<void> {
+        await this.logout();
+        this.onInactivityTimeout?.();
     }
 
     // Renovar token automáticamente

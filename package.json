@@ -23,9 +23,10 @@
     "postbuild": "node replace-config.js",
     "start": "serve -s dist -l $PORT",
     "dev": "fiori run",
+    "build:prod": "ui5 build --all --clean-dest && node scripts/prepare-prod-dist.js",
     "deploy": "fiori deploy",
     "lint": "eslint webapp",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build:prod"
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "dependencies": {

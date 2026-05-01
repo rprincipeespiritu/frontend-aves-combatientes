@@ -19,7 +19,20 @@ app.use((req, res, next) => {
 });
 
 // Servir archivos estáticos
-app.use(express.static(staticPath));
+app.use((req, res, next) => {
+  if (!isDevelopment && (req.path.endsWith('.map') || req.path.endsWith('.ts'))) {
+    return res.sendStatus(404);
+  }
+  next();
+});
+
+app.use(express.static(staticPath, {
+  setHeaders: (res, filePath) => {
+    if (!isDevelopment && /\.(js|css|html)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 
 // Servir recursos de UI5 desde node_modules
 app.use('/resources', express.static(path.join(__dirname, 'node_modules/@openui5')));

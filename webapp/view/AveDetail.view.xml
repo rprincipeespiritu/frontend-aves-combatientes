@@ -7,79 +7,86 @@
 
     <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
             <form:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
 
                 <!-- Header con foto y datos básicos -->
                 <HBox class="sapUiMediumMarginBottom" alignItems="Center">
-                    <Avatar src="{detail>/fotoPrincipal}" displaySize="XL" class="sapUiMediumMarginEnd"/>
+                    <Avatar src="{detail>/fotoPrincipal}" displaySize="XL"
+                        class="sapUiMediumMarginEnd" />
                     <VBox>
-                        <Title text="{detail>/nombre}" level="H2"/>
-                        <Text text="Placa: {detail>/placa}"/>
-                        <ObjectStatus text="{detail>/estado}" state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
+                        <Title text="{detail>/nombre}" level="H2" />
+                        <Text text="Placa: {detail>/placa}" />
+                        <ObjectStatus text="{detail>/estado}"
+                            state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
                                    ${detail>/estado} === 'VENDIDO' ? 'Warning' :
-                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}"/>
+                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
                     </VBox>
                 </HBox>
 
                 <!-- Identificación -->
                 <Panel headerText="Identificación" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
+                        columnsL="2" columnsM="1">
                         <f:content>
-                            <Label text="Placa"/>
-                            <Text text="{detail>/placa}"/>
+                            <Label text="Placa" />
+                            <Text text="{detail>/placa}" />
 
-                            <Label text="Nombre"/>
-                            <Text text="{detail>/nombre}"/>
+                            <Label text="Nombre" />
+                            <Text text="{detail>/nombre}" />
 
-                            <Label text="Apodo"/>
-                            <Text text="{detail>/apodo}"/>
+                            <Label text="Apodo" />
+                            <Text text="{detail>/apodo}" />
 
-                            <Label text="Género"/>
-                            <Text text="{
+                            <Label text="Género" />
+                            <Text
+                                text="{
                                     path: 'detail>/sexo',
                                     formatter: '.formatearSexo'
-                                }"/>
-                           <!-- <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
+                                }" />
+                            <!-- <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
                                 <core:Item key="M" text="Macho"/>
                                 <core:Item key="H" text="Hembra"/>
                             </Select> -->
 
-                            <Label text="Cría"/>
-                            <CheckBox selected="{detail>/cria}" editable="false"/>
+                            <Label text="Cría" />
+                            <CheckBox selected="{detail>/cria}" editable="false" />
 
-                            <Label text="Estado"/>
-                            <Text text="{
+                            <Label text="Estado" />
+                            <Text
+                                text="{
                                     path: 'detail>/estado',
                                     formatter: '.formatearEstado'
-                                }"/>
-                           <!-- <Select selectedKey="{detail>/estado}" enabled="{detail>/editMode}">
+                                }" />
+                            <!-- <Select selectedKey="{detail>/estado}"
+                            enabled="{detail>/editMode}">
                                 <core:Item key="ACTIVO" text="Activo"/>
                                 <core:Item key="VENDIDO" text="Vendido"/>
                                 <core:Item key="FALLECIDO" text="Fallecido"/>
                                 <core:Item key="PRESTADO" text="Prestado"/>
                             </Select> -->
 
-                            <Label text="Ubicación"/>
-                            <Text text="{detail>/ubicacion}" editable="{detail>/editMode}"/>
+                            <Label text="Ubicación" />
+                            <Text text="{detail>/ubicacion}" editable="{detail>/editMode}" />
 
-                            <Label text="Padrote"/>
-                            <CheckBox selected="{detail>/padrote}" editable="false"/>
+                            <Label text="Padrote" />
+                            <CheckBox selected="{detail>/padrote}" editable="false" />
 
-                            <Label text="Calificación"/>
-                            <Text text="{
+                            <Label text="Calificación" />
+                            <Text
+                                text="{
                                     path: 'detail>/categoria',
                                     formatter: '.formatearCategoria'
-                                }"/>
-                           <!-- <Select selectedKey="{detail>/categoria}" editable="false">
+                                }" />
+                            <!-- <Select selectedKey="{detail>/categoria}" editable="false">
                                 <core:Item key="BUENO" text="Bueno"/>
                                 <core:Item key="EXCELENTE" text="Excelente"/>
                                 <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
@@ -90,83 +97,113 @@
                 </Panel>
 
                 <!-- Estadísticas -->
-                <Panel headerText="Estadísticas" expandable="false" class="sapUiSmallMarginTop" visible="false">
+                <Panel headerText="Estadísticas" expandable="false" class="sapUiSmallMarginTop"
+                    visible="false">
                     <HBox justifyContent="SpaceAround" class="sapUiSmallMargin">
                         <VBox alignItems="Center">
-                            <Title text="{detail>/totalPeleas}" level="H2"/>
-                            <Label text="Total Peleas"/>
+                            <Title text="{detail>/totalPeleas}" level="H2" />
+                            <Label text="Total Peleas" />
                         </VBox>
                         <VBox alignItems="Center">
-                            <Title text="{detail>/peleasGanadas}" level="H2" class="sapThemePositiveText"/>
-                            <Label text="Victorias"/>
+                            <Title text="{detail>/peleasGanadas}" level="H2"
+                                class="sapThemePositiveText" />
+                            <Label text="Victorias" />
                         </VBox>
                         <VBox alignItems="Center">
-                            <Title text="{detail>/porcentajeVictorias}" level="H2"/>
-                            <Label text="% Victorias"/>
+                            <Title text="{detail>/porcentajeVictorias}" level="H2" />
+                            <Label text="% Victorias" />
                         </VBox>
                         <VBox alignItems="Center">
-                            <Title text="{detail>/pesoActual}" level="H2"/>
-                            <Label text="Peso Actual (kg)"/>
+                            <Title text="{detail>/pesoActual}" level="H2" />
+                            <Label text="Peso Actual (kg)" />
                         </VBox>
                         <VBox alignItems="Center">
-                            <Title text="{detail>/edad}" level="H2"/>
-                            <Label text="Edad (años)"/>
+                            <Title text="{detail>/edad}" level="H2" />
+                            <Label text="Edad (años)" />
                         </VBox>
                     </HBox>
                 </Panel>
 
                 <!-- Características -->
-                <Panel headerText="Características Físicas" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}" columnsL="2" columnsM="1">
+                <Panel headerText="Características Físicas" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
+                        columnsL="2" columnsM="1">
                         <f:content>
-                            <Label text="Raza"/>
-                            <Text text="{detail>/raza}" visible="true"/>
+                            <Label text="Raza" />
+                            <Text text="{detail>/raza}" visible="true" />
 
-                            <Label text="Color"/>
-                            <Text text="{detail>/color}" visible="true"/>
+                            <Label text="Color" />
+                            <Text text="{detail>/color}" visible="true" />
 
-                            <Label text="Tipo de Ave"/>
-                            <Text text="{detail>/tipoAve}" visible="true"/>
+                            <Label text="Tipo de Ave" />
+                            <Text text="{detail>/tipoAve}" visible="true" />
 
-                            <Label text="Fecha Nacimiento"/>
-                            <Text text="{detail>/fechaNacimiento}" visible="true"/>
+                            <Label text="Fecha Nacimiento" />
+                            <Text
+                                text="{
+                                path: 'detail>/fechaNacimiento',
+                                formatter: '.formatearFecha'
+                            }" />
+                            <!-- <Text text="{detail>/fechaNacimiento}" visible="true" /> -->
 
-                            <Label text="Fecha Compra"/>
-                            <Text text="{detail>/fechaCompra}" visible="true"/>
+                            <Label text="Fecha Compra" />
+                            <Text text="{detail>/fechaCompra}" visible="true" />
 
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
-                <Panel headerText="Evaluacion reproductiva" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                <Panel headerText="Evaluacion reproductiva" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
                     <Table items="{detail>/evaluaciones}" noDataText="Sin evaluaciones registradas">
                         <headerToolbar>
                             <OverflowToolbar>
-                                <ToolbarSpacer/>
-                                <Button text="Nueva evaluacion" type="Emphasized" icon="sap-icon://add" press=".onAbrirEvaluacionDialog"/>
+                                <ToolbarSpacer />
+                                <Button text="Nueva evaluacion" type="Emphasized"
+                                    icon="sap-icon://add" press=".onAbrirEvaluacionDialog" />
                             </OverflowToolbar>
                         </headerToolbar>
                         <columns>
-                            <Column width="10%"><Text text="Fecha" /></Column>
-                            <Column width="10%"><Text text="Vigor"/></Column>
-                            <Column width="10%"><Text text="Salud"/></Column>
-                            <Column width="10%"><Text text="Fertilidad"/></Column>
-                            <Column width="10%"><Text text="Apto"/></Column>
-                            <Column width="20%"><Text text="Defectos observados"/></Column>
-                            <Column width="20%"><Text text="Recomendacion"/></Column>
-                            <Column width="10%"><Text text="Acciones"/></Column>
+                            <Column width="10%">
+                                <Text text="Fecha" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Vigor" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Salud" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Fertilidad" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Apto" />
+                            </Column>
+                            <Column width="20%">
+                                <Text text="Defectos observados" />
+                            </Column>
+                            <Column width="20%">
+                                <Text text="Recomendacion" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Acciones" />
+                            </Column>
                         </columns>
                         <items>
                             <ColumnListItem>
                                 <cells>
-                                    <Text text="{detail>fecha}"/>
-                                    <ObjectNumber number="{detail>vigor}"/>
-                                    <ObjectNumber number="{detail>saludGeneral}"/>
-                                    <ObjectNumber number="{detail>fertilidad}"/>
-                                    <ObjectStatus text="{= ${detail>aptoReproduccion} ? 'Si' : 'No'}" state="{= ${detail>aptoReproduccion} ? 'Success' : 'Error'}"/>
-                                    <Text text="{detail>defectosObservados}"/>
-                                    <Text text="{detail>recomendacion}"/>
-                                    <Button icon="sap-icon://edit" type="Transparent" tooltip="Editar" press=".onEditarEvaluacion"/>
+                                    <Text text="{detail>fecha}" />
+                                    <ObjectNumber number="{detail>vigor}" />
+                                    <ObjectNumber number="{detail>saludGeneral}" />
+                                    <ObjectNumber number="{detail>fertilidad}" />
+                                    <ObjectStatus
+                                        text="{= ${detail>aptoReproduccion} ? 'Si' : 'No'}"
+                                        state="{= ${detail>aptoReproduccion} ? 'Success' : 'Error'}" />
+                                    <Text text="{detail>defectosObservados}" />
+                                    <Text text="{detail>recomendacion}" />
+                                    <Button icon="sap-icon://edit" type="Transparent"
+                                        tooltip="Editar" press=".onEditarEvaluacion" />
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -174,27 +211,32 @@
                 </Panel>
 
                 <!-- Genealogía -->
-                <Panel headerText="Genealogía" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
+                <Panel headerText="Genealogía" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2"
+                        columnsM="1">
                         <f:content>
-                            <Label text="Padre"/>
-                            <Link text="{detail>/padre/placa} {detail>/padre/nombre}" press="onVerPadre"/>
+                            <Label text="Padre" />
+                            <Link text="{detail>/padre/placa} {detail>/padre/nombre}"
+                                press="onVerPadre" />
 
-                            <Label text="Madre"/>
-                            <Link text="{detail>/madre/placa} {detail>/madre/nombre}" press="onVerMadre"/>
+                            <Label text="Madre" />
+                            <Link text="{detail>/madre/placa} {detail>/madre/nombre}"
+                                press="onVerMadre" />
 
-                            <Label text="Procedencia"/>
-                            <Input value="{detail>/procedencia}" editable="false"/>
+                            <Label text="Procedencia" />
+                            <Input value="{detail>/procedencia}" editable="false" />
 
-                            <Label text="Criador"/>
-                            <Input value="{detail>/criador}" editable="false"/>
+                            <Label text="Criador" />
+                            <Input value="{detail>/criador}" editable="false" />
 
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
                 <!-- Pesajes recientes -->
-                <!-- <Panel headerText="Pesajes Recientes" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                <!-- <Panel headerText="Pesajes Recientes" expandable="true" expanded="false"
+                class="sapUiSmallMarginTop">
                     <headerToolbar>
                         <Toolbar>
                             <Title text="Pesajes Recientes"/>
@@ -221,7 +263,8 @@
                             <ColumnListItem>
                                 <Text text="{detail>fecha}"/>
                                 <Text text="{detail>peso}"/>
-                                <ObjectStatus text="{detail>condicionFisica}" state="{= ${detail>condicionFisica} === 'EXCELENTE' ? 'Success' :
+                                <ObjectStatus text="{detail>condicionFisica}" state="{= ${detail>condicionFisica} === 'EXCELENTE' ?
+                'Success' :
                                            ${detail>condicionFisica} === 'BUENA' ? 'Success' :
                                            ${detail>condicionFisica} === 'REGULAR' ? 'Warning' : 'Error'}"/>
                                 <Text text="{detail>observaciones}"/>
@@ -231,7 +274,8 @@
                 </Panel>-->
 
                 <!-- Peleas recientes -->
-                <!-- <Panel headerText="Peleas" expandable="true" expanded="false" class="sapUiSmallMarginTop">
+                <!-- <Panel headerText="Peleas" expandable="true" expanded="false"
+                class="sapUiSmallMarginTop">
                     <Table items="{detail>/peleas}" noDataText="Sin peleas registradas">
                         <columns>
                             <Column>
@@ -261,9 +305,11 @@
                 </Panel>-->
 
                 <!-- Observaciones -->
-                <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                <Panel headerText="Observaciones" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
                     <VBox class="sapUiSmallMargin">
-                        <TextArea value="{detail>/observaciones}" rows="4" width="100%" editable="false"/>
+                        <TextArea value="{detail>/observaciones}" rows="4" width="100%"
+                            editable="false" />
                     </VBox>
                 </Panel>
 
@@ -271,10 +317,12 @@
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Editar" icon="sap-icon://edit" type="Emphasized" press="onEditar" visible="{= !${detail>/editMode}}"/>
-                <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar" press="eliminarAve"/>
-                <Button text="Cancelar" press="onCancelarEdicion" visible="true"/>
+                <ToolbarSpacer />
+                <Button text="Editar" icon="sap-icon://edit" type="Emphasized" press="onEditar"
+                    visible="{= !${detail>/editMode}}" />
+                <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar"
+                    press="eliminarAve" />
+                <Button text="Cancelar" press="onCancelarEdicion" visible="true" />
                 <!-- <Button text="Guardar" type="Emphasized" press="onGuardar"/> -->
             </Toolbar>
         </footer>

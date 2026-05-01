@@ -537,4 +537,24 @@ export default class AveDetail extends Controller {
         return categorias[categoria] || categoria;
     }
 
+    public formatearFecha(fecha: string | Date): string {
+        if (!fecha) {
+          return "";
+        }
+    
+        if (typeof fecha === "string") {
+          const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+          if (match) {
+            return `${match[3]}/${match[2]}/${match[1]}`;
+          }
+        }
+    
+        const date = fecha instanceof Date ? fecha : new Date(fecha);
+        if (isNaN(date.getTime())) {
+          return "";
+        }
+    
+        return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+      }
+
 }

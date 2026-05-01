@@ -385,4 +385,9 @@ export default class Welcome extends Controller {
         oRouter?.navTo("RoutePlanesCruce");
     }
 
+    public onVerReportes(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteReportes");
+    }
+
 }

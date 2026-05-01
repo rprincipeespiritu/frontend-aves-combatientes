@@ -271,6 +271,22 @@ export default class AveCreate extends Controller {
             }
             oModel.setProperty("/placaState", "None");
 
+             // Validar género
+             if (!data.sexo) {
+                oModel.setProperty("/generoState", "Error");
+                MessageToast.show("El género es requerido");
+                return;
+            }
+            oModel.setProperty("/generoState", "None");
+
+             // Validar fecha de nacimiento
+             if (!data.fechaNacimiento) {
+                oModel.setProperty("/fecNacState", "Error");
+                MessageToast.show("La fecha de nacimiento es requerida");
+                return;
+            }
+            oModel.setProperty("/fecNacState", "None");
+
             const authUser = localStorage.getItem("auth_user");
             if (!authUser) {
                 MessageToast.show("No se encontró la sesión del usuario");

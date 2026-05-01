@@ -88,8 +88,9 @@
                                 <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
                             </Select> -->
 
-                            <Label text="Fecha Nacimiento"/>
-                            <DatePicker value="{update>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
+                            <Label text="Fecha Nacimiento" required="true"/>
+                            <DatePicker value="{update>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueState="{update>/fecNacState}"
+                            valueStateText="La fecha de nacimiento es requerida"/>
 
                             <Label text="Fecha Compra"/>
                             <DatePicker value="{update>/fechaCompra}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>

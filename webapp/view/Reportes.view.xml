@@ -1,0 +1,118 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Reportes"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.f">
+
+    <Page
+        title="Reportes"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin" busy="{reportes>/busy}">
+
+                <Panel headerText="Opciones de reporte">
+                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" columnsL="3"
+                        columnsM="2">
+                        <f:content>
+                            <Label text="Reporte" />
+                            <Select selectedKey="{reportes>/tipoReporte}" change=".onGenerarReporte">
+                                <core:Item key="CRUCES_INCUBACION" text="Cruces e incubaciones" />
+                                <core:Item key="PLANES" text="Planes de cruce" />
+                                <core:Item key="AVES" text="Aves" />
+                            </Select>
+
+                            <Label text="Fecha desde" />
+                            <DatePicker value="{reportes>/fechaDesde}" displayFormat="dd/MM/yyyy"
+                                valueFormat="yyyy-MM-dd" />
+
+                            <Label text="Fecha hasta" />
+                            <DatePicker value="{reportes>/fechaHasta}" displayFormat="dd/MM/yyyy"
+                                valueFormat="yyyy-MM-dd" />
+                        </f:content>
+                    </f:SimpleForm>
+
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button text="Generar" type="Emphasized" icon="sap-icon://refresh"
+                            press=".onGenerarReporte" />
+                        <Button text="Exportar Excel" icon="sap-icon://excel-attachment"
+                            press=".onExportarExcel" />
+                    </Toolbar>
+                </Panel>
+
+                <Panel headerText="{reportes>/titulo}" class="sapUiMediumMarginTop">
+                    <Toolbar>
+                        <Text text="Registros: {reportes>/totalRegistros}" />
+                    </Toolbar>
+
+                    <Table
+                        items="{reportes>/rows}"
+                        noDataText="Sin datos para mostrar"
+                        growing="true"
+                        growingThreshold="25">
+                        <columns>
+                            <Column>
+                                <Text text="Fecha" />
+                            </Column>
+                            <Column>
+                                <Text text="Referencia" />
+                            </Column>
+                            <Column>
+                                <Text text="Macho/Placa" />
+                            </Column>
+                            <Column>
+                                <Text text="Hembra/Nombre" />
+                            </Column>
+                            <Column>
+                                <Text text="Riesgo/Estado" />
+                            </Column>
+                            <Column hAlign="End">
+                                <Text text="Huevos/%" />
+                            </Column>
+                            <Column hAlign="End">
+                                <Text text="Nacidos" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text
+                                        text="{= ${reportes>fechaIncubacion} || ${reportes>fechaPropuesta} || ${reportes>fechaNacimiento} }" />
+                                    <ObjectIdentifier
+                                        title="{= ${reportes>codigoIncubacion} || ${reportes>codigo} || ${reportes>placa} }"
+                                        text="{= ${reportes>planCruce} || ${reportes>linea} || ${reportes>nombre} }" />
+                                    <Text text="{= ${reportes>macho} || ${reportes>sexo} }" />
+                                    <Text text="{= ${reportes>hembra} || ${reportes>estado} }" />
+                                    <ObjectStatus
+                                        text="{= ${reportes>riesgo} || ${reportes>decision} || ${reportes>aptoReproduccion} }"
+                                        state="{= ${reportes>riesgo} === 'ALTO' ? 'Error' :
+                                                      ${reportes>riesgo} === 'MEDIO' ? 'Warning' : 'Success'}" />
+                                    <ObjectNumber
+                                        number="{= ${reportes>totalHuevos} || ${reportes>porcentajeConsanguinidad} || ${reportes>coeficienteConsanguinidad} || 0 }"
+                                        unit="{= ${reportes>totalHuevos} ? 'huevos' : '%' }" />
+                                    <ObjectNumber
+                                        number="{= ${reportes>huevosEclosionados} || ${reportes>fertilidadPorc} || 0 }"
+                                        unit="{= ${reportes>huevosEclosionados} ? 'nacidos' : '%' }" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
