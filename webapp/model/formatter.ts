@@ -4,6 +4,13 @@ export default {
             return "";
         }
 
+        if (typeof value === "string") {
+            const dateOnly = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (dateOnly) {
+                return `${dateOnly[3]}/${dateOnly[2]}/${dateOnly[1]}`;
+            }
+        }
+
         const date = value instanceof Date ? value : new Date(value);
 
         if (isNaN(date.getTime())) {

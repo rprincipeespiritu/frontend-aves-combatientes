@@ -1,66 +1,71 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.AveCreate"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m"
-          xmlns:f="sap.ui.layout.form"
-          xmlns:core="sap.ui.core"
-          xmlns:upload="sap.m.upload"
-          xmlns:form="sap.f">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:upload="sap.m.upload"
+    xmlns:form="sap.f">
 
     <Page title="Registrar Nueva Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
             <form:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
             <VBox class="sapUiMediumMargin">
 
                 <!-- Identificación -->
                 <Panel headerText="Identificación" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2"
+                        columnsM="1">
                         <f:content>
-                            <Label text="Placa" required="true"/>
-                            <Input id="placa" value="{create>/placa}" placeholder="Ej: GAL-001" valueState="{create>/placaState}" valueStateText="La placa es requerida"/>
+                            <Label text="Placa" required="true" />
+                            <Input id="placa" value="{create>/placa}" placeholder="Ej: GAL-001"
+                                valueState="{create>/placaState}"
+                                valueStateText="La placa es requerida" />
 
-                            <Label text="Nombre"/>
-                            <Input value="{create>/nombre}" placeholder="Nombre del ave"/>
+                            <Label text="Nombre" />
+                            <Input value="{create>/nombre}" placeholder="Nombre del ave" />
 
-                            <Label text="Apodo"/>
-                            <Input value="{create>/apodo}" placeholder="Apodo"/>
+                            <Label text="Apodo" />
+                            <Input value="{create>/apodo}" placeholder="Apodo" />
 
-                            <Label text="Género" required="true"/>
+                            <Label text="Género" required="true" />
                             <Select selectedKey="{create>/sexo}">
-                                <core:Item key="M" text="Macho"/>
-                                <core:Item key="H" text="Hembra"/>
+                                <core:Item key="M" text="Macho" />
+                                <core:Item key="H" text="Hembra" />
                             </Select>
 
-                            <Label text="Cría"/>
-                            <CheckBox selected="{create>/cria}"/>
+                            <Label text="Cría" />
+                            <CheckBox selected="{create>/cria}" />
 
-                            <Label text="Estado"/>
+                            <Label text="Estado" />
                             <Select selectedKey="{create>/estado}">
-                                <core:Item key="ACTIVO" text="Activo"/>
-                                <core:Item key="VENDIDO" text="Vendido"/>
-                                <core:Item key="PRESTADO" text="Prestado"/>
-                                <core:Item key="RETIRADO" text="Retirado"/>
-                                <core:Item key="FALLECIDO" text="Fallecido"/>
+                                <core:Item key="ACTIVO" text="Activo" />
+                                <core:Item key="VENDIDO" text="Vendido" />
+                                <core:Item key="PRESTADO" text="Prestado" />
+                                <core:Item key="RETIRADO" text="Retirado" />
+                                <core:Item key="FALLECIDO" text="Fallecido" />
                             </Select>
 
-                            <Label text="Ubicación"/>
-                            <Input value="{create>/ubicacion}" placeholder="Ubicación actual"/>
+                            <Label text="Ubicación" />
+                            <Input value="{create>/ubicacion}" placeholder="Ubicación actual" />
 
-                            <Label text="Padrote"/>
-                            <CheckBox selected="{create>/padrote}"/>
+                            <Label text="Padrote" />
+                            <CheckBox selected="{create>/padrote}" />
 
-                            <Label text="Calificación"/>
+                            <Label text="Calificación" />
                             <Select selectedKey="{create>/categoria}">
-                                <core:Item key="BUENO" text="Bueno"/>
-                                <core:Item key="EXCELENTE" text="Excelente"/>
-                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
+                                <core:Item key="PESIMO" text="Pésimo" />
+                                <core:Item key="REGULAR" text="Regular" />
+                                <core:Item key="BUENO" text="Bueno" />
+                                <core:Item key="EXCELENTE" text="Excelente" />
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
                             </Select>
 
                         </f:content>
@@ -68,97 +73,120 @@
                 </Panel>
 
                 <!-- Características físicas -->
-                <Panel headerText="Características" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                <Panel headerText="Características" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2"
+                        columnsM="1">
                         <f:content>
-                            <Label text="Raza"/>
-                            <Input value="{create>/raza}" placeholder="Raza"/>
-                            <!-- <Select id="razaSelect" selectedKey="{create>/raza_ID}" items="{razas>/}">
+                            <Label text="Raza" />
+                            <Input value="{create>/raza}" placeholder="Raza" />
+                            <!-- <Select id="razaSelect" selectedKey="{create>/raza_ID}"
+                            items="{razas>/}">
                                 <core:Item key="{razas>ID}" text="{razas>nombre}"/>
                             </Select> -->
 
-                            <Label text="Color"/>
-                            <Input value="{create>/color}" placeholder="Color"/>
-                            <!-- <Select id="colorSelect" selectedKey="{create>/color_ID}" items="{colores>/}">
+                            <Label text="Color" />
+                            <Input value="{create>/color}" placeholder="Color" />
+                            <!-- <Select id="colorSelect" selectedKey="{create>/color_ID}"
+                            items="{colores>/}">
                                 <core:Item key="{colores>ID}" text="{colores>nombre}"/>
                             </Select> -->
 
-                            <Label text="Tipo Ave"/>
-                            <Input value="{create>/tipoAve}" placeholder="Tipo Ave"/>
+                            <Label text="Tipo Ave" />
+                            <Input value="{create>/tipoAve}" placeholder="Tipo Ave" />
 
-                            <Label text="Fecha Nacimiento"/>
-                            <DatePicker value="{create>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
+                            <Label text="Fecha Nacimiento" required="true"/>
+                            <DatePicker value="{create>/fechaNacimiento}" valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy" valueState="{create>/fecNacState}"
+                                valueStateText="La fecha de nacimiento es requerida" />
 
-                            <Label text="Fecha Compra"/>
-                            <DatePicker value="{create>/fechaCompra}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
+                            <Label text="Fecha Compra" />
+                            <DatePicker value="{create>/fechaCompra}" valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy" />
 
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
                 <!-- Genealogía -->
-                <Panel headerText="Genealogía" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                <Panel headerText="Genealogía" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2"
+                        columnsM="1">
                         <f:content>
-                            <Label text="Padre"/>
+                            <Label text="Padre" />
                             <Input
-                                    id="inputPadre"
-                                    placeholder="Seleccionar Padre"
-                                    value="{create>/placaPadre}"
-                                    description="{create>/nombrePadre}"
-                                    showValueHelp="true"
-                                    valueHelpOnly="true"
-                                    valueHelpRequest="onValueHelpPadre"
-                                    width="100%"/>
-                            <!--<Input id="idPadre" valueState="{create>/placaPadreState}" textFormatMode="KeyValue" placeholder="Ingrese Padre" showSuggestion="true" suggestionItems="{avesMachos>/}" change=".onSuggestionItemSelectedPlacaPadre">
+                                id="inputPadre"
+                                placeholder="Seleccionar Padre"
+                                value="{create>/placaPadre}"
+                                description="{create>/nombrePadre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpPadre"
+                                width="100%" />
+                            <!--<Input
+                            id="idPadre" valueState="{create>/placaPadreState}"
+                            textFormatMode="KeyValue" placeholder="Ingrese Padre"
+                            showSuggestion="true" suggestionItems="{avesMachos>/}"
+                            change=".onSuggestionItemSelectedPlacaPadre">
                                 <suggestionItems>
-                                    <core:ListItem key="{avesMachos>placa}" text="{avesMachos>nombre}" additionalText="{avesMachos>placa}" />
+                                    <core:ListItem key="{avesMachos>placa}" text="{avesMachos>nombre}"
+                            additionalText="{avesMachos>placa}" />
                                 </suggestionItems>
                             </Input>-->
 
 
-                            <Label text="Madre"/>
+                            <Label text="Madre" />
                             <Input
-                                    id="inputMadre"
-                                    placeholder="Seleccionar Madre"
-                                    value="{create>/placaMadre}"
-                                    description="{create>/nombreMadre}"
-                                    showValueHelp="true"
-                                    valueHelpOnly="true"
-                                    valueHelpRequest="onValueHelpMadre"
-                                    width="100%"/>
-                            <!--<Input id="idMadre" valueState="{create>/placaMadreState}" textFormatMode="KeyValue" placeholder="Ingrese Madre" showSuggestion="true" suggestionItems="{avesHembras>/}" change=".onSuggestionItemSelectedPlacaMadre">
+                                id="inputMadre"
+                                placeholder="Seleccionar Madre"
+                                value="{create>/placaMadre}"
+                                description="{create>/nombreMadre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpMadre"
+                                width="100%" />
+                            <!--<Input
+                            id="idMadre" valueState="{create>/placaMadreState}"
+                            textFormatMode="KeyValue" placeholder="Ingrese Madre"
+                            showSuggestion="true" suggestionItems="{avesHembras>/}"
+                            change=".onSuggestionItemSelectedPlacaMadre">
                                 <suggestionItems>
-                                    <core:ListItem key="{avesHembras>placa}" text="{avesHembras>nombre}" additionalText="{avesHembras>placa}" />
+                                    <core:ListItem key="{avesHembras>placa}" text="{avesHembras>nombre}"
+                            additionalText="{avesHembras>placa}" />
                                 </suggestionItems>
                             </Input>-->
 
-                            <Label text="Lugar de Procedencia"/>
-                            <Input value="{create>/procedencia}" placeholder="Lugar de procedencia"/>
+                            <Label text="Lugar de Procedencia" />
+                            <Input value="{create>/procedencia}" placeholder="Lugar de procedencia" />
 
-                            <Label text="Criador de Procedencia"/>
-                            <Input value="{create>/criador}" placeholder="Nombre del criador"/>
+                            <Label text="Criador de Procedencia" />
+                            <Input value="{create>/criador}" placeholder="Nombre del criador" />
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
                 <!-- Información financiera -->
-                <Panel headerText="Información Financiera" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                <Panel headerText="Información Financiera" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2"
+                        columnsM="1">
                         <f:content>
-                            <Label text="Valor Compra (S/.)"/>
-                            <Input value="{create>/valorCompra}" type="Number" placeholder="0.00"/>
+                            <Label text="Valor Compra (S/.)" />
+                            <Input value="{create>/valorCompra}" type="Number" placeholder="0.00" />
 
-                            <Label text="Valor Actual (S/.)"/>
-                            <Input value="{create>/valorActual}" type="Number" placeholder="0.00"/>
+                            <Label text="Valor Actual (S/.)" />
+                            <Input value="{create>/valorActual}" type="Number" placeholder="0.00" />
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
 
                 <!-- Observaciones -->
-                <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                <Panel headerText="Observaciones" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
                     <VBox class="sapUiSmallMargin">
-                        <TextArea value="{create>/observaciones}" rows="4" width="100%" placeholder="Observaciones adicionales..."/>
+                        <TextArea value="{create>/observaciones}" rows="4" width="100%"
+                            placeholder="Observaciones adicionales..." />
                     </VBox>
                 </Panel>
 
@@ -166,9 +194,9 @@
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Guardar" type="Emphasized" press="onGuardar"/>
-                <Button text="Cancelar" press="onNavBack"/>
+                <ToolbarSpacer />
+                <Button text="Guardar" type="Emphasized" press="onGuardar" />
+                <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
         </footer>
     </Page>
