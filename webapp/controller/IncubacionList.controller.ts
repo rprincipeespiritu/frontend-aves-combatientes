@@ -22,7 +22,7 @@ export default class IncubacionList extends Controller {
   authService: AuthService;
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
-  private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
 
   public onInit(): void {
     this.authService = AuthService.getInstance();

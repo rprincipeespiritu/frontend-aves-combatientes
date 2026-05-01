@@ -17,7 +17,7 @@ import MessageToast from "sap/m/MessageToast";
 export default class LineaGalloDetail extends Controller {
 
     private lineaId: string = "";
-    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;

@@ -18,7 +18,7 @@ import {Linea} from "com/rprincipees/registroavescombate/services/LineaService";
 
 export default class LineaGallos extends Controller {
 
-    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private _oUserMenuSheet: any;
     private _oUserMenuPopover: any;

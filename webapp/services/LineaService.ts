@@ -10,7 +10,7 @@ export interface Linea {
 
 export default class LineaService {
   private static instance: LineaService;
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   // Reemplaza por la misma estrategia que ya usas en AuthService
 
   private async parseResponse(response: Response): Promise<any> {

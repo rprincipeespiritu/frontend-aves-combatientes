@@ -21,7 +21,7 @@ import List from "sap/m/List";
 
 export default class LineaGalloForm extends Controller {
     private service = new LineaService();
-    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
