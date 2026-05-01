@@ -15,18 +15,18 @@
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@ui5/cli": "^3.11.13",
+    "javascript-obfuscator": "^5.4.2",
     "typescript": "^5.1.6",
     "ui5-tooling-transpile": "^3.3.7"
   },
   "scripts": {
     "build": "ui5 build --all --clean-dest",
-    "postbuild": "node replace-config.js",
+    "obfuscate": "node scripts/obfuscate.js",
+    "build:prod": "ui5 build --all --clean-dest && npm run obfuscate",
     "start": "serve -s dist -l $PORT",
     "dev": "fiori run",
-    "build:prod": "ui5 build --all --clean-dest && node scripts/prepare-prod-dist.js",
     "deploy": "fiori deploy",
-    "lint": "eslint webapp",
-    "postinstall": "npm run build:prod"
+    "lint": "eslint webapp"
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "dependencies": {
