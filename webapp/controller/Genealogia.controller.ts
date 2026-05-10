@@ -47,7 +47,7 @@ interface INodoGenealogia {
 }
 
 export default class Genealogia extends Controller {
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   private authService: AuthService;
   private avesPorId = new Map<string, IAveGenealogia>();
   helpSelected: string;
