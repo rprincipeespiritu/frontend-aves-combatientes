@@ -8,6 +8,7 @@
             <VBox class="sapUiMediumMargin">
 
                 <SearchField
+                        id="idSearchPadres"
                         width="100%"
                         placeholder="Buscar por nombre o placa"
                         liveChange="onSearchPadres" />

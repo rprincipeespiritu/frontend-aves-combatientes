@@ -116,7 +116,7 @@
                         <ColumnListItem>
                             <cells>
                                 <Input
-                                    value="{view>planCruceCodigo}"
+                                    value="{view>codigo}"
                                     placeholder="Seleccionar plan"
                                     width="100%"
                                     showValueHelp="true"

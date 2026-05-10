@@ -65,25 +65,25 @@
                         growingThreshold="25">
                         <columns>
                             <Column>
-                                <Text text="Fecha" />
+                                <Text text="{reportes>/columnasVista/fecha}" />
                             </Column>
                             <Column>
-                                <Text text="Referencia" />
+                                <Text text="{reportes>/columnasVista/referencia}" />
                             </Column>
                             <Column>
-                                <Text text="Macho/Placa" />
+                                <Text text="{reportes>/columnasVista/machoPlaca}" />
                             </Column>
                             <Column>
-                                <Text text="Hembra/Nombre" />
+                                <Text text="{reportes>/columnasVista/hembraNombre}" />
                             </Column>
                             <Column>
-                                <Text text="Riesgo/Estado" />
+                                <Text text="{reportes>/columnasVista/riesgoEstado}" />
                             </Column>
                             <Column hAlign="End">
-                                <Text text="Huevos/%" />
+                                <Text text="{reportes>/columnasVista/huevosPorcentaje}" />
                             </Column>
                             <Column hAlign="End">
-                                <Text text="Nacidos" />
+                                <Text text="{reportes>/columnasVista/nacidos}" />
                             </Column>
                         </columns>
                         <items>
@@ -94,18 +94,18 @@
                                     <ObjectIdentifier
                                         title="{= ${reportes>codigoIncubacion} || ${reportes>codigo} || ${reportes>placa} }"
                                         text="{= ${reportes>planCruce} || ${reportes>linea} || ${reportes>nombre} }" />
-                                    <Text text="{= ${reportes>macho} || ${reportes>sexo} }" />
-                                    <Text text="{= ${reportes>hembra} || ${reportes>estado} }" />
+                                    <Text text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>nombre} : ${reportes>macho} }" />
+                                    <Text text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>sexo} : ${reportes>hembra} }" />
                                     <ObjectStatus
-                                        text="{= ${reportes>riesgo} || ${reportes>decision} || ${reportes>aptoReproduccion} }"
-                                        state="{= ${reportes>riesgo} === 'ALTO' ? 'Error' :
-                                                      ${reportes>riesgo} === 'MEDIO' ? 'Warning' : 'Success'}" />
+                                        text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>estado} : (${reportes>riesgo} || ${reportes>decision}) }"
+                                        state="{= ${reportes>riesgo} === 'ALTO' || ${reportes>estado} === 'ELIMINADO' || ${reportes>estado} === 'FALLECIDO' ? 'Error' :
+                                                      ${reportes>riesgo} === 'MEDIO' || ${reportes>riesgo} === 'MODERADO' || ${reportes>estado} === 'RETIRADO' ? 'Warning' : 'Success'}" />
                                     <ObjectNumber
-                                        number="{= ${reportes>totalHuevos} || ${reportes>porcentajeConsanguinidad} || ${reportes>coeficienteConsanguinidad} || 0 }"
-                                        unit="{= ${reportes>totalHuevos} ? 'huevos' : '%' }" />
+                                        number="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>aptoReproduccion} : (${reportes>totalHuevos} || ${reportes>porcentajeConsanguinidad} || 0) }"
+                                        unit="{= ${reportes>/tipoReporte} === 'AVES' ? '' : (${reportes>totalHuevos} ? 'huevos' : '%') }" />
                                     <ObjectNumber
-                                        number="{= ${reportes>huevosEclosionados} || ${reportes>fertilidadPorc} || 0 }"
-                                        unit="{= ${reportes>huevosEclosionados} ? 'nacidos' : '%' }" />
+                                        number="{= ${reportes>/tipoReporte} === 'AVES' ? (${reportes>coeficienteConsanguinidad} || 0) : (${reportes>huevosEclosionados} || ${reportes>fertilidadPorc} || 0) }"
+                                        unit="{= ${reportes>/tipoReporte} === 'AVES' ? '%' : (${reportes>huevosEclosionados} ? 'nacidos' : '%') }" />
                                 </cells>
                             </ColumnListItem>
                         </items>

@@ -1,87 +1,97 @@
 <mvc:View
-        controllerName="com.rprincipees.registroavescombate.controller.PlanesCruce"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns="sap.m"
-        xmlns:core="sap.ui.core">
+    controllerName="com.rprincipees.registroavescombate.controller.PlanesCruce"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.f">
 
     <Page
-            title="Planes de Cruce"
-            showNavButton="true"
-            navButtonPress=".onNavBack">
+        title="Planes de Cruce"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
 
         <content>
             <VBox class="sapUiMediumMargin">
 
                 <!-- Toolbar -->
                 <Toolbar>
-                    <Title text="Historial de Cruces"/>
-                    <ToolbarSpacer/>
+                    <Title text="Historial de Cruces" />
+                    <ToolbarSpacer />
                     <Button
-                            text="Nuevo Plan"
-                            icon="sap-icon://add"
-                            press=".onNuevoPlan"/>
+                        text="Nuevo Plan"
+                        icon="sap-icon://add"
+                        press=".onNuevoPlan" />
                 </Toolbar>
 
                 <!-- Tabla -->
                 <Table
-                        id="planesTable"
-                        width="100%"
-                        inset="false"
-                        items="{planes>/data}"
-                        class="sapUiMediumMarginTop">
+                    id="planesTable"
+                    width="100%"
+                    inset="false"
+                    items="{planes>/data}"
+                    class="sapUiMediumMarginTop">
 
                     <headerToolbar>
                         <OverflowToolbar>
-                            <Title text="Planes de Cruce ({= ${planes>/data}.length})"/>
+                            <Title text="Planes de Cruce ({= ${planes>/data}.length})" />
                         </OverflowToolbar>
                     </headerToolbar>
 
                     <columns>
                         <Column>
-                            <Text text="Codigo"/>
+                            <Text text="Codigo" />
                         </Column>
                         <Column>
-                            <Text text="Macho"/>
+                            <Text text="Macho" />
                         </Column>
                         <Column>
-                            <Text text="Hembra"/>
+                            <Text text="Hembra" />
                         </Column>
                         <Column>
-                            <Text text="Parentesco"/>
+                            <Text text="Parentesco" />
                         </Column>
                         <Column>
-                            <Text text="Riesgo"/>
+                            <Text text="Riesgo" />
                         </Column>
                         <Column>
-                            <Text text="Decision"/>
+                            <Text text="Decision" />
                         </Column>
                         <Column>
-                            <Text text="Fecha"/>
+                            <Text text="Fecha" />
                         </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem type="Active" press=".onSelectPlan">
                             <cells>
-                                <Text text="{= ${planes>codigo} || 'Sin codigo' }"/>
-                                <Text text="{planes>macho/placa}"/>
-                                <Text text="{planes>hembra/placa}"/>
-                                <Text text="{planes>tipoParentesco}"/>
+                                <Text text="{= ${planes>codigo} || 'Sin codigo' }" />
+                                <Text text="{planes>macho/placa}" />
+                                <Text text="{planes>hembra/placa}" />
+                                <Text
+                                    text="{
+                                    path: 'planes>tipoParentesco',
+                                    formatter: '.formatearParentesco'
+                                }" />
                                 <ObjectStatus
-                                        text="{planes>nivelRiesgo}"
-                                        state="{
-                                        = ${planes>nivelRiesgo} === 'ALTO' ? 'Error' :
+                                    text="{planes>nivelRiesgo}"
+                                    state="{= ${planes>nivelRiesgo} === 'ALTO' ? 'Error' :
                                           ${planes>nivelRiesgo} === 'MODERADO' ? 'Warning' :
-                                          'Success'
-                                    }"/>
+                                          'Success'}" />
                                 <ObjectStatus
-                                        text="{planes>decision}"
-                                        state="{
-                                        = ${planes>decision} === 'NO_RECOMENDADO' ? 'Error' :
+                                    text="{planes>decision}"
+                                    state="{= ${planes>decision} === 'NO_RECOMENDADO' ? 'Error' :
                                           ${planes>decision} === 'OBSERVAR' ? 'Warning' :
-                                          'Success'
-                                    }"/>
-                                <Text text="{planes>fechaPropuesta}"/>
+                                          'Success'}" />
+                                <Text text="{planes>fechaPropuesta}" />
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -90,5 +100,11 @@
 
             </VBox>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press="onNavBack" />
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>

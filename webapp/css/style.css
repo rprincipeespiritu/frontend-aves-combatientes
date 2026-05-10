@@ -1,1 +1,111 @@
 /* Enter your custom styles here */
+
+.genealogyScroll {
+  border-top: 1px solid #d9e2ec;
+  background: #f8f2ec;
+}
+
+.genealogyBoard {
+  min-width: 132rem;
+  padding: 1.5rem 2rem 2.5rem;
+}
+
+.genealogyLevel {
+  position: relative;
+  width: 100%;
+  min-height: 8.5rem;
+  padding-top: 1.5rem;
+}
+
+.genealogyLevel:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #c9b9a8;
+}
+
+.genealogyLevelHeader {
+  min-height: 2.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.genealogyPeopleRow {
+  position: relative;
+  width: 100%;
+  gap: 1rem;
+}
+
+.genealogyLevel:not(:first-child) .genealogyPeopleRow::before {
+  content: "";
+  position: absolute;
+  top: -1.05rem;
+  left: 50%;
+  width: 2px;
+  height: 1.05rem;
+  background: #c9b9a8;
+}
+
+.genealogyPerson {
+  position: relative;
+  width: 8rem;
+  min-width: 8rem;
+  padding: 0.35rem 0.25rem;
+  border: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.genealogyLevel:not(:first-child) .genealogyPerson::before {
+  content: "";
+  position: absolute;
+  top: -1.45rem;
+  left: 50%;
+  width: 2px;
+  height: 1.3rem;
+  background: #c9b9a8;
+}
+
+.genealogyPersonInner {
+  width: 100%;
+}
+
+.genealogyPersonCode {
+  max-width: 7.5rem;
+  margin-top: 0.35rem;
+  color: #1d2b3a;
+  font-weight: 700;
+  text-align: center;
+}
+
+.genealogyPersonName {
+  max-width: 7.5rem;
+  color: #5d6b7a;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.genealogyPersonDate {
+  max-width: 7.5rem;
+  color: #2f6f8f;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.genealogyPersonRole {
+  max-width: 7.5rem;
+  color: #7b6b5b;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.genealogyPersonMissing {
+  opacity: 0.62;
+}
+
+.genealogyPersonMissing .sapMAvatar {
+  outline: 2px dashed #b9a999;
+  outline-offset: 3px;
+}

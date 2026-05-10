@@ -40,9 +40,14 @@ export interface IIncubacion {
   motivoCancelacion?: string;
   padre_ID: string;
   placaPadre?: string;
-  madre_ID: string;  
+  madre_ID: string;
   placaMadre?: string;
   detalles?: IIncubacionDetalle[];
+  success: boolean;
+  message?: string;
+  error?: string | {
+    message?: string;
+  };
 }
 
 export default class IncubacionService {
@@ -59,6 +64,24 @@ export default class IncubacionService {
     }
   }
 
+  private getErrorMessage(data: any, fallback: string): string {
+    const errorMessage = data?.error?.message;
+
+    if (typeof errorMessage === "string") {
+      return errorMessage;
+    }
+
+    if (typeof data?.message === "string") {
+      return data.message;
+    }
+
+    if (typeof data?.error === "string") {
+      return data.error;
+    }
+
+    return fallback;
+  }
+
   public static getInstance(): IncubacionService {
     if (!IncubacionService.instance) {
       IncubacionService.instance = new IncubacionService();
@@ -68,7 +91,7 @@ export default class IncubacionService {
 
   private buildHeaders(): HeadersInit {
     return {
-      'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
       "Content-Type": "application/json",
     };
   }
@@ -78,18 +101,15 @@ export default class IncubacionService {
   }
 
   public async list(): Promise<IIncubacion[]> {
-
     let url = `${this.baseUrl}/IncubacionesActivas?$orderby=createdAt desc`;
-    let proceso = localStorage.getItem('filterIncProceso');
-    if(proceso){
+    let proceso = localStorage.getItem("filterIncProceso");
+    if (proceso) {
       url = `${this.baseUrl}/IncubacionesActivas?$filter=estado eq '${proceso}'&$orderby=createdAt desc`;
     }
-    const response = await fetch( url,
-      {
-        method: "GET",
-        headers: this.buildHeaders(),
-      },
-    );
+    const response = await fetch(url, {
+      method: "GET",
+      headers: this.buildHeaders(),
+    });
 
     const data = await this.parseResponse(response);
 
@@ -127,40 +147,69 @@ export default class IncubacionService {
   }
 
   public async create(payload: IIncubacion): Promise<IIncubacion> {
-    const response = await fetch(`${this.baseUrl}/Incubaciones`, {
-      method: "POST",
-      headers: this.buildHeaders(),
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}/Incubaciones`, {
+        method: "POST",
+        headers: this.buildHeaders(),
+        body: JSON.stringify(payload),
+      });
 
-    const data = await this.parseResponse(response);
+      const result = await this.parseResponse(response);
 
-    if (!response.ok) {
-      throw new Error(
-        data?.error?.message ||
-          data?.message ||
-          "No se pudo crear la incubación",
-      );
+      if (!response.ok) {
+        return {
+          success: false,
+          error: {
+            message: this.getErrorMessage(result, "No se pudo crear la incubacion"),
+          },
+        } as IIncubacion;
+      }
+
+      return {
+        ...result,
+        success: true,
+      };
+      
+    } catch (error) {
+      console.error("Error creando incubacion:", error);
+      return {
+        success: false,
+        error: "Error de conexión",
+      };
     }
-
-    return data;
   }
 
-  public async update(id: string, payload: IIncubacion): Promise<void> {
-    const response = await fetch(this.buildEntityUrl(id), {
-      method: "PATCH",
-      headers: this.buildHeaders(),
-      body: JSON.stringify(payload),
-    });
+  public async update(id: string, payload: IIncubacion): Promise<IIncubacion> {
+    try {
+      const response = await fetch(this.buildEntityUrl(id), {
+        method: "PATCH",
+        headers: this.buildHeaders(),
+        body: JSON.stringify(payload),
+      });
 
-    const data = await this.parseResponse(response);
+      const result = await this.parseResponse(response);
 
-    if (!response.ok) {
-      throw new Error(
-        data?.error?.message ||
-          data?.message ||
-          "No se pudo actualizar la incubación",
-      );
+      if (!response.ok) {
+        return {
+          success: false,
+          error: {
+            message: this.getErrorMessage(result, "No se pudo actualizar la incubacion"),
+          },
+        } as IIncubacion;
+      }
+
+      return {
+        ...result,
+        success: true,
+      };
+    } catch (error) {
+      console.error("Error actualizando incubacion:", error);
+      return {
+        success: false,
+        error: {
+          message: "Error de conexion",
+        },
+      } as IIncubacion;
     }
   }
 
@@ -182,13 +231,10 @@ export default class IncubacionService {
   }
 
   public async listAves(): Promise<IAveOption[]> {
-    const response = await fetch(
-      `${this.baseUrl}/AvesActivas`,
-      {
-        method: "GET",
-        headers: this.buildHeaders(),
-      },
-    );
+    const response = await fetch(`${this.baseUrl}/AvesActivas`, {
+      method: "GET",
+      headers: this.buildHeaders(),
+    });
 
     const data = await this.parseResponse(response);
 

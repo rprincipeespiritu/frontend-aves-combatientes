@@ -32,9 +32,11 @@
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap">
                                     <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add"
                                         press="onNavNewBird" />
-                                    <Button text="Nueva Incubación" icon="sap-icon://add"
+                                    <Button text="Nueva Incubación" type="Emphasized"
+                                        icon="sap-icon://add"
                                         press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
-                                    <Button text="Nueva Línea" icon="sap-icon://add"
+                                    <Button text="Nueva Línea" type="Emphasized"
+                                        icon="sap-icon://add"
                                         press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin" />
                                 </HBox>
                             </VBox>
@@ -87,6 +89,14 @@
                             press="onVerReportes" visible="true">
                             <TileContent>
                                 <ImageContent src="sap-icon://business-objects-experience" />
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile class="sapUiSmallMarginTop" header="Genealogía"
+                            subheader="Arbol genealógico por ave" press="onVerGenealogia"
+                            visible="true">
+                            <TileContent>
+                                <ImageContent src="sap-icon://org-chart" />
                             </TileContent>
                         </GenericTile>
                     </HBox>

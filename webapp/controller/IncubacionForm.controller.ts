@@ -13,7 +13,7 @@ import UIComponent from "sap/ui/core/UIComponent";
 import DatePicker from "sap/m/DatePicker";
 import DateTimePicker from "sap/m/DateTimePicker";
 import Input from "sap/m/Input";
-import {EstadoAve, EstadoIncubacion, IAve} from "../types/Models";
+import { EstadoAve, EstadoIncubacion, IAve } from "../types/Models";
 import formatter from "../model/formatter";
 import Router from "sap/ui/core/routing/Router";
 import Event from "sap/ui/base/Event";
@@ -49,7 +49,7 @@ export default class IncubacionForm extends Controller {
       fechaEclosion: null,
       estado: "Programada",
       observacion: "",
-      detalles: []
+      detalles: [],
     };
 
     oViewModel.setProperty("/form", form);
@@ -60,16 +60,18 @@ export default class IncubacionForm extends Controller {
     oPicker?.addEventDelegate({
       onAfterRendering: () => {
         const sInnerId = `${oPicker.getId()}-inner`;
-        const oInner = document.getElementById(sInnerId) as HTMLInputElement | null;
+        const oInner = document.getElementById(
+          sInnerId,
+        ) as HTMLInputElement | null;
 
         if (oInner) {
           oInner.readOnly = true;
           oInner.setAttribute("readonly", "readonly");
         }
-      }
-    })
+      },
+    });
 
-    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();;
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
     oRouter
       ?.getRoute("RouteIncubacionCreate")
       ?.attachPatternMatched(this._onCreateMatched, this);
@@ -113,7 +115,6 @@ export default class IncubacionForm extends Controller {
     }
 
     this._oPadresDialog?.close();
-
   }
 
   public onfechaIncubacionChange = (oEvent: any): void => {
@@ -138,7 +139,7 @@ export default class IncubacionForm extends Controller {
 
     oModel.setProperty("/form/fechaPreNacimiento", fechaPreNacimiento);
     oModel.setProperty("/form/fechaEclosion", fechaEclosion);
-  }
+  };
 
   private onValueHelpPadre = (oEvent: Event): void => {
     const oThat = this;
@@ -165,7 +166,7 @@ export default class IncubacionForm extends Controller {
     this._sDetallePath = oContext.getPath();
     oThat.helpSelected = "valueHelpMadre";
     oThat.onAbrirPopupPadres(oThat.helpSelected, "Seleccionar Madre");
-  }
+  };
 
   public async onAbrirPopupPadres(
     helpSelected: string,
@@ -175,7 +176,7 @@ export default class IncubacionForm extends Controller {
       const response = await fetch(`${this.baseUrl}/AvesActivas`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           "Content-Type": "application/json",
         },
       });
@@ -218,41 +219,53 @@ export default class IncubacionForm extends Controller {
     const oModel = this.getView()?.getModel("view") as JSONModel;
     const aves = await this.service.listAves();
 
-    const machos = (aves || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
-    const hembras = (aves || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
+    const machos = (aves || []).filter(
+      (a: any) => a.sexo === "M" && a.padrote === true,
+    );
+    const hembras = (aves || []).filter(
+      (a: any) => a.sexo === "H" && a.padrote === true,
+    );
     this.getView()?.setModel(new JSONModel(machos), "avesMachos");
     this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
-
   }
 
   private async _loadPlanesCruce(): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/PlanesCruces?$expand=macho,hembra,linea&$orderby=createdAt desc`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${this.baseUrl}/PlanesCruces?$expand=macho,hembra,linea&$orderby=createdAt desc`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message || data?.message || "No se pudo cargar planes de cruce");
+      throw new Error(
+        data?.error?.message ||
+          data?.message ||
+          "No se pudo cargar planes de cruce",
+      );
     }
 
-    const planes = (data.value || []).filter((plan: any) =>
-      ["PROPUESTO", "APROBADO", "EJECUTADO"].includes(plan.estado)
-    ).map((plan: any) => ({
-      ...plan,
-      codigoVisual: plan.codigo || `PC-${plan.macho?.placa || "M"}-${plan.hembra?.placa || "H"}`,
-      descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""} | ${plan.decision || ""} | ${plan.nivelRiesgo || ""}`
-    }));
+    const planes = (data.value || [])
+      .filter((plan: any) =>
+        ["PROPUESTO", "APROBADO", "EJECUTADO"].includes(plan.estado),
+      )
+      .map((plan: any) => ({
+        ...plan,
+        codigoVisual:
+          plan.codigo,
+        descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""} | ${plan.decision || ""} | ${plan.nivelRiesgo || ""}`,
+      }));
 
     this.getView()?.setModel(new JSONModel(planes), "planesCruce");
   }
 
   private async _onCreateMatched(): Promise<void> {
-
     const oModel = this.getView()?.getModel("view") as JSONModel;
     try {
       if (!this.authService.isAuthenticated()) {
@@ -270,7 +283,7 @@ export default class IncubacionForm extends Controller {
 
       oModel.setProperty("/busy", true);
       oModel.setProperty("/editMode", false);
-      this.incubacionId = null;      
+      this.incubacionId = null;
 
       oModel.setProperty("/form", {
         fechaIncubacion: null,
@@ -279,12 +292,11 @@ export default class IncubacionForm extends Controller {
         estado: "PROGRAMADA",
         observacion: "",
         eInputNacNoEcl: false,
-        detalles: []
+        detalles: [],
       });
 
       await this._loadAvesPadrotes();
       await this._loadPlanesCruce();
-
     } catch (error) {
       MessageBox.error(
         error instanceof Error ? error.message : "No se pudo cargar aves",
@@ -323,7 +335,7 @@ export default class IncubacionForm extends Controller {
       const oFechaEclosion = new Date(incubacion.fechaEclosion || 0);
       const oFechaActual = new Date();
 
-      if ( oFechaActual >= oFechaEclosion ) {
+      if (oFechaActual >= oFechaEclosion) {
         incubacion.eInputNacNoEcl = true;
       }
 
@@ -334,10 +346,11 @@ export default class IncubacionForm extends Controller {
         element.nombrePadre = element.padre.nombre;
         element.placaMadre = element.madre.placa;
         element.nombreMadre = element.madre.nombre;
-        element.planCruce_ID = element.planCruce_ID || element.planCruce?.ID || "";
-        element.planCruceCodigo = element.planCruce?.codigo || "";
-        element.decision = element.decision || element.planCruce?.decision || "";
-
+        element.planCruce_ID =
+          element.planCruce_ID || element.planCruce?.ID || "";
+        element.codigo = element.planCruce?.codigo || "";
+        element.decision =
+          element.decision || element.planCruce?.decision || "";
       }
 
       oModel.setProperty("/form", {
@@ -348,9 +361,8 @@ export default class IncubacionForm extends Controller {
         estado: incubacion.estado || "PROGRAMADA",
         observaciones: incubacion.observaciones || "",
         eInputNacNoEcl: incubacion.eInputNacNoEcl,
-        detalles: incubacion.detalles
+        detalles: detalles,
       });
-
     } catch (error) {
       MessageBox.error(
         error instanceof Error
@@ -367,7 +379,6 @@ export default class IncubacionForm extends Controller {
   }
 
   private _validarDetalles(aDetalles: any[]): boolean {
-
     for (let i = 0; i < aDetalles.length; i++) {
       const d = aDetalles[i];
 
@@ -377,27 +388,37 @@ export default class IncubacionForm extends Controller {
       const noEclosionados = Number(d.noEclosionados || 0);
 
       if (!d.padre_ID || !d.madre_ID) {
-        MessageBox.error(`Debe seleccionar un plan de cruce en la fila ${i + 1}`);
+        MessageBox.error(
+          `Debe seleccionar un plan de cruce en la fila ${i + 1}`,
+        );
         return false;
       }
 
       if (d.padre_ID === d.madre_ID) {
-        MessageBox.error(`Padre y madre no pueden ser iguales en la fila ${i + 1}`);
+        MessageBox.error(
+          `Padre y madre no pueden ser iguales en la fila ${i + 1}`,
+        );
         return false;
       }
 
       if (fertiles > totalHuevos) {
-        MessageBox.error(`Fértiles no puede ser mayor a Total Huevos en la fila ${i + 1}`);
+        MessageBox.error(
+          `Fértiles no puede ser mayor a Total Huevos en la fila ${i + 1}`,
+        );
         return false;
       }
 
       if (nacidos > fertiles) {
-        MessageBox.error(`Nacidos no puede ser mayor a Fértiles en la fila ${i + 1}`);
+        MessageBox.error(
+          `Nacidos no puede ser mayor a Fértiles en la fila ${i + 1}`,
+        );
         return false;
       }
 
-      if ((nacidos + noEclosionados) > fertiles) {
-        MessageBox.error(`Nacidos + No eclosionados no puede ser mayor a Fértiles en la fila ${i + 1}`);
+      if (nacidos + noEclosionados > fertiles) {
+        MessageBox.error(
+          `Nacidos + No eclosionados no puede ser mayor a Fértiles en la fila ${i + 1}`,
+        );
         return false;
       }
     }
@@ -412,7 +433,6 @@ export default class IncubacionForm extends Controller {
     const oODataModel = oView?.getModel(); // OData principal
 
     try {
-
       const oData = oModelLocal?.getProperty("/form");
 
       if (!oData.fechaIncubacion) {
@@ -434,12 +454,17 @@ export default class IncubacionForm extends Controller {
       const usuario = JSON.parse(authUser);
       const userId = usuario._id;
 
-
       const oPayload = {
         codigo: oData.codigo,
-        fechaIncubacion: oData.fechaIncubacion ? new Date(oData.fechaIncubacion).toISOString() : null,
-        fechaPreNacimiento: oData.fechaPreNacimiento ? new Date(oData.fechaPreNacimiento).toISOString() : null,
-        fechaEclosion: oData.fechaEclosion ? new Date(oData.fechaEclosion).toISOString() : null,
+        fechaIncubacion: oData.fechaIncubacion
+          ? new Date(oData.fechaIncubacion).toISOString()
+          : null,
+        fechaPreNacimiento: oData.fechaPreNacimiento
+          ? new Date(oData.fechaPreNacimiento).toISOString()
+          : null,
+        fechaEclosion: oData.fechaEclosion
+          ? new Date(oData.fechaEclosion).toISOString()
+          : null,
         estado: oData.estado,
         observaciones: oData.observaciones,
         usuario_ID: userId,
@@ -450,65 +475,96 @@ export default class IncubacionForm extends Controller {
             planCruce_ID: d.planCruce_ID || null,
             tipoParentesco: d.tipoParentesco || null,
             nivelRiesgo: d.nivelRiesgo || null,
-            porcentaje: d.porcentaje === undefined || d.porcentaje === null ? null : Number(d.porcentaje),
+            porcentaje:
+              d.porcentaje === undefined || d.porcentaje === null
+                ? null
+                : Number(d.porcentaje),
             totalHuevos: Number(d.totalHuevos || 0),
             huevosFertiles: Number(d.huevosFertiles || 0),
             huevosEclosionados: Number(d.huevosEclosionados || 0),
             huevosNoEclosionados: Number(d.huevosNoEclosionados || 0),
-            usuario_ID: d.usuario_ID || userId
+            usuario_ID: d.usuario_ID || userId,
           };
-        })
+        }),
       };
 
-
       if (this.incubacionId) {
-        MessageBox.information("¿Está seguro que desea actualizar el registro?", {
-          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-          emphasizedAction: MessageBox.Action.OK,
-          onClose: async function (sAction) {
-            if (sAction === "OK") {
-              await oThat.service.update(oThat.incubacionId, oPayload);
-              MessageBox.success("¡Incubación actualizada exitosamente!", {
-                actions: [MessageBox.Action.OK],
-                emphasizedAction: MessageBox.Action.OK,
-                onClose: function (sAction) {
-                  oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
-                },
-                dependentOn: oThat.getView()
-              });
-            }
+        MessageBox.information(
+          "¿Está seguro que desea actualizar el registro?",
+          {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.OK,
+            onClose: async function (sAction) {
+              if (sAction === "OK") {
+                const bResult = await oThat.service.update(oThat.incubacionId, oPayload);
+                if (bResult.success) {
+                  MessageBox.success("Incubacion actualizada exitosamente", {
+                    actions: [MessageBox.Action.OK],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                      oThat
+                        .getOwnerComponent()
+                        ?.getRouter()
+                        .navTo("RouteIncubacionList");
+                    },
+                    dependentOn: oThat.getView(),
+                  });
+                } else {
+                  MessageBox.error(oThat.obtenerMensajeError(bResult));
+                }
+              }
+            },
+            dependentOn: this.getView(),
           },
-          dependentOn: this.getView()
-        });
-
+        );
       } else {
-
         MessageBox.information("¿Está seguro que desea crear el registro?", {
           actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
           emphasizedAction: MessageBox.Action.OK,
-          onClose: async function (sAction) {
+          onClose: async function (sAction: any) {
             if (sAction === "OK") {
-              await oThat.service.create(oPayload);
-              MessageBox.success("¡Incubación creada exitosamente!", {
-                actions: [MessageBox.Action.OK],
-                emphasizedAction: MessageBox.Action.OK,
-                onClose: function (sAction) {
-                  oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
-                },
-                dependentOn: oThat.getView()
-              });
+              const bResult = await oThat.service.create(oPayload);
+              if (bResult.success) {
+                MessageBox.success("¡Incubación creada exitosamente!", {
+                  actions: [MessageBox.Action.OK],
+                  emphasizedAction: MessageBox.Action.OK,
+                  onClose: function (sAction) {
+                    oThat
+                      .getOwnerComponent()
+                      ?.getRouter()
+                      .navTo("RouteIncubacionList");
+                  },
+                  dependentOn: oThat.getView(),
+                });
+              } else {
+                MessageBox.error(oThat.obtenerMensajeError(bResult));
+              }
+
             }
           },
-          dependentOn: this.getView()
-        });        
-       
+          dependentOn: this.getView(),
+        });
       }
-
     } catch (oError) {
       MessageBox.error("Error al guardar la incubación");
       console.error(oError);
     }
+  }
 
+  private obtenerMensajeError(result: any): string {
+    if (typeof result?.error?.message === "string") {
+      return result.error.message;
+    }
+
+    if (typeof result?.error === "string") {
+      return result.error;
+    }
+
+    if (typeof result?.message === "string") {
+      return result.message;
+    }
+
+    return "No se pudo guardar la incubacion";
   }
 
   public onAddDetalle(): void {
@@ -531,7 +587,7 @@ export default class IncubacionForm extends Controller {
       totalHuevos: 0,
       huevosFertiles: 0,
       huevosEclosionados: 0,
-      huevosNoEclosionados: 0
+      huevosNoEclosionados: 0,
     });
 
     oModel.setProperty("/form/detalles", aDetalles);
@@ -541,11 +597,20 @@ export default class IncubacionForm extends Controller {
     const oModel = this.getView()?.getModel("view") as JSONModel;
 
     oModel.setProperty(`${sPath}/planCruce_ID`, plan.ID);
-    oModel.setProperty(`${sPath}/planCruceCodigo`, plan.codigoVisual || plan.codigo || "");
-    oModel.setProperty(`${sPath}/padre_ID`, plan.macho_ID || plan.macho?.ID || "");
+    oModel.setProperty(
+      `${sPath}/codigo`,
+      plan.codigoVisual || plan.codigo || "",
+    );
+    oModel.setProperty(
+      `${sPath}/padre_ID`,
+      plan.macho_ID || plan.macho?.ID || "",
+    );
     oModel.setProperty(`${sPath}/placaPadre`, plan.macho?.placa || "");
     oModel.setProperty(`${sPath}/nombrePadre`, plan.macho?.nombre || "");
-    oModel.setProperty(`${sPath}/madre_ID`, plan.hembra_ID || plan.hembra?.ID || "");
+    oModel.setProperty(
+      `${sPath}/madre_ID`,
+      plan.hembra_ID || plan.hembra?.ID || "",
+    );
     oModel.setProperty(`${sPath}/placaMadre`, plan.hembra?.placa || "");
     oModel.setProperty(`${sPath}/nombreMadre`, plan.hembra?.nombre || "");
     oModel.setProperty(`${sPath}/tipoParentesco`, plan.tipoParentesco || "");
@@ -579,7 +644,11 @@ export default class IncubacionForm extends Controller {
 
       this._oPlanesCruceDialog.open();
     } catch (error) {
-      MessageBox.error(error instanceof Error ? error.message : "No se pudo cargar planes de cruce");
+      MessageBox.error(
+        error instanceof Error
+          ? error.message
+          : "No se pudo cargar planes de cruce",
+      );
     }
   }
 
@@ -615,10 +684,10 @@ export default class IncubacionForm extends Controller {
             new Filter("descripcionVisual", FilterOperator.Contains, sValue),
             new Filter("tipoParentesco", FilterOperator.Contains, sValue),
             new Filter("nivelRiesgo", FilterOperator.Contains, sValue),
-            new Filter("decision", FilterOperator.Contains, sValue)
+            new Filter("decision", FilterOperator.Contains, sValue),
           ],
-          and: false
-        })
+          and: false,
+        }),
       ]);
     } else {
       oBinding.filter([]);
@@ -653,7 +722,9 @@ export default class IncubacionForm extends Controller {
   }
 
   public onNavWelcome(): void {
-    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+    const oRouter = (
+      this.getOwnerComponent() as UIComponent
+    )?.getRouter() as Router;
     oRouter?.navTo("RouteWelcome");
   }
 
@@ -665,7 +736,7 @@ export default class IncubacionForm extends Controller {
         const oFragment = await Fragment.load({
           id: this.getView()?.getId(),
           name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
-          controller: this
+          controller: this,
         });
 
         this._oUserMenuSheet = oFragment as ActionSheet;
@@ -686,7 +757,7 @@ export default class IncubacionForm extends Controller {
       const oFragment = await Fragment.load({
         id: this.getView()?.getId(),
         name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
-        controller: this
+        controller: this,
       });
 
       this._oUserMenuPopover = oFragment as Popover;
@@ -699,7 +770,6 @@ export default class IncubacionForm extends Controller {
     } else {
       this._oUserMenuPopover.openBy(oSource);
     }
-
   }
 
   public formatearEstado(estado: EstadoIncubacion): string {
@@ -707,10 +777,9 @@ export default class IncubacionForm extends Controller {
       [EstadoIncubacion.Proceso]: "En proceso",
       [EstadoIncubacion.Programada]: "Programada",
       [EstadoIncubacion.Completada]: "Completada",
-      [EstadoIncubacion.Cancelada]: "Cancelada"
+      [EstadoIncubacion.Cancelada]: "Cancelada",
     };
 
     return estados[estado] || estado;
   }
-
 }

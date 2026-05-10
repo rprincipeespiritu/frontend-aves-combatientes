@@ -11,7 +11,7 @@ import Fragment from "sap/ui/core/Fragment";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
 import formatter from "../model/formatter";
-import {EstadoLinea} from "com/rprincipees/registroavescombate/types/Models";
+import {EstadoLinea, ParentescoAve} from "com/rprincipees/registroavescombate/types/Models";
 import MessageToast from "sap/m/MessageToast";
 
 export default class LineaGalloDetail extends Controller {
@@ -185,5 +185,21 @@ export default class LineaGalloDetail extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
+
+    public formatearParentesco(parentesco: ParentescoAve): string {
+        const parentescos = {
+          [ParentescoAve.AbuelaNieto]: "Abuela Niet0",
+          [ParentescoAve.AbueloNieta]: "Abuelo Nieta",
+          [ParentescoAve.MadreHijo]: "Madre Hijo",
+          [ParentescoAve.MedioHermanos]: "Medio Hermanos",
+          [ParentescoAve.PadreHija]: "Padre Hija",
+          [ParentescoAve.Primos]: "Primos",
+          [ParentescoAve.SinParentesco]: "Sin Parentesco",
+          [ParentescoAve.TiaSobrina]: "Tia Sobrina",
+          [ParentescoAve.TioSobrina]: "Tio Sobrina"
+        };
+    
+        return parentescos[parentesco] || parentesco;
+      }
 
 }

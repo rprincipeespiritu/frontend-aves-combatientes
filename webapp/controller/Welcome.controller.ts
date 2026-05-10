@@ -390,4 +390,9 @@ export default class Welcome extends Controller {
         oRouter?.navTo("RouteReportes");
     }
 
+    public onVerGenealogia(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RouteGenealogia");
+    }
+
 }
