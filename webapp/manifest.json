@@ -41,6 +41,7 @@
         "sap.ui.core": {},
         "sap.f": {},
         "sap.tnt": {},
+        "sap.suite.ui.commons": {},
         "sap.ui.export": {}
       }
     },
@@ -170,6 +171,11 @@
           "target": "TargetReportes"
         },
         {
+          "pattern": "genealogia",
+          "name": "RouteGenealogia",
+          "target": "TargetGenealogia"
+        },
+        {
           "pattern": "lineas",
           "name": "RouteLineaGallos",
           "target": "TargetLineaGallos"
@@ -251,6 +257,10 @@
         "TargetReportes": {
           "id": "Reportes",
           "viewName": "Reportes"
+        },
+        "TargetGenealogia": {
+          "id": "Genealogia",
+          "viewName": "Genealogia"
         },
         "TargetLineaGallos": {
           "id": "LineaGallos",

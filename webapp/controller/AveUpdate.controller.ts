@@ -135,8 +135,10 @@ export default class AveUpdate extends Controller {
                 ...ave,
                 razaNombre: ave.raza?.nombre || "",
                 colorNombre: ave.color?.nombre || "",
-                padreNombre: ave.padre ? `${ave.padre.placa} - ${ave.padre.nombre || ""}` : "Sin registro",
-                madreNombre: ave.madre ? `${ave.madre.placa} - ${ave.madre.nombre || ""}` : "Sin registro",
+                padrePlaca: ave.padre ? `${ave.padre.placa || ""}` : "",
+                padreNombre: ave.padre ? `${ave.padre.nombre || ""}` : "",
+                madrePlaca: ave.madre ? `${ave.madre.placa || ""}` : "",
+                madreNombre: ave.madre ? `${ave.madre.nombre || ""}` : "",
                 fotoPrincipal: ave.fotos?.find((f: any) => f.esPrincipal)?.thumbnailUrl || "",
                 pesajes: ave.pesajes || [],
                 peleas: ave.peleas || [],
@@ -355,8 +357,9 @@ export default class AveUpdate extends Controller {
                 madre_ID: null
             };
 
-            //const oInputPadre = oThat.byId("idPadre") as Input;
-            const placaPadre = data.padre ? data.padre.placa : null;
+            const inputPadre = oThat.byId("inputPadre") as Input;
+            const placaPadre = inputPadre.getValue();
+            // const placaPadre = data.padre ? data.padre.placa : null;
             const oMachosModel = oThat.getView()?.getModel("avesMachos") as JSONModel;
             const aMachos = oMachosModel.getData() as any[];
             let oPadre: IAve[];
@@ -365,8 +368,9 @@ export default class AveUpdate extends Controller {
                 data.padre_ID = oPadre[0].ID;
             }
 
-           //const oInputMadre = oThat.byId("idMadre") as Input;
-            const placaMadre = data.madre ? data.madre.placa : null
+            const inputMadre = oThat.byId("inputMadre") as Input;
+            const placaMadre = inputMadre.getValue();
+            // const placaMadre = data.madre ? data.madre.placa : null
             const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
             const aHembras = oHembrasModel.getData() as any[];
             let oMadre: IAve[];

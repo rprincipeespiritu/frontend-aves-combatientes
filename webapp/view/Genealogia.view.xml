@@ -1,0 +1,130 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Genealogia"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:graph="sap.suite.ui.commons.networkgraph"
+    xmlns:layout="sap.suite.ui.commons.networkgraph.layout">
+
+    <Page
+        title="Arbol genealógico"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        xmlns:form="sap.f">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin" busy="{genealogia>/busy}">
+                <Panel headerText="Seleccion de ave">
+                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" columnsL="3"
+                        columnsM="2">
+                        <f:content>
+                            <Label text="Ave" />
+                            <Input
+                                id="inputAve"
+                                placeholder="Seleccionar Ave"
+                                value="{genealogia>/placa}"
+                                description="{genealogia>/nombre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpAve"
+                                width="100%" />
+                            <!-- <Select
+                                selectedKey="{genealogia>/aveSeleccionadaId}"
+                                change=".onSeleccionarAve"
+                                items="{genealogia>/aves}">
+                                <core:Item
+                                    key="{genealogia>ID}"
+                                    text="{= ${genealogia>placa} + ' - ' + (${genealogia>nombre} || 'Sin nombre') }" />
+                            </Select> -->
+
+                            <Label text="Generaciones" />
+                            <ObjectStatus text="Hasta 5 generaciones" state="Information" />
+
+                            <Label text="Ancestros encontrados" />
+                            <ObjectNumber number="{genealogia>/resumen/ancestrosIdentificados}" />
+                        </f:content>
+                    </f:SimpleForm>
+
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button
+                            text="Refrescar"
+                            icon="sap-icon://refresh"
+                            press=".onRefrescar" />
+                    </Toolbar>
+                </Panel>
+
+                <Panel headerText="Resumen genealogico" class="sapUiMediumMarginTop">
+                    <HBox wrap="Wrap" justifyContent="SpaceBetween">
+                        <ObjectIdentifier
+                            title="{genealogia>/aveSeleccionada/placa}"
+                            text="{= ${genealogia>/aveSeleccionada/nombre} + (${genealogia>/aveSeleccionada/fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>/aveSeleccionada/fechaNacimientoFmt} : '') }" />
+                        <ObjectStatus
+                            text="{genealogia>/aveSeleccionada/estado}"
+                            state="{= ${genealogia>/aveSeleccionada/estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                        <ObjectNumber
+                            number="{genealogia>/resumen/registrosFaltantes}"
+                            unit="registros faltantes" />
+                    </HBox>
+                </Panel>
+
+                <graph:Graph
+                    id="genealogyGraph"
+                    class="genealogyNetworkGraph sapUiMediumMarginTop"
+                    height="42rem"
+                    orientation="TopBottom"
+                    enableWheelZoom="true"
+                    nodes="{genealogia>/graph/nodes}"
+                    lines="{genealogia>/graph/lines}">
+                    <graph:layoutAlgorithm>
+                        <layout:LayeredLayout
+                            nodePlacement="BrandesKoepf"
+                            nodeSpacing="56"
+                            layerSpacing="92" />
+                    </graph:layoutAlgorithm>
+                    <graph:statuses>
+                        <graph:Status key="Base" title="Ave seleccionada" backgroundColor="#fff0b3" borderColor="#d99a00" />
+                        <graph:Status key="Padre" title="Padre" backgroundColor="#e5f2ff" borderColor="#0a6ed1" />
+                        <graph:Status key="Madre" title="Madre" backgroundColor="#f4e8ff" borderColor="#8a3ffc" />
+                        <graph:Status key="Faltante" title="Sin registro" backgroundColor="#f2f4f5" borderColor="#89919a" />
+                        <graph:Status key="Linea" title="Relacion" borderColor="#6a7d90" />
+                    </graph:statuses>
+                    <graph:nodes>
+                        <graph:Node
+                            key="{genealogia>key}"
+                            title="{genealogia>title}"
+                            description="{genealogia>description}"
+                            icon="{genealogia>icon}"
+                            shape="{genealogia>shape}"
+                            width="{genealogia>width}"
+                            status="{genealogia>status}">
+                            <graph:attributes>
+                                <graph:ElementAttribute label="Rol" value="{genealogia>rol}" />
+                                <graph:ElementAttribute label="Generacion" value="{genealogia>generacion}" />
+                                <graph:ElementAttribute label="Sexo" value="{genealogia>sexo}" />
+                                <graph:ElementAttribute label="Estado" value="{genealogia>estado}" />
+                            </graph:attributes>
+                        </graph:Node>
+                    </graph:nodes>
+                    <graph:lines>
+                        <graph:Line
+                            from="{genealogia>from}"
+                            to="{genealogia>to}"
+                            status="{genealogia>status}"
+                            arrowPosition="End" />
+                    </graph:lines>
+                </graph:Graph>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

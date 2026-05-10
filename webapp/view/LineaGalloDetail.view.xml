@@ -61,10 +61,13 @@
                     </headerToolbar>
 
                     <columns>
-                        <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Column >
+                            <Text text="Código"/>
+                        </Column>
+                        <Column >
                             <Text text="Macho"/>
                         </Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Column >
                             <Text text="Hembra"/>
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
@@ -84,9 +87,13 @@
                     <items>
                         <ColumnListItem>
                             <cells>
+                                <Text text="{detalle>codigo}"/>
                                 <Text text="{detalle>macho/placa}"/>
-                                <Text text="{detalle>hembra/placa}"/>
-                                <Text text="{detalle>tipoParentesco}"/>
+                                <Text text="{detalle>hembra/placa}"/>                                
+                                <Text text="{
+                                    path: 'detalle>tipoParentesco',
+                                    formatter: '.formatearParentesco'
+                                }"/>
                                 <ObjectStatus
                                         text="{detalle>nivelRiesgo}"
                                         state="{

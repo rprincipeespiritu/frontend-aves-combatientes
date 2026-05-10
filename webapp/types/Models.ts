@@ -107,6 +107,18 @@ export enum DialogMode {
     Edit = "edit"
 }
 
+export enum ParentescoAve {
+    PadreHija = "PADRE_HIJA",
+    MadreHijo = "MADRE_HIJO",
+    AbueloNieta = "ABUELO_NIETA",
+    AbuelaNieto = "ABUELA_NIETO",
+    TioSobrina = "TIO_SOBRINA",
+    TiaSobrina = "TIA_SOBRINO",
+    MedioHermanos = "MEDIO_HERMANOS",
+    Primos = "PRIMOS",
+    SinParentesco = "SIN_PARENTESCO"
+}
+
 // Mensajes de validación
 export const ValidationMessages = {
     NOMBRE_REQUERIDO: "El nombre del ave es requerido",

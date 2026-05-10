@@ -285,9 +285,11 @@ export default class CruceCreate extends Controller {
             recomendacion: resultado.recomendacion,
             estado: resultado.decision === "APROBADO" ? "APROBADO" : "PROPUESTO",
             fechaPropuesta: new Date().toISOString().split("T")[0],
-            usuario_ID: usuario._id            
+            usuario_ID: usuario._id,
+            codigo: `PC_${oModel.getProperty("/padrePlaca")}_${oModel.getProperty("/madrePlaca")}`            
         };
 
+        let error: any;
         try {
             const response = await fetch(`${this.baseUrl}/PlanesCruces`, {
                 method: "POST",
@@ -299,7 +301,8 @@ export default class CruceCreate extends Controller {
             });
 
             if (!response.ok) {
-                throw new Error("No se pudo guardar el plan.");
+                error = await response.json();                
+                throw new Error( "No se pudo guardar el plan.");
             }
 
             MessageToast.show("Plan de cruce guardado correctamente.");
@@ -308,8 +311,8 @@ export default class CruceCreate extends Controller {
                 id: this.lineaId
             });
 
-        } catch (error) {
-            MessageBox.error("No se pudo guardar el plan de cruce.");
+        } catch (error2) {
+            MessageBox.error(error?.error?.message || "No se pudo guardar el plan de cruce.");
         }
     }
 

@@ -106,8 +106,8 @@
                             <Input
                                     id="inputPadre"
                                     placeholder="Seleccionar Padre"
-                                    value="{update>/padre/placa}"
-                                    description="{update>/padre/nombre}"
+                                    value="{update>/padrePlaca}"
+                                    description="{update>/padreNombre}"
                                     showValueHelp="true"
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpPadre"
@@ -117,8 +117,8 @@
                             <Input
                                     id="inputMadre"
                                     placeholder="Seleccionar Madre"
-                                    value="{update>/madre/placa}"
-                                    description="{update>/madre/nombre}"
+                                    value="{update>/madrePlaca}"
+                                    description="{update>/madreNombre}"
                                     showValueHelp="true"
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpMadre"

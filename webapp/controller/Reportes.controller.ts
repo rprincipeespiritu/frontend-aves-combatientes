@@ -34,6 +34,7 @@ export default class Reportes extends Controller {
         rows: [],
         titulo: "Reporte de cruces e incubaciones",
         totalRegistros: 0,
+        columnasVista: this.getColumnasVista("CRUCES_INCUBACION"),
       }),
       "reportes",
     );
@@ -229,6 +230,7 @@ export default class Reportes extends Controller {
       oModel.setProperty("/rows", rows);
       oModel.setProperty("/titulo", titulo);
       oModel.setProperty("/totalRegistros", rows.length);
+      oModel.setProperty("/columnasVista", this.getColumnasVista(tipo));
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo generar el reporte");
     } finally {
@@ -300,6 +302,30 @@ export default class Reportes extends Controller {
     };
 
     return columnas[tipo] || columnas.CRUCES_INCUBACION;
+  }
+
+  private getColumnasVista(tipo: string): any {
+    if (tipo === "AVES") {
+      return {
+        fecha: "Fecha nac.",
+        referencia: "Placa",
+        machoPlaca: "Nombre",
+        hembraNombre: "Sexo",
+        riesgoEstado: "Estado",
+        huevosPorcentaje: "Apto rep.",
+        nacidos: "% Consang.",
+      };
+    }
+
+    return {
+      fecha: "Fecha",
+      referencia: "Referencia",
+      machoPlaca: "Macho/Placa",
+      hembraNombre: "Hembra/Placa",
+      riesgoEstado: "Riesgo/Estado",
+      huevosPorcentaje: "Huevos/%",
+      nacidos: "Nacidos",
+    };
   }
 
   public async onExportarExcel(): Promise<void> {
