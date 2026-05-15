@@ -50,6 +50,7 @@ export default class Genealogia extends Controller {
   private baseUrl = "http://localhost:4004/api/avecombatiente";
   private authService: AuthService;
   private avesPorId = new Map<string, IAveGenealogia>();
+  private aveIdInicial = "";
   helpSelected: string;
   private _oPadresDialog: any;
   private _oUserMenuPopover: any;
@@ -78,13 +79,19 @@ export default class Genealogia extends Controller {
           generaciones: 0,
           ancestrosIdentificados: 0,
           registrosFaltantes: 0,
+          hermanosCompletos: 0,
+          mediosHermanosPadre: 0,
+          mediosHermanosMadre: 0,
         },
+        hermanos: [],
+        mediosHermanosPadre: [],
+        mediosHermanosMadre: [],
       }),
       "genealogia",
     );
   }
 
-  private onRouteMatched = (): void => {
+  private onRouteMatched = (oEvent: any): void => {
     if (!this.authService.isAuthenticated()) {
       (this.getOwnerComponent() as UIComponent)
         ?.getRouter()
@@ -99,6 +106,9 @@ export default class Genealogia extends Controller {
       const oUserModel = new JSONModel(oUser);
       this.getView()?.setModel(oUserModel, "user");
     }
+
+    const oArguments = oEvent.getParameter("arguments") || {};
+    this.aveIdInicial = oArguments["?query"]?.aveId || "";
 
     void this.cargarAves();
   };
@@ -280,25 +290,36 @@ export default class Genealogia extends Controller {
       );
 
       oModel.setProperty("/aves", aves);
-      let oInput: Input | undefined;
-      oInput = this.byId("inputAve") as Input;
-      if (oInput) {
-        oInput.setValue(aves[0].placa);
-        oInput.setDescription(aves[0].nombre);
-      }
+      const aveSeleccionadaId = this.avesPorId.has(this.aveIdInicial)
+        ? this.aveIdInicial
+        : aves[0]?.ID;
 
-      if (!oModel.getProperty("/aveSeleccionadaId") && aves.length) {
-        oModel.setProperty("/aveSeleccionadaId", aves[0].ID);
-
-        this.construirArbol(aves[0].ID);
-      } else {
-        this.construirArbol(oModel.getProperty("/aveSeleccionadaId"));
+      if (aveSeleccionadaId) {
+        this.seleccionarAve(aveSeleccionadaId);
       }
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo cargar genealogia");
     } finally {
       oModel.setProperty("/busy", false);
     }
+  }
+
+  private seleccionarAve(aveId: string): void {
+    const ave = this.avesPorId.get(aveId);
+    const oModel = this.getView()?.getModel("genealogia") as JSONModel;
+
+    if (!ave) return;
+
+    const oInput = this.byId("inputAve") as Input;
+    if (oInput) {
+      oInput.setValue(ave.placa || "");
+      oInput.setDescription(ave.nombre || "");
+    }
+
+    oModel.setProperty("/aveSeleccionadaId", aveId);
+    oModel.setProperty("/placa", ave.placa || "");
+    oModel.setProperty("/nombre", ave.nombre || "");
+    this.construirArbol(aveId);
   }
 
   public onSeleccionarAve(): void {
@@ -317,9 +338,15 @@ export default class Genealogia extends Controller {
     if (!ave) {
       oModel.setProperty("/aveSeleccionada", null);
       oModel.setProperty("/generaciones", []);
+      oModel.setProperty("/hermanos", []);
+      oModel.setProperty("/mediosHermanosPadre", []);
+      oModel.setProperty("/mediosHermanosMadre", []);
       return;
     }
 
+    const hermanos = this.obtenerHermanosCompletos(ave);
+    const mediosHermanosPadre = this.obtenerMediosHermanosPorPadre(ave);
+    const mediosHermanosMadre = this.obtenerMediosHermanosPorMadre(ave);
     const generaciones = [];
     let referenciasFaltantes = 0;
     let nivelActual = [this.crearNodo(ave, 0, "Ave seleccionada", "Base")];
@@ -385,11 +412,73 @@ export default class Genealogia extends Controller {
     });
     oModel.setProperty("/generaciones", generaciones);
     oModel.setProperty("/graph", this.crearModeloGraph(generaciones));
+    oModel.setProperty("/hermanos", hermanos);
+    oModel.setProperty("/mediosHermanosPadre", mediosHermanosPadre);
+    oModel.setProperty("/mediosHermanosMadre", mediosHermanosMadre);
     oModel.setProperty("/resumen", {
       generaciones: generaciones.length - 1,
       ancestrosIdentificados,
       registrosFaltantes: referenciasFaltantes,
+      hermanosCompletos: hermanos.length,
+      mediosHermanosPadre: mediosHermanosPadre.length,
+      mediosHermanosMadre: mediosHermanosMadre.length,
     });
+  }
+
+  private obtenerHermanosCompletos(ave: IAveGenealogia): any[] {
+    if (!ave.padre_ID || !ave.madre_ID) return [];
+
+    return Array.from(this.avesPorId.values())
+      .filter((candidato) =>
+        candidato.ID !== ave.ID &&
+        candidato.padre_ID === ave.padre_ID &&
+        candidato.madre_ID === ave.madre_ID,
+      )
+      .sort((a, b) => (a.placa || "").localeCompare(b.placa || ""))
+      .map((hermano) => ({
+        ...this.crearItemHermano(hermano),
+        parentesco: "Hermano completo",
+      }));
+  }
+
+  private obtenerMediosHermanosPorPadre(ave: IAveGenealogia): any[] {
+    if (!ave.padre_ID) return [];
+
+    return Array.from(this.avesPorId.values())
+      .filter((candidato) =>
+        candidato.ID !== ave.ID &&
+        candidato.padre_ID === ave.padre_ID &&
+        candidato.madre_ID !== ave.madre_ID,
+      )
+      .sort((a, b) => (a.placa || "").localeCompare(b.placa || ""))
+      .map((hermano) => ({
+        ...this.crearItemHermano(hermano),
+        parentesco: "Medio hermano por padre",
+      }));
+  }
+
+  private obtenerMediosHermanosPorMadre(ave: IAveGenealogia): any[] {
+    if (!ave.madre_ID) return [];
+
+    return Array.from(this.avesPorId.values())
+      .filter((candidato) =>
+        candidato.ID !== ave.ID &&
+        candidato.madre_ID === ave.madre_ID &&
+        candidato.padre_ID !== ave.padre_ID,
+      )
+      .sort((a, b) => (a.placa || "").localeCompare(b.placa || ""))
+      .map((hermano) => ({
+        ...this.crearItemHermano(hermano),
+        parentesco: "Medio hermano por madre",
+      }));
+  }
+
+  private crearItemHermano(ave: IAveGenealogia): any {
+    return {
+      ...ave,
+      sexoFmt: this.formatearSexo(ave.sexo),
+      fechaNacimientoFmt: this.formatearFecha(ave.fechaNacimiento),
+    };
   }
 
   private crearNodo(
@@ -548,6 +637,25 @@ export default class Genealogia extends Controller {
     (this.getOwnerComponent() as UIComponent)
       ?.getRouter()
       ?.navTo("RouteAveDetail", { aveId: nodo.aveId });
+  }
+
+  public onSeleccionarHermano(oEvent: any): void {
+    const hermano = oEvent
+      .getSource()
+      ?.getBindingContext("genealogia")
+      ?.getObject();
+
+    if (!hermano?.ID) return;
+
+    const oInput = this.byId("inputAve") as Input;
+    if (oInput) {
+      oInput.setValue(hermano.placa || "");
+      oInput.setDescription(hermano.nombre || "");
+    }
+
+    const oModel = this.getView()?.getModel("genealogia") as JSONModel;
+    oModel.setProperty("/aveSeleccionadaId", hermano.ID);
+    this.construirArbol(hermano.ID);
   }
 
   public onNavBack(): void {

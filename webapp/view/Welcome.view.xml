@@ -32,10 +32,13 @@
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap">
                                     <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add"
                                         press="onNavNewBird" />
+                                    <Button text="Nuevo Pollito" type="Emphasized"
+                                        icon="sap-icon://add-employee"
+                                        press="onNavNewPollito" class="sapUiTinyMarginBegin" />
                                     <Button text="Nueva Incubación" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
-                                    <Button text="Nueva Línea" type="Emphasized"
+                                    <Button text="Nuevo Linaje" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin" />
                                 </HBox>
@@ -44,16 +47,16 @@
                     </Panel>
 
                     <!-- KPIS -->
-                    <HBox wrap="Wrap" justifyContent="SpaceBetween" class="sapUiSmallMarginTop">
-                        <GenericTile class="sapUiSmallMarginTop" header="Aves"
-                            subheader="Registradas" press="onNavBirdList">
+                    <HBox wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMarginTop">
+                        <GenericTile class="sapUiSmallMarginTop" header="Aves Adultas"
+                            subheader="Registros por Placa" press="onNavBirdList">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalAves}"
                                     icon="sap-icon://activate" />
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Linea de Gallos"
+                        <GenericTile class="sapUiSmallMarginTop" header="Linaje de Aves"
                             subheader="Registradas" press="onNavLineasGallosList">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalLineas}"
@@ -93,10 +96,20 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Genealogía"
-                            subheader="Arbol genealógico por ave" press="onVerGenealogia"
+                            subheader="Arbol genealógico" press="onVerGenealogia"
                             visible="true">
                             <TileContent>
                                 <ImageContent src="sap-icon://org-chart" />
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile class="sapUiSmallMarginTop" header="Aves Jóvenes"
+                            subheader="Registros por cintillo" press="onNavPollitos"
+                            visible="true">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalPollitos}"
+                                    icon="sap-icon://collaborate" />
+                                <!-- <ImageContent src="sap-icon://collaborate" /> -->
                             </TileContent>
                         </GenericTile>
                     </HBox>

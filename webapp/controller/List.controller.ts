@@ -41,6 +41,29 @@ export default class List extends Controller {
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
   private _oPadresDialog: Dialog;
+  private importTemplateColumns = [
+    "placa",
+    "nombre",
+    "sexo",
+    "fechaNacimiento",
+    "categoria",
+    "estado",
+    "cria",
+    "padrote",
+    "padrePlaca",
+    "madrePlaca",
+    "apodo",
+    "raza",
+    "color",
+    "tipoAve",
+    "ubicacion",
+    "procedencia",
+    "criador",
+    "fechaCompra",
+    "valorCompra",
+    "valorActual",
+    "observaciones"
+  ];
   public formatter = formatter;
 
   public onInit(): void {
@@ -210,7 +233,8 @@ export default class List extends Controller {
         },
       });
 
-      const mockAves: IAve[] = await response.json();
+      const mockAves: any = await response.json();
+      mockAves.value = (mockAves.value || []).filter((ave: any) => ave.etapaVida !== "POLLITO");
       const oAvesModel = new JSONModel(mockAves)
       this.getView()?.setModel(oAvesModel, "aves");
     } catch (error) { }
@@ -632,6 +656,372 @@ export default class List extends Controller {
     oSheet.build().finally(() => {
       oSheet.destroy();
     });
+  }
+
+  public onDescargarPlantilla(): void {
+    const aRows = [
+      this.importTemplateColumns,
+      [
+        "PLACA-001",
+        "Nombre del ave",
+        "M",
+        "2024-01-15",
+        "BUENO",
+        "ACTIVO",
+        "NO",
+        "NO",
+        "",
+        "",
+        "",
+        "Navajero",
+        "Colorado",
+        "Gallo",
+        "Galpon A",
+        "Criadero propio",
+        "Criador",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ];
+
+    this.descargarCsv("plantilla_carga_aves.csv", aRows);
+  }
+
+  public onSubirDatos(): void {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".csv,.txt,text/csv,text/plain";
+    input.style.display = "none";
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      input.remove();
+
+      if (!file) return;
+
+      if (!/\.(csv|txt)$/i.test(file.name)) {
+        MessageBox.warning("Sube la plantilla en formato CSV.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => void this.importarAvesDesdeCsv(String(reader.result || ""));
+      reader.onerror = () => MessageBox.error("No se pudo leer el archivo seleccionado.");
+      reader.readAsText(file, "UTF-8");
+    };
+
+    document.body.appendChild(input);
+    input.click();
+  }
+
+  private async importarAvesDesdeCsv(contenido: string): Promise<void> {
+    const rows = this.parseDelimitedText(contenido);
+    const nonEmptyRows = rows.filter((row) => row.some((cell) => String(cell || "").trim()));
+
+    if (nonEmptyRows.length < 2) {
+      MessageBox.warning("La plantilla no contiene filas para importar.");
+      return;
+    }
+
+    const headers = nonEmptyRows[0].map((header) => this.normalizarHeader(header));
+    const registros = nonEmptyRows.slice(1).map((row) => this.crearRegistroDesdeFila(headers, row));
+    const authUser = localStorage.getItem("auth_user");
+
+    if (!authUser) {
+      MessageToast.show("No se encontrÃ³ la sesiÃ³n del usuario");
+      return;
+    }
+
+    const usuario = JSON.parse(authUser);
+    const userId = usuario._id;
+    const avesModel = this.getView()?.getModel("aves") as JSONModel;
+    const avesActuales = avesModel?.getProperty("/value") || [];
+    const avesPorPlaca = new Map<string, any>();
+    const placasImportadas = new Set<string>();
+
+    avesActuales.forEach((ave: any) => {
+      if (ave?.placa) avesPorPlaca.set(String(ave.placa).trim().toUpperCase(), ave);
+    });
+
+    let creadas = 0;
+    const errores: string[] = [];
+    const advertencias: string[] = [];
+
+    for (let index = 0; index < registros.length; index += 1) {
+      const fila = index + 2;
+      const registro = registros[index];
+      const placa = String(registro.placa || "").trim().toUpperCase();
+
+      if (!placa) {
+        errores.push(`Fila ${fila}: la placa es obligatoria.`);
+        continue;
+      }
+
+      if (avesPorPlaca.has(placa) || placasImportadas.has(placa)) {
+        errores.push(`Fila ${fila}: la placa ${placa} ya existe o estÃ¡ duplicada en el archivo.`);
+        continue;
+      }
+
+      const sexo = this.normalizarSexo(registro.sexo);
+      if (!sexo) {
+        errores.push(`Fila ${fila}: el sexo debe ser M, H, Macho o Hembra.`);
+        continue;
+      }
+
+      const fechaNacimiento = this.normalizarFechaImportacion(registro.fechaNacimiento);
+      if (!fechaNacimiento) {
+        errores.push(`Fila ${fila}: la fechaNacimiento es obligatoria y debe ser yyyy-mm-dd o dd/mm/yyyy.`);
+        continue;
+      }
+
+      const payload: any = {
+        placa,
+        nombre: this.valorTexto(registro.nombre),
+        apodo: this.valorTexto(registro.apodo),
+        sexo,
+        estado: this.normalizarEstado(registro.estado),
+        raza: this.valorTexto(registro.raza),
+        color: this.valorTexto(registro.color),
+        tipoAve: this.valorTexto(registro.tipoAve),
+        ubicacion: this.valorTexto(registro.ubicacion),
+        procedencia: this.valorTexto(registro.procedencia),
+        criador: this.valorTexto(registro.criador),
+        categoria: this.normalizarCategoria(registro.categoria),
+        cria: this.normalizarBooleano(registro.cria),
+        padrote: this.normalizarBooleano(registro.padrote),
+        observaciones: this.valorTexto(registro.observaciones),
+        fechaNacimiento,
+        fechaCompra: this.normalizarFechaImportacion(registro.fechaCompra),
+        valorCompra: this.normalizarNumero(registro.valorCompra),
+        valorActual: this.normalizarNumero(registro.valorActual),
+        usuario_ID: userId
+      };
+
+      const padre = this.buscarAvePorPlaca(avesPorPlaca, registro.padrePlaca);
+      const madre = this.buscarAvePorPlaca(avesPorPlaca, registro.madrePlaca);
+
+      if (padre) {
+        payload.padre_ID = padre.ID;
+      } else if (this.valorTexto(registro.padrePlaca)) {
+        advertencias.push(`Fila ${fila}: no se encontrÃ³ padre con placa ${registro.padrePlaca}.`);
+      }
+
+      if (madre) {
+        payload.madre_ID = madre.ID;
+      } else if (this.valorTexto(registro.madrePlaca)) {
+        advertencias.push(`Fila ${fila}: no se encontrÃ³ madre con placa ${registro.madrePlaca}.`);
+      }
+
+      try {
+        const response = await fetch(`${this.baseUrl}/Aves`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.authService.getToken()}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          errores.push(`Fila ${fila}: ${error.error?.message || error.message || "no se pudo crear."}`);
+          continue;
+        }
+
+        const creada = await response.json();
+        creadas += 1;
+        placasImportadas.add(placa);
+        avesPorPlaca.set(placa, creada);
+      } catch (error: any) {
+        errores.push(`Fila ${fila}: ${error.message || "error de conexiÃ³n."}`);
+      }
+    }
+
+    await this.initializeData();
+    this.mostrarResumenImportacion(creadas, errores, advertencias);
+  }
+
+  private mostrarResumenImportacion(creadas: number, errores: string[], advertencias: string[]): void {
+    const detalle = [...advertencias, ...errores].slice(0, 12).join("\n");
+    const mensaje = [
+      `Aves creadas: ${creadas}`,
+      `Advertencias: ${advertencias.length}`,
+      `Errores: ${errores.length}`,
+      detalle ? `\n${detalle}` : ""
+    ].join("\n");
+
+    if (errores.length) {
+      MessageBox.warning(mensaje);
+    } else {
+      MessageBox.success(mensaje);
+    }
+  }
+
+  private descargarCsv(fileName: string, rows: any[][]): void {
+    const content = "\uFEFF" + rows
+      .map((row) => row.map((cell) => this.escapeCsvCell(cell)).join(";"))
+      .join("\r\n");
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private escapeCsvCell(value: any): string {
+    const text = value == null ? "" : String(value);
+    return /[;"\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  private parseDelimitedText(text: string): string[][] {
+    const cleanText = text.replace(/^\uFEFF/, "");
+    const firstLine = cleanText.split(/\r?\n/)[0] || "";
+    const delimiter = firstLine.includes(";") ? ";" : firstLine.includes("\t") ? "\t" : ",";
+    const rows: string[][] = [];
+    let current = "";
+    let row: string[] = [];
+    let inQuotes = false;
+
+    for (let i = 0; i < cleanText.length; i += 1) {
+      const char = cleanText[i];
+      const next = cleanText[i + 1];
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          current += '"';
+          i += 1;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === delimiter && !inQuotes) {
+        row.push(current.trim());
+        current = "";
+      } else if ((char === "\n" || char === "\r") && !inQuotes) {
+        if (char === "\r" && next === "\n") i += 1;
+        row.push(current.trim());
+        rows.push(row);
+        row = [];
+        current = "";
+      } else {
+        current += char;
+      }
+    }
+
+    if (current || row.length) {
+      row.push(current.trim());
+      rows.push(row);
+    }
+
+    return rows;
+  }
+
+  private normalizarHeader(value: string): string {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .toLowerCase();
+  }
+
+  private crearRegistroDesdeFila(headers: string[], row: string[]): any {
+    const aliases: Record<string, string> = {
+      placa: "placa",
+      nombre: "nombre",
+      sexo: "sexo",
+      genero: "sexo",
+      fechanacimiento: "fechaNacimiento",
+      fechanac: "fechaNacimiento",
+      categoria: "categoria",
+      estado: "estado",
+      cria: "cria",
+      padrote: "padrote",
+      padreplaca: "padrePlaca",
+      padre: "padrePlaca",
+      madreplaca: "madrePlaca",
+      madre: "madrePlaca",
+      apodo: "apodo",
+      raza: "raza",
+      color: "color",
+      tipoave: "tipoAve",
+      ubicacion: "ubicacion",
+      procedencia: "procedencia",
+      criador: "criador",
+      fechacompra: "fechaCompra",
+      valorcompra: "valorCompra",
+      valoractual: "valorActual",
+      observaciones: "observaciones"
+    };
+    const registro: any = {};
+
+    headers.forEach((header, index) => {
+      const key = aliases[header];
+      if (key) registro[key] = row[index] || "";
+    });
+
+    return registro;
+  }
+
+  private normalizarSexo(value: any): string {
+    const normalized = String(value || "").trim().toUpperCase();
+    if (["M", "MACHO"].includes(normalized)) return "M";
+    if (["H", "HEMBRA"].includes(normalized)) return "H";
+    return "";
+  }
+
+  private normalizarEstado(value: any): string {
+    const normalized = String(value || "ACTIVO").trim().toUpperCase();
+    return ["ACTIVO", "VENDIDO", "PRESTADO", "RETIRADO", "FALLECIDO"].includes(normalized)
+      ? normalized
+      : "ACTIVO";
+  }
+
+  private normalizarCategoria(value: any): string {
+    const normalized = String(value || "BUENO").trim().toUpperCase();
+    return ["PESIMO", "REGULAR", "BUENO", "EXCELENTE", "EXTRAORDINARIO"].includes(normalized)
+      ? normalized
+      : "BUENO";
+  }
+
+  private normalizarBooleano(value: any): boolean {
+    const normalized = String(value || "").trim().toUpperCase();
+    return ["SI", "S", "TRUE", "1", "X", "YES"].includes(normalized);
+  }
+
+  private normalizarNumero(value: any): number | null {
+    const text = String(value || "").trim().replace(",", ".");
+    if (!text) return null;
+    const number = Number(text);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  private normalizarFechaImportacion(value: any): string | null {
+    const text = String(value || "").trim();
+    if (!text) return null;
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+
+    const match = text.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+    if (match) {
+      const day = match[1].padStart(2, "0");
+      const month = match[2].padStart(2, "0");
+      return `${match[3]}-${month}-${day}`;
+    }
+
+    return null;
+  }
+
+  private valorTexto(value: any): string | null {
+    const text = String(value || "").trim();
+    return text || null;
+  }
+
+  private buscarAvePorPlaca(avesPorPlaca: Map<string, any>, placa: any): any {
+    const key = String(placa || "").trim().toUpperCase();
+    return key ? avesPorPlaca.get(key) : null;
   }
 
   public onNavWelcome(): void {

@@ -28,7 +28,7 @@
                     <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="Código" />
                     </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
+                    <Column >
                         <Text text="Fecha Incubación" />
                     </Column>
                     <Column minScreenWidth="Tablet" demandPopin="true">
@@ -49,7 +49,7 @@
                     <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="Estado" />
                     </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
+                    <Column >
                         <Text text="Acciones" />
                     </Column>
                 </columns>

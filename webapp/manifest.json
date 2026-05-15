@@ -113,6 +113,34 @@
           ]
         },
         {
+          "name": "RoutePollitos",
+          "pattern": "pollitos",
+          "target": [
+            "TargetPollitos"
+          ]
+        },
+        {
+          "name": "RoutePollitoCreate",
+          "pattern": "pollitos/crear",
+          "target": [
+            "TargetPollitoForm"
+          ]
+        },
+        {
+          "name": "RoutePollitoDetail",
+          "pattern": "pollitos/{pollitoId}",
+          "target": [
+            "TargetPollitoDetail"
+          ]
+        },
+        {
+          "name": "RoutePollitoEdit",
+          "pattern": "pollitos/{pollitoId}/editar",
+          "target": [
+            "TargetPollitoForm"
+          ]
+        },
+        {
           "name": "RouteAveDetail",
           "pattern": "aves/{aveId}",
           "target": [
@@ -171,7 +199,7 @@
           "target": "TargetReportes"
         },
         {
-          "pattern": "genealogia",
+          "pattern": "genealogia:?query:",
           "name": "RouteGenealogia",
           "target": "TargetGenealogia"
         },
@@ -221,6 +249,18 @@
         "TargetAveCreate": {
           "id": "AveCreate",
           "name": "AveCreate"
+        },
+        "TargetPollitos": {
+          "id": "Pollitos",
+          "name": "Pollitos"
+        },
+        "TargetPollitoForm": {
+          "id": "PollitoForm",
+          "name": "PollitoForm"
+        },
+        "TargetPollitoDetail": {
+          "id": "PollitoDetail",
+          "name": "PollitoDetail"
         },
         "TargetAveDetail": {
           "id": "AveDetail",

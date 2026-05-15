@@ -1,0 +1,404 @@
+import Controller from "sap/ui/core/mvc/Controller";
+import UIComponent from "sap/ui/core/UIComponent";
+import Router from "sap/ui/core/routing/Router";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import MessageToast from "sap/m/MessageToast";
+import MessageBox from "sap/m/MessageBox";
+import Table from "sap/m/Table";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
+import Event from "sap/ui/base/Event";
+import Spreadsheet from "sap/ui/export/Spreadsheet";
+import { AuthService } from "../services/AuthService";
+import Popover from "sap/m/Popover";
+import Fragment from "sap/ui/core/Fragment";
+import ActionSheet from "sap/m/ActionSheet";
+import Device from "sap/ui/Device";
+import Control from "sap/ui/core/Control";
+import Dialog from "sap/m/Dialog";
+import Input from "sap/m/Input";
+import Label from "sap/m/Label";
+import Text from "sap/m/Text";
+import VBox from "sap/m/VBox";
+import Button from "sap/m/Button";
+
+export default class Pollitos extends Controller {
+    private baseUrl = "http://localhost:4004/api/avecombatiente";
+    private authService: AuthService;
+    private _oUserMenuPopover: any;
+    private _oUserMenuSheet: any;
+    private _oRegistrarAdultoDialog?: Dialog;
+    private _oPlacaAdultoInput?: Input;
+    private _criaIdRegistroAdulto = "";
+
+    public onInit(): void {
+        this.authService = AuthService.getInstance();
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.getRoute("RoutePollitos")?.attachPatternMatched(this.onRouteMatched, this);
+    }
+
+    private onRouteMatched = (): void => {
+        if (!this.authService.isAuthenticated()) {
+            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+            return;
+        }
+
+        const sUserData = localStorage.getItem("auth_user");
+        if (sUserData) {
+            this.getView()?.setModel(new JSONModel(JSON.parse(sUserData)), "user");
+        }
+
+        this.getView()?.setModel(new JSONModel({ selectedIndex: -1, busy: false }), "table");
+        this.cargarPollitos();
+    }
+
+    private async cargarPollitos(): Promise<void> {
+        const oTableModel = this.getView()?.getModel("table") as JSONModel;
+        oTableModel?.setProperty("/busy", true);
+
+        try {
+            const response = await fetch(`${this.baseUrl}/Crias?$expand=padre,madre,aveGenerada`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${this.authService.getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("No se pudo cargar el modulo de pollitos");
+            }
+
+            const data = await response.json();
+            const pollitos = (data.value || []).filter((cria: any) => cria.estado !== "ELIMINADO");
+            this.getView()?.setModel(new JSONModel({ value: pollitos }), "pollitos");
+        } catch (error: any) {
+            MessageToast.show(error.message || "Error cargando pollitos");
+        } finally {
+            oTableModel?.setProperty("/busy", false);
+        }
+    }
+
+    public onAgregarPollito(): void {
+        (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RoutePollitoCreate");
+    }
+
+    public onEditarPollito(oEvent: Event): void {
+        const oSource = oEvent.getSource() as any;
+        const oContext = oSource.getBindingContext("pollitos");
+        const pollito = oContext?.getObject();
+        if (pollito?.ID) {
+            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RoutePollitoEdit", { pollitoId: pollito.ID });
+        }
+    }
+
+    public onPollitoPress(oEvent: Event): void {
+        const oSource = oEvent.getSource() as any;
+        const oContext = oSource.getBindingContext("pollitos");
+        const pollito = oContext?.getObject();
+        if (pollito?.ID) {
+            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RoutePollitoDetail", { pollitoId: pollito.ID });
+        }
+    }
+
+    public onEliminarPollito(oEvent: Event): void {
+        const oSource = oEvent.getSource() as any;
+        const oContext = oSource.getBindingContext("pollitos");
+        const pollito = oContext?.getObject();
+
+        if (!pollito?.ID) return;
+
+        const identificador = this.formatearIdentificador(pollito);
+        MessageBox.confirm(`Deseas eliminar el pollito ${identificador}?`, {
+            title: "Eliminar pollito",
+            onClose: (action: string) => {
+                if (action === MessageBox.Action.OK) {
+                    this.eliminarPollito(pollito.ID);
+                }
+            }
+        });
+    }
+
+    private async eliminarPollito(criaId: string): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/eliminarCria`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify({ criaId })
+            });
+
+            const result = await response.json();
+            if (!response.ok || result?.success === false) {
+                throw new Error(result?.error?.message || result?.message || "No se pudo eliminar el pollito");
+            }
+
+            MessageToast.show("Pollito eliminado");
+            this.cargarPollitos();
+        } catch (error: any) {
+            MessageBox.error(error.message || "Error eliminando pollito");
+        }
+    }
+
+    public onRegistrarComoAveAdulta(oEvent: Event): void {
+        const oSource = oEvent.getSource() as any;
+        const oContext = oSource.getBindingContext("pollitos");
+        const pollito = oContext?.getObject();
+        if (!pollito?.ID) return;
+
+        this.abrirDialogoRegistroAdulto(pollito);
+    }
+
+    private abrirDialogoRegistroAdulto(pollito: any): void {
+        this._criaIdRegistroAdulto = pollito.ID;
+
+        if (!this._oPlacaAdultoInput) {
+            this._oPlacaAdultoInput = new Input({
+                placeholder: "Ingrese la placa del ave",
+                valueLiveUpdate: true,
+                maxLength: 20
+            });
+        }
+
+        this._oPlacaAdultoInput.setValue("");
+        this._oPlacaAdultoInput.setValueState("None");
+
+        if (!this._oRegistrarAdultoDialog) {
+            this._oRegistrarAdultoDialog = new Dialog({
+                title: "Registrar como ave adulta",
+                contentWidth: "28rem",
+                content: [
+                    new VBox({                        
+                        items: [
+                            new Text({ text: "Confirme el registro como ave adulta e ingrese la placa." }),
+                            new Label({ text: "Placa del ave", required: true, class: "sapUiSmallMarginTop" }),
+                            this._oPlacaAdultoInput
+                        ]
+                    }).addStyleClass("sapUiSmallMargin")
+                ],
+                beginButton: new Button({
+                    text: "Registrar",
+                    type: "Emphasized",
+                    press: () => {
+                        const placa = this._oPlacaAdultoInput?.getValue().trim().toUpperCase() || "";
+                        if (!placa) {
+                            this._oPlacaAdultoInput?.setValueState("Error");
+                            this._oPlacaAdultoInput?.setValueStateText("La placa es obligatoria");
+                            MessageToast.show("Ingrese la placa del ave");
+                            return;
+                        }
+                        this._oRegistrarAdultoDialog?.close();
+                        this.registrarComoAveAdulta(this._criaIdRegistroAdulto, placa);
+                    }
+                }),
+                endButton: new Button({
+                    text: "Cancelar",
+                    press: () => this._oRegistrarAdultoDialog?.close()
+                })
+            });
+            this.getView()?.addDependent(this._oRegistrarAdultoDialog);
+        }
+
+        this._oRegistrarAdultoDialog.open();
+    }
+
+    private async registrarComoAveAdulta(criaId: string, placa: string): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/registrarCriaComoAve`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify({ criaId, placa })
+            });
+
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result?.error?.message || "No se pudo registrar como ave adulta");
+            }
+
+            MessageBox.success(`Ave adulta creada con placa ${result?.placa || ""}`, {
+                actions: [MessageBox.Action.OK],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: () => this.cargarPollitos(),
+                dependentOn: this.getView()
+            });
+        } catch (error: any) {
+            MessageBox.error(error.message || "Error registrando como ave adulta");
+        }
+    }
+
+    public onBuscar(): void {
+        const oTable = this.byId("pollitosTable") as Table;
+        const oBinding = oTable.getBinding("items");
+        const search = (this.byId("searchField") as any).getValue();
+        const temporada = (this.byId("temporadaFilter") as any).getValue();
+        const color = (this.byId("colorFilter") as any).getValue();
+        const filters: Filter[] = [];
+
+        if (search) {
+            filters.push(new Filter({
+                filters: [
+                    new Filter("cintillo", FilterOperator.Contains, search),
+                    new Filter("nombre", FilterOperator.Contains, search)
+                ],
+                and: false
+            }));
+        }
+
+        if (temporada) filters.push(new Filter("temporada", FilterOperator.EQ, Number(temporada)));
+        if (color) filters.push(new Filter("colorCintillo", FilterOperator.Contains, color.toUpperCase()));
+
+        oBinding?.filter(filters);
+    }
+
+    public onLimpiarFiltros(): void {
+        (this.byId("searchField") as any).setValue("");
+        (this.byId("temporadaFilter") as any).setValue("");
+        (this.byId("colorFilter") as any).setValue("");
+        this.onBuscar();
+    }
+
+    public async onRefrescar(): Promise<void> {
+        await this.cargarPollitos();
+        MessageToast.show("Pollitos actualizados");
+    }
+
+    public onExportarExcel(): void {
+        const oTable = this.byId("pollitosTable") as any;
+        const oBinding = oTable.getBinding("items");
+        const data = oBinding.getContexts().map((context: any) => context.getObject());
+
+        const columns = [
+            { label: "Cintillo", property: "cintillo" },
+            { label: "Color cintillo", property: "colorCintillo" },
+            { label: "Temporada", property: "temporada" },
+            { label: "Nombre", property: "nombre" },
+            { label: "Sexo", property: "sexo" },
+            { label: "Fecha nacimiento", property: "fechaNacimiento" },
+            { label: "Padre", property: "padre/placa" },
+            { label: "Madre", property: "madre/placa" }
+            ,
+            { label: "Estado", property: "estado" },
+            { label: "Ave generada", property: "aveGenerada/placa" }
+        ];
+
+        const sheet = new Spreadsheet({
+            workbook: { columns },
+            dataSource: data,
+            fileName: "pollitos.xlsx"
+        });
+
+        sheet.build().finally(() => sheet.destroy());
+    }
+
+    public formatearIdentificador(pollito: any): string {
+        if (!pollito) return "";
+        return [pollito.temporada, pollito.colorCintillo, pollito.cintillo].filter(Boolean).join(" - ");
+    }
+
+    public formatearFecha(fecha: string | Date): string {
+        if (!fecha) {
+          return "";
+        }
+    
+        if (typeof fecha === "string") {
+          const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+          if (match) {
+            return `${match[3]}/${match[2]}/${match[1]}`;
+          }
+        }
+    
+        const date = fecha instanceof Date ? fecha : new Date(fecha);
+        if (isNaN(date.getTime())) {
+          return "";
+        }
+    
+        return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
+    }
+
+    public formatearSexo(sexo: string): string {
+        return sexo === "M" ? "Macho" : sexo === "H" ? "Hembra" : "";
+    }
+
+    public formatearEstado(estado: string): string {
+        return estado === "REGISTRADA_ADULTA" ? "Registrada como Ave Adulta" : "Activa";
+    }
+
+    public onNavBack(): void {
+        (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteWelcome");
+    }
+
+    public onNavWelcome(): void {
+        (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteWelcome");
+    }
+
+    public async onUserMenuPress(oEvent: Event): Promise<void> {
+        const oSource = oEvent.getSource() as Control;
+
+        if (Device.system.phone) {
+            if (!this._oUserMenuSheet) {
+                const oFragment = await Fragment.load({
+                    id: this.getView()?.getId(),
+                    name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
+                    controller: this
+                });
+
+                this._oUserMenuSheet = oFragment as ActionSheet;
+                this.getView()?.addDependent(this._oUserMenuSheet);
+            }
+
+            // TOGGLE
+            if (this._oUserMenuSheet.isOpen()) {
+                this._oUserMenuSheet.close();
+            } else {
+                this._oUserMenuSheet.openBy(oSource);
+            }
+
+            return;
+        }
+
+        if (!this._oUserMenuPopover) {
+            const oFragment = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+                controller: this
+            });
+
+            this._oUserMenuPopover = oFragment as Popover;
+            this.getView()?.addDependent(this._oUserMenuPopover);
+        }
+
+        // TOGGLE
+        if (this._oUserMenuPopover.isOpen()) {
+            this._oUserMenuPopover.close();
+        } else {
+            this._oUserMenuPopover.openBy(oSource);
+        }
+
+    }
+
+    public async onLogout(): Promise<void> {
+        try {
+            await this.authService.logout();
+            MessageToast.show("Sesión cerrada exitosamente");
+
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+            oRouter?.navTo("RouteLogin");
+
+            // Verificar que el método existe antes de llamarlo
+            const oOwner = this.getOwnerComponent() as any;
+            if (oOwner && typeof oOwner.updateUserModel === 'function') {
+                oOwner.updateUserModel();
+            }
+
+        } catch (error) {
+            console.error("Error en logout:", error);
+            MessageToast.show("Error cerrando sesión");
+        }
+    }
+    
+}

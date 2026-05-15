@@ -171,19 +171,19 @@
                             <Column width="10%">
                                 <Text text="Vigor" />
                             </Column>
-                            <Column width="10%">
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="Salud" />
                             </Column>
-                            <Column width="10%">
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="Fertilidad" />
                             </Column>
-                            <Column width="10%">
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="Apto" />
                             </Column>
-                            <Column width="20%">
+                            <Column width="20%" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="Defectos observados" />
                             </Column>
-                            <Column width="20%">
+                            <Column width="20%" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="Recomendacion" />
                             </Column>
                             <Column width="10%">
@@ -229,6 +229,10 @@
 
                             <Label text="Criador" />
                             <Input value="{detail>/criador}" editable="false" />
+
+                            <Label text="Arbol Genealógico" />
+                            <Button icon="sap-icon://org-chart" type="Emphasized"
+                                press="onVerArbGen" width="5rem" tooltip="Ver Arbol Genealógico"/>
 
                         </f:content>
                     </f:SimpleForm>

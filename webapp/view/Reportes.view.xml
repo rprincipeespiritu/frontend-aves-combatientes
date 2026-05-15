@@ -70,19 +70,19 @@
                             <Column>
                                 <Text text="{reportes>/columnasVista/referencia}" />
                             </Column>
-                            <Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="{reportes>/columnasVista/machoPlaca}" />
                             </Column>
-                            <Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="{reportes>/columnasVista/hembraNombre}" />
                             </Column>
-                            <Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="{reportes>/columnasVista/riesgoEstado}" />
                             </Column>
-                            <Column hAlign="End">
+                            <Column hAlign="End" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="{reportes>/columnasVista/huevosPorcentaje}" />
                             </Column>
-                            <Column hAlign="End">
+                            <Column hAlign="End" minScreenWidth="Desktop" demandPopin="true">
                                 <Text text="{reportes>/columnasVista/nacidos}" />
                             </Column>
                         </columns>

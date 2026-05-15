@@ -5,7 +5,7 @@
         xmlns:form="sap.f">
 
     <Page
-            title="Líneas de Gallos"
+            title="Linaje de Aves"
             showNavButton="true"
             navButtonPress=".onNavBack">
         <headerContent>
@@ -26,7 +26,7 @@
                         growingScrollToLoad="true">
                     <headerToolbar>
                         <OverflowToolbar>
-                            <Title text="Familias / Líneas registradas ({= ${lineas>/data}.length})"/>
+                            <Title text="Linajes registrados ({= ${lineas>/data}.length})"/>
                             <ToolbarSpacer/>
                             <Button
                                     text=""
