@@ -19,7 +19,7 @@ import Device from "sap/ui/Device";
 
 export default class PollitoForm extends Controller {
     private authService: AuthService;
-    private baseUrl = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private pollitoId = "";
     private _oPadresDialog: Dialog;
     private helpSelected = "";

@@ -23,7 +23,7 @@ import VBox from "sap/m/VBox";
 import Button from "sap/m/Button";
 
 export default class Pollitos extends Controller {
-    private baseUrl = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;

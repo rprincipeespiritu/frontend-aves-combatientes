@@ -21,7 +21,7 @@ import Select from "sap/m/Select";
 import Item from "sap/ui/core/Item";
 
 export default class PollitoDetail extends Controller {
-    private baseUrl = "http://localhost:4004/api/avecombatiente";
+    private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
     private authService: AuthService;
     private pollitoId = "";
     private _oUserMenuPopover: any;
