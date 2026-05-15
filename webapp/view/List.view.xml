@@ -1,23 +1,23 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.List"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m"
-          xmlns:core="sap.ui.core"
-          xmlns:f="sap.f">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f">
 
     <Page
-            title="{i18n>titleListPage}"
-            titleAlignment="Center"
-            showNavButton="true"
-            navButtonPress="onNavBack">
+        title="{i18n>titleListPage}"
+        titleAlignment="Center"
+        showNavButton="true"
+        navButtonPress="onNavBack">
 
         <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
             <f:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
 
         <content>
@@ -25,25 +25,25 @@
 
                 <!-- Barra principal responsiva -->
                 <OverflowToolbar width="100%">
-                    <Title text="Gestión de Aves" level="H2"/>
-                    <ToolbarSpacer/>
+                    <!-- <Title text="Gestión de Aves" level="H2" /> -->
+                    <ToolbarSpacer />
                     <Button
-                            text="{= ${device>/system/phone} ? '' : 'Agregar Ave'}"
-                            icon="sap-icon://add"
-                            type="Emphasized"
-                            press="onAgregarAve"/>
+                        text="{= ${device>/system/phone} ? '' : 'Agregar Ave'}"
+                        icon="sap-icon://add"
+                        type="Emphasized"
+                        press="onAgregarAve" />
                     <Button
-                            text="{= ${device>/system/phone} ? '' : 'Refrescar'}"
-                            icon="sap-icon://refresh"
-                            press="onRefrescar"/>
+                        text="{= ${device>/system/phone} ? '' : 'Refrescar'}"
+                        icon="sap-icon://refresh"
+                        press="onRefrescar" />
                 </OverflowToolbar>
 
                 <!-- Panel de filtros -->
                 <Panel
-                        headerText="Filtros"
-                        expandable="true"
-                        expanded="false"
-                        width="100%">
+                    headerText="Filtros"
+                    expandable="true"
+                    expanded="false"
+                    width="100%">
 
                     <content>
                         <VBox>
@@ -51,32 +51,32 @@
                             <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
                                 <items>
                                     <SearchField
-                                            id="searchField"
-                                            tooltip="Buscar por Nombre y Placa del Ave"
-                                            placeholder="Nombre y Placa del Ave"
-                                            width="100%"
-                                            search="onBuscar"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+                                        id="searchField"
+                                        tooltip="Buscar por Nombre y Placa del Ave"
+                                        placeholder="Nombre y Placa del Ave"
+                                        width="100%"
+                                        search="onBuscar"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
 
                                     <ComboBox
-                                            id="generoFilter"
-                                            placeholder="Filtrar por Género"
-                                            width="100%"
-                                            selectionChange="onFiltrarGenero"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="M" text="Macho"/>
-                                        <core:Item key="H" text="Hembra"/>
+                                        id="generoFilter"
+                                        placeholder="Filtrar por Género"
+                                        width="100%"
+                                        selectionChange="onFiltrarGenero"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <core:Item key="M" text="Macho" />
+                                        <core:Item key="H" text="Hembra" />
                                     </ComboBox>
 
                                     <ComboBox
-                                            id="categoriaFilter"
-                                            placeholder="Filtrar por Categoría"
-                                            width="100%"
-                                            selectionChange="onFiltrarCategoria"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="BUENO" text="Bueno"/>
-                                        <core:Item key="EXCELENTE" text="Excelente"/>
-                                        <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
+                                        id="categoriaFilter"
+                                        placeholder="Filtrar por Categoría"
+                                        width="100%"
+                                        selectionChange="onFiltrarCategoria"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <core:Item key="BUENO" text="Bueno" />
+                                        <core:Item key="EXCELENTE" text="Excelente" />
+                                        <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
                                     </ComboBox>
                                 </items>
                             </FlexBox>
@@ -84,39 +84,41 @@
                             <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
                                 <items>
                                     <Input
-                                            id="inputPadres"
-                                            placeholder="Seleccionar Padre/Madre"
-                                            showValueHelp="true"
-                                            valueHelpOnly="true"
-                                            valueHelpRequest="onAbrirPopupPadres"
-                                            width="100%"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+                                        id="inputPadres"
+                                        placeholder="Seleccionar Padre/Madre"
+                                        showValueHelp="true"
+                                        valueHelpOnly="true"
+                                        valueHelpRequest="onAbrirPopupPadres"
+                                        width="100%"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
 
                                     <ComboBox
-                                            id="estadoFilter"
-                                            placeholder="Filtrar por Estado"
-                                            width="100%"
-                                            selectionChange="onFiltrarEstado"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="ACTIVO" text="Activo"/>
-                                        <core:Item key="VENDIDO" text="Vendido"/>
-                                        <core:Item key="PRESTADO" text="Prestado"/>
-                                        <core:Item key="RETIRADO" text="Retirado"/>
-                                        <core:Item key="FALLECIDO" text="Fallecido"/>
+                                        id="estadoFilter"
+                                        placeholder="Filtrar por Estado"
+                                        width="100%"
+                                        selectionChange="onFiltrarEstado"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <core:Item key="ACTIVO" text="Activo" />
+                                        <core:Item key="VENDIDO" text="Vendido" />
+                                        <core:Item key="PRESTADO" text="Prestado" />
+                                        <core:Item key="RETIRADO" text="Retirado" />
+                                        <core:Item key="FALLECIDO" text="Fallecido" />
                                     </ComboBox>
 
                                     <CheckBox
-                                            id="padroteFilter"
-                                            text="Padrote"
-                                            select="onSelectPadrote"
-                                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom sapUiTinyMarginTop"/>
+                                        id="padroteFilter"
+                                        text="Padrote"
+                                        select="onSelectPadrote"
+                                        class="sapUiTinyMarginEnd sapUiTinyMarginBottom sapUiTinyMarginTop" />
 
-                                    <Button text="Limpiar Filtros" press="onLimpiarFiltros" class="sapUiTinyMarginBottom"/>
+                                    <Button text="Limpiar Filtros" press="onLimpiarFiltros"
+                                        class="sapUiTinyMarginBottom" />
 
                                 </items>
                             </FlexBox>
 
-                            <!--<HBox width="100%" justifyContent="End">
+                            <!--<HBox
+                            width="100%" justifyContent="End">
                                 <Button text="Limpiar Filtros" press="onLimpiarFiltros"/>
                             </HBox>-->
 
@@ -124,101 +126,120 @@
                     </content>
                 </Panel>
 
-                <!-- Tabla -->
-                <Table
+                <Panel>
+                    <!-- Tabla -->
+                    <Table
                         id="avesTable"
                         width="100%"
                         inset="false"
                         items="{aves>/value}"
                         class="sapUiMediumMarginTop">
 
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title text="Aves Registradas ({= ${aves>/value}.length})"/>
-                            <ToolbarSpacer/>
-                            <Button
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="Aves Registradas ({= ${aves>/value}.length})" />
+                                <ToolbarSpacer />
+                                <Button
                                     text="{= ${device>/system/phone} ? 'Editar' : 'Editar Seleccionada'}"
                                     enabled="{= ${table>/selectedIndex} >= 0}"
                                     press="onEditarAve"
-                                    visible="false"/>
-                            <Button
+                                    visible="false" />
+                                <Button
+                                    text="{= ${device>/system/phone} ? '' : 'Descargar plantilla'}"
+                                    icon="sap-icon://download"
+                                    press="onDescargarPlantilla" 
+                                    type="Emphasized"/>
+                                <Button
+                                    text="{= ${device>/system/phone} ? '' : 'Subir datos'}"
+                                    icon="sap-icon://upload"
+                                    press="onSubirDatos" 
+                                    type="Emphasized"/>
+                                <!-- <Button
                                     text="{= ${device>/system/phone} ? '' : 'Exportar a Excel'}"
                                     icon="sap-icon://excel-attachment"
                                     press="onExportarExcel"
-                                    type="Emphasized" />
-                        </OverflowToolbar>
-                    </headerToolbar>
+                                    type="Emphasized" /> -->
+                            </OverflowToolbar>
+                        </headerToolbar>
 
-                    <columns>
-                        <Column width="7rem">
-                            <Text text="Placa"/>
-                        </Column>
+                        <columns>
+                            <Column width="8rem">
+                                <Text text="Placa" />
+                            </Column>
 
-                        <Column width="9rem">
-                            <Text text="Nombre"/>
-                        </Column>
+                            <Column width="8rem">
+                                <Text text="Nombre" />
+                            </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem" visible="{= ${device>/system/phone} ? false : true}">
-                            <Text text="Fecha Nac."/>
-                        </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true"
+                                visible="{= ${device>/system/phone} ? false : true}">
+                                <Text text="Fecha Nac." />
+                            </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
-                            <Text text="Género"/>
-                        </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="Género" />
+                            </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="8rem" visible="{= ${device>/system/phone} ? false : true}">
-                            <Text text="Categoría"/>
-                        </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true"
+                                visible="{= ${device>/system/phone} ? false : true}">
+                                <Text text="Categoría" />
+                            </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="5rem" visible="{= ${device>/system/phone} ? false : true}">
-                            <Text text="Cría"/>
-                        </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true"
+                                visible="{= ${device>/system/phone} ? false : true}">
+                                <Text text="Cría" />
+                            </Column>
 
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="7rem" visible="{= ${device>/system/phone} ? false : true}">
-                            <Text text="Estado"/>
-                        </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true"
+                                visible="{= ${device>/system/phone} ? false : true}">
+                                <Text text="Estado" />
+                            </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="6rem" visible="{= ${device>/system/phone} ? false : true}">
-                            <Text text="Padrote"/>
-                        </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true"
+                                visible="{= ${device>/system/phone} ? false : true}">
+                                <Text text="Padrote" />
+                            </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="7rem">
-                            <Text text="Padre"/>
-                        </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Padre" />
+                            </Column>
 
-                        <Column minScreenWidth="Desktop" demandPopin="true" width="7rem">
-                            <Text text="Madre"/>
-                        </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Madre" />
+                            </Column>
 
-                        <Column hAlign="Center" width="7rem">
-                            <Text text="Acciones"/>
-                        </Column>
-                    </columns>
+                            <Column width="8rem" hAlign="Center">
+                                <Text text="Acciones" />
+                            </Column>
+                        </columns>
 
-                    <items>
-                        <ColumnListItem type="Active" press="onAvePress">
-                            <cells>
-                                <Text text="{aves>placa}"/>
-                                <Text text="{aves>nombre}"/>
+                        <items>
+                            <ColumnListItem type="Navigation" press="onAvePress">
+                                <cells>
+                                    <Text text="{aves>placa}" />
+                                    <Text text="{aves>nombre}" />
 
-                                <Text text="{
+                                    <Text
+                                        text="{
                                     path: 'aves>fechaNacimiento',
                                     formatter: '.formatearFecha'
-                                }"/>
+                                }" />
 
-                                <Text text="{
+                                    <Text
+                                        text="{
                                     path: 'aves>sexo',
                                     formatter: '.formatearSexo'
-                                }"/>
+                                }" />
 
-                                <Text text="{
+                                    <Text
+                                        text="{
                                     path: 'aves>categoria',
                                     formatter: '.formatearCategoria'
-                                }"/>
+                                }" />
 
-                                <CheckBox selected="{aves>cria}" editable="false"/>
+                                    <CheckBox selected="{aves>cria}" editable="false" />
 
-                                <ObjectStatus
+                                    <ObjectStatus
                                         text="{
                                         path: 'aves>estado',
                                         formatter: '.formatearEstado'
@@ -226,51 +247,52 @@
                                         state="{= ${aves>estado} === 'ACTIVO' ? 'Success' :
                                              ${aves>estado} === 'PRESTADO' ? 'Information' :
                                              ${aves>estado} === 'RETIRADO' ? 'Information' :
-                                             ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}"/>
+                                             ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}" />
 
-                                <CheckBox selected="{aves>padrote}" editable="false"/>
+                                    <CheckBox selected="{aves>padrote}" editable="false" />
 
-                                <!--<Link text="{aves>padre/placa}" press="onPadreLinkPress"/>
+                                    <!--<Link
+                                    text="{aves>padre/placa}" press="onPadreLinkPress"/>
                                 <Link text="{aves>madre/placa}" press="onMadreLinkPress"/>-->
-                                <VBox>
-                                    <Text text="{aves>padre/placa}" class="sapUiTinyMarginTop"/>
-                                    <Text text="{aves>padre/nombre}"/>
-                                </VBox>
+                                    <VBox>
+                                        <Text text="{aves>padre/placa}" class="sapUiTinyMarginTop" />
+                                        <Text text="{aves>padre/nombre}" />
+                                    </VBox>
 
-                                <VBox>
-                                    <Text text="{aves>madre/placa}" class="sapUiTinyMarginTop"/>
-                                    <Text text="{aves>madre/nombre}"/>
-                                </VBox>
+                                    <VBox>
+                                        <Text text="{aves>madre/placa}" class="sapUiTinyMarginTop" />
+                                        <Text text="{aves>madre/nombre}" />
+                                    </VBox>
 
-                                <HBox justifyContent="Center" width="100%" renderType="Bare">
-                                    <Button
+                                    <HBox justifyContent="Center" width="100%" renderType="Bare">
+                                        <Button
                                             icon="sap-icon://edit"
                                             type="Emphasized"
                                             tooltip="Editar"
-                                            press="onEditarAveInline"/>
-                                    <Button
+                                            press="onEditarAveInline" />
+                                        <Button
                                             icon="sap-icon://delete"
                                             type="Transparent"
                                             tooltip="Eliminar"
                                             press="onEliminarAveInline"
-                                            visible="true"/>
-                                    <Button
+                                            visible="true" />
+                                        <!-- <Button
                                             icon="sap-icon://detail-view"
                                             type="Emphasized"
                                             tooltip="Ver detalle"
-                                            press="onAvePress"/>
-                                </HBox>
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
-
+                                            press="onAvePress" /> -->
+                                    </HBox>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
             </VBox>
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Cancelar" press="onNavBack" visible="true"/>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press="onNavBack" visible="true" />
             </Toolbar>
         </footer>
     </Page>

@@ -216,9 +216,7 @@ export default class IncubacionDetail extends Controller {
             horizontalScrolling: false,
             verticalScrolling: true,
             content: [
-                new VBox({
-                    width: "100%",
-                    renderType: "Bare",
+                new VBox({                   
                     items: [
 
                         new Label({ text: "¿Seguro que desea Finalizar la Incubación; sino revise la opción de Edición?" }).addStyleClass("sapUiSmallMarginTop"),
@@ -226,7 +224,7 @@ export default class IncubacionDetail extends Controller {
                         new Label({ text: "Observación" }).addStyleClass("sapUiSmallMarginTop"),
                         oTextAreaObservacion
                     ]
-                })
+                }).addStyleClass("sapUiSmallMargin")
             ],
             beginButton: new Button({
                 text: "Aceptar",

@@ -1,0 +1,154 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.PollitoForm"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.f">
+
+    <Page title="{pollito>/title}" showNavButton="true" navButtonPress="onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Panel headerText="Identificacion" expandable="false">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Cintillo" required="true" />
+                            <Input
+                                value="{pollito>/cintillo}"
+                                placeholder="Ej: 001"
+                                valueState="{pollito>/cintilloState}"
+                                valueStateText="El cintillo es requerido" 
+                                change="onChangeCintillo"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Color de cintillo" required="true" />
+                            <Input
+                                value="{pollito>/colorCintillo}"
+                                placeholder="Ej: Rojo, Azul, Verde"
+                                valueState="{pollito>/colorCintilloState}"
+                                valueStateText="El color de cintillo es requerido" 
+                                change="onChangeColorCintillo"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Placa" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                            <Input
+                                value="{pollito>/aveGenerada/placa}"
+                                placeholder="Ej: 001"
+                                valueState="{pollito>/cintilloState}"
+                                valueStateText="El cintillo es requerido" 
+                                change="onChangeCintillo"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"
+                                visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                            
+                            <Label text="Estado" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                            <ObjectStatus text="{pollito>/estadoTexto}"
+                            state="{= ${pollito>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" 
+                            visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Temporada" required="true" />
+                            <Input
+                                value="{pollito>/temporada}"
+                                type="Number"
+                                placeholder="Año"
+                                valueState="{pollito>/temporadaState}"
+                                valueStateText="La temporada es requerida" 
+                                change="onChangeTemporada"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Nombre o alias" />
+                            <Input value="{pollito>/nombre}" placeholder="Opcional" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Genero"/>
+                            <Select selectedKey="{pollito>/sexo}" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}">
+                                <core:Item key="" text="" />
+                                <core:Item key="M" text="Macho" />
+                                <core:Item key="H" text="Hembra" />
+                            </Select>
+
+                            <Label text="Fecha nacimiento" required="true" />
+                            <DatePicker
+                                value="{pollito>/fechaNacimiento}"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy"
+                                valueState="{pollito>/fecNacState}"
+                                valueStateText="La fecha de nacimiento es requerida" 
+                                change="onChangeFecNac"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Color del ave" />
+                            <Input value="{pollito>/color}" placeholder="Color observado" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Ubicacion" />
+                            <Input value="{pollito>/ubicacion}" placeholder="Jaula, lote o ambiente" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <Panel headerText="Origen genealogico" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Padre" required="true"/>
+                            <Input
+                                id="inputPadre"
+                                value="{pollito>/placaPadre}"
+                                description="{pollito>/nombrePadre}"
+                                placeholder="Seleccionar padre"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpPadre"
+                                width="100%" 
+                                valueState="{pollito>/placaPadreState}"
+                                valueStateText="El padre es requerido"
+                                change="onChangePlacaPadre"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+
+                            <Label text="Madre" required="true"/>
+                            <Input
+                                id="inputMadre"
+                                value="{pollito>/placaMadre}"
+                                description="{pollito>/nombreMadre}"
+                                placeholder="Seleccionar madre"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpMadre"
+                                width="100%" 
+                                valueState="{pollito>/placaMadreState}"
+                                valueStateText="La Madre es requerida"
+                                change="onChangePlacaMadre"
+                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <TextArea
+                            value="{pollito>/observaciones}"
+                            rows="4"
+                            width="100%"
+                            placeholder="Notas de manejo, lote, salud o seguimiento..." 
+                            editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                    </VBox>
+                </Panel>
+            </VBox>
+        </content>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Guardar" type="Emphasized" press="onGuardar"  visible="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                <Button text="Cancelar" press="onNavBack" />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

@@ -75,8 +75,115 @@
                         <ObjectNumber
                             number="{genealogia>/resumen/registrosFaltantes}"
                             unit="registros faltantes" />
+                        <ObjectNumber
+                            number="{genealogia>/resumen/hermanosCompletos}"
+                            unit="hermanos completos" />
+                        <ObjectNumber
+                            number="{genealogia>/resumen/mediosHermanosPadre}"
+                            unit="medios por padre" />
+                        <ObjectNumber
+                            number="{genealogia>/resumen/mediosHermanosMadre}"
+                            unit="medios por madre" />
                     </HBox>
                 </Panel>
+
+                <HBox
+                    wrap="Wrap"
+                    renderType="Bare"
+                    class="sapUiMediumMarginTop">
+                    <Panel
+                        headerText="Hermanos completos"
+                        width="32rem"
+                        class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                        <List
+                            noDataText="No hay hermanos completos registrados."
+                            items="{genealogia>/hermanos}">
+                            <CustomListItem
+                                type="Active"
+                                press=".onSeleccionarHermano">
+                                <HBox
+                                    alignItems="Center"
+                                    justifyContent="SpaceBetween"
+                                    class="sapUiSmallMargin">
+                                    <ObjectIdentifier
+                                        title="{genealogia>placa}"
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus
+                                            text="{genealogia>sexoFmt}"
+                                            state="Information"
+                                            class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{genealogia>estado}"
+                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                    </HBox>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </Panel>
+
+                    <Panel
+                        headerText="Medios hermanos por padre"
+                        width="32rem"
+                        class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+                        <List
+                            noDataText="No hay medios hermanos por padre."
+                            items="{genealogia>/mediosHermanosPadre}">
+                            <CustomListItem
+                                type="Active"
+                                press=".onSeleccionarHermano">
+                                <HBox
+                                    alignItems="Center"
+                                    justifyContent="SpaceBetween"
+                                    class="sapUiSmallMargin">
+                                    <ObjectIdentifier
+                                        title="{genealogia>placa}"
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus
+                                            text="{genealogia>sexoFmt}"
+                                            state="Information"
+                                            class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{genealogia>estado}"
+                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                    </HBox>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </Panel>
+
+                    <Panel
+                        headerText="Medios hermanos por madre"
+                        width="32rem"
+                        class="sapUiSmallMarginBottom">
+                        <List
+                            noDataText="No hay medios hermanos por madre."
+                            items="{genealogia>/mediosHermanosMadre}">
+                            <CustomListItem
+                                type="Active"
+                                press=".onSeleccionarHermano">
+                                <HBox
+                                    alignItems="Center"
+                                    justifyContent="SpaceBetween"
+                                    class="sapUiSmallMargin">
+                                    <ObjectIdentifier
+                                        title="{genealogia>placa}"
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus
+                                            text="{genealogia>sexoFmt}"
+                                            state="Information"
+                                            class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{genealogia>estado}"
+                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                    </HBox>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </Panel>
+                </HBox>
 
                 <graph:Graph
                     id="genealogyGraph"
@@ -126,5 +233,11 @@
                 </graph:Graph>
             </VBox>
         </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>                
+                <Button text="Cancelar" press="onNavBack"/>
+            </Toolbar>
+        </footer>
     </Page>
 </mvc:View>

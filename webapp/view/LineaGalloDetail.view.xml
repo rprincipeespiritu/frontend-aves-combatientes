@@ -1,114 +1,126 @@
 <mvc:View
-        controllerName="com.rprincipees.registroavescombate.controller.LineaGalloDetail"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns="sap.m"
-        xmlns:form="sap.f">
+    controllerName="com.rprincipees.registroavescombate.controller.LineaGalloDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:form="sap.f"
+    xmlns:f="sap.ui.layout.form">
 
     <Page
-            title="Detalle de Línea"
-            showNavButton="true"
-            navButtonPress=".onNavBack">
+        title="Detalle de Linaje"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
         <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
             <form:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
 
         <content>
             <VBox class="sapUiMediumMargin">
 
                 <ObjectHeader
-                        title="{detalle>/linea/nombre}"
-                        number="{
+                    title="{detalle>/linea/nombre}"
+                    number="{
                                         path: 'detalle>/linea/estado',
                                         formatter: '.formatearEstado'
-                                    }" numberState="{= ${detalle>/linea/estado} === 'ACTIVA' ? 'Success' :
-                                             ${detalle>/linea/estado} === 'INACTIVA' ? 'Warning' : 'Error'}" >
-                    <attributes>
-                        <ObjectAttribute
-                                title="Objetivo"
-                                text="{detalle>/linea/objetivo}"/>
-                        <ObjectAttribute
-                                title="Descripción"
-                                text="{detalle>/linea/descripcion}"/>
-                        <ObjectAttribute
-                                title="Padre Fundador"
-                                text="{detalle>/linea/aveFundador/placa}"/>
-                        <ObjectAttribute
-                                title="Madre Fundadora"
-                                text="{detalle>/linea/aveFundadora/placa}"/>
-                    </attributes>
+                                    }"
+                    numberState="{= ${detalle>/linea/estado} === 'ACTIVA' ? 'Success' :
+                                             ${detalle>/linea/estado} === 'INACTIVA' ? 'Warning' : 'Error'}">
+
                 </ObjectHeader>
 
+                <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
+                    columnsL="2" columnsM="1">
+                    <f:content>
+                        <Label text="Objetivo" />
+                        <Text text="{detalle>/linea/objetivo}" />
+
+                        <Label text="Descripción" />
+                        <Text text="{detalle>/linea/descripcion}" />
+
+                        <Label text="Padre Fundador" />
+                        <Link text="{detalle>/linea/aveFundador/placa} {detalle>/linea/aveFundador/nombre}"
+                            press="onVerPadre" />
+                        <!-- <Text text="{detalle>/linea/aveFundador/placa}" /> -->
+
+                        <Label text="Madre Fundadora" />
+                        <Link text="{detalle>/linea/aveFundadora/placa} {detalle>/linea/aveFundadora/nombre}"
+                            press="onVerMadre" />
+                        <!-- <Text text="{detalle>/linea/aveFundadora/placa}" /> -->
+
+                    </f:content>
+                </f:SimpleForm>
+
                 <Table
-                        items="{detalle>/planes}"
-                        growing="true">
+                    items="{detalle>/planes}"
+                    growing="true">
                     <headerToolbar>
                         <OverflowToolbar>
-                            <Title text="Planes de Cruce ({= ${detalle>/planes}.length})"/>
-                            <ToolbarSpacer/>
+                            <Title text="Planes de Cruce ({= ${detalle>/planes}.length})" />
+                            <ToolbarSpacer />
                             <Button
-                                    text=""
-                                    type="Emphasized"
-                                    icon="sap-icon://add"
-                                    press=".onNuevoCruce"/>
-                            <Button icon="sap-icon://refresh" press="onRefresh"/>
+                                text=""
+                                type="Emphasized"
+                                icon="sap-icon://add"
+                                press=".onNuevoCruce" />
+                            <Button icon="sap-icon://refresh" press="onRefresh" />
                         </OverflowToolbar>
                     </headerToolbar>
 
                     <columns>
-                        <Column >
-                            <Text text="Código"/>
+                        <Column>
+                            <Text text="Código" />
                         </Column>
-                        <Column >
-                            <Text text="Macho"/>
+                        <Column>
+                            <Text text="Macho" />
                         </Column>
-                        <Column >
-                            <Text text="Hembra"/>
-                        </Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true">
-                            <Text text="Parentesco"/>
+                        <Column>
+                            <Text text="Hembra" />
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
-                            <Text text="Riesgo"/>
+                            <Text text="Parentesco" />
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
-                            <Text text="Decision"/>
+                            <Text text="Riesgo" />
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
-                            <Text text="Fecha"/>
+                            <Text text="Decision" />
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Fecha" />
                         </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{detalle>codigo}"/>
-                                <Text text="{detalle>macho/placa}"/>
-                                <Text text="{detalle>hembra/placa}"/>                                
-                                <Text text="{
+                                <Text text="{detalle>codigo}" />
+                                <Text text="{detalle>macho/placa}" />
+                                <Text text="{detalle>hembra/placa}" />
+                                <Text
+                                    text="{
                                     path: 'detalle>tipoParentesco',
                                     formatter: '.formatearParentesco'
-                                }"/>
+                                }" />
                                 <ObjectStatus
-                                        text="{detalle>nivelRiesgo}"
-                                        state="{
+                                    text="{detalle>nivelRiesgo}"
+                                    state="{
                                         = ${detalle>nivelRiesgo} === 'ALTO' ? 'Error' :
                                           ${detalle>nivelRiesgo} === 'MODERADO' ? 'Warning' :
                                           'Success'
-                                    }"/>
+                                    }" />
                                 <ObjectStatus
-                                        text="{detalle>decision}"
-                                        state="{
+                                    text="{detalle>decision}"
+                                    state="{
                                         = ${detalle>decision} === 'NO_RECOMENDADO' ? 'Error' :
                                           ${detalle>decision} === 'OBSERVAR' ? 'Warning' :
                                           'Success'
-                                    }"/>
-                                <Text text="{detalle>fechaPropuesta}"/>
+                                    }" />
+                                <Text text="{detalle>fechaPropuesta}" />
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -119,8 +131,8 @@
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Cancelar" press="onNavBack"/>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
         </footer>
     </Page>

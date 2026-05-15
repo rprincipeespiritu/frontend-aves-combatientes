@@ -354,6 +354,24 @@ export default class AveDetail extends Controller {
         );
     }
 
+    public onVerArbGen(): void {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const oAve = oModel?.getData();
+        const aveId = oAve?.ID || this.aveId;
+
+        if (!aveId) {
+            MessageToast.show("No se pudo obtener el ave seleccionada");
+            return;
+        }
+
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteGenealogia", {
+            "?query": {
+                aveId
+            }
+        });
+    }
+
     public onAgregarPesaje(): void {
         MessageToast.show("Próximamente: agregar pesaje");
     }

@@ -40,9 +40,9 @@ export interface AuthResponse {
 }
 
 export class AuthService {
-    private static instance: AuthService;
     private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
-    private readonly inactivityTimeoutMs: number = 5 * 60 * 1000;
+    private static instance: AuthService;
+    private readonly inactivityTimeoutMs: number = 10 * 60 * 1000;
     private inactivityTimer: number | null = null;
     private inactivityStarted: boolean = false;
     private onInactivityTimeout?: () => void;

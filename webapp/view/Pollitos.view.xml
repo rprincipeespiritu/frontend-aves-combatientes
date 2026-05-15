@@ -1,0 +1,165 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Pollitos"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f">
+
+    <Page title="Gestion de Pollitos" titleAlignment="Center" showNavButton="true"
+        navButtonPress="onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <f:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox width="100%">
+                <OverflowToolbar width="100%">
+                    <!-- <Title text="Gestion de Pollitos" level="H2" /> -->
+                    <ToolbarSpacer />
+                    <Button text="Agregar Pollito" icon="sap-icon://add" type="Emphasized"
+                        press="onAgregarPollito" />
+                    <Button text="Refrescar" icon="sap-icon://refresh" press="onRefrescar" />
+                </OverflowToolbar>
+
+                <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
+                    <content>
+                        <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
+                            <items>
+                                <SearchField
+                                    id="searchField"
+                                    placeholder="Buscar por cintillo o nombre"
+                                    width="100%"
+                                    search="onBuscar"
+                                    liveChange="onBuscar"
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                                <Input
+                                    id="colorFilter"
+                                    placeholder="Color de cintillo"
+                                    width="100%"
+                                    liveChange="onBuscar"
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                                <Input
+                                    id="temporadaFilter"
+                                    placeholder="Temporada"
+                                    type="Number"
+                                    width="100%"
+                                    liveChange="onBuscar"
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                                <Button text="Limpiar Filtros" press="onLimpiarFiltros"
+                                    class="sapUiTinyMarginBottom" />
+                            </items>
+                        </FlexBox>
+                    </content>
+                </Panel>
+                <Panel>
+                    <Table
+                        id="pollitosTable"
+                        width="100%"
+                        inset="false"
+                        busy="{table>/busy}"
+                        items="{pollitos>/value}"
+                        class="sapUiMediumMarginTop">
+
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="Pollitos registrados ({= ${pollitos>/value}.length})" />
+                                <ToolbarSpacer />
+                                <Button text="Exportar a Excel" icon="sap-icon://excel-attachment"
+                                    press="onExportarExcel" type="Emphasized" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+
+                        <columns>
+                            <Column width="6rem">
+                                <Text text="Cintillo" />
+                            </Column>
+                            <Column width="6rem">
+                                <Text text="Color" />
+                            </Column>
+                            <Column width="8rem">
+                                <Text text="Placa" />
+                            </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Temporada" />
+                            </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Nombre" />
+                            </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Genero" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="Fecha Nac." />
+                            </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Padre" />
+                            </Column>
+                            <Column minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Madre" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" demandPopin="true">
+                                <Text text="Estado" />
+                            </Column>
+                            <Column width="8rem" hAlign="Center">
+                                <Text text="Acciones" />
+                            </Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem type="Navigation" press="onPollitoPress">
+                                <cells>
+                                    <Text text="{pollitos>cintillo}" />
+                                    <ObjectStatus text="{pollitos>colorCintillo}"
+                                        state="Information" />
+                                    <Text text="{pollitos>aveGenerada/placa}" />
+                                    <Text text="{pollitos>temporada}" />
+                                    <Text text="{pollitos>nombre}" />
+                                    <Text
+                                        text="{path: 'pollitos>sexo', formatter: '.formatearSexo'}" />
+                                    <Text
+                                        text="{path: 'pollitos>fechaNacimiento', formatter: '.formatearFecha'}" />
+                                    <VBox>
+                                        <Text text="{pollitos>padre/placa}" />
+                                        <Text text="{pollitos>padre/nombre}" />
+                                    </VBox>
+                                    <VBox>
+                                        <Text text="{pollitos>madre/placa}" />
+                                        <Text text="{pollitos>madre/nombre}" />
+                                    </VBox>
+                                    <ObjectStatus
+                                        text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
+                                        state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
+                                    <HBox justifyContent="Center" width="100%" renderType="Bare"  visible="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? false : true}">
+                                        <!-- <Button
+                                        icon="sap-icon://accept"
+                                        type="Emphasized"
+                                        tooltip="Registrar como ave adulta"
+                                        press="onRegistrarComoAveAdulta"
+                                        visible="{= ${pollitos>estado} !== 'REGISTRADA_ADULTA'}" /> -->
+                                        <Button icon="sap-icon://edit" type="Emphasized"
+                                            tooltip="Editar" press="onEditarPollito" />
+                                        <Button icon="sap-icon://delete" type="Transparent"
+                                            tooltip="Eliminar" press="onEliminarPollito" />
+                                    </HBox>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+            </VBox>
+        </content>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press="onNavBack" />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

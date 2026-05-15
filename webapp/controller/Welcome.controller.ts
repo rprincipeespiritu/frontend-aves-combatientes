@@ -113,7 +113,8 @@ export default class Welcome extends Controller {
                 alertaEclosion: oData.alertaEclosion || "",
                 incubacionesRecientes: aIncubacionesRecientes,
                 totalLineas: oData.totalLineas,
-                totalPlanes: oData.totalPlanes || 0
+                totalPlanes: oData.totalPlanes || 0,
+                totalPollitos: oData.totalPollitos || 0
             });
         } catch (error: any) {
             MessageToast.show(error.message || "Error al cargar dashboard");
@@ -351,6 +352,16 @@ export default class Welcome extends Controller {
     public onNavNewBird(): void {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.navTo("RouteAveCreate");
+    }
+
+    public onNavNewPollito(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RoutePollitoCreate");
+    }
+
+    public onNavPollitos(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+        oRouter?.navTo("RoutePollitos");
     }
 
     public onNavNewIncubation(): void {
