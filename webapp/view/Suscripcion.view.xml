@@ -1,0 +1,131 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Suscripcion"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f">
+
+    <Page
+        title="Suscripcion"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <f:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin" busy="{suscripcion>/busy}">
+                <Panel headerText="Estado de suscripcion">
+                    <VBox class="sapUiMediumMargin">
+                        <HBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="Center">
+                            <ObjectIdentifier
+                                title="{= 'Plan ' + ${suscripcion>/plan} }"
+                                text="{suscripcion>/mensaje}" />
+                            <ObjectStatus
+                                text="{suscripcion>/estado}"
+                                state="{suscripcion>/estadoState}" />
+                        </HBox>
+
+                        <HBox wrap="Wrap" class="sapUiMediumMarginTop">
+                            <ObjectNumber
+                                number="{suscripcion>/diasRestantes}"
+                                unit="dias restantes"
+                                class="sapUiLargeMarginEnd" />
+                            <ObjectIdentifier
+                                title="Inicio"
+                                text="{suscripcion>/fechaInicioFmt}"
+                                class="sapUiLargeMarginEnd" />
+                            <ObjectIdentifier
+                                title="Vencimiento"
+                                text="{suscripcion>/fechaFinFmt}" />
+                        </HBox>
+                    </VBox>
+                </Panel>
+
+                <Panel headerText="Uso del plan" class="sapUiMediumMarginTop">
+                    <HBox wrap="Wrap" justifyContent="SpaceAround">
+                        <GenericTile header="Aves adultas" subheader="Registros usados" class="sapUiSmallMarginTop">
+                            <TileContent>
+                                <NumericContent
+                                    value="{suscripcion>/totalAves}"
+                                    scale="{= 'de ' + ${suscripcion>/maxAves} }"
+                                    icon="sap-icon://activate" />
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile header="Aves jovenes" subheader="Registros usados" class="sapUiSmallMarginTop">
+                            <TileContent>
+                                <NumericContent
+                                    value="{suscripcion>/totalPollitos}"
+                                    scale="{= 'de ' + ${suscripcion>/maxPollitos} }"
+                                    icon="sap-icon://collaborate" />
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile header="Incubaciones" subheader="Registros usados" class="sapUiSmallMarginTop">
+                            <TileContent>
+                                <NumericContent
+                                    value="{suscripcion>/totalIncubaciones}"
+                                    scale="{= 'de ' + ${suscripcion>/maxIncubaciones} }"
+                                    icon="sap-icon://nutrition-activity" />
+                            </TileContent>
+                        </GenericTile>
+                    </HBox>
+                </Panel>
+
+                <Panel headerText="Planes disponibles" class="sapUiMediumMarginTop">
+                    <HBox wrap="Wrap" justifyContent="SpaceAround">
+                        <Panel headerText="Basico" width="20rem" class="sapUiSmallMargin">
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectStatus text="Criadero pequeno" state="Information" />
+                                <Text text="100 aves adultas" />
+                                <Text text="200 aves jovenes" />
+                                <Text text="50 incubaciones" />
+                                <ObjectNumber number="19" unit="PEN / mes" />
+                                <Button text="Activar Basico" type="Emphasized" press=".onActivarBasico" />
+                            </VBox>
+                        </Panel>
+
+                        <Panel headerText="Pro" width="20rem" class="sapUiSmallMargin">
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectStatus text="Gestion avanzada" state="Success" />
+                                <Text text="500 aves adultas" />
+                                <Text text="1000 aves jovenes" />
+                                <Text text="250 incubaciones" />
+                                <ObjectNumber number="79" unit="PEN / mes" />
+                                <Button text="Activar Pro" type="Emphasized" press=".onActivarPro" />
+                            </VBox>
+                        </Panel>
+
+                        <Panel headerText="Premium" width="20rem" class="sapUiSmallMargin">
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectStatus text="Uso ilimitado" state="Success" />
+                                <Text text="Aves adultas ilimitadas" />
+                                <Text text="Aves jovenes ilimitadas" />
+                                <Text text="Incubaciones ilimitadas" />
+                                <Text text="Genealogía" />
+                                <Text text="Reportes" />
+                                <Text text="Fotos y videos" />
+                                <ObjectNumber number="149" unit="PEN / mes" />
+                                <Button text="Activar Premium" type="Emphasized" press=".onActivarPremium" />
+                            </VBox>
+                        </Panel>
+                    </HBox>
+                </Panel>
+            </VBox>
+        </content>
+
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer />
+                <Button text="Refrescar" icon="sap-icon://refresh" press=".onRefrescar" />
+                <Button text="Cancelar suscripcion" icon="sap-icon://decline" type="Reject" press=".onCancelarSuscripcion" visible="{= ${suscripcion>/estado} === 'ACTIVA'}"/>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

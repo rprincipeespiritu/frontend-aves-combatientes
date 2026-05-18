@@ -55,7 +55,11 @@
         "settings": {
           "bundleName": "com.rprincipees.registroavescombate.i18n.i18n"
         }
-      }
+      },
+      "dashboard": {
+				"type": "sap.ui.model.json.JSONModel",
+				"preload": false
+			}
     },
     "resources": {
       "css": [
@@ -199,6 +203,11 @@
           "target": "TargetReportes"
         },
         {
+          "pattern": "suscripcion",
+          "name": "RouteSuscripcion",
+          "target": "TargetSuscripcion"
+        },
+        {
           "pattern": "genealogia:?query:",
           "name": "RouteGenealogia",
           "target": "TargetGenealogia"
@@ -297,6 +306,10 @@
         "TargetReportes": {
           "id": "Reportes",
           "viewName": "Reportes"
+        },
+        "TargetSuscripcion": {
+          "id": "Suscripcion",
+          "viewName": "Suscripcion"
         },
         "TargetGenealogia": {
           "id": "Genealogia",

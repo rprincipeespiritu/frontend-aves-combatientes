@@ -230,9 +230,11 @@
                             <Label text="Criador" />
                             <Input value="{detail>/criador}" editable="false" />
 
-                            <Label text="Arbol Genealógico" />
+                            <Label text="Arbol Genealógico"
+                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }"/>
                             <Button icon="sap-icon://org-chart" type="Emphasized"
-                                press="onVerArbGen" width="5rem" tooltip="Ver Arbol Genealógico"/>
+                                press="onVerArbGen" width="5rem" tooltip="Ver Arbol Genealógico"
+                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }"/>
 
                         </f:content>
                     </f:SimpleForm>

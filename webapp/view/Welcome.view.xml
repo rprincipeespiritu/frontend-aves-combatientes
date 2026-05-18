@@ -24,12 +24,12 @@
                     <Panel class="sapUiResponsiveMargin sapUiNoContentPadding">
                         <content>
                             <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
-                                <Text text="Gestiona tu criadero de forma inteligente" level="H2"
-                                    design="Bold" />
+                                <Title text="Gestiona tu criadero de forma inteligente" level="H2" />
                                 <Text
                                     text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar."
                                     class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
-                                <HBox class="sapUiSmallMarginTop" wrap="Wrap">
+                                <HBox class="sapUiSmallMarginTop" wrap="Wrap"
+                                    visible="{dashboard>/accesoSuscripcion}">
                                     <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add"
                                         press="onNavNewBird" />
                                     <Button text="Nuevo Pollito" type="Emphasized"
@@ -40,7 +40,8 @@
                                         press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
                                     <Button text="Nuevo Linaje" type="Emphasized"
                                         icon="sap-icon://add"
-                                        press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin" />
+                                        press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin"
+                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}" />
                                 </HBox>
                             </VBox>
                         </content>
@@ -49,7 +50,8 @@
                     <!-- KPIS -->
                     <HBox wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMarginTop">
                         <GenericTile class="sapUiSmallMarginTop" header="Aves Adultas"
-                            subheader="Registros por Placa" press="onNavBirdList">
+                            subheader="Registros por Placa" press="onNavBirdList"
+                            visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalAves}"
                                     icon="sap-icon://activate" />
@@ -57,7 +59,8 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Linaje de Aves"
-                            subheader="Registradas" press="onNavLineasGallosList">
+                            subheader="Registradas" press="onNavLineasGallosList"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalLineas}"
                                     icon="sap-icon://tree" />
@@ -65,7 +68,8 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce"
-                            subheader="Ver historial" press=".onVerPlanesCruce">
+                            subheader="Ver historial" press=".onVerPlanesCruce"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalPlanes}"
                                     icon="sap-icon://table-view" />
@@ -73,7 +77,8 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Incubaciones"
-                            subheader="Totales" press="onNavIncubationList">
+                            subheader="Totales" press="onNavIncubationList"
+                            visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalIncubaciones}"
                                     icon="sap-icon://nutrition-activity" />
@@ -81,7 +86,8 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Incubaciones"
-                            subheader="En proceso" press="onNavIncubationListProcess">
+                            subheader="En proceso" press="onNavIncubationListProcess"
+                            visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/incubacionesActivas}"
                                     icon="sap-icon://process" />
@@ -89,7 +95,8 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader=""
-                            press="onVerReportes" visible="true">
+                            press="onVerReportes"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
                             <TileContent>
                                 <ImageContent src="sap-icon://business-objects-experience" />
                             </TileContent>
@@ -97,7 +104,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Genealogía"
                             subheader="Arbol genealógico" press="onVerGenealogia"
-                            visible="true">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
                             <TileContent>
                                 <ImageContent src="sap-icon://org-chart" />
                             </TileContent>
@@ -105,17 +112,24 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Aves Jóvenes"
                             subheader="Registros por cintillo" press="onNavPollitos"
-                            visible="true">
+                            visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalPollitos}"
                                     icon="sap-icon://collaborate" />
                                 <!-- <ImageContent src="sap-icon://collaborate" /> -->
                             </TileContent>
                         </GenericTile>
+                        <GenericTile class="sapUiSmallMarginTop" header="Suscripción"
+                            subheader="{dashboard>/suscripcionTexto}" press="onVerSuscripcion"
+                            visible="true">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/suscripcionDias}"
+                                    scale="dias" icon="sap-icon://payment-approval" />
+                            </TileContent>
+                        </GenericTile>
                     </HBox>
-
                     <!-- ALERTAS -->
-                    <VBox class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMarginTop" visible="{dashboard>/accesoSuscripcion}">
                         <MessageStrip
                             text="{dashboard>/alertaIncubaciones}"
                             type="Warning"
@@ -131,7 +145,7 @@
                     </VBox>
 
                     <!-- BLOQUE CENTRAL -->
-                    <HBox wrap="Wrap" class="sapUiMediumMarginTop" justifyContent="SpaceBetween">
+                    <HBox wrap="Wrap" class="sapUiMediumMarginTop" justifyContent="SpaceBetween" visible="{dashboard>/accesoSuscripcion}">
 
                         <!-- INCUBACIONES RECIENTES -->
                         <Panel headerText="Incubaciones recientes" width="auto" class="panelSpacing">
