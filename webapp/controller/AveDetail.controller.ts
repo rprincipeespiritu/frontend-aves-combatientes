@@ -68,9 +68,56 @@ export default class AveDetail extends Controller {
                 recomendacion: ""
             }
         }), "detail");
-
+    
         this.cargarAve();
         this.cargarCatalogos();
+        void this.cargarSuscripcionResumen();
+    }
+
+    private getDashboardModel(): JSONModel {
+        let oModel = this.getOwnerComponent()?.getModel("dashboard") as JSONModel;
+
+        if (!oModel) {
+            oModel = new JSONModel({
+                plan: "",
+                estadoSuscripcion: "",
+                accesoSuscripcion: false
+            });
+            this.getOwnerComponent()?.setModel(oModel, "dashboard");
+        }
+
+        return oModel;
+    }
+
+    private async cargarSuscripcionResumen(): Promise<void> {
+        const oModel = this.getDashboardModel();
+        oModel.setProperty("/accesoSuscripcion", false);
+
+        try {
+            const response = await fetch(`${this.baseUrl}/obtenerSuscripcionActual`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            });
+
+            const data = await response.json();
+            if (!response.ok) return;
+
+            const tieneAcceso =
+                data.tieneSuscripcion !== false &&
+                ["ACTIVA", "CANCELADA"].includes(data.estado) &&
+                Number(data.diasRestantes || 0) >= 0;
+
+            oModel.setProperty("/plan", data.plan || "");
+            oModel.setProperty("/estadoSuscripcion", data.estado || "");
+            oModel.setProperty("/accesoSuscripcion", tieneAcceso);
+            oModel.refresh(true);
+        } catch (error) {
+            // El detalle del ave puede mostrarse aunque falle el resumen de suscripcion.
+        }
     }
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {

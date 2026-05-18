@@ -1,5 +1,200 @@
 /* Enter your custom styles here */
 
+:root {
+  --app-ink: #132235;
+  --app-muted: #506783;
+  --app-blue: #0877f2;
+  --app-sky: #38bdf8;
+  --app-teal: #13b8a6;
+  --app-green: #2fb86f;
+  --app-amber: #f7b731;
+  --app-rose: #f05d7b;
+  --app-surface: rgba(255, 255, 255, 0.92);
+  --app-border: rgba(42, 88, 135, 0.18);
+  --app-shadow: 0 0.9rem 2rem rgba(21, 47, 80, 0.14);
+}
+
+.sapMApp,
+.sapMPage,
+.sapMPageBgStandard,
+.sapMPage > section,
+.sapMScrollCont {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(56, 189, 248, 0.24), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(47, 184, 111, 0.18), transparent 26rem),
+    linear-gradient(135deg, #f6fbff 0%, #f3fff9 48%, #fff8eb 100%);
+  color: var(--app-ink);
+}
+
+.sapMBar,
+.sapMIBar,
+.sapMPageHeader {
+  background: rgba(255, 255, 255, 0.86) !important;
+  border-bottom: 1px solid rgba(42, 88, 135, 0.14);
+  box-shadow: 0 0.25rem 1rem rgba(20, 48, 78, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.sapMTitle,
+.sapMLabel,
+.sapMText {
+  color: var(--app-ink);
+}
+
+.homeMainTitle {
+  margin: 0.7rem 0 0.4rem;
+  color: #08345f;
+  font-weight: 900;
+  text-shadow: 0 0.08rem 0 rgba(255, 255, 255, 0.8);
+}
+
+.dashboardHero {
+  min-height: 8rem;
+  padding: 1.35rem 1.6rem;
+  border-radius: 1rem;
+  background:
+    linear-gradient(120deg, rgba(8, 119, 242, 0.12), rgba(19, 184, 166, 0.12)),
+    #ffffff;
+  border: 1px solid rgba(8, 119, 242, 0.16);
+}
+
+.dashboardHero .sapMTitle {
+  color: #08345f;
+  font-weight: 900;
+}
+
+.dashboardHero .sapMText {
+  color: var(--app-muted);
+  font-size: 1.02rem;
+}
+
+.sapMPanel {
+  border-radius: 1rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+  overflow: hidden;
+}
+
+.sapMPanelWrappingDiv,
+.sapMPanelHdr {
+  background: linear-gradient(90deg, rgba(8, 119, 242, 0.08), rgba(19, 184, 166, 0.08));
+  border-bottom-color: rgba(42, 88, 135, 0.16);
+}
+
+.sapMPanelHdr,
+.sapMPanel .sapMTitle {
+  color: #0b355a;
+  font-weight: 800;
+}
+
+.panelSpacing {
+  min-width: min(100%, 34rem);
+  flex: 1 1 34rem;
+  margin-bottom: 1rem;
+}
+
+.sapMGenericTile {
+  border-radius: 1rem;
+  border: 1px solid rgba(8, 119, 242, 0.15);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(235, 249, 255, 0.9)),
+    #ffffff;
+  box-shadow: 0 0.85rem 1.7rem rgba(21, 58, 95, 0.14);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.sapMGenericTile:hover,
+.sapMGenericTile:focus {
+  border-color: rgba(8, 119, 242, 0.42);
+  box-shadow: 0 1.1rem 2.2rem rgba(21, 58, 95, 0.22);
+  transform: translateY(-0.12rem);
+}
+
+.sapMGT .sapMGTHeader,
+.sapMGT .sapMText,
+.sapMGT .sapMNCValue {
+  color: #102d4a;
+}
+
+.sapMGTSubHdrTxt {
+  color: #51708e !important;
+}
+
+.sapMNCIconImage {
+  color: var(--app-blue);
+}
+
+.sapMBtnEmphasized .sapMBtnInner,
+.sapMBtnInner.sapMBtnEmphasized {
+  border: 0;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, var(--app-blue), var(--app-sky)) !important;
+  box-shadow: 0 0.45rem 1rem rgba(8, 119, 242, 0.25);
+  color: #ffffff !important;
+  font-weight: 800;
+}
+
+.sapMBtnTransparent .sapMBtnInner {
+  color: var(--app-blue);
+  font-weight: 700;
+}
+
+.sapMInputBaseContentWrapper,
+.sapMTextAreaInner,
+.sapMSlt {
+  border-radius: 0.65rem;
+  border-color: rgba(40, 93, 142, 0.28);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.sapMInputBaseContentWrapper:hover,
+.sapMTextAreaInner:hover,
+.sapMSlt:hover {
+  border-color: rgba(8, 119, 242, 0.42);
+}
+
+.sapMListTblHeaderCell,
+.sapMColumnHeader {
+  background: #eaf6ff;
+}
+
+.sapMListTblHeaderCell .sapMText,
+.sapMColumnHeader .sapMText {
+  color: #0b355a;
+  font-weight: 800;
+}
+
+.sapMListTblRow,
+.sapMLIB {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.sapMListTblRow:hover,
+.sapMLIBHoverable:hover {
+  background: #f0fbff;
+}
+
+.sapMObjStatusSuccess .sapMObjStatusText,
+.sapMObjStatusSuccess .sapMObjStatusIcon {
+  color: var(--app-green);
+}
+
+.sapMObjStatusWarning .sapMObjStatusText,
+.sapMObjStatusWarning .sapMObjStatusIcon {
+  color: #d88900;
+}
+
+.sapMObjStatusError .sapMObjStatusText,
+.sapMObjStatusError .sapMObjStatusIcon {
+  color: var(--app-rose);
+}
+
+.sapMMsgStrip {
+  border-radius: 0.85rem;
+  box-shadow: 0 0.45rem 1rem rgba(20, 48, 78, 0.08);
+}
+
 .genealogyScroll {
   border-top: 1px solid #d9e2ec;
   background: #f8f2ec;
@@ -108,4 +303,141 @@
 .genealogyPersonMissing .sapMAvatar {
   outline: 2px dashed #b9a999;
   outline-offset: 3px;
+}
+
+.trialDialog .sapMDialogScrollCont {
+  padding: 0;
+}
+
+.trialDialogContent {
+  padding: 1.25rem 1.6rem 1.1rem;
+  background: linear-gradient(180deg, #dff1ff 0%, #ffffff 26%, #ffffff 100%);
+}
+
+.trialDialogTopBar {
+  min-height: 2.75rem;
+}
+
+.trialHero {
+  padding: 0.4rem 0 1.4rem;
+}
+
+.trialHeroAvatar {
+  background: #f7fbff;
+  box-shadow: 0 0 0 0.65rem rgba(255, 255, 255, 0.72);
+}
+
+.trialBrand {
+  margin-top: 0.75rem;
+  color: #2e9df2;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.trialTitle {
+  margin-top: 0.35rem;
+  color: #12466f;
+  font-size: 1.65rem;
+}
+
+.trialSubtitle {
+  max-width: 24rem;
+  margin-top: 0.6rem;
+  color: #426174;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.trialSteps {
+  margin: 0.5rem 0 1rem;
+}
+
+.trialStep {
+  min-height: 4.6rem;
+}
+
+.trialStepMarkerBox {
+  width: 3.5rem;
+  min-width: 3.5rem;
+}
+
+.trialStepMarker {
+  background: #39a7f5;
+  color: #ffffff;
+  box-shadow: 0 0 0 0.45rem rgba(57, 167, 245, 0.18);
+}
+
+.trialStepMarkerMuted {
+  background: #f3f6f9;
+  color: #f0b52f;
+}
+
+.trialStepLine,
+.trialStepLineMuted {
+  margin-top: 0.45rem;
+  color: #b8d4e8;
+  transform: scaleY(1.35);
+}
+
+.trialStepLineMuted {
+  color: #e1e8ee;
+}
+
+.trialStepText {
+  padding-top: 0.15rem;
+}
+
+.trialStepText .sapMTitle {
+  color: #12466f;
+  font-size: 1rem;
+}
+
+.trialStepText .sapMText {
+  margin-top: 0.25rem;
+  color: #7b8792;
+  font-size: 0.92rem;
+}
+
+.trialStepActive .trialStepText .sapMTitle {
+  color: #2e9df2;
+}
+
+.trialActivationBox {
+  margin-top: 0.4rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1.2rem;
+  background: #f4f7fa;
+}
+
+.trialActivationBox .sapMTitle {
+  color: #12466f;
+}
+
+.trialPaymentSummary {
+  gap: 0.35rem;
+  padding: 1rem 0.25rem 1.1rem;
+}
+
+.trialPaymentSummary .sapMText {
+  color: #12466f;
+  font-weight: 700;
+}
+
+.trialPrimaryButton .sapMBtnInner {
+  height: 3rem;
+  border-radius: 1rem;
+  background: #35a4f4;
+  box-shadow: inset 0 -0.25rem 0 rgba(0, 82, 151, 0.22);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.trialFooterLinks {
+  padding-top: 0.85rem;
+  color: #7b8792;
+}
+
+.trialFooterLinks .sapMText,
+.trialFooterLinks .sapMLnk {
+  font-size: 0.78rem;
 }

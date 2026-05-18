@@ -1,4 +1,5 @@
 import {AuthResponse} from "com/rprincipees/registroavescombate/services/AuthService";
+import { IIncubacion } from "./IncubacionService";
 
 export interface Linea {
   ID: string;

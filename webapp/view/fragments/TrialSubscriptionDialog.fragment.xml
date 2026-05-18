@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Dialog
+        title=""
+        showHeader="false"
+        contentWidth="34rem"
+        stretchOnPhone="true"
+        class="trialDialog">
+        <content>
+            <VBox class="trialDialogContent">
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="trialDialogTopBar">
+                    <Button icon="sap-icon://decline" type="Transparent" press=".onCerrarTrialDialog" tooltip="Cerrar sesión"/>
+                    <Button text="Restaurar" type="Transparent" enabled="false"/>
+                </HBox>
+
+                <VBox alignItems="Center" class="trialHero">
+                    <Avatar icon="sap-icon://learning-assistant" displaySize="XL" class="trialHeroAvatar"/>
+                    <Text text="Gestión Pro" class="trialBrand"/>
+                    <Title text="Activa tu prueba gratuita" level="H1" textAlign="Center" class="trialTitle"/>
+                    <Text text="Prueba el sistema por 30 días con los mismos límites del plan Básico." textAlign="Center" class="trialSubtitle"/>
+                </VBox>
+
+                <VBox class="trialSteps">
+                    <HBox alignItems="Start" class="trialStep trialStepActive">
+                        <VBox alignItems="Center" class="trialStepMarkerBox">
+                            <Avatar icon="sap-icon://unlocked" displaySize="S" class="trialStepMarker"/>
+                            <core:Icon src="sap-icon://vertical-grip" class="trialStepLine"/>
+                        </VBox>
+                        <VBox class="trialStepText">
+                            <Title text="Comienza tu prueba gratuita" level="H4"/>
+                            <Text text="Se activará por 30 días desde hoy."/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox alignItems="Start" class="trialStep">
+                        <VBox alignItems="Center" class="trialStepMarkerBox">
+                            <Avatar icon="sap-icon://bell" displaySize="S" class="trialStepMarkerMuted"/>
+                            <core:Icon src="sap-icon://vertical-grip" class="trialStepLineMuted"/>
+                        </VBox>
+                        <VBox class="trialStepText">
+                            <Title text="Incluye el plan Básico" level="H4"/>
+                            <Text text="100 aves adultas, 200 aves jóvenes y 50 incubaciones."/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox alignItems="Start" class="trialStep">
+                        <VBox alignItems="Center" class="trialStepMarkerBox">
+                            <Avatar icon="sap-icon://favorite" displaySize="S" class="trialStepMarkerMuted"/>
+                        </VBox>
+                        <VBox class="trialStepText">
+                            <Title text="Continúa cuando quieras" level="H4"/>
+                            <Text text="Al finalizar podrás elegir Básico, Pro o Premium."/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="trialActivationBox">
+                    <Title text="Prueba gratuita" level="H3"/>
+                    <Switch state="true" enabled="false"/>
+                </HBox>
+
+                <VBox class="trialPaymentSummary">
+                    <HBox justifyContent="SpaceBetween">
+                        <Text text="A pagar hoy"/>
+                        <ObjectStatus text="30 días gratis  S/0.00" state="Success"/>
+                    </HBox>
+                    <HBox justifyContent="SpaceBetween">
+                        <Text text="Límites incluidos"/>
+                        <Text text="Plan Básico"/>
+                    </HBox>
+                </VBox>
+
+                <Button text="Probar gratis" type="Emphasized" width="100%" press=".onActivarTrialDesdeDialog"/>
+
+                <HBox justifyContent="SpaceBetween" class="trialFooterLinks">
+                    <!-- <Link text="Privacidad"/> -->
+                    <Text text="Puedes cancelar en cualquier momento"/>
+                    <!-- <Link text="Términos"/> -->
+                </HBox>
+            </VBox>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

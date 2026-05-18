@@ -7,8 +7,6 @@
         <content>
             <ScrollContainer height="100%" vertical="true">
                 <VBox class="sapUiMediumMargin">
-
-                    <!-- Panel de registro -->
                     <Panel width="100%">
                         <headerToolbar>
                             <Toolbar>
@@ -18,15 +16,10 @@
 
                         <content>
                             <VBox class="sapUiMediumMargin">
-
-                                <!-- Mensaje de error -->
                                 <MessageStrip id="registerErrorMessage" text="" type="Error" visible="false" class="sapUiMediumMarginBottom"/>
 
-                                <!-- Formulario de registro -->
                                 <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
-
                                     <f:content>
-                                        <!-- Información básica -->
                                         <Title text="Información Básica"/>
 
                                         <Label text="Nombre de Usuario" required="true"/>
@@ -40,14 +33,11 @@
 
                                         <Label text="Confirmar Contraseña" required="true"/>
                                         <Input id="confirmPasswordInput" type="Password" placeholder="Repite la contraseña" value="{/confirmPassword}" valueState="{/confirmPasswordState}" valueStateText="{/confirmPasswordStateText}" change="onConfirmPasswordChange"/>
-
                                     </f:content>
                                 </f:SimpleForm>
 
                                 <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
-
                                     <f:content>
-                                        <!-- Información personal -->
                                         <Title text="Información Personal"/>
 
                                         <Label text="Nombre" required="true"/>
@@ -64,24 +54,19 @@
                                     </f:content>
                                 </f:SimpleForm>
 
-                                <!-- Términos y condiciones -->
                                 <CheckBox id="termsCheckBox" text="Acepto los términos y condiciones" selected="{/acceptTerms}" class="sapUiMediumMarginTop" select="onConfirmTermsCheckBoxChange"/>
 
-                                <!-- Indicador de fortaleza de contraseña -->
                                 <VBox class="sapUiSmallMarginTop">
                                     <Text text="Fortaleza de la contraseña:"/>
                                     <ProgressIndicator id="passwordStrengthIndicator" percentValue="{/passwordStrength}" state="{/passwordStrengthState}" showValue="false" width="100%"/>
                                     <Text text="{/passwordStrengthText}" class="sapUiTinyMarginTop"/>
                                 </VBox>
 
-                                <!-- Botones -->
                                 <HBox class="sapUiLargeMarginTop" justifyContent="SpaceBetween">
                                     <Button text="Volver al Login" press="onGoToLogin"/>
-
                                     <Button id="registerButton" text="Crear Cuenta" type="Emphasized" press="onRegister" enabled="{/registerEnabled}"/>
                                 </HBox>
 
-                                <!-- Loading indicator -->
                                 <BusyIndicator id="registerBusyIndicator" visible="false" class="sapUiMediumMarginTop"/>
                             </VBox>
                         </content>
