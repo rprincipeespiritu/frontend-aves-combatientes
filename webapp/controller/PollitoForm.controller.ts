@@ -47,7 +47,7 @@ export default class PollitoForm extends Controller {
         const pollitoId = oEvent.getParameter("arguments")?.pollitoId || "";
         this.pollitoId = pollitoId;
         this.getView()?.setModel(new JSONModel({
-            title: pollitoId ? "Editar Pollito" : "Registrar Pollito",
+            title: pollitoId ? "Editar Ave Jóven" : "Registrar Ave Jóven",
             editMode: !!pollitoId,
             cintillo: "",
             colorCintillo: "",

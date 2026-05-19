@@ -5,7 +5,7 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:form="sap.f">
 
-    <Page title="{= ${view>/editMode} ? 'Editar Incubación' : 'Nueva Incubación' }"
+    <Page title="{= ${view>/editMode} ? 'Editar Incubación' : 'Agregar Incubación' }"
         showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />

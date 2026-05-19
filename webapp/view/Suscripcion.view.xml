@@ -54,7 +54,7 @@
                                 <NumericContent
                                     value="{suscripcion>/totalAves}"
                                     scale="{= 'de ' + ${suscripcion>/maxAves} }"
-                                    icon="sap-icon://activate" />
+                                    icon="images/icons/adult-bird.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -63,7 +63,7 @@
                                 <NumericContent
                                     value="{suscripcion>/totalPollitos}"
                                     scale="{= 'de ' + ${suscripcion>/maxPollitos} }"
-                                    icon="sap-icon://collaborate" />
+                                    icon="images/icons/young-chick.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -72,7 +72,7 @@
                                 <NumericContent
                                     value="{suscripcion>/totalIncubaciones}"
                                     scale="{= 'de ' + ${suscripcion>/maxIncubaciones} }"
-                                    icon="sap-icon://nutrition-activity" />
+                                    icon="images/icons/incubation-eggs.svg" />
                             </TileContent>
                         </GenericTile>
                     </HBox>
