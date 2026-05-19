@@ -30,15 +30,15 @@
                                     class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
                                 <HBox class="sapUiSmallMarginTop" wrap="Wrap"
                                     visible="{dashboard>/accesoSuscripcion}">
-                                    <Button text="Nueva Ave" type="Emphasized" icon="sap-icon://add"
+                                    <Button text="Agregar Ave Adulta" type="Emphasized" icon="sap-icon://add"
                                         press="onNavNewBird" />
-                                    <Button text="Nuevo Pollito" type="Emphasized"
-                                        icon="sap-icon://add-employee"
+                                    <Button text="Agregar Ave jóven" type="Emphasized"
+                                        icon="sap-icon://add"
                                         press="onNavNewPollito" class="sapUiTinyMarginBegin" />
-                                    <Button text="Nueva Incubación" type="Emphasized"
+                                    <Button text="Agregar Incubación" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
-                                    <Button text="Nuevo Linaje" type="Emphasized"
+                                    <Button text="Agregar Linaje" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin"
                                         visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}" />
@@ -54,7 +54,7 @@
                             visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalAves}"
-                                    icon="sap-icon://activate" />
+                                    icon="images/icons/adult-bird.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -81,7 +81,7 @@
                             visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalIncubaciones}"
-                                    icon="sap-icon://nutrition-activity" />
+                                    icon="images/icons/incubation-eggs.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -90,7 +90,7 @@
                             visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/incubacionesActivas}"
-                                    icon="sap-icon://process" />
+                                    icon="images/icons/hatching-process.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -115,7 +115,7 @@
                             visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalPollitos}"
-                                    icon="sap-icon://collaborate" />
+                                    icon="images/icons/young-chick.svg" />
                                 <!-- <ImageContent src="sap-icon://collaborate" /> -->
                             </TileContent>
                         </GenericTile>
@@ -124,7 +124,7 @@
                             visible="true">
                             <TileContent>
                                 <NumericContent value="{dashboard>/suscripcionDias}"
-                                    scale="dias" icon="sap-icon://payment-approval" />
+                                    scale="dias" icon="images/icons/subscription-plan.svg" />
                             </TileContent>
                         </GenericTile>
                     </HBox>
@@ -187,19 +187,19 @@
                                     <StandardListItem
                                         title="Aves activas"
                                         info="{dashboard>/totalAvesActivas}"
-                                        icon="sap-icon://activate" />
+                                        icon="images/icons/adult-bird.svg" />
                                     <StandardListItem
                                         title="Incubaciones programadas"
                                         info="{dashboard>/incubacionesProgramadas}"
-                                        icon="sap-icon://calendar" />
+                                        icon="images/icons/incubation-eggs.svg" />
                                     <StandardListItem
                                         title="Incubaciones en proceso"
                                         info="{dashboard>/incubacionesActivas}"
-                                        icon="sap-icon://process" />
+                                        icon="images/icons/hatching-process.svg" />
                                     <StandardListItem
                                         title="Nacimientos acumulados"
                                         info="{dashboard>/totalNacidos}"
-                                        icon="sap-icon://favorite" />
+                                        icon="images/icons/young-chick.svg" />
                                 </List>
                             </content>
                         </Panel>

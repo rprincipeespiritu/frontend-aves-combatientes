@@ -5,7 +5,7 @@
     xmlns:core="sap.ui.core"
     xmlns:f="sap.f">
 
-    <Page title="Gestion de Pollitos" titleAlignment="Center" showNavButton="true"
+    <Page title="Gestion de Aves Jóvenes" titleAlignment="Center" showNavButton="true"
         navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
@@ -22,7 +22,7 @@
                 <OverflowToolbar width="100%">
                     <!-- <Title text="Gestion de Pollitos" level="H2" /> -->
                     <ToolbarSpacer />
-                    <Button text="Agregar Pollito" icon="sap-icon://add" type="Emphasized"
+                    <Button text="Agregar Ave Jóven" icon="sap-icon://add" type="Emphasized"
                         press="onAgregarPollito" />
                     <Button text="Refrescar" icon="sap-icon://refresh" press="onRefrescar" />
                 </OverflowToolbar>
