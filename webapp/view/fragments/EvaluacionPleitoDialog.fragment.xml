@@ -1,0 +1,60 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog title="{detail>/evaluacionPleitoDialogTitle}" contentWidth="42rem">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    columnsL="1"
+                    columnsM="1">
+                    <f:content>
+                        <Label text="Fecha" required="true" />
+                        <DatePicker
+                            value="{detail>/nuevaEvaluacionPleito/fecha}"
+                            valueFormat="yyyy-MM-dd"
+                            displayFormat="dd/MM/yyyy" />
+
+                        <Label text="Calificacion" required="true" />
+                        <Select selectedKey="{detail>/nuevaEvaluacionPleito/calificacion}">
+                            <core:Item key="PESIMO" text="Pesimo" />
+                            <core:Item key="REGULAR" text="Regular" />
+                            <core:Item key="BUENO" text="Bueno" />
+                            <core:Item key="EXCELENTE" text="Excelente" />
+                            <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
+                        </Select>
+
+                        <Label text="Bravura" />
+                        <Input value="{detail>/nuevaEvaluacionPleito/bravura}" type="Number" placeholder="1 - 10" />
+
+                        <Label text="Tecnica" />
+                        <Input value="{detail>/nuevaEvaluacionPleito/tecnica}" type="Number" placeholder="1 - 10" />
+
+                        <Label text="Resistencia" />
+                        <Input value="{detail>/nuevaEvaluacionPleito/resistencia}" type="Number" placeholder="1 - 10" />
+
+                        <Label text="Condicion fisica" />
+                        <Input value="{detail>/nuevaEvaluacionPleito/condicionFisica}" type="Number" placeholder="1 - 10" />
+
+                        <Label text="Observaciones" />
+                        <TextArea value="{detail>/nuevaEvaluacionPleito/observaciones}" rows="3" />
+
+                        <Label text="Recomendacion" />
+                        <TextArea value="{detail>/nuevaEvaluacionPleito/recomendacion}" rows="3" />
+                    </f:content>
+                </f:SimpleForm>
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press=".onRegistrarEvaluacionPleito" />
+        </beginButton>
+
+        <endButton>
+            <Button text="Cancelar" press=".onCerrarEvaluacionPleitoDialog" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

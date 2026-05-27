@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        title="{detail>/archivoViewer/title}"
+        contentWidth="48rem"
+        contentHeight="32rem"
+        resizable="true"
+        draggable="true">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <ObjectStatus
+                    text="{detail>/archivoViewer/nombreArchivo}"
+                    icon="{= ${detail>/archivoViewer/tipo} === 'VIDEO' ? 'sap-icon://video' : 'sap-icon://picture'}"
+                    state="Information"
+                    class="sapUiTinyMarginBottom" />
+                <core:HTML content="{detail>/archivoViewer/html}" />
+            </VBox>
+        </content>
+        <endButton>
+            <Button text="Cerrar" press=".onCerrarVisorArchivoAve" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

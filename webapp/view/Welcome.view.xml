@@ -7,6 +7,7 @@
 
     <Page>
         <headerContent>
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd"/>
             <f:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -15,42 +16,42 @@
                 class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
         <content>
-            <ScrollContainer height="100%" vertical="true">
-                <VBox class="sapUiMediumMargin">
+            <ScrollContainer height="100%" vertical="true" horizontal="false">
+                <VBox class="welcomePageContent sapUiMediumMargin">
                     <HBox width="100%" wrap="Wrap" justifyContent="Center" alignItems="Center">
                         <Title text="Gestión de Aves Combatientes" level="H1" class="homeMainTitle" />
                     </HBox>
                     <!-- HERO / BIENVENIDA -->
-                    <Panel class="sapUiResponsiveMargin sapUiNoContentPadding">
+                    <Panel class="welcomeHeroPanel sapUiResponsiveMargin sapUiNoContentPadding">
                         <content>
                             <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
                                 <Title text="Gestiona tu criadero de forma inteligente" level="H2" />
                                 <Text
                                     text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar."
                                     class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
-                                <HBox class="sapUiSmallMarginTop" wrap="Wrap"
+                                <HBox class="heroActionBar sapUiSmallMarginTop" wrap="Wrap"
                                     visible="{dashboard>/accesoSuscripcion}">
                                     <Button text="Agregar Ave Adulta" type="Emphasized" icon="sap-icon://add"
-                                        press="onNavNewBird" />
+                                        press="onNavNewBird" class="heroActionButton" />
                                     <Button text="Agregar Ave jóven" type="Emphasized"
                                         icon="sap-icon://add"
-                                        press="onNavNewPollito" class="sapUiTinyMarginBegin" />
+                                        press="onNavNewPollito" class="heroActionButton" />
                                     <Button text="Agregar Incubación" type="Emphasized"
                                         icon="sap-icon://add"
-                                        press="onNavNewIncubation" class="sapUiTinyMarginBegin" />
+                                        press="onNavNewIncubation" class="heroActionButton" />
                                     <Button text="Agregar Linaje" type="Emphasized"
                                         icon="sap-icon://add"
-                                        press="onNavLineasGallosCreate" class="sapUiTinyMarginBegin"
-                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}" />
+                                        press="onNavNewLine" class="heroActionButton"
+                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
                                 </HBox>
                             </VBox>
                         </content>
                     </Panel>
 
                     <!-- KPIS -->
-                    <HBox wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMarginTop">
+                    <HBox wrap="Wrap" justifyContent="SpaceAround" class="dashboardTiles sapUiSmallMarginTop">
                         <GenericTile class="sapUiSmallMarginTop" header="Aves Adultas"
-                            subheader="Registros por Placa" press="onNavBirdList"
+                            subheader="Registros por placa" press="onNavBirdList"
                             visible="{dashboard>/accesoSuscripcion}">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalAves}"
@@ -60,19 +61,19 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Linaje de Aves"
                             subheader="Registradas" press="onNavLineasGallosList"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalLineas}"
-                                    icon="sap-icon://tree" />
+                                    icon="images/icons/bird-lineage.svg" />
                             </TileContent>
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce"
                             subheader="Ver historial" press=".onVerPlanesCruce"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalPlanes}"
-                                    icon="sap-icon://table-view" />
+                                    icon="images/icons/crossing-plans.svg" />
                             </TileContent>
                         </GenericTile>
 
@@ -96,17 +97,17 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader=""
                             press="onVerReportes"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
-                                <ImageContent src="sap-icon://business-objects-experience" />
+                                <ImageContent src="images/icons/reports.svg" />
                             </TileContent>
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Genealogía"
                             subheader="Arbol genealógico" press="onVerGenealogia"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PRO'}">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
-                                <ImageContent src="sap-icon://org-chart" />
+                                <ImageContent src="images/icons/genealogy.svg" />                                
                             </TileContent>
                         </GenericTile>
 
@@ -117,6 +118,15 @@
                                 <NumericContent value="{dashboard>/totalPollitos}"
                                     icon="images/icons/young-chick.svg" />
                                 <!-- <ImageContent src="sap-icon://collaborate" /> -->
+                            </TileContent>
+                        </GenericTile>
+
+                        <GenericTile class="sapUiSmallMarginTop" header="Combates"
+                            subheader="Registro de peleas" press="onVerCombates"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PREMIUM' }">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalCombates}"
+                                    icon="images/icons/combats.svg" />
                             </TileContent>
                         </GenericTile>
                         <GenericTile class="sapUiSmallMarginTop" header="Suscripción"

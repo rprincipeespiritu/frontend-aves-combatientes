@@ -25,6 +25,7 @@ export default class AveCreate extends Controller {
     private _oPadresDialog: Dialog;
     private helpSelected: any;
     private oUploadPluginInstance: any;
+    private readonly maxArchivosAve: number = 3;
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -55,7 +56,9 @@ export default class AveCreate extends Controller {
                 fechaCompra: "", padre_ID: "", madre_ID: "",
                 procedencia: "", criador: "", valorCompra: "",
                 valorActual: "", observaciones: "", placaState: "None",
-                categoria: "BUENO", placaPadre: "", placaMadre: ""
+                categoria: "BUENO", placaPadre: "", placaMadre: "",
+                archivosAve: [],
+                archivosRestantes: this.maxArchivosAve
             });
 
             /*
@@ -354,6 +357,8 @@ export default class AveCreate extends Controller {
             });
 
             if (response.ok) {
+                const aveCreada = await response.json();
+                await this.guardarArchivosAve(aveCreada.ID, data.archivosAve || []);
                 MessageBox.success("¡Ave creada exitosamente!", {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
@@ -369,6 +374,180 @@ export default class AveCreate extends Controller {
         } catch (error) {
             MessageBox.error(JSON.stringify(error));
         }
+    }
+
+    public onArchivosAveChange(oEvent: any): void {
+        const oModel = this.getView()?.getModel("create") as JSONModel;
+        const actuales = oModel.getProperty("/archivosAve") || [];
+        const files = Array.from(oEvent.getParameter("files") || []) as File[];
+        const disponibles = this.maxArchivosAve - actuales.length;
+
+        if (!files.length) return;
+
+        if (disponibles <= 0) {
+            MessageBox.warning(`No se agrego ningun archivo porque el ave ya tiene el maximo permitido de ${this.maxArchivosAve} archivos.`);
+            this.limpiarUploaderArchivosAve();
+            return;
+        }
+
+        if (files.length > disponibles) {
+            MessageBox.warning(`Seleccionaste ${files.length} archivos, pero solo quedan ${disponibles} espacios disponibles. Se agregaran solo los permitidos.`);
+        }
+
+        const agregados = new Set(actuales.map((archivo: any) => this.normalizarNombreArchivo(archivo.nombreArchivo)));
+        let archivosAgregados = 0;
+        let archivosOmitidos = 0;
+        let huboDuplicados = false;
+
+        files.slice(0, Math.max(disponibles, 0)).forEach((file) => {
+            if (!file.type?.startsWith("image/") && !file.type?.startsWith("video/")) {
+                archivosOmitidos++;
+                MessageToast.show(`${file.name} no se agrego porque solo se permiten imagenes o videos.`);
+                return;
+            }
+
+            const nombreNormalizado = this.normalizarNombreArchivo(file.name);
+            if (agregados.has(nombreNormalizado)) {
+                archivosOmitidos++;
+                huboDuplicados = true;
+                MessageBox.warning(`No se pueden guardar archivos duplicados. "${this.obtenerNombreSinExtension(file.name)}" ya fue seleccionado.`);
+                return;
+            }
+
+            agregados.add(nombreNormalizado);
+            archivosAgregados++;
+            actuales.push({
+                id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                nombreArchivo: file.name,
+                nombreVisual: this.obtenerNombreSinExtension(file.name),
+                mimeType: file.type,
+                sizeBytes: file.size,
+                sizeLabel: this.formatearTamanioArchivo(file.size),
+                tipo: file.type.startsWith("image/") ? "IMAGEN" : "VIDEO",
+                file
+            });
+        });
+
+        oModel.setProperty("/archivosAve", actuales);
+        oModel.setProperty("/archivosRestantes", this.maxArchivosAve - actuales.length);
+        this.limpiarUploaderArchivosAve();
+
+        if (archivosAgregados > 0) {
+            MessageToast.show(`${archivosAgregados} archivo(s) agregado(s). ${this.maxArchivosAve - actuales.length} espacio(s) disponible(s).`);
+        } else if ((archivosOmitidos > 0 || disponibles <= 0) && !huboDuplicados) {
+            MessageToast.show("No se agregaron archivos nuevos.");
+        }
+    }
+
+    public onQuitarArchivoAve(oEvent: Event): void {
+        const oModel = this.getView()?.getModel("create") as JSONModel;
+        const oContext = oEvent.getSource().getBindingContext("create");
+        const archivo = oContext?.getObject();
+        if (!archivo) return;
+
+        const archivos = (oModel.getProperty("/archivosAve") || []).filter((item: any) => item.id !== archivo.id);
+        oModel.setProperty("/archivosAve", archivos);
+        oModel.setProperty("/archivosRestantes", this.maxArchivosAve - archivos.length);
+    }
+
+    private async guardarArchivosAve(aveId: string, archivos: any[]): Promise<void> {
+        for (const archivo of archivos) {
+            const esImagen = archivo.tipo === "IMAGEN";
+            const endpoint = esImagen ? "FotosAve" : "VideosAve";
+            const carga = await this.prepararCargaArchivoAve(aveId, archivo);
+            await this.subirArchivoAS3(carga.uploadUrl, archivo.file, archivo.mimeType);
+
+            const payload: any = {
+                ave_ID: aveId,
+                titulo: carga.nombreArchivo || archivo.nombreArchivo,
+                descripcion: "Archivo guardado correctamente",
+                urlSharepoint: carga.fileUrl
+            };
+
+            if (esImagen) {
+                payload.fechaFoto = new Date().toISOString().slice(0, 10);
+                payload.thumbnailUrl = carga.fileUrl;
+                payload.esPrincipal = false;
+            } else {
+                payload.fechaVideo = new Date().toISOString().slice(0, 10);
+            }
+
+            const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.error?.message || `No se pudo registrar el archivo ${archivo.nombreArchivo}`);
+            }
+        }
+    }
+
+    private async prepararCargaArchivoAve(aveId: string, archivo: any): Promise<any> {
+        const response = await fetch(`${this.baseUrl}/prepararCargaArchivoAve`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.authService.getToken()}`
+            },
+            body: JSON.stringify({
+                aveId,
+                nombreArchivo: archivo.nombreArchivo,
+                mimeType: archivo.mimeType,
+                tamanioBytes: archivo.sizeBytes,
+                tipo: archivo.tipo
+            })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error?.message || data.message || `No se pudo preparar ${archivo.nombreArchivo}`);
+        }
+
+        if (!data.uploadUrl) {
+            throw new Error("El backend no devolvio URL de carga. Configura AWS_S3_AVES_BUCKET o AWS_S3_BUCKET.");
+        }
+
+        return data;
+    }
+
+    private async subirArchivoAS3(uploadUrl: string, file: File, mimeType: string): Promise<void> {
+        const response = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": mimeType
+            },
+            body: file
+        });
+
+        if (!response.ok) {
+            throw new Error(`No se pudo subir ${file.name} a AWS S3.`);
+        }
+    }
+
+    private limpiarUploaderArchivosAve(): void {
+        const uploader = this.byId("archivosAveUploader") as any;
+        uploader?.clear?.();
+        uploader?.setValue?.("");
+    }
+
+    private formatearTamanioArchivo(bytes: number): string {
+        if (!bytes) return "";
+        const mb = bytes / (1024 * 1024);
+        return mb >= 1 ? `${mb.toFixed(1)} MB` : `${Math.max(bytes / 1024, 1).toFixed(0)} KB`;
+    }
+
+    private obtenerNombreSinExtension(nombreArchivo: string): string {
+        return String(nombreArchivo || "").replace(/\.[^/.]+$/, "");
+    }
+
+    private normalizarNombreArchivo(nombreArchivo: string): string {
+        return String(nombreArchivo || "").trim().toLowerCase();
     }
 
     public onNavBack(): void {

@@ -6,6 +6,7 @@
     <Page title="Detalle de Incubación" showNavButton="true" navButtonPress="onNavBack">
 
         <headerContent>
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <Button text="Editar" icon="sap-icon://edit" press="onEdit" visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" />
         </headerContent>
 

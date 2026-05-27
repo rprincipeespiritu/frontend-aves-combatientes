@@ -3,12 +3,14 @@
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
     xmlns:upload="sap.m.upload"
     xmlns:form="sap.f">
 
     <Page title="Registrar Nueva Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <form:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -107,6 +109,44 @@
                         </f:content>
                     </f:SimpleForm>
                 </Panel>
+
+                <!-- <Panel headerText="Archivos del ave" expandable="true" expanded="true"
+                    visible="{dashboard>/multimediaPremium}"
+                    class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <HBox alignItems="Center" wrap="Wrap" class="sapUiTinyMarginBottom">
+                            <u:FileUploader
+                                id="archivosAveUploader"
+                                buttonText="Seleccionar imagenes o videos"
+                                fileType="jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm"
+                                mimeType="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm"
+                                multiple="true"
+                                sameFilenameAllowed="true"
+                                change=".onArchivosAveChange" />
+                            <ObjectStatus
+                                class="sapUiSmallMarginBegin"
+                                text="{= 'Disponibles: ' + ${create>/archivosRestantes} + ' de 3'}"
+                                state="{= ${create>/archivosRestantes} > 0 ? 'Information' : 'Warning'}" />
+                        </HBox>
+                        <List items="{create>/archivosAve}" noDataText="Sin archivos seleccionados">
+                            <CustomListItem>
+                                <HBox alignItems="Center" justifyContent="SpaceBetween" class="sapUiTinyMargin">
+                                    <HBox alignItems="Center">
+                                        <ObjectStatus
+                                            icon="{= ${create>tipo} === 'IMAGEN' ? 'sap-icon://picture' : 'sap-icon://video'}"
+                                            state="Information" />
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Text text="{create>nombreVisual}" />
+                                            <Text text="{create>sizeLabel}" class="sapUiTinyMarginTop" />
+                                        </VBox>
+                                    </HBox>
+                                    <Button icon="sap-icon://delete" type="Transparent"
+                                        tooltip="Quitar archivo" press=".onQuitarArchivoAve" />
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </VBox>
+                </Panel> -->
 
                 <!-- Genealogía -->
                 <Panel headerText="Genealogía" expandable="true" expanded="true"

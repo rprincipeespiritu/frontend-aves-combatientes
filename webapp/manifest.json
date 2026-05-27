@@ -40,6 +40,7 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.f": {},
+        "sap.ui.unified": {},
         "sap.tnt": {},
         "sap.suite.ui.commons": {},
         "sap.ui.export": {}
@@ -203,6 +204,26 @@
           "target": "TargetReportes"
         },
         {
+          "pattern": "combates",
+          "name": "RouteCombates",
+          "target": "TargetCombates"
+        },
+        {
+          "pattern": "combates/create",
+          "name": "RouteCombateCreate",
+          "target": "TargetCombateForm"
+        },
+        {
+          "pattern": "combates/edit/{id}",
+          "name": "RouteCombateEdit",
+          "target": "TargetCombateForm"
+        },
+        {
+          "pattern": "combates/detail/{id}",
+          "name": "RouteCombateDetail",
+          "target": "TargetCombateDetail"
+        },
+        {
           "pattern": "suscripcion",
           "name": "RouteSuscripcion",
           "target": "TargetSuscripcion"
@@ -306,6 +327,18 @@
         "TargetReportes": {
           "id": "Reportes",
           "viewName": "Reportes"
+        },
+        "TargetCombates": {
+          "id": "Combates",
+          "name": "Combates"
+        },
+        "TargetCombateForm": {
+          "id": "CombateForm",
+          "name": "CombateForm"
+        },
+        "TargetCombateDetail": {
+          "id": "CombateDetail",
+          "name": "CombateDetail"
         },
         "TargetSuscripcion": {
           "id": "Suscripcion",
