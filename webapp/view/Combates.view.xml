@@ -30,8 +30,17 @@
                     <headerToolbar>
                         <OverflowToolbar>
                             <Title text="Combates registrados ({= ${combates>/combates}.length})" />
+                            <ObjectStatus
+                                text="{combates>/limiteMensaje}"
+                                state="Warning"
+                                visible="{combates>/limiteAlcanzado}" />
                             <ToolbarSpacer />
-                            <Button icon="sap-icon://add" type="Emphasized" press=".onCrearCombate" />
+                            <Button
+                                icon="sap-icon://add"
+                                type="Emphasized"
+                                press=".onCrearCombate"
+                                enabled="{= !${combates>/limiteAlcanzado} }"
+                                tooltip="{combates>/limiteMensaje}" />
                             <Button icon="sap-icon://refresh" press=".onRefrescar" />
                         </OverflowToolbar>
                     </headerToolbar>

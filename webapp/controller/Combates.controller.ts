@@ -14,6 +14,7 @@ import { AuthService } from "../services/AuthService";
 
 export default class Combates extends Controller {
   private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private readonly limiteTemporalCombates = 10;
   private authService: AuthService;
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
@@ -38,6 +39,8 @@ export default class Combates extends Controller {
     this.getView()?.setModel(new JSONModel({
       busy: false,
       combates: [],
+      limiteAlcanzado: false,
+      limiteMensaje: "",
     }), "combates");
 
     void this.cargarCombates();
@@ -65,7 +68,9 @@ export default class Combates extends Controller {
         throw new Error(data?.error?.message || "No se pudo cargar el historial de combates.");
       }
 
-      oModel.setProperty("/combates", data.value || []);
+      const combates = data.value || [];
+      oModel.setProperty("/combates", combates);
+      this.actualizarLimiteCombates(combates.length);
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo cargar combates.");
     } finally {
@@ -73,7 +78,27 @@ export default class Combates extends Controller {
     }
   }
 
+  private actualizarLimiteCombates(total: number): void {
+    const oModel = this.getView()?.getModel("combates") as JSONModel;
+    const limiteAlcanzado = total >= this.limiteTemporalCombates;
+    const limiteMensaje = limiteAlcanzado
+      ? `Limite temporal alcanzado: maximo ${this.limiteTemporalCombates} combates.`
+      : "";
+
+    oModel.setProperty("/limiteAlcanzado", limiteAlcanzado);
+    oModel.setProperty("/limiteMensaje", limiteMensaje);
+  }
+
   public onCrearCombate(): void {
+    const oModel = this.getView()?.getModel("combates") as JSONModel;
+    if (oModel?.getProperty("/limiteAlcanzado")) {
+      MessageBox.warning(
+        oModel.getProperty("/limiteMensaje") ||
+          `Por ahora solo puedes registrar hasta ${this.limiteTemporalCombates} combates.`,
+      );
+      return;
+    }
+
     (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteCombateCreate");
   }
 
