@@ -88,6 +88,8 @@ export interface IFiltros {
 
 // Enums
 export enum CategoriaAve {
+  Pesimo = "PESIMO",
+  Regular = "REGULAR",
   Bueno = "BUENO",
   Excelente = "EXCELENTE",
   Extraordinario = "EXTRAORDINARIO",

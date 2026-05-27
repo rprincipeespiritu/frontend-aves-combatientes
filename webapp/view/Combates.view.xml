@@ -1,0 +1,80 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Combates"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f">
+
+    <Page
+        title="Combates"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        busy="{combates>/busy}">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
+            <f:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Table
+                    items="{combates>/combates}"
+                    growing="true"
+                    growingScrollToLoad="true"
+                    noDataText="Sin combates registrados">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Combates registrados ({= ${combates>/combates}.length})" />
+                            <ToolbarSpacer />
+                            <Button icon="sap-icon://add" type="Emphasized" press=".onCrearCombate" />
+                            <Button icon="sap-icon://refresh" press=".onRefrescar" />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column><Text text="Fecha" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Tipo de Pelea" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Primer combatiente " /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Segundo combatiente / Rival" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Propietario rival" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Resultado" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Evento" /></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Video" /></Column>
+                        <Column><Text text="Acciones" /></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem type="Navigation" press=".onVerDetalleCombate">
+                            <cells>
+                                <Text text="{path: 'combates>fecha', formatter: '.formatearFecha'}" />
+                                <ObjectStatus text="{path: 'combates>tipoCombate', formatter: '.formatearTipo'}" state="{= ${combates>tipoCombate} === 'OFICIAL' ? 'Success' : 'Information'}" />
+                                <ObjectIdentifier title="{= ${combates>ave/placa} || 'Sin placa' }" text="{combates>ave/nombre}" />
+                                <VBox>
+                                    <ObjectIdentifier title="{= ${combates>combatienteB/placa} || 'Sin placa' }" text="{combates>combatienteB/nombre}" visible="{= ${combates>ambosPropios}}" />
+                                    <Text text="{path: 'combates>', formatter: '.formatearRival'}" visible="{= !${combates>ambosPropios}}"/>
+                                </VBox>
+                                <Text text="{path: 'combates>', formatter: '.formatearPropietarioRival'}" />
+                                <ObjectStatus text="{path: 'combates>resultado', formatter: '.formatearResultado'}" state="{path: 'combates>resultado', formatter: '.estadoResultado'}" />
+                                <Text text="{combates>evento}" />
+                                <ObjectStatus text="{path: 'combates>videoEstadoCarga', formatter: '.formatearVideo'}" icon="{= ${combates>videoUrl} ? 'sap-icon://video' : 'sap-icon://attachment' }" state="{= ${combates>videoUrl} ? 'Information' : 'None' }" />
+                                <HBox>
+                                    <Button icon="sap-icon://edit" type="Emphasized" press=".onEditarCombate" />
+                                    <Button icon="sap-icon://delete" type="Transparent" press=".onEliminarCombate" />
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press=".onNavBack" />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

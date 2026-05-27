@@ -1,0 +1,162 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.CombateForm"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:fb="sap.f"
+    xmlns:u="sap.ui.unified"
+    xmlns:core="sap.ui.core">
+
+    <Page
+        title="{= ${combate>/editMode} ? 'Editar combate' : 'Nuevo combate' }"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        busy="{combate>/busy}">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
+            <fb:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Panel headerText="Datos del combate">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="3" columnsM="2">
+                        <f:content>
+
+                            <Label text="Tipo de Pelea" required="true" />
+                            <Select selectedKey="{combate>/form/tipoCombate}" width="100%" change=".onTipoCombateChange">
+                                <core:Item key="PRUEBA" text="Entrenamiento" />
+                                <core:Item key="OFICIAL" text="Oficial" />
+                            </Select>
+
+                            <Label text="¿Eres propietario de ambas aves?" required="true" />
+                            <Switch
+                                state="{combate>/form/ambosPropios}"
+                                customTextOn="Si"
+                                customTextOff="No"
+                                change=".onAmbosPropiosChange">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Switch>
+
+                            <Label text="Fecha" required="true" />
+                            <DateTimePicker
+                                value="{combate>/form/fecha}"
+                                valueFormat="yyyy-MM-dd'T'HH:mm:ss"
+                                displayFormat="dd/MM/yyyy HH:mm"
+                                width="100%" />
+
+                            <Label text="Evento" />
+                            <Input value="{combate>/form/evento}" placeholder="Torneo, entrenamiento, visita" />
+
+                            <Label text="Lugar" />
+                            <Input value="{combate>/form/lugar}" placeholder="Galpon, ciudad o recinto" />
+
+                            <Label text="Primer combatiente" required="true" />
+                            <Input
+                                value="{combate>/form/placaCombA}"
+                                placeholder="Seleccionar ave de tu galpon o criadero"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest=".onValueHelpCombatienteA"
+                                description="{combate>/form/nombreCombA}" />
+
+                            <Label text="Segundo combatiente" required="true" visible="{combate>/form/ambosPropios}" />
+                            <Input
+                                value="{combate>/form/placaCombB}"
+                                placeholder="Seleccionar ave de tu galpon o criadero"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest=".onValueHelpCombatienteB"
+                                visible="{combate>/form/ambosPropios}"
+                                description="{combate>/form/nombreCombB}" />
+                            
+                            <Label text="Combatiente rival" required="false" visible="{= !${combate>/form/ambosPropios}}" />
+                            <Input value="{combate>/form/nombreOponente}" placeholder="Ingrese nombre o placa del rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+
+                            <Label text="Propietario rival" required="false" visible="{= !${combate>/form/ambosPropios}}" />
+                            <Input value="{combate>/form/propietarioOponente}" placeholder="Ingrese nombre del propietario rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+
+                            <Label text="Procedencia rival" visible="{= !${combate>/form/ambosPropios}}" />
+                            <Input value="{combate>/form/procedenciaOponente}" placeholder="Ingrese nombre del criadero rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+
+                            <Label text="Resultado" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" />
+                            <Select selectedKey="{combate>/form/resultado}" width="100%" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" >
+                                <core:Item key="" text="Sin resultado" />
+                                <core:Item key="VICTORIA" text="Victoria" />
+                                <core:Item key="DERROTA" text="Derrota" />
+                                <core:Item key="EMPATE" text="Empate" />
+                                <core:Item key="DESCALIFICADO" text="Descalificado" />
+                            </Select>
+                            
+                            <!-- <Label text="Premio" />
+                            <Input value="{combate>/form/premioDinero}" type="Number" placeholder="Monto en PEN" /> -->
+
+                            <!-- <Label text="Metodo" />
+                            <Input value="{combate>/form/metodoVictoria}" placeholder="Puntos, abandono, decision" /> -->
+
+                            <Label text="Lesiones" />
+                            <Input value="{combate>/form/lesiones}" placeholder="Sin lesiones, leve, etc." />
+
+                            <Label text="Observaciones" />
+                            <TextArea value="{combate>/form/observaciones}" rows="3" placeholder="Notas del combate" />
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <Panel headerText="Video de la pelea" class="sapUiMediumMarginTop"
+                    visible="{dashboard>/multimediaPremium}">
+                    <VBox class="sapUiMediumMargin">
+                        <HBox wrap="Wrap">
+                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom" width="28rem">
+                                <Label text="Archivo" />
+                                <u:FileUploader
+                                    id="videoCombateUploader"
+                                    width="100%"
+                                    sameFilenameAllowed="true"
+                                    fileType="mp4,mov,avi,mkv,webm"
+                                    mimeType="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm"
+                                    placeholder="Selecciona un video para guardarlo luego en AWS"
+                                    change=".onVideoSeleccionado" />
+                            </VBox>
+                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom" width="24rem">
+                                <Label text="Estado" />
+                                <ObjectStatus
+                                    text="{path: 'combate>/form/videoEstadoCarga', formatter: '.formatearVideo'}"
+                                    icon="{= ${combate>/form/videoUrl} || ${combate>/form/videoNombreArchivo} ? 'sap-icon://video' : 'sap-icon://attachment' }"
+                                    state="{= ${combate>/form/videoUrl} || ${combate>/form/videoNombreArchivo} ? 'Information' : 'None' }" />
+                                <Text text="{combate>/form/videoNombreArchivo}" visible="{= !!${combate>/form/videoNombreArchivo} }" />
+                                <Text text="{combate>/form/videoSizeLabel}" visible="{= !!${combate>/form/videoSizeLabel} }" />
+                                <Link
+                                    text="Ver video"
+                                    press=".onAbrirVideoCombateViewer"
+                                    visible="{= !!${combate>/form/videoUrl} }" />
+                            </VBox>
+                            <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom" width="10rem" justifyContent="End">
+                                <Button
+                                    text="Quitar video"
+                                    icon="sap-icon://decline"
+                                    visible="{= !!${combate>/form/videoNombreArchivo} || !!${combate>/form/videoUrl} }"
+                                    press=".onQuitarVideo" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </Panel>
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Guardar" type="Emphasized" icon="sap-icon://save" press=".onGuardar" />
+                <Button text="Cancelar" press=".onNavBack" />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

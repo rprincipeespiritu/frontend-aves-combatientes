@@ -10,6 +10,7 @@
         navButtonPress=".onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <f:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -97,6 +98,8 @@
                                 <Text text="500 aves adultas" />
                                 <Text text="1000 aves jovenes" />
                                 <Text text="250 incubaciones" />
+                                <Text text="Genealogía" />
+                                <Text text="Reportes" />
                                 <ObjectNumber number="79" unit="PEN / mes" />
                                 <Button text="Activar Pro" type="Emphasized" press=".onActivarPro" />
                             </VBox>
@@ -110,6 +113,7 @@
                                 <Text text="Incubaciones ilimitadas" />
                                 <Text text="Genealogía" />
                                 <Text text="Reportes" />
+                                <Text text="Combates" />
                                 <Text text="Fotos y videos" />
                                 <ObjectNumber number="149" unit="PEN / mes" />
                                 <Button text="Activar Premium" type="Emphasized" press=".onActivarPremium" />

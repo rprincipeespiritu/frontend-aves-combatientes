@@ -21,6 +21,9 @@ export default class AveDetail extends Controller {
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
     private _oEvaluacionDialog: any;
+    private _oEvaluacionPleitoDialog: any;
+    private _oArchivoAveViewerDialog: any;
+    private readonly maxArchivosAve: number = 3;
     public formatter = formatter;
 
     public onInit(): void {
@@ -56,8 +59,20 @@ export default class AveDetail extends Controller {
             padreNombre: "", madreNombre: "", padre_ID: "", madre_ID: "",
             raza_ID: "", color_ID: "", fotoPrincipal: "",
             evaluaciones: [],
+            evaluacionesPleito: [],
+            archivosAve: [],
+            archivosRestantes: this.maxArchivosAve,
+            archivoViewer: {
+                title: "",
+                nombreArchivo: "",
+                tipo: "",
+                url: "",
+                html: ""
+            },
             evaluacionDialogTitle: "Registrar evaluacion",
             evaluacionEditId: "",
+            evaluacionPleitoDialogTitle: "Registrar evaluacion de pleito",
+            evaluacionPleitoEditId: "",
             nuevaEvaluacion: {
                 vigor: "",
                 saludGeneral: "",
@@ -65,6 +80,16 @@ export default class AveDetail extends Controller {
                 desarrollo: "BUENO",
                 aptoReproduccion: true,
                 defectosObservados: "",
+                recomendacion: ""
+            },
+            nuevaEvaluacionPleito: {
+                fecha: new Date().toISOString().split("T")[0],
+                calificacion: "BUENO",
+                bravura: "",
+                tecnica: "",
+                resistencia: "",
+                condicionFisica: "",
+                observaciones: "",
                 recomendacion: ""
             }
         }), "detail");
@@ -81,7 +106,8 @@ export default class AveDetail extends Controller {
             oModel = new JSONModel({
                 plan: "",
                 estadoSuscripcion: "",
-                accesoSuscripcion: false
+                accesoSuscripcion: false,
+                multimediaPremium: false
             });
             this.getOwnerComponent()?.setModel(oModel, "dashboard");
         }
@@ -110,11 +136,17 @@ export default class AveDetail extends Controller {
                 data.tieneSuscripcion !== false &&
                 ["ACTIVA", "CANCELADA"].includes(data.estado) &&
                 Number(data.diasRestantes || 0) >= 0;
+            const multimediaPremium = tieneAcceso && data.plan === "PREMIUM";
 
             oModel.setProperty("/plan", data.plan || "");
             oModel.setProperty("/estadoSuscripcion", data.estado || "");
             oModel.setProperty("/accesoSuscripcion", tieneAcceso);
+            oModel.setProperty("/multimediaPremium", multimediaPremium);
             oModel.refresh(true);
+
+            if (multimediaPremium) {
+                await this.cargarArchivosAve();
+            }
         } catch (error) {
             // El detalle del ave puede mostrarse aunque falle el resumen de suscripcion.
         }
@@ -196,6 +228,8 @@ export default class AveDetail extends Controller {
             });
 
             await this.cargarEvaluaciones();
+            await this.cargarEvaluacionesPleito();
+            await this.cargarArchivosAve();
 
         } catch (error) {
             MessageBox.error("Error cargando el ave");
@@ -213,6 +247,68 @@ export default class AveDetail extends Controller {
         oModel.setProperty("/evaluaciones", data.value || []);
     }
 
+    private async cargarEvaluacionesPleito(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const response = await fetch(
+            `${this.baseUrl}/EvaluacionesPleito?$filter=ave_ID eq ${this.aveId}&$orderby=fecha desc,modifiedAt desc`,
+            { headers: { "Authorization": `Bearer ${this.authService.getToken()}` } }
+        );
+
+        const data = await response.json();
+        const evaluaciones = data.value || [];
+        oModel.setProperty("/evaluacionesPleito", evaluaciones);
+        if (evaluaciones[0]?.calificacion) {
+            oModel.setProperty("/categoria", evaluaciones[0].calificacion);
+        }
+    }
+
+    private async cargarArchivosAve(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const dashboard = this.getDashboardModel();
+
+        if (!dashboard.getProperty("/multimediaPremium")) {
+            oModel.setProperty("/archivosAve", []);
+            oModel.setProperty("/archivosRestantes", this.maxArchivosAve);
+            return;
+        }
+
+        const headers = { "Authorization": `Bearer ${this.authService.getToken()}` };
+
+        const [fotosResponse, videosResponse] = await Promise.all([
+            fetch(`${this.baseUrl}/FotosAve?$filter=ave_ID eq ${this.aveId}&$orderby=createdAt desc`, { headers }),
+            fetch(`${this.baseUrl}/VideosAve?$filter=ave_ID eq ${this.aveId}&$orderby=createdAt desc`, { headers })
+        ]);
+
+        const fotosData = await fotosResponse.json();
+        const videosData = await videosResponse.json();
+        const fotos = (fotosData.value || []).map((item: any) => ({
+            ...item,
+            tipo: "IMAGEN",
+            endpoint: "FotosAve",
+            nombreArchivo: item.titulo || "Imagen del ave",
+            nombreVisual: this.obtenerNombreSinExtension(item.titulo || "Imagen del ave"),
+            urlArchivo: item.urlSharepoint,
+            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint),
+            estadoArchivoState: this.obtenerEstadoArchivoState(item.urlSharepoint),
+            estadoArchivoIcon: this.obtenerEstadoArchivoIcon(item.urlSharepoint)
+        }));
+        const videos = (videosData.value || []).map((item: any) => ({
+            ...item,
+            tipo: "VIDEO",
+            endpoint: "VideosAve",
+            nombreArchivo: item.titulo || "Video del ave",
+            nombreVisual: this.obtenerNombreSinExtension(item.titulo || "Video del ave"),
+            urlArchivo: item.urlSharepoint,
+            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint),
+            estadoArchivoState: this.obtenerEstadoArchivoState(item.urlSharepoint),
+            estadoArchivoIcon: this.obtenerEstadoArchivoIcon(item.urlSharepoint)
+        }));
+        const archivos = [...fotos, ...videos].slice(0, this.maxArchivosAve);
+
+        oModel.setProperty("/archivosAve", archivos);
+        oModel.setProperty("/archivosRestantes", this.maxArchivosAve - archivos.length);
+    }
+
     private async cargarCatalogos(): Promise<void> {
         const token = this.authService.getToken();
         const headers = { "Authorization": `Bearer ${token}` };
@@ -226,6 +322,22 @@ export default class AveDetail extends Controller {
         } catch (error) {
             console.error("Error cargando catálogos:", error);
         }
+    }
+
+    private obtenerEstadoArchivoTexto(url?: string): string {
+        if (!url || String(url).startsWith("pending-upload://")) return "Pendiente";
+        if (String(url).includes(".s3.")) return "Video registrado";
+        return "Registrado";
+    }
+
+    private obtenerEstadoArchivoState(url?: string): string {
+        if (!url || String(url).startsWith("pending-upload://")) return "Warning";
+        return "Success";
+    }
+
+    private obtenerEstadoArchivoIcon(url?: string): string {
+        if (!url || String(url).startsWith("pending-upload://")) return "sap-icon://cloud";
+        return "sap-icon://sys-enter-2";
     }
 
     public onEditar(oEvent: Event): void {
@@ -541,6 +653,472 @@ export default class AveDetail extends Controller {
         }
     }
 
+    private resetEvaluacionPleitoForm(): void {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        oModel.setProperty("/evaluacionPleitoDialogTitle", "Registrar evaluacion de pleito");
+        oModel.setProperty("/evaluacionPleitoEditId", "");
+        oModel.setProperty("/nuevaEvaluacionPleito", {
+            fecha: new Date().toISOString().split("T")[0],
+            calificacion: "BUENO",
+            bravura: "",
+            tecnica: "",
+            resistencia: "",
+            condicionFisica: "",
+            observaciones: "",
+            recomendacion: ""
+        });
+    }
+
+    public async onAbrirEvaluacionPleitoDialog(): Promise<void> {
+        this.resetEvaluacionPleitoForm();
+
+        if (!this._oEvaluacionPleitoDialog) {
+            this._oEvaluacionPleitoDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.EvaluacionPleitoDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oEvaluacionPleitoDialog);
+        }
+
+        this._oEvaluacionPleitoDialog.open();
+    }
+
+    public async onEditarEvaluacionPleito(oEvent: Event): Promise<void> {
+        const oContext = oEvent.getSource().getBindingContext("detail");
+        if (!oContext) {
+            MessageBox.warning("No se pudo obtener la evaluacion de pleito seleccionada.");
+            return;
+        }
+
+        const evaluacion = oContext.getObject();
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+
+        oModel.setProperty("/evaluacionPleitoDialogTitle", "Editar evaluacion de pleito");
+        oModel.setProperty("/evaluacionPleitoEditId", evaluacion.ID || "");
+        oModel.setProperty("/nuevaEvaluacionPleito", {
+            fecha: evaluacion.fecha || new Date().toISOString().split("T")[0],
+            calificacion: evaluacion.calificacion || "BUENO",
+            bravura: evaluacion.bravura ?? "",
+            tecnica: evaluacion.tecnica ?? "",
+            resistencia: evaluacion.resistencia ?? "",
+            condicionFisica: evaluacion.condicionFisica ?? "",
+            observaciones: evaluacion.observaciones || "",
+            recomendacion: evaluacion.recomendacion || ""
+        });
+
+        if (!this._oEvaluacionPleitoDialog) {
+            this._oEvaluacionPleitoDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.EvaluacionPleitoDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oEvaluacionPleitoDialog);
+        }
+
+        this._oEvaluacionPleitoDialog.open();
+    }
+
+    public onCerrarEvaluacionPleitoDialog(): void {
+        this._oEvaluacionPleitoDialog?.close();
+    }
+
+    public async onRegistrarEvaluacionPleito(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const evaluacion = oModel.getProperty("/nuevaEvaluacionPleito");
+        const evaluacionEditId = oModel.getProperty("/evaluacionPleitoEditId");
+        const authUser = localStorage.getItem("auth_user");
+
+        if (!authUser) {
+            MessageToast.show("No se encontro la sesion del usuario");
+            return;
+        }
+
+        if (!evaluacion.fecha || !evaluacion.calificacion) {
+            MessageBox.warning("Selecciona fecha y calificacion.");
+            return;
+        }
+
+        const usuario = JSON.parse(authUser);
+        const payload = {
+            ave_ID: this.aveId,
+            fecha: evaluacion.fecha,
+            calificacion: evaluacion.calificacion,
+            bravura: evaluacion.bravura ? Number(evaluacion.bravura) : null,
+            tecnica: evaluacion.tecnica ? Number(evaluacion.tecnica) : null,
+            resistencia: evaluacion.resistencia ? Number(evaluacion.resistencia) : null,
+            condicionFisica: evaluacion.condicionFisica ? Number(evaluacion.condicionFisica) : null,
+            observaciones: evaluacion.observaciones || null,
+            recomendacion: evaluacion.recomendacion || null,
+            usuario_ID: usuario._id
+        };
+
+        try {
+            const response = await fetch(evaluacionEditId
+                ? `${this.baseUrl}/EvaluacionesPleito('${evaluacionEditId}')`
+                : `${this.baseUrl}/EvaluacionesPleito`, {
+                method: evaluacionEditId ? "PATCH" : "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data?.error?.message || "No se pudo registrar la evaluacion de pleito");
+            }
+
+            MessageToast.show(evaluacionEditId ? "Evaluacion de pleito actualizada" : "Evaluacion de pleito registrada");
+            this.resetEvaluacionPleitoForm();
+            this._oEvaluacionPleitoDialog?.close();
+            await this.cargarEvaluacionesPleito();
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo registrar la evaluacion de pleito");
+        }
+    }
+
+    public onEliminarEvaluacionPleito(oEvent: Event): void {
+        const oContext = oEvent.getSource().getBindingContext("detail");
+        if (!oContext) {
+            MessageBox.warning("No se pudo obtener la evaluacion de pleito seleccionada.");
+            return;
+        }
+
+        const evaluacion = oContext.getObject();
+        MessageBox.confirm("Deseas eliminar esta evaluacion de pleito?", {
+            title: "Eliminar evaluacion",
+            onClose: async (action: string) => {
+                if (action !== MessageBox.Action.OK) return;
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/EvaluacionesPleito('${evaluacion.ID}')`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${this.authService.getToken()}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("No se pudo eliminar la evaluacion de pleito");
+                    }
+
+                    MessageToast.show("Evaluacion de pleito eliminada");
+                    await this.cargarEvaluacionesPleito();
+                } catch (error: any) {
+                    MessageBox.error(error.message || "No se pudo eliminar la evaluacion de pleito");
+                }
+            }
+        });
+    }
+
+    public async onArchivosAveDetailChange(oEvent: any): Promise<void> {
+        if (!this.getDashboardModel().getProperty("/multimediaPremium")) {
+            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium.");
+            this.limpiarUploaderArchivosAveDetail();
+            return;
+        }
+
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const actuales = oModel.getProperty("/archivosAve") || [];
+        const files = Array.from(oEvent.getParameter("files") || []) as File[];
+        const disponibles = this.maxArchivosAve - actuales.length;
+
+        if (!files.length) return;
+
+        if (disponibles <= 0) {
+            MessageBox.warning(`No se registro ningun archivo porque el ave ya tiene el maximo permitido de ${this.maxArchivosAve} archivos.`);
+            this.limpiarUploaderArchivosAveDetail();
+            return;
+        }
+
+        if (files.length > disponibles) {
+            MessageBox.warning(`Seleccionaste ${files.length} archivos, pero solo quedan ${disponibles} espacios disponibles. Se registraran solo los permitidos.`);
+        }
+
+        try {
+            const agregados = new Set(actuales.map((archivo: any) => this.normalizarNombreArchivo(archivo.nombreArchivo)));
+            let archivosRegistrados = 0;
+            let archivosOmitidos = 0;
+            let huboDuplicados = false;
+
+            for (const file of files.slice(0, Math.max(disponibles, 0))) {
+                if (!file.type?.startsWith("image/") && !file.type?.startsWith("video/")) {
+                    archivosOmitidos++;
+                    MessageToast.show(`${file.name} no se registro porque solo se permiten imagenes o videos.`);
+                    continue;
+                }
+
+                const nombreNormalizado = this.normalizarNombreArchivo(file.name);
+                if (agregados.has(nombreNormalizado)) {
+                    archivosOmitidos++;
+                    huboDuplicados = true;
+                    MessageBox.warning(`No se pueden guardar archivos duplicados. "${this.obtenerNombreSinExtension(file.name)}" ya existe en esta ave.`);
+                    continue;
+                }
+
+                agregados.add(nombreNormalizado);
+                await this.registrarArchivoAve(file);
+                archivosRegistrados++;
+            }
+
+            this.limpiarUploaderArchivosAveDetail();
+            await this.cargarArchivosAve();
+
+            if (archivosRegistrados > 0) {
+                MessageToast.show(`${archivosRegistrados} archivo(s) registrado(s). ${this.maxArchivosAve - (actuales.length + archivosRegistrados)} espacio(s) disponible(s).`);
+            } else if ((archivosOmitidos > 0 || disponibles <= 0) && !huboDuplicados) {
+                MessageToast.show("No se registraron archivos nuevos.");
+            }
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo registrar el archivo.");
+        }
+    }
+
+    public onEliminarArchivoAve(oEvent: Event): void {
+        const oContext = oEvent.getSource().getBindingContext("detail");
+        const archivo = oContext?.getObject();
+        if (!archivo?.ID || !archivo?.endpoint) return;
+
+        MessageBox.confirm("Deseas quitar este archivo del ave?", {
+            title: "Quitar archivo",
+            onClose: async (action: string) => {
+                if (action !== MessageBox.Action.OK) return;
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/${archivo.endpoint}('${archivo.ID}')`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${this.authService.getToken()}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json().catch(() => ({}));
+                        throw new Error(error.error?.message || "No se pudo quitar el archivo.");
+                    }
+
+                    await this.cargarArchivosAve();
+                    MessageToast.show("Archivo eliminado");
+                } catch (error: any) {
+                    MessageBox.error(error.message || "No se pudo quitar el archivo.");
+                }
+            }
+        });
+    }
+
+    public async onVerArchivoAve(oEvent: Event): Promise<void> {
+        if (!this.getDashboardModel().getProperty("/multimediaPremium")) {
+            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium.");
+            return;
+        }
+
+        const oContext = oEvent.getSource().getBindingContext("detail");
+        const archivo = oContext?.getObject();
+        if (!archivo) return;
+
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const url = await this.obtenerUrlVisualizacionArchivo(archivo.urlArchivo || archivo.urlSharepoint || "");
+        const esPendiente = !url || String(url).startsWith("pending-upload://");
+        const nombreArchivo = archivo.nombreArchivo || archivo.titulo || "Archivo del ave";
+        const tipo = archivo.tipo || "ARCHIVO";
+
+        oModel.setProperty("/archivoViewer", {
+            title: tipo === "VIDEO" ? "Video del ave" : "Imagen del ave",
+            nombreArchivo,
+            tipo,
+            url,
+            html: this.crearHtmlVisorArchivo(tipo, url, nombreArchivo, esPendiente)
+        });
+
+        if (!this._oArchivoAveViewerDialog) {
+            this._oArchivoAveViewerDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.ArchivoAveViewerDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oArchivoAveViewerDialog);
+        }
+
+        this._oArchivoAveViewerDialog.open();
+    }
+
+    public onCerrarVisorArchivoAve(): void {
+        this.detenerMediaArchivoAve();
+        this._oArchivoAveViewerDialog?.close();
+
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        oModel.setProperty("/archivoViewer/html", "");
+        oModel.setProperty("/archivoViewer/url", "");
+    }
+
+    private detenerMediaArchivoAve(): void {
+        const dialogDom = this._oArchivoAveViewerDialog?.getDomRef?.();
+        const mediaElements = dialogDom?.querySelectorAll?.("video, audio") || [];
+
+        mediaElements.forEach((media: HTMLMediaElement) => {
+            media.pause();
+            media.removeAttribute("src");
+            media.querySelectorAll("source").forEach((source) => source.removeAttribute("src"));
+            media.load();
+        });
+    }
+
+    private crearHtmlVisorArchivo(tipo: string, url: string, nombreArchivo: string, esPendiente: boolean): string {
+        const nombre = this.escapeHtml(nombreArchivo);
+        const src = this.escapeHtml(url);
+
+        if (esPendiente) {
+            return `
+                <div class="aveMediaPlaceholder">
+                    <div class="aveMediaPlaceholderIcon">☁</div>
+                    <div class="aveMediaPlaceholderTitle">Archivo pendiente de subida</div>
+                    <div class="aveMediaPlaceholderText">${nombre}</div>
+                </div>
+            `;
+        }
+
+        if (tipo === "VIDEO") {
+            return `
+                <div class="aveMediaViewer">
+                    <video controls preload="metadata" playsinline title="${nombre}">
+                        <source src="${src}" />
+                        Tu navegador no puede reproducir este video.
+                    </video>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="aveMediaViewer">
+                <img src="${src}" alt="${nombre}" />
+            </div>
+        `;
+    }
+
+    private async obtenerUrlVisualizacionArchivo(url: string): Promise<string> {
+        if (!url || !String(url).includes(".s3.")) return url;
+
+        const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.authService.getToken()}`
+            },
+            body: JSON.stringify({ fileUrl: url })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error?.message || "No se pudo preparar la visualizacion del archivo.");
+        }
+
+        return data.downloadUrl || url;
+    }
+
+    private escapeHtml(value: string): string {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    private obtenerNombreSinExtension(nombreArchivo: string): string {
+        return String(nombreArchivo || "").replace(/\.[^/.]+$/, "");
+    }
+
+    private normalizarNombreArchivo(nombreArchivo: string): string {
+        return String(nombreArchivo || "").trim().toLowerCase();
+    }
+
+    private async registrarArchivoAve(file: File): Promise<void> {
+        const esImagen = file.type.startsWith("image/");
+        const endpoint = esImagen ? "FotosAve" : "VideosAve";
+        const tipo = esImagen ? "IMAGEN" : "VIDEO";
+        const carga = await this.prepararCargaArchivoAve(file, tipo);
+        await this.subirArchivoAS3(carga.uploadUrl, file, file.type);
+
+        const payload: any = {
+            ave_ID: this.aveId,
+            titulo: carga.nombreArchivo || file.name,
+            descripcion: "Archivo guardado correctamente",
+            urlSharepoint: carga.fileUrl
+        };
+
+        if (esImagen) {
+            payload.fechaFoto = new Date().toISOString().slice(0, 10);
+            payload.thumbnailUrl = carga.fileUrl;
+            payload.esPrincipal = false;
+        } else {
+            payload.fechaVideo = new Date().toISOString().slice(0, 10);
+        }
+
+        const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.authService.getToken()}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.error?.message || `No se pudo registrar ${file.name}`);
+        }
+    }
+
+    private async prepararCargaArchivoAve(file: File, tipo: string): Promise<any> {
+        const response = await fetch(`${this.baseUrl}/prepararCargaArchivoAve`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.authService.getToken()}`
+            },
+            body: JSON.stringify({
+                aveId: this.aveId,
+                nombreArchivo: file.name,
+                mimeType: file.type,
+                tamanioBytes: file.size,
+                tipo
+            })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error?.message || data.message || `No se pudo preparar ${file.name}`);
+        }
+
+        if (!data.uploadUrl) {
+            throw new Error("El backend no devolvio URL de carga. Configura AWS_S3_AVES_BUCKET o AWS_S3_BUCKET.");
+        }
+
+        return data;
+    }
+
+    private async subirArchivoAS3(uploadUrl: string, file: File, mimeType: string): Promise<void> {
+        const response = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": mimeType
+            },
+            body: file
+        });
+
+        if (!response.ok) {
+            throw new Error(`No se pudo subir ${file.name} a AWS S3.`);
+        }
+    }
+
+    private limpiarUploaderArchivosAveDetail(): void {
+        const uploader = this.byId("archivosAveDetailUploader") as any;
+        uploader?.clear?.();
+        uploader?.setValue?.("");
+    }
+
     public onNavBack(): void {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
         oRouter?.navTo("RouteList");
@@ -594,6 +1172,8 @@ export default class AveDetail extends Controller {
 
     public formatearCategoria(categoria: CategoriaAve): string {
         const categorias = {
+            [CategoriaAve.Pesimo]: "Pesimo",
+            [CategoriaAve.Regular]: "Regular",
             [CategoriaAve.Bueno]: "Bueno",
             [CategoriaAve.Excelente]: "Excelente",
             [CategoriaAve.Extraordinario]: "Extraordinario",

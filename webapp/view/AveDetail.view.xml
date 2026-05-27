@@ -3,11 +3,15 @@
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
     xmlns:form="sap.f">
 
     <Page title="Detalle del Ave" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}"
+                type="{planIndicator>/type}" visible="{planIndicator>/visible}"
+                class="planHeaderButton sapUiTinyMarginEnd" />
             <form:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -25,7 +29,11 @@
                     <VBox>
                         <Title text="{detail>/nombre}" level="H2" />
                         <Text text="Placa: {detail>/placa}" />
-                        <ObjectStatus text="{detail>/estado}"
+                        <ObjectStatus
+                            text="{
+                                    path: 'detail>/estado',
+                                    formatter: '.formatearEstado'
+                                }"
                             state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
                                    ${detail>/estado} === 'VENDIDO' ? 'Warning' :
                                    ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
@@ -38,7 +46,11 @@
                         columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Placa" />
-                            <Text text="{detail>/placa}" />
+                            <ObjectStatus
+                                text="{
+                                path: 'detail>/placa'
+                                }"
+                                state="Information" />
 
                             <Label text="Nombre" />
                             <Text text="{detail>/nombre}" />
@@ -47,11 +59,13 @@
                             <Text text="{detail>/apodo}" />
 
                             <Label text="Género" />
-                            <Text
+                            <ObjectStatus
                                 text="{
-                                    path: 'detail>/sexo',
-                                    formatter: '.formatearSexo'
-                                }" />
+                                path: 'detail>/sexo',
+                                formatter: '.formatearSexo'
+                                }"
+                                state="Information" />
+
                             <!-- <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
                                 <core:Item key="M" text="Macho"/>
                                 <core:Item key="H" text="Hembra"/>
@@ -61,11 +75,19 @@
                             <CheckBox selected="{detail>/cria}" editable="false" />
 
                             <Label text="Estado" />
-                            <Text
+                            <ObjectStatus
                                 text="{
                                     path: 'detail>/estado',
                                     formatter: '.formatearEstado'
-                                }" />
+                                }"
+                                state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
+                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
+                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
+                            <!-- <Text
+                                text="{
+                                    path: 'detail>/estado',
+                                    formatter: '.formatearEstado'
+                                }" /> -->
                             <!-- <Select selectedKey="{detail>/estado}"
                             enabled="{detail>/editMode}">
                                 <core:Item key="ACTIVO" text="Activo"/>
@@ -154,6 +176,66 @@
                     </f:SimpleForm>
                 </Panel>
 
+                <Panel headerText="Archivos del ave" expandable="true" expanded="true"
+                    visible="{dashboard>/multimediaPremium}"
+                    class="sapUiSmallMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <HBox alignItems="Center" wrap="Wrap" class="sapUiTinyMarginBottom">
+                            <u:FileUploader
+                                id="archivosAveDetailUploader"
+                                buttonText="Agregar imagenes o videos"
+                                fileType="jpg,jpeg,png,webp,mp4,mov,avi,mkv,webm"
+                                mimeType="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm"
+                                multiple="true"
+                                sameFilenameAllowed="true"
+                                change=".onArchivosAveDetailChange" />
+                            <ObjectStatus
+                                class="sapUiSmallMarginBegin"
+                                text="{= 'Disponibles: ' + ${detail>/archivosRestantes} + ' de 3'}"
+                                state="{= ${detail>/archivosRestantes} > 0 ? 'Information' : 'Warning'}" />
+                        </HBox>
+                        <Table items="{detail>/archivosAve}" noDataText="Sin archivos registrados">
+                            <columns>
+                                <Column minScreenWidth="Desktop" demandPopin="true" >
+                                    <Text text="Archivo" />
+                                </Column>
+                                <Column width="15%">
+                                    <Text text="Vista" />
+                                </Column>
+                                <Column width="15%" minScreenWidth="Desktop" demandPopin="true">
+                                    <Text text="Estado" />
+                                </Column>
+                                <Column width="10%">
+                                    <Text text="Acciones" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <HBox alignItems="Center">
+                                            <ObjectStatus
+                                                icon="{= ${detail>tipo} === 'IMAGEN' ? 'sap-icon://picture' : 'sap-icon://video'}"
+                                                state="Information" />
+                                            <Text text="{detail>nombreVisual}" class="sapUiSmallMarginBegin" />
+                                        </HBox>
+                                        <Button
+                                            text="Ver"
+                                            icon="{= ${detail>tipo} === 'VIDEO' ? 'sap-icon://video' : 'sap-icon://picture'}"
+                                            type="Transparent"
+                                            press=".onVerArchivoAve" />
+                                        <ObjectStatus
+                                            text="{detail>estadoArchivoTexto}"
+                                            state="{detail>estadoArchivoState}"
+                                            icon="{detail>estadoArchivoIcon}" />
+                                        <Button icon="sap-icon://delete" type="Transparent"
+                                            tooltip="Quitar archivo" press=".onEliminarArchivoAve" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </VBox>
+                </Panel>
+
                 <Panel headerText="Evaluacion reproductiva" expandable="true" expanded="true"
                     class="sapUiSmallMarginTop">
                     <Table items="{detail>/evaluaciones}" noDataText="Sin evaluaciones registradas">
@@ -210,6 +292,68 @@
                     </Table>
                 </Panel>
 
+                <Panel headerText="Evaluacion de pleito" expandable="true" expanded="true"
+                    class="sapUiSmallMarginTop">
+                    <Table items="{detail>/evaluacionesPleito}"
+                        noDataText="Sin evaluaciones de pleito registradas">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <ToolbarSpacer />
+                                <Button text="Nueva evaluacion" type="Emphasized"
+                                    icon="sap-icon://add" press=".onAbrirEvaluacionPleitoDialog" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column width="10%">
+                                <Text text="Fecha" />
+                            </Column>
+                            <Column width="14%">
+                                <Text text="Calificacion" />
+                            </Column>
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Bravura" />
+                            </Column>
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Tecnica" />
+                            </Column>
+                            <Column width="10%" minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Resistencia" />
+                            </Column>
+                            <Column width="12%" minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Cond. fisica" />
+                            </Column>
+                            <Column width="24%" minScreenWidth="Desktop" demandPopin="true">
+                                <Text text="Observaciones" />
+                            </Column>
+                            <Column width="10%">
+                                <Text text="Acciones" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text
+                                        text="{path: 'detail>fecha', formatter: '.formatearFecha'}" />
+                                    <ObjectStatus
+                                        text="{path: 'detail>calificacion', formatter: '.formatearCategoria'}"
+                                        state="{= ${detail>calificacion} === 'EXCELENTE' || ${detail>calificacion} === 'EXTRAORDINARIO' ? 'Success' : ${detail>calificacion} === 'REGULAR' ? 'Warning' : ${detail>calificacion} === 'PESIMO' ? 'Error' : 'Information'}" />
+                                    <ObjectNumber number="{detail>bravura}" />
+                                    <ObjectNumber number="{detail>tecnica}" />
+                                    <ObjectNumber number="{detail>resistencia}" />
+                                    <ObjectNumber number="{detail>condicionFisica}" />
+                                    <Text text="{detail>observaciones}" />
+                                    <HBox>
+                                        <Button icon="sap-icon://edit" type="Transparent"
+                                            tooltip="Editar" press=".onEditarEvaluacionPleito" />
+                                        <Button icon="sap-icon://delete" type="Transparent"
+                                            tooltip="Eliminar" press=".onEliminarEvaluacionPleito" />
+                                    </HBox>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
                 <!-- Genealogía -->
                 <Panel headerText="Genealogía" expandable="true" expanded="true"
                     class="sapUiSmallMarginTop">
@@ -231,10 +375,10 @@
                             <Input value="{detail>/criador}" editable="false" />
 
                             <Label text="Arbol Genealógico"
-                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }"/>
+                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
                             <Button icon="sap-icon://org-chart" type="Emphasized"
                                 press="onVerArbGen" width="5rem" tooltip="Ver Arbol Genealógico"
-                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }"/>
+                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
 
                         </f:content>
                     </f:SimpleForm>

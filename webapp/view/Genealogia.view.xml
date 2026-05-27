@@ -14,6 +14,7 @@
         xmlns:form="sap.f">
         <headerContent>
             <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <form:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -217,7 +218,6 @@
                             status="{genealogia>status}">
                             <graph:attributes>
                                 <graph:ElementAttribute label="Rol" value="{genealogia>rol}" />
-                                <graph:ElementAttribute label="Generacion" value="{genealogia>generacion}" />
                                 <graph:ElementAttribute label="Sexo" value="{genealogia>sexo}" />
                                 <graph:ElementAttribute label="Estado" value="{genealogia>estado}" />
                             </graph:attributes>

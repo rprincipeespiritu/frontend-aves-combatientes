@@ -1,0 +1,108 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.CombateDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:fb="sap.f">
+
+    <Page
+        title="Detalle de combate"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        busy="{detalle>/busy}">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
+            <fb:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <ObjectHeader
+                    title="{path: 'detalle>/combate/fecha', formatter: '.formatearFecha'}"
+                    intro="{detalle>/combate/evento}"
+                    number="{path: 'detalle>/combate/tipoCombate', formatter: '.formatearTipo'}"
+                    numberState="{= ${detalle>/combate/tipoCombate} === 'OFICIAL' ? 'Success' : 'Information'}">
+                    <statuses>
+                        <ObjectStatus
+                            text="{path: 'detalle>/combate/resultado', formatter: '.formatearResultado'}"
+                            state="{path: 'detalle>/combate/resultado', formatter: '.estadoResultado'}" />
+                        <ObjectStatus
+                            text="{= ${detalle>/combate/ambosPropios} === false ? 'Rival externo' : 'Ambas aves propias'}"
+                            state="{= ${detalle>/combate/ambosPropios} === false ? 'Warning' : 'Success'}" />
+                    </statuses>
+                </ObjectHeader>
+
+                <Panel headerText="Combatientes" class="sapUiMediumMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Primer combatiente" />
+                            <Link text="{= ${detalle>/combate/ave/placa} + ' - ' + (${detalle>/combate/ave/nombre} || 'Sin nombre') }" press=".onVerCombatienteA" />
+
+                            <Label text="Segundo combatiente / Rival" />
+                            <Link text="{= ${detalle>/combate/combatienteB/placa} + ' - ' + (${detalle>/combate/combatienteB/nombre} || 'Sin nombre') }" press=".onVerCombatienteB" visible="{= ${detalle>/combate/ambosPropios}}" />
+                            <Text text="{path: 'detalle>/combate', formatter: '.formatearRival'}" visible="{= !${detalle>/combate/ambosPropios}}"/>
+
+                            <Label text="Propietario rival" />
+                            <Text text="{path: 'detalle>/combate', formatter: '.formatearPropietarioRival'}" />
+
+                            <Label text="Procedencia rival" visible="{= ${detalle>/combate/ambosPropios} === false}" />
+                            <Text text="{detalle>/combate/procedenciaOponente}" visible="{= ${detalle>/combate/ambosPropios} === false}" />
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <Panel headerText="Datos del combate" class="sapUiMediumMarginTop">
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Lugar" />
+                            <Text text="{detalle>/combate/lugar}" />
+
+                            <Label text="Metodo" />
+                            <Text text="{detalle>/combate/metodoVictoria}" />
+
+                            <Label text="Lesiones" />
+                            <Text text="{detalle>/combate/lesiones}" />
+
+                            <Label text="Observaciones" />
+                            <Text text="{detalle>/combate/observaciones}" />
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <Panel headerText="Video" class="sapUiMediumMarginTop"
+                    visible="{dashboard>/multimediaPremium}">
+                    <core:HTML
+                        sanitizeContent="false"
+                        visible="{= !!${detalle>/combate/videoUrl}}"
+                        content="{path: 'detalle>/combate', formatter: '.renderVideoPlayer'}" />
+                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
+                        <f:content>
+                            <Label text="Estado" />
+                            <ObjectStatus
+                                text="{path: 'detalle>/combate/videoEstadoCarga', formatter: '.formatearVideo'}"
+                                icon="{= ${detalle>/combate/videoUrl} ? 'sap-icon://video' : 'sap-icon://attachment' }"
+                                state="{= ${detalle>/combate/videoUrl} ? 'Information' : 'None' }" />
+
+                            <Label text="Archivo" />
+                            <Text text="{detalle>/combate/videoNombreArchivo}" />
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+            </VBox>
+        </content>
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Editar" type="Emphasized" icon="sap-icon://edit" press=".onEditar" />
+                <Button text="Cancelar" press=".onNavBack" />
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

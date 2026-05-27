@@ -74,6 +74,7 @@ export default class Welcome extends Controller {
       alertaEclosion: "",
       incubacionesRecientes: [],
       totalCruces: 0,
+      totalCombates: 0,
       suscripcionTexto: "",
       suscripcionDias: 0,
       plan: "",
@@ -130,6 +131,7 @@ export default class Welcome extends Controller {
         totalLineas: oData.totalLineas,
         totalPlanes: oData.totalPlanes || 0,
         totalPollitos: oData.totalPollitos || 0,
+        totalCombates: oData.totalCombates || 0,
         suscripcionTexto: oModel.getProperty("/suscripcionTexto") || "",
         suscripcionDias: oModel.getProperty("/suscripcionDias") || 0,
         plan: oData.plan,
@@ -183,6 +185,11 @@ export default class Welcome extends Controller {
     } catch (error) {
       // El dashboard puede mostrarse aunque falle este resumen.
     }
+  }
+
+  public onNavNewLine(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter.navTo("RouteLineaGalloCreate");
   }
 
   private mostrarPopupTrialObligatorioLegacy(): void {
@@ -262,6 +269,7 @@ export default class Welcome extends Controller {
 
       MessageToast.show(oData.message || "Plan de prueba activado");
       await this._cargarDashboard();
+      await (this.getOwnerComponent() as any)?.loadPlanIndicator?.();
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo activar el plan de prueba", {
         onClose: () => void this.mostrarPopupTrialObligatorio(),
@@ -554,6 +562,11 @@ export default class Welcome extends Controller {
   public onVerReportes(): void {
     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
     oRouter?.navTo("RouteReportes");
+  }
+
+  public onVerCombates(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter?.navTo("RouteCombates");
   }
 
   public onVerGenealogia(): void {

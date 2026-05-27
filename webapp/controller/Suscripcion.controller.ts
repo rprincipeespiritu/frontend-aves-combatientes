@@ -103,43 +103,39 @@ export default class Suscripcion extends Controller {
     }
 
     private confirmarActivacion(plan: string): void {
-        MessageBox.confirm(`Seras redirigido a Mercado Pago para suscribirte al plan ${plan}.`, {
-            title: "Pagar suscripcion",
+        MessageBox.confirm(`Deseas activar el plan ${plan} en modo local para probar accesos?`, {
+            title: "Activar plan local",
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             emphasizedAction: MessageBox.Action.OK,
             onClose: (action: string) => {
                 if (action === MessageBox.Action.OK) {
-                    void this.crearCheckoutMercadoPago(plan);
+                    void this.activarSuscripcionLocal(plan);
                 }
             },
         });
     }
 
-    private async crearCheckoutMercadoPago(plan: string): Promise<void> {
+    private async activarSuscripcionLocal(plan: string): Promise<void> {
         const oModel = this.getView()?.getModel("suscripcion") as JSONModel;
         oModel.setProperty("/busy", true);
 
         try {
-            const response = await fetch(`${this.baseUrl}/crearCheckoutMercadoPago`, {
+            const response = await fetch(`${this.baseUrl}/activarSuscripcion`, {
                 method: "POST",
                 headers: this.getHeaders(),
-                body: JSON.stringify({ plan }),
+                body: JSON.stringify({ plan, meses: 1 }),
             });
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data?.error?.message || data?.message || "No se pudo iniciar el pago");
+                throw new Error(data?.error?.message || data?.message || "No se pudo activar la suscripcion");
             }
 
-            const checkoutUrl = data.initPoint || data.sandboxInitPoint;
-            if (!checkoutUrl) {
-                throw new Error("Mercado Pago no devolvio una URL de pago.");
-            }
-
-            MessageToast.show("Abriendo Mercado Pago");
-            window.location.href = checkoutUrl;
+            MessageToast.show(data.message || "Plan local activado");
+            await this.cargarSuscripcion();
+            await (this.getOwnerComponent() as any)?.loadPlanIndicator?.();
         } catch (error: any) {
-            MessageBox.error(error.message || "No se pudo iniciar el pago");
+            MessageBox.error(error.message || "No se pudo activar la suscripcion");
         } finally {
             oModel.setProperty("/busy", false);
         }
