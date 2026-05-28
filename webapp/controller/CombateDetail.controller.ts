@@ -82,7 +82,7 @@ export default class CombateDetail extends Controller {
       model.setProperty("/plan", data.plan || "");
       model.setProperty("/estadoSuscripcion", data.estado || "");
       model.setProperty("/accesoSuscripcion", tieneAcceso);
-      model.setProperty("/multimediaPremium", tieneAcceso && data.plan === "PREMIUM");
+      model.setProperty("/multimediaPremium", tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan));
       model.refresh(true);
     } catch (error) {
       // El detalle puede mostrarse aunque falle el resumen de suscripcion.

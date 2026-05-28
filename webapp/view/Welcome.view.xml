@@ -42,7 +42,7 @@
                                     <Button text="Agregar Linaje" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavNewLine" class="heroActionButton"
-                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
+                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
                                 </HBox>
                             </VBox>
                         </content>
@@ -61,7 +61,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Linaje de Aves"
                             subheader="Registradas" press="onNavLineasGallosList"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalLineas}"
                                     icon="images/icons/bird-lineage.svg" />
@@ -70,7 +70,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce"
                             subheader="Ver historial" press=".onVerPlanesCruce"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalPlanes}"
                                     icon="images/icons/crossing-plans.svg" />
@@ -97,7 +97,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Reportes" subheader=""
                             press="onVerReportes"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <ImageContent src="images/icons/reports.svg" />
                             </TileContent>
@@ -105,7 +105,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Genealogía"
                             subheader="Arbol genealógico" press="onVerGenealogia"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <ImageContent src="images/icons/genealogy.svg" />                                
                             </TileContent>
@@ -123,7 +123,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Combates"
                             subheader="Registro de peleas" press="onVerCombates"
-                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; ${dashboard>/plan} === 'PREMIUM' }">
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalCombates}"
                                     icon="images/icons/combats.svg" />
