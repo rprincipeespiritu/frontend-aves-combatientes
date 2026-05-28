@@ -199,7 +199,7 @@ export default class Welcome extends Controller {
 
     this._trialPromptOpen = true;
     MessageBox.warning(
-      "Para continuar usando el sistema debes activar tu plan de prueba gratuito por 30 dias.\n\nIncluye lo mismo que el plan Basico:\n- 100 aves adultas\n- 200 aves jovenes\n- 50 incubaciones",
+      "Para continuar usando el sistema debes activar tu plan de prueba gratuito por 60 dias.\n\nIncluye los mismos privilegios del plan Premium.",
       {
         title: "Activa tu prueba",
         actions: ["Activar prueba", "Cerrar sesión"],

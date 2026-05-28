@@ -57,16 +57,7 @@ export default class Component extends BaseComponent {
     RouteCombateDetail: "Peleas",
   };
   private readonly modulesByPlan: Record<string, string[]> = {
-    PRUEBA: [
-      "Aves",
-      "Crias",
-      "Incubaciones",
-      "IncubacionDetalles",
-      "FotosAve",
-      "VideosAve",
-      "DocumentosAve",
-      "Suscripciones",
-    ],
+    PRUEBA: ["*"],
     BASICO: [
       "Aves",
       "Crias",

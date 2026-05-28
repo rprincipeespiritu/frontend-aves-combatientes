@@ -136,7 +136,7 @@ export default class AveDetail extends Controller {
                 data.tieneSuscripcion !== false &&
                 ["ACTIVA", "CANCELADA"].includes(data.estado) &&
                 Number(data.diasRestantes || 0) >= 0;
-            const multimediaPremium = tieneAcceso && data.plan === "PREMIUM";
+            const multimediaPremium = tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan);
 
             oModel.setProperty("/plan", data.plan || "");
             oModel.setProperty("/estadoSuscripcion", data.estado || "");

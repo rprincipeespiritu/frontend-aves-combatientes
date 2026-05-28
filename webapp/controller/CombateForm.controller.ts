@@ -111,7 +111,7 @@ export default class CombateForm extends Controller {
       model.setProperty("/plan", data.plan || "");
       model.setProperty("/estadoSuscripcion", data.estado || "");
       model.setProperty("/accesoSuscripcion", tieneAcceso);
-      model.setProperty("/multimediaPremium", tieneAcceso && data.plan === "PREMIUM");
+      model.setProperty("/multimediaPremium", tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan));
       model.refresh(true);
     } catch (error) {
       // La carga del formulario no depende del resumen de suscripcion.

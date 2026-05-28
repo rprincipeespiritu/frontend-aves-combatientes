@@ -16,9 +16,9 @@
 
                 <VBox alignItems="Center" class="trialHero">
                     <Avatar icon="sap-icon://learning-assistant" displaySize="XL" class="trialHeroAvatar"/>
-                    <Text text="Gestión Pro" class="trialBrand"/>
+                    <Text text="Gestión de Suscripciones" class="trialBrand"/>
                     <Title text="Activa tu prueba gratuita" level="H1" textAlign="Center" class="trialTitle"/>
-                    <Text text="Prueba el sistema por 30 días con los mismos límites del plan Básico." textAlign="Center" class="trialSubtitle"/>
+                    <Text text="Prueba el sistema por 60 días con los mismos privilegios del Plan Premium." textAlign="Center" class="trialSubtitle"/>
                 </VBox>
 
                 <VBox class="trialSteps">
@@ -29,7 +29,7 @@
                         </VBox>
                         <VBox class="trialStepText">
                             <Title text="Comienza tu prueba gratuita" level="H4"/>
-                            <Text text="Se activará por 30 días desde hoy."/>
+                            <Text text="Se activará por 60 días desde hoy."/>
                         </VBox>
                     </HBox>
 
@@ -39,8 +39,8 @@
                             <core:Icon src="sap-icon://vertical-grip" class="trialStepLineMuted"/>
                         </VBox>
                         <VBox class="trialStepText">
-                            <Title text="Incluye el plan Básico" level="H4"/>
-                            <Text text="100 aves adultas, 200 aves jóvenes y 50 incubaciones."/>
+                            <Title text="Incluye el Plan Premium" level="H4"/>
+                            <Text text="Acceso completo a gestión de Aves, Crias, Incubaciones, Fotos, Videos, Combates, Genealogía, Linaje, Plan de Cruces y Reportes."/>
                         </VBox>
                     </HBox>
 
@@ -63,11 +63,11 @@
                 <VBox class="trialPaymentSummary">
                     <HBox justifyContent="SpaceBetween">
                         <Text text="A pagar hoy"/>
-                        <ObjectStatus text="30 días gratis  S/0.00" state="Success"/>
+                        <ObjectStatus text="S/0.00 x 60 días gratis" state="Success"/>
                     </HBox>
                     <HBox justifyContent="SpaceBetween">
-                        <Text text="Límites incluidos"/>
-                        <Text text="Plan Básico"/>
+                        <Text text="Privilegios incluidos"/>
+                        <Text text="Plan Premium"/>
                     </HBox>
                 </VBox>
 
