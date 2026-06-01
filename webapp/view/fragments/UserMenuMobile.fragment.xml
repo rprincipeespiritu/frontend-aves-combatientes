@@ -2,7 +2,7 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
 
-    <ActionSheet id="userMenuSheet" placement="Bottom" title="Datos del Usuario">
+    <ActionSheet id="userMenuSheet" placement="Bottom" title="Datos del Usuario" class="userMenuMobileSheet">
         <buttons>
             <Button text="{user>/nombre} {user>/apellido}" icon="sap-icon://account" enabled="false" />
             <Button text="{user>/email}" icon="sap-icon://email" enabled="false" />

@@ -929,3 +929,21 @@
   max-width: 80%;
   overflow-wrap: anywhere;
 }
+
+.userMenuMobileSheet .sapMActionSheetCancelButton .sapMBtnInner,
+.userMenuMobileSheet .sapMBtnReject .sapMBtnInner {
+  border-color: #0a6ed1;
+  background: #0a6ed1;
+  color: #fff;
+}
+
+.userMenuMobileSheet .sapMActionSheetCancelButton .sapMBtnContent,
+.userMenuMobileSheet .sapMBtnReject .sapMBtnContent {
+  color: #fff;
+}
+
+.userMenuMobileSheet .sapMActionSheetCancelButton .sapMBtnInner:hover,
+.userMenuMobileSheet .sapMBtnReject .sapMBtnInner:hover {
+  border-color: #0854a0;
+  background: #0854a0;
+}
