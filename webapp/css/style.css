@@ -380,6 +380,129 @@
   color: #d88900 !important;
 }
 
+.userMenuPopover .sapMPopoverCont,
+.userMenuPopover .sapMPopoverScroll,
+.userMenuPopover .sapMDialogScrollCont {
+  overflow: hidden !important;
+}
+
+.userMenuCard {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.45rem 1.25rem 1.25rem;
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(222, 243, 255, 0.8) 0%, rgba(255, 255, 255, 0.98) 42%),
+    #ffffff;
+}
+
+.userMenuAvatarWrap {
+  margin-bottom: 0.9rem;
+}
+
+.userMenuAvatar {
+  background: #d6efff;
+  color: var(--app-blue);
+  box-shadow: 0 0 0 0.45rem rgba(214, 239, 255, 0.55);
+}
+
+.userMenuIdentity {
+  margin-bottom: 1rem;
+}
+
+.userMenuName {
+  max-width: 100%;
+  color: #092a4b;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.userMenuEmail {
+  max-width: 100%;
+  margin-top: 0.25rem;
+  color: #3e5973;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.userMenuActions {
+  gap: 0.75rem;
+}
+
+.userMenuActions .sapMBtn + .sapMBtn {
+  margin-top: 0.75rem;
+}
+
+.userMenuActionButton .sapMBtnInner,
+.userMenuLogoutButton .sapMBtnInner {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0 1rem !important;
+}
+
+.userMenuActionButton .sapMBtnInner {
+  height: 2.65rem;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--app-blue);
+}
+
+.userMenuPopover .userMenuActionButton .sapMBtnInner,
+.userMenuPopover .userMenuActionButton .sapMBtnInner.sapMBtnTransparent,
+.userMenuPopover .userMenuActionButton .sapMBtnInner:hover,
+.userMenuPopover .userMenuActionButton .sapMBtnInner:focus,
+.userMenuPopover .userMenuActionButton .sapMBtnInner:active {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.userMenuPopover .userMenuActionButton .sapMBtnInner::before,
+.userMenuPopover .userMenuActionButton .sapMBtnInner::after,
+.userMenuPopover .userMenuActionButton .sapMBtn:focus > .sapMFocusable::before,
+.userMenuPopover .userMenuActionButton .sapMBtn:focus > .sapMFocusable::after {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.userMenuActionButton .sapMBtnContent,
+.userMenuActionButton .sapMBtnIcon {
+  color: var(--app-blue) !important;
+  font-weight: 800;
+}
+
+.userMenuActionButton .sapMBtnContent,
+.userMenuLogoutButton .sapMBtnContent {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 !important;
+  text-align: center;
+}
+
+.userMenuActionButton .sapMBtnIcon,
+.userMenuLogoutButton .sapMBtnIcon {
+  position: static !important;
+  width: auto !important;
+  margin: 0 !important;
+  line-height: 1;
+}
+
+.userMenuLogoutButton .sapMBtnInner {
+  height: 2.65rem;
+  border-radius: 0.75rem;
+}
+
 .sapMBtnEmphasized .sapMBtnInner,
 .sapMBtnInner.sapMBtnEmphasized {
   border: 0;
@@ -475,6 +598,38 @@
   .combatVideoPlayer video {
     max-height: 13rem;
     border-radius: 0.65rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .userMenuPopover {
+    max-width: calc(100vw - 1.5rem) !important;
+  }
+
+  .userMenuPopover .sapMPopover,
+  .userMenuPopover .sapMPopoverCont {
+    max-width: calc(100vw - 1.5rem) !important;
+  }
+
+  .userMenuCard {
+    padding: 1.15rem 1rem 1rem;
+  }
+
+  .userMenuAvatarWrap {
+    margin-bottom: 0.75rem;
+  }
+
+  .userMenuName {
+    font-size: 1rem;
+  }
+
+  .userMenuEmail {
+    font-size: 0.9rem;
+  }
+
+  .userMenuActionButton .sapMBtnInner,
+  .userMenuLogoutButton .sapMBtnInner {
+    height: 2.45rem;
   }
 }
 

@@ -5,41 +5,43 @@
 
     <ResponsivePopover
             id="userMenuPopover"
+            class="userMenuPopover"
             showHeader="false"
             placement="Bottom"
-            contentWidth="15rem">
+            contentWidth="20rem"
+            horizontalScrolling="false"
+            verticalScrolling="false">
 
-        <VBox class="sapUiMediumMargin">
-            <HBox justifyContent="Center" class="sapUiSmallMarginBottom">
+        <VBox class="userMenuCard">
+            <HBox justifyContent="Center" class="userMenuAvatarWrap">
                 <f:Avatar
                         src="{user>/foto}"
                         displaySize="L"
-                        displayShape="Circle" />
+                        displayShape="Circle"
+                        class="userMenuAvatar" />
             </HBox>
 
-            <VBox alignItems="Center" class="sapUiSmallMarginBottom">
-                <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" />
-                <Text text="{user>/email}" />
+            <VBox alignItems="Center" class="userMenuIdentity">
+                <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" class="userMenuName" />
+                <Text text="{user>/email}" textAlign="Center" class="userMenuEmail" />
             </VBox>
 
-            <!--<Button
-                    text="Administrar perfil"
-                    type="Transparent"
-                    icon="sap-icon://employee"
-                    press="onMiPerfil"
-                    class="sapUiSmallMarginBottom" />-->
-
-            <VBox justifyContent="SpaceBetween">
-                <!--<Button
-                        text="Cambiar cuenta"
-                        icon="sap-icon://person-placeholder"
-                        press="onCambiarCuenta" />-->
+            <VBox class="userMenuActions">
+                <Button
+                        text="Configuracion de cuenta"
+                        type="Transparent"
+                        icon="sap-icon://action-settings"
+                        press="onAccountSettings"
+                        width="100%"
+                        class="userMenuActionButton" />
 
                 <Button
-                        text="Cerrar sesión"
+                        text="Cerrar sesion"
                         type="Emphasized"
                         icon="sap-icon://log"
-                        press="onLogout" />
+                        press="onLogout"
+                        width="100%"
+                        class="userMenuLogoutButton" />
             </VBox>
         </VBox>
     </ResponsivePopover>
