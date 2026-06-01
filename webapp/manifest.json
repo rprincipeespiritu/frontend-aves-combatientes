@@ -229,6 +229,11 @@
           "target": "TargetSuscripcion"
         },
         {
+          "pattern": "cuenta",
+          "name": "RouteAccountSettings",
+          "target": "TargetAccountSettings"
+        },
+        {
           "pattern": "genealogia:?query:",
           "name": "RouteGenealogia",
           "target": "TargetGenealogia"
@@ -348,6 +353,10 @@
         "TargetSuscripcion": {
           "id": "Suscripcion",
           "viewName": "Suscripcion"
+        },
+        "TargetAccountSettings": {
+          "id": "AccountSettings",
+          "viewName": "AccountSettings"
         },
         "TargetGenealogia": {
           "id": "Genealogia",

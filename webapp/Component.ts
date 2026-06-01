@@ -1,4 +1,5 @@
 import BaseComponent from "sap/ui/core/UIComponent";
+import Controller from "sap/ui/core/mvc/Controller";
 import { createDeviceModel } from "./model/models";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
@@ -29,6 +30,7 @@ export default class Component extends BaseComponent {
   private readonly unrestrictedRoutes = new Set([
     "RouteWelcome",
     "RouteSuscripcion",
+    "RouteAccountSettings",
   ]);
   private readonly routeModuleMap: Record<string, string> = {
     RouteList: "Aves",
@@ -93,6 +95,7 @@ export default class Component extends BaseComponent {
   public init(): void {
     // call the base component's init function
     super.init();
+    this.installGlobalAccountSettingsHandler();
 
     // set the device model
     this.setModel(createDeviceModel(), "device");
@@ -110,6 +113,20 @@ export default class Component extends BaseComponent {
       void this.onRouteMatched(event);
     });
     this.getRouter().initialize();
+  }
+
+  private installGlobalAccountSettingsHandler(): void {
+    const controllerPrototype = Controller.prototype as any;
+
+    if (controllerPrototype.onAccountSettings) {
+      return;
+    }
+
+    controllerPrototype.onAccountSettings = function (): void {
+      this._oUserMenuPopover?.close?.();
+      this._oUserMenuSheet?.close?.();
+      this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteAccountSettings");
+    };
   }
 
   private async onRouteMatched(event: any): Promise<void> {

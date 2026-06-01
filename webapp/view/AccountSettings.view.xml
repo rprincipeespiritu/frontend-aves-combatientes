@@ -1,0 +1,104 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.AccountSettings"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:fb="sap.f">
+
+    <Page
+        title="Configuracion de cuenta"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
+            <fb:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin" busy="{account>/busy}">
+                <HBox wrap="Wrap" alignItems="Center" class="sapUiMediumMarginBottom">
+                    <Avatar
+                        src="{user>/foto}"
+                        displaySize="L"
+                        displayShape="Circle"
+                        class="sapUiMediumMarginEnd" />
+                    <VBox>
+                        <Title text="{= ${account>/perfil/nombre} + ' ' + ${account>/perfil/apellido} }" level="H2" />
+                        <ObjectStatus text="{account>/perfil/email}" state="Information" />
+                    </VBox>
+                </HBox>
+
+                <Panel headerText="Datos personales">
+                    <f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="4"
+                        labelSpanS="12"
+                        columnsXL="2"
+                        columnsL="2"
+                        columnsM="1">
+                        <f:content>
+                            <Label text="Usuario" />
+                            <Input value="{account>/perfil/username}" maxLength="50" />
+
+                            <Label text="Email" required="true" />
+                            <Input value="{account>/perfil/email}" type="Email" maxLength="100" />
+
+                            <Label text="Nombre" required="true" />
+                            <Input value="{account>/perfil/nombre}" maxLength="100" />
+
+                            <Label text="Apellido" required="true" />
+                            <Input value="{account>/perfil/apellido}" maxLength="200" />
+
+                            <Label text="Telefono" />
+                            <Input value="{account>/perfil/telefono}" type="Tel" maxLength="20" />
+
+                            <Label text="Direccion" />
+                            <TextArea value="{account>/perfil/direccion}" rows="3" growing="true" maxLength="300" />
+                        </f:content>
+                    </f:SimpleForm>
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button text="Guardar cambios" icon="sap-icon://save" type="Emphasized" press=".onGuardarPerfil" />
+                    </Toolbar>
+                </Panel>
+
+                <Panel headerText="Seguridad" class="sapUiMediumMarginTop">
+                    <f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="4"
+                        labelSpanS="12"
+                        columnsXL="2"
+                        columnsL="2"
+                        columnsM="1">
+                        <f:content>
+                            <Label text="Contrasena actual" required="true" />
+                            <Input value="{account>/password/actual}" type="Password" />
+
+                            <Label text="Nueva contrasena" required="true" />
+                            <Input value="{account>/password/nueva}" type="Password" />
+
+                            <Label text="Confirmar contrasena" required="true" />
+                            <Input value="{account>/password/confirmacion}" type="Password" />
+                        </f:content>
+                    </f:SimpleForm>
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <Button text="Actualizar contrasena" icon="sap-icon://key" type="Emphasized" press=".onCambiarPassword" />
+                    </Toolbar>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

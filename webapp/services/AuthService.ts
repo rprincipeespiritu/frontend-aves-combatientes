@@ -27,16 +27,20 @@ export interface Usuario {
 
 export interface AuthResponse {
     success: boolean;
-    token: string;
-    userId: string;
-    username: string;
-    nombre: string;
-    apellido: string;
-    email: string;
-    rol: string;
-    activo: boolean;
+    token?: string;
+    userId?: string;
+    username?: string;
+    nombre?: string;
+    apellido?: string;
+    email?: string;
+    rol?: string;
+    activo?: boolean;
+    estado?: string;
+    telefono?: string;
+    direccion?: string;
     message?: string;
     error?: string;
+    data?: any;
 }
 
 export class AuthService {
@@ -242,11 +246,13 @@ export class AuthService {
         if (!this.token) return null;
 
         try {
-            const response = await fetch(`${this.baseUrl}/auth/perfil`, {
-                method: 'GET',
+            const response = await fetch(`${this.baseUrl}/obtenerPerfil`, {
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.token}`
-                }
+                },
+                body: JSON.stringify({})
             });
 
             if (!response.ok) {
@@ -259,9 +265,9 @@ export class AuthService {
 
             const result = await response.json();
             if (result.success) {
-                this.usuario = result.data;
+                this.usuario = this.mapPerfilToUsuario(result);
                 this.guardarUsuarioEnStorage();
-                return result.data;
+                return this.usuario;
             }
 
             return null;
@@ -282,8 +288,8 @@ export class AuthService {
         }
 
         try {
-            const response = await fetch(`${this.baseUrl}/auth/perfil`, {
-                method: 'PUT',
+            const response = await fetch(`${this.baseUrl}/actualizarPerfil`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.token}`
@@ -293,8 +299,8 @@ export class AuthService {
 
             const result: AuthResponse = await response.json();
 
-            if (result.success && result.data) {
-                this.usuario = result.data.usuario;
+            if (result.success) {
+                this.usuario = this.mapPerfilToUsuario(result);
                 this.guardarUsuarioEnStorage();
             }
 
@@ -319,8 +325,8 @@ export class AuthService {
         }
 
         try {
-            const response = await fetch(`${this.baseUrl}/auth/cambiar-password`, {
-                method: 'PUT',
+            const response = await fetch(`${this.baseUrl}/cambiarPassword`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.token}`
@@ -449,6 +455,20 @@ export class AuthService {
             localStorage.removeItem('auth_user');
             localStorage.removeItem('auth_last_activity');
         }
+    }
+
+    private mapPerfilToUsuario(result: AuthResponse): Usuario {
+        return {
+            _id: result.userId || this.usuario?._id || "",
+            username: result.username || "",
+            email: result.email || "",
+            nombre: result.nombre || "",
+            apellido: result.apellido || "",
+            telefono: result.telefono || "",
+            direccion: result.direccion || "",
+            rol: result.rol || "",
+            activo: result.estado ? result.estado === "ACTIVO" : this.usuario?.activo ?? true
+        };
     }
 
     public iniciarTimeoutInactividad(onTimeout?: () => void): void {
