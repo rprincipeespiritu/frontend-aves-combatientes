@@ -56,7 +56,7 @@ export default class AveUpdate extends Controller {
                 placa: "", nombre: "", apodo: "", sexo: "M",
                 estado: "ACTIVO", ubicacion: "", raza: "",
                 color: "", tipoAve: "", fechaNacimiento: "",
-                fechaCompra: "", padre_ID: "", madre_ID: "",
+                fechaCompra: "", padre_ID: "", madre_ID: "", linea_ID: "",
                 procedencia: "", criador: "", valorCompra: "",
                 valorActual: "", observaciones: "", placaState: "None",
                 categoria: "BUENO"
@@ -173,19 +173,30 @@ export default class AveUpdate extends Controller {
     private async cargarCatalogos(): Promise<void> {
         try {
 
-            const response = await fetch(`${this.baseUrl}/AvesActivas`, {
-                method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-                    "Content-Type": "application/json",
-                },
-            });
+            const headers = {
+                'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                "Content-Type": "application/json",
+            };
+
+            const [response, lineasResponse] = await Promise.all([
+                fetch(`${this.baseUrl}/AvesActivas`, {
+                    method: "GET",
+                    headers,
+                }),
+                fetch(`${this.baseUrl}/LineasAvesActivas?$orderby=nombre asc`, {
+                    method: "GET",
+                    headers,
+                }),
+            ]);
 
             const aves: IAve[] = await response.json();
             const machos = (aves.value || []).filter((a: any) => a.sexo === "M" && a.padrote === true);
             const hembras = (aves.value || []).filter((a: any) => a.sexo === "H" && a.padrote === true);
             this.getView()?.setModel(new JSONModel(machos), "avesMachos");
             this.getView()?.setModel(new JSONModel(hembras), "avesHembras");
+
+            const lineas = lineasResponse.ok ? await lineasResponse.json() : { value: [] };
+            this.getView()?.setModel(new JSONModel(lineas.value || []), "lineas");
         } catch (error) {
             console.error("Error cargando catálogos:", error);
         }
@@ -350,6 +361,7 @@ export default class AveUpdate extends Controller {
                 observaciones: data.observaciones || null,
                 fechaNacimiento: data.fechaNacimiento || null,
                 fechaCompra: data.fechaCompra || null,
+                linea_ID: data.linea_ID || null,
                 valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
                 valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
                 usuario_ID: userId,

@@ -128,8 +128,9 @@
                                     text="{view>nombrePadre}" />
                                 <ObjectIdentifier title="{view>placaMadre}"
                                     text="{view>nombreMadre}" />
-                                <ObjectStatus text="{view>nivelRiesgo}"
-                                    state="{= ${view>nivelRiesgo} === 'ALTO' ? 'Error' : ${view>nivelRiesgo} === 'MEDIO' ? 'Warning' : 'Success'}" />
+                                <ObjectStatus
+                                    text="{ path: 'view>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
+                                    state="{ path: 'view>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
                                 <ObjectNumber number="{view>porcentaje}" unit="%" />
                                 <Input value="{view>totalHuevos}" type="Number"
                                     editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />

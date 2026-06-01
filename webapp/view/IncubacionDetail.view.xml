@@ -1,26 +1,47 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionDetail"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m"
-          xmlns:f="sap.ui.layout.form">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.f">
 
     <Page title="Detalle de Incubación" showNavButton="true" navButtonPress="onNavBack">
 
         <headerContent>
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
-            <Button text="Editar" icon="sap-icon://edit" press="onEdit" visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" />
+            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}"
+                type="{planIndicator>/type}" visible="{planIndicator>/visible}"
+                class="planHeaderButton sapUiTinyMarginEnd" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press="onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
         </headerContent>
 
         <content>
             <VBox class="sapUiMediumMargin" busy="{view>/busy}">
-                <ObjectHeader title="{view>/incubacion/codigo}" number="{
-                                        path: 'view>/incubacion/estado',
-                                        formatter: '.formatearEstado'
-                                    }" numberState="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Success' :
-                                             ${view>/incubacion/estado} === 'PROGRAMADA' ? 'Information' :
-                                             ${view>/incubacion/estado} === 'COMPLETADA' ? 'Warning' :
-                                             ${view>/incubacion/estado} === 'CANCELADA' ? 'Error' : 'Error'}" />
+                <!-- <OverflowToolbar class="sapUiTinyMarginTop">
+                    <ToolbarSpacer />
+                    <Button icon="sap-icon://edit" type="Emphasized" tooltip="Editar" press="onEdit"
+                        visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" />
+                </OverflowToolbar>                 -->
+                <HBox justifyContent="SpaceBetween" alignItems="Center"
+                    class="sapUiMediumMarginBottom">
+                    <Title text="{view>/incubacion/codigo}" level="H1" />
+                    <ObjectStatus
+                        text="{
+                            path: 'view>/incubacion/estado',
+                            formatter: '.formatearEstado'
+                        }"
+                        state="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Success' :
+                            ${view>/incubacion/estado} === 'PROGRAMADA' ? 'Information' :
+                            ${view>/incubacion/estado} === 'COMPLETADA' ? 'Warning' :
+                            ${view>/incubacion/estado} === 'CANCELADA' ? 'Error' : 'Error'}" />
+                </HBox>
 
-                <f:SimpleForm editable="false" layout="ResponsiveGridLayout" class="sapUiMediumMarginTop">
+                <f:SimpleForm editable="false" layout="ResponsiveGridLayout"
+                    class="sapUiMediumMarginTop">
 
                     <f:content>
                         <Title text="Datos Generales" />
@@ -39,32 +60,45 @@
                                              ${view>/incubacion/estado} === 'CANCELADA' ? 'Warning' : 'Error'}"/> -->
 
                         <Label text="Fecha Incubación" />
-                        <Text text="{ path: 'view>/incubacion/fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
+                        <Text
+                            text="{ path: 'view>/incubacion/fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
 
                         <Label text="Fecha Pre Nacimiento" />
-                        <Text text="{ path: 'view>/incubacion/fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
+                        <Text
+                            text="{ path: 'view>/incubacion/fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
 
                         <Label text="Fecha Eclosión Estimada" />
-                        <Text text="{ path: 'view>/incubacion/fechaEclosion', formatter: '.formatter.formatDateTime' }" />
+                        <Text
+                            text="{ path: 'view>/incubacion/fechaEclosion', formatter: '.formatter.formatDateTime' }" />
 
-                        <Label text="Fecha Fin Incubación" visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
-                        <Text text="{ path: 'view>/incubacion/fechaFinIncubacion', formatter: '.formatter.formatDateTime' }" visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }"/>
+                        <Label text="Fecha Fin Incubación"
+                            visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
+                        <Text
+                            text="{ path: 'view>/incubacion/fechaFinIncubacion', formatter: '.formatter.formatDateTime' }"
+                            visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
 
                         <Label text="Observaciones" />
-                        <TextArea value="{view>/incubacion/observaciones}" rows="4" editable="false"/>
-                        <!--<Text text="{view>/incubacion/observaciones}" />-->
+                        <TextArea value="{view>/incubacion/observaciones}" rows="4" editable="false" />
+                        <!--<Text
+                        text="{view>/incubacion/observaciones}" />-->
 
-                        <Label text="Motivo de cancelación" visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
-                        <Text text="{view>/incubacion/motivoCancelacion}" visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
+                        <Label text="Motivo de cancelación"
+                            visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
+                        <Text text="{view>/incubacion/motivoCancelacion}"
+                            visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
 
                         <Label text="Detalle" />
-                        <Table id="tblIncubacionesDetalle" items="{view>/incubacion/detalles}" busy="{view>/busy}">
+                        <Table id="tblIncubacionesDetalle" items="{view>/incubacion/detalles}"
+                            busy="{view>/busy}">
                             <headerToolbar>
                                 <OverflowToolbar>
-                                    <!-- <Title text="Incubaciones Registradas ({= ${view>/incubaciones}.length})"/> -->
-                                    <ToolbarSpacer/>
-                                    <!-- <Button icon="sap-icon://refresh" enabled="{= ${table>/selectedIndex} >= 0}" press="onRefresh"/> -->
-                                    <!-- <Button icon="sap-icon://add" type="Emphasized" press="onAddDetalle" /> -->
+                                    <!-- <Title text="Incubaciones Registradas ({=
+                                    ${view>/incubaciones}.length})"/> -->
+                                    <ToolbarSpacer />
+                                    <!-- <Button icon="sap-icon://refresh" enabled="{=
+                                    ${table>/selectedIndex} >= 0}" press="onRefresh"/> -->
+                                    <!-- <Button icon="sap-icon://add" type="Emphasized"
+                                    press="onAddDetalle" /> -->
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
@@ -72,7 +106,7 @@
                                     <Text text="Padre" />
                                 </Column>
                                 <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
-                                    <Text text="Madre"/>
+                                    <Text text="Madre" />
                                 </Column>
                                 <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
                                     <Text text="Total huevos" />
@@ -94,14 +128,15 @@
                                 <ColumnListItem>
                                     <cells>
                                         <!-- <Text text="{view>padre/placa} {view>padre/nombre}" /> -->
-                                        <Text text="{view>placaPadre}" width="100%"/>
+                                        <Text text="{view>placaPadre}" width="100%" />
                                         <!-- <Text text="{view>madre/placa} {view>madre/nombre}" /> -->
-                                        <Text text="{view>placaMadre}" width="100%"/>
+                                        <Text text="{view>placaMadre}" width="100%" />
                                         <Text text="{view>totalHuevos}" />
                                         <Text text="{view>huevosFertiles}" />
                                         <Text text="{view>huevosEclosionados}" />
                                         <Text text="{view>huevosNoEclosionados}" />
-                                        <!-- <Button icon="sap-icon://delete" type="Transparent" press=".onDeleteDetalle" /> -->
+                                        <!-- <Button icon="sap-icon://delete" type="Transparent"
+                                        press=".onDeleteDetalle" /> -->
                                     </cells>
                                 </ColumnListItem>
                             </items>
@@ -113,11 +148,19 @@
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Iniciar Incubación" type="Emphasized" visible="{= ${view>/incubacion/estado} === 'PROGRAMADA' }" press=".onConfirmarIniciar" />
-                <Button text="Finalizar Incubación" type="Accept" visible="{= ${view>/incubacion/estado} === 'EN_PROCESO' }" press=".onConfirmarFinalizar" />
-                <Button text="Cancelar Incubación" type="Reject" visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" press=".onConfirmarCancelar" />
-                <Button text="Cancelar" press="onNavBack"/>
+                <ToolbarSpacer />
+                <Button text="Iniciar Incubación" type="Emphasized"
+                    visible="{= ${view>/incubacion/estado} === 'PROGRAMADA' }"
+                    press=".onConfirmarIniciar" />
+                <Button text="Finalizar Incubación" type="Accept"
+                    visible="{= ${view>/incubacion/estado} === 'EN_PROCESO' }"
+                    press=".onConfirmarFinalizar" />
+                <Button text="Cancelar Incubación" type="Reject"
+                    visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }"
+                    press=".onConfirmarCancelar" />
+                    <Button icon="sap-icon://edit" type="Emphasized" tooltip="Editar" press="onEdit"
+                    visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" />
+                <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
         </footer>
     </Page>

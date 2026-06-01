@@ -17,22 +17,26 @@ import Input from "sap/m/Input";
 import List from "sap/m/List";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
+import formatter from "../model/formatter";
 
 export default class CruceCreate extends Controller {
 
     private lineaId: string = "";
+    private planId: string = "";
     private baseUrl: string = "http://localhost:4004/api/avecombatiente";
     private authService: AuthService;
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
     private _oPadresDialog: Dialog;
     private helpSelected: any;
+    public formatter = formatter;
 
     public onInit(): void {
 
         this.authService = AuthService.getInstance();
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.getRoute("RoutelineaGallosCruceCreate")?.attachPatternMatched(this.onRouteMatched, this);
+        oRouter?.getRoute("RouteLineaGallosCruceEdit")?.attachPatternMatched(this.onRouteMatched, this);
 
     }
 
@@ -52,6 +56,10 @@ export default class CruceCreate extends Controller {
         }
 
         this.getView()?.setModel(new JSONModel({
+            titulo: "Nuevo Plan de Cruce",
+            guardarTexto: "Guardar Plan de Cruce",
+            editMode: false,
+            cruceAbierto: false,
             macho_ID: "",
             hembra_ID: "",
             tipoParentesco: "",
@@ -76,7 +84,85 @@ export default class CruceCreate extends Controller {
         }), "cruce");
 
         this.lineaId = oEvent.getParameter("arguments").lineaId;
+        this.planId = oEvent.getParameter("arguments").planId || "";
+        await this.cargarContextoLinea();
+        if (this.planId) {
+            await this.cargarPlanCruce();
+        }
         //await this.cargarAves();
+    }
+
+    private async cargarContextoLinea(): Promise<void> {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/LineasAves('${this.lineaId}')`, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) return;
+
+            const linea = await response.json();
+            const cruceAbierto = linea?.nombre === "Cruce abierto";
+            const editMode = !!this.planId;
+            oModel.setProperty("/cruceAbierto", cruceAbierto);
+            oModel.setProperty(
+                "/titulo",
+                editMode
+                    ? (cruceAbierto ? "Editar Cruce Abierto" : "Editar Plan de Cruce")
+                    : (cruceAbierto ? "Nuevo Cruce Abierto" : "Nuevo Plan de Cruce")
+            );
+            oModel.setProperty("/guardarTexto", editMode ? "Actualizar Plan de Cruce" : "Guardar Plan de Cruce");
+            oModel.setProperty("/editMode", editMode);
+        } catch (error) {
+            oModel.setProperty("/cruceAbierto", false);
+            oModel.setProperty("/titulo", "Nuevo Plan de Cruce");
+        }
+    }
+
+    private async cargarPlanCruce(): Promise<void> {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/PlanesCruces('${this.planId}')?$expand=macho,hembra,linea`, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Plan de cruce no encontrado.");
+            }
+
+            const plan = await response.json();
+            const parentescoTexto = this.obtenerTextoParentesco(plan.tipoParentesco);
+            oModel.setProperty("/macho_ID", plan.macho_ID || plan.macho?.ID || "");
+            oModel.setProperty("/hembra_ID", plan.hembra_ID || plan.hembra?.ID || "");
+            oModel.setProperty("/padrePlaca", plan.macho?.placa || "");
+            oModel.setProperty("/padreNombre", plan.macho?.nombre || plan.macho?.apodo || "");
+            oModel.setProperty("/madrePlaca", plan.hembra?.placa || "");
+            oModel.setProperty("/madreNombre", plan.hembra?.nombre || plan.hembra?.apodo || "");
+            oModel.setProperty("/tipoParentesco", plan.tipoParentesco || "");
+            oModel.setProperty("/parentescoTexto", parentescoTexto);
+            oModel.setProperty("/objetivoCruce", plan.objetivoCruce || "");
+            oModel.setProperty("/resultadoVisible", true);
+            oModel.setProperty("/resultado", {
+                nivelRiesgo: plan.nivelRiesgo,
+                porcentaje: plan.porcentaje,
+                ancestrosComunes: plan.ancestrosComunes,
+                decision: plan.decision,
+                recomendacion: plan.recomendacion,
+                descripcion: parentescoTexto,
+                messageType: plan.nivelRiesgo === "ALTO" ? "Error" : plan.nivelRiesgo === "MODERADO" ? "Warning" : "Success",
+            });
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo cargar el plan de cruce.");
+            this.onNavBack();
+        }
     }
 
     /*private async cargarAves(): Promise<void> {
@@ -286,13 +372,14 @@ export default class CruceCreate extends Controller {
             estado: resultado.decision === "APROBADO" ? "APROBADO" : "PROPUESTO",
             fechaPropuesta: new Date().toISOString().split("T")[0],
             usuario_ID: usuario._id,
-            codigo: `PC_${oModel.getProperty("/padrePlaca")}_${oModel.getProperty("/madrePlaca")}`            
+            codigo: `${oModel.getProperty("/cruceAbierto") ? "PCA" : "PC"}_${oModel.getProperty("/padrePlaca")}_${oModel.getProperty("/madrePlaca")}`            
         };
 
         let error: any;
         try {
-            const response = await fetch(`${this.baseUrl}/PlanesCruces`, {
-                method: "POST",
+            const editMode = oModel.getProperty("/editMode");
+            const response = await fetch(editMode ? `${this.baseUrl}/PlanesCruces('${this.planId}')` : `${this.baseUrl}/PlanesCruces`, {
+                method: editMode ? "PATCH" : "POST",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
                     "Content-Type": "application/json",
@@ -305,8 +392,13 @@ export default class CruceCreate extends Controller {
                 throw new Error( "No se pudo guardar el plan.");
             }
 
-            MessageToast.show("Plan de cruce guardado correctamente.");
+            MessageToast.show(editMode ? "Plan de cruce actualizado correctamente." : "Plan de cruce guardado correctamente.");
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+            if (oModel.getProperty("/cruceAbierto")) {
+                oRouter?.navTo("RoutePlanesCruce");
+                return;
+            }
+
             oRouter?.navTo("RouteLineaGalloDetail", {
                 id: this.lineaId
             });
@@ -363,6 +455,12 @@ export default class CruceCreate extends Controller {
 
     public onNavBack(): void {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        if (oModel?.getProperty("/cruceAbierto")) {
+            oRouter?.navTo("RoutePlanesCruce");
+            return;
+        }
+
         oRouter?.navTo("RouteLineaGalloDetail", {
             id: this.lineaId
         });

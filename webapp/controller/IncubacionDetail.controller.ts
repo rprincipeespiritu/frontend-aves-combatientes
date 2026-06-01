@@ -12,17 +12,29 @@ import VBox from "sap/m/VBox";
 import Dialog from "sap/m/Dialog";
 import MessageToast from "sap/m/MessageToast";
 import TextArea from "sap/m/TextArea";
+import UIComponent from "sap/ui/core/UIComponent";
+import Router from "sap/m/routing/Router";
+import { AuthService } from "../services/AuthService";
+import Control from "sap/ui/core/Control";
+import Device from "sap/ui/Device";
+import Fragment from "sap/ui/core/Fragment";
+import ActionSheet from "sap/m/ActionSheet";
+import Popover from "sap/m/Popover";
 
 export default class IncubacionDetail extends Controller {
+    private _oUserMenuSheet: any;
+    private _oUserMenuPopover: any;
+    private authService: AuthService;
     public formatter = formatter;
     private service = new IncubacionService();
     private incubacionId: string = "";
-    private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
+    private baseUrl: string = "http://localhost:4004/api/avecombatiente";
 
     public onInit(): void {
+        this.authService = AuthService.getInstance();
         const oModel = new JSONModel({
             busy: false,
-            incubacion: {}
+            incubacion: {},
         });
 
         this.getView()?.setModel(oModel, "view");
@@ -33,7 +45,24 @@ export default class IncubacionDetail extends Controller {
             ?.attachPatternMatched(this._onRouteMatched, this);
     }
 
-    private _onRouteMatched = async (oEvent: sap.ui.base.Event): Promise<void> => {
+    private _onRouteMatched = async (
+        oEvent: sap.ui.base.Event,
+    ): Promise<void> => {
+
+        if (!this.authService.isAuthenticated()) {
+            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+            oRouter?.navTo("RouteLogin");
+            return;
+        }
+
+        const sUserData = localStorage.getItem("auth_user");
+        if (sUserData) {
+            const oUser = JSON.parse(sUserData);
+            const oUserModel = new JSONModel(oUser);
+            this.getView()?.setModel(oUserModel, "user");
+        }
+
+
         const args = oEvent.getParameter("arguments") as { id?: string };
         this.incubacionId = args.id || "";
 
@@ -44,6 +73,63 @@ export default class IncubacionDetail extends Controller {
 
         await this._loadIncubacion();
     };
+
+    public async onUserMenuPress(oEvent: Event): Promise<void> {
+        const oSource = (oEvent as any)?.getSource() as Control;
+
+        if (Device.system.phone) {
+            if (!this._oUserMenuSheet) {
+                const oFragment = await Fragment.load({
+                    id: this.getView()?.getId(),
+                    name: "com.rprincipees.registroavescombate.view.fragments.UserMenuMobile",
+                    controller: this,
+                });
+
+                this._oUserMenuSheet = oFragment as ActionSheet;
+                this.getView()?.addDependent(this._oUserMenuSheet);
+            }
+
+            // TOGGLE
+            if (this._oUserMenuSheet.isOpen()) {
+                this._oUserMenuSheet.close();
+            } else {
+                this._oUserMenuSheet.openBy(oSource);
+            }
+
+            return;
+        }
+
+        if (!this._oUserMenuPopover) {
+            const oFragment = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.UserMenu",
+                controller: this,
+            });
+
+            this._oUserMenuPopover = oFragment as Popover;
+            this.getView()?.addDependent(this._oUserMenuPopover);
+        }
+
+        // TOGGLE
+        if (this._oUserMenuPopover.isOpen()) {
+            this._oUserMenuPopover.close();
+        } else {
+            this._oUserMenuPopover.openBy(oSource);
+        }
+    }
+
+    public async onLogout(): Promise<void> {
+        try {
+            await this.authService.logout();
+            localStorage.removeItem("auth_token");
+            const oRouter = (
+                this.getOwnerComponent() as UIComponent
+            )?.getRouter() as Router;
+            oRouter?.navTo("RouteLogin");
+        } catch (error) {
+            MessageBox.error("Error al cerrar sesión.");
+        }
+    }
 
     private async _loadIncubacion(): Promise<void> {
         const oModel = this.getView()?.getModel("view") as JSONModel;
@@ -59,7 +145,6 @@ export default class IncubacionDetail extends Controller {
                 element.nombrePadre = element.padre.nombre;
                 element.placaMadre = element.madre.placa;
                 element.nombreMadre = element.madre.nombre;
-
             }
 
             oModel.setProperty("/incubacion", {
@@ -72,11 +157,14 @@ export default class IncubacionDetail extends Controller {
                 estado: incubacion.estado || "PROGRAMADA",
                 observaciones: incubacion.observaciones || "",
                 motivoCancelacion: incubacion.motivoCancelacion || "",
-                detalles: incubacion.detalles
+                detalles: incubacion.detalles,
             });
-
         } catch (error) {
-            MessageBox.error(error instanceof Error ? error.message : "No se pudo cargar la incubación");
+            MessageBox.error(
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo cargar la incubación",
+            );
         } finally {
             oModel.setProperty("/busy", false);
         }
@@ -86,18 +174,22 @@ export default class IncubacionDetail extends Controller {
         this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
     };
 
+    public onNavWelcome = (): void => {
+        this.getOwnerComponent()?.getRouter().navTo("RouteWelcome");
+    };
+
     public onEdit = (): void => {
         this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionEdit", {
-            id: this.incubacionId
+            id: this.incubacionId,
         });
-    }
+    };
 
     public formatearEstado(estado: EstadoIncubacion): string {
         const estados = {
             [EstadoIncubacion.Proceso]: "En proceso",
             [EstadoIncubacion.Programada]: "Programada",
             [EstadoIncubacion.Completada]: "Completada",
-            [EstadoIncubacion.Cancelada]: "Cancelada"
+            [EstadoIncubacion.Cancelada]: "Cancelada",
         };
 
         return estados[estado] || estado;
@@ -113,7 +205,9 @@ export default class IncubacionDetail extends Controller {
         }
 
         if (oData.estado !== "PROGRAMADA") {
-            MessageBox.error("Solo se puede iniciar una incubación en estado PROGRAMADA");
+            MessageBox.error(
+                "Solo se puede iniciar una incubación en estado PROGRAMADA",
+            );
             return;
         }
 
@@ -131,7 +225,9 @@ export default class IncubacionDetail extends Controller {
         }
 
         if (oFechaIncubacion > oFechaActual) {
-            MessageBox.error("La fecha de incubación no debe ser mayor a la fecha actual");
+            MessageBox.error(
+                "La fecha de incubación no debe ser mayor a la fecha actual",
+            );
             return;
         }
 
@@ -141,17 +237,19 @@ export default class IncubacionDetail extends Controller {
                 if (sAction === MessageBox.Action.YES) {
                     await oThat.onIniciarIncubacion(oEvent);
                 }
-            }
+            },
         });
     }
 
     private async onIniciarIncubacion(oEvent: any): Promise<void> {
-
         BusyIndicator.show(0);
 
         try {
             const oThat = this;
-            const oData = oThat.getView()?.getModel("view").getProperty("/incubacion");
+            const oData = oThat
+                .getView()
+                ?.getModel("view")
+                .getProperty("/incubacion");
 
             const sId = oData.ID;
 
@@ -161,13 +259,13 @@ export default class IncubacionDetail extends Controller {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('auth_token')}`
+                    Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify({}),
             });
 
             BusyIndicator.hide();
-            if(!response.ok){
+            if (!response.ok) {
                 let result = await response.json();
                 MessageBox.error(result?.error?.message);
                 return;
@@ -179,9 +277,8 @@ export default class IncubacionDetail extends Controller {
                 onClose: function (sAction: string) {
                     oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
                 },
-                dependentOn: oThat.getView()
+                dependentOn: oThat.getView(),
             });
-
         } catch (error: any) {
             BusyIndicator.hide();
             MessageBox.error(error.message || "No se pudo iniciar la incubación");
@@ -205,7 +302,7 @@ export default class IncubacionDetail extends Controller {
             width: "100%",
             rows: 4,
             growing: false,
-            placeholder: "Observación(Opcional)"
+            placeholder: "Observación(Opcional)",
         });
 
         const oDialog = new Dialog({
@@ -216,41 +313,38 @@ export default class IncubacionDetail extends Controller {
             horizontalScrolling: false,
             verticalScrolling: true,
             content: [
-                new VBox({                   
+                new VBox({
                     items: [
+                        new Label({
+                            text: "¿Seguro que desea Finalizar la Incubación; sino revise la opción de Edición?",
+                        }).addStyleClass("sapUiSmallMarginTop"),
 
-                        new Label({ text: "¿Seguro que desea Finalizar la Incubación; sino revise la opción de Edición?" }).addStyleClass("sapUiSmallMarginTop"),
-
-                        new Label({ text: "Observación" }).addStyleClass("sapUiSmallMarginTop"),
-                        oTextAreaObservacion
-                    ]
-                }).addStyleClass("sapUiSmallMargin")
+                        new Label({ text: "Observación" }).addStyleClass(
+                            "sapUiSmallMarginTop",
+                        ),
+                        oTextAreaObservacion,
+                    ],
+                }).addStyleClass("sapUiSmallMargin"),
             ],
             beginButton: new Button({
                 text: "Aceptar",
                 type: "Emphasized",
                 press: async function () {
-
                     const sObservacion = oTextAreaObservacion.getValue().trim();
 
-
-
                     oDialog.close();
-                    await oThat._finalizarIncubacion(
-                        oEvent,
-                        sObservacion
-                    );
-                }
+                    await oThat._finalizarIncubacion(oEvent, sObservacion);
+                },
             }),
             endButton: new Button({
                 text: "Cerrar",
                 press: function () {
                     oDialog.close();
-                }
+                },
             }),
             afterClose: function () {
                 oDialog.destroy();
-            }
+            },
         });
 
         oDialog.open();
@@ -258,12 +352,14 @@ export default class IncubacionDetail extends Controller {
 
     private async _finalizarIncubacion(
         oEvent: Event,
-        observacion: string
+        observacion: string,
     ): Promise<void> {
         try {
-
             const oThat = this;
-            const oData = oThat.getView()?.getModel("view").getProperty("/incubacion");
+            const oData = oThat
+                .getView()
+                ?.getModel("view")
+                .getProperty("/incubacion");
             const sId = oData?.ID;
 
             if (!sId) {
@@ -272,7 +368,9 @@ export default class IncubacionDetail extends Controller {
             }
 
             if (oData.estado !== "EN_PROCESO") {
-                MessageBox.error("Solo se puede finalizar una incubación en estado \"En proceso\"");
+                MessageBox.error(
+                    'Solo se puede finalizar una incubación en estado "En proceso"',
+                );
                 return;
             }
 
@@ -280,22 +378,27 @@ export default class IncubacionDetail extends Controller {
 
             const sToken = localStorage.getItem("token");
 
-            const response = await fetch(`${oThat.baseUrl}/Incubaciones('${sId}')/finalizar`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('auth_token')}`
+            const response = await fetch(
+                `${oThat.baseUrl}/Incubaciones('${sId}')/finalizar`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                    },
+                    body: JSON.stringify({
+                        observacion,
+                    }),
                 },
-                body: JSON.stringify({
-                    observacion
-                })
-            });
+            );
 
             BusyIndicator.hide();
 
             if (!response.ok) {
                 const result = await response.json();
-                throw new Error(result?.error?.message || "No se pudo cancelar la incubación");
+                throw new Error(
+                    result?.error?.message || "No se pudo cancelar la incubación",
+                );
             }
 
             MessageBox.success("¡Incubación finalizada correctamente!", {
@@ -304,7 +407,7 @@ export default class IncubacionDetail extends Controller {
                 onClose: function (sAction: string) {
                     oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
                 },
-                dependentOn: oThat.getView()
+                dependentOn: oThat.getView(),
             });
 
             //this._recargarDetalleIncubacion();
@@ -319,7 +422,7 @@ export default class IncubacionDetail extends Controller {
 
         const oInput = new Input({
             width: "100%",
-            placeholder: "Ingrese el motivo de cancelación"
+            placeholder: "Ingrese el motivo de cancelación",
         });
 
         const oDialog = new Dialog({
@@ -331,11 +434,11 @@ export default class IncubacionDetail extends Controller {
                     items: [
                         new Label({
                             text: "Motivo de cancelación",
-                            labelFor: oInput
+                            labelFor: oInput,
                         }),
-                        oInput
-                    ]
-                }).addStyleClass("sapUiSmallMargin")
+                        oInput,
+                    ],
+                }).addStyleClass("sapUiSmallMargin"),
             ],
             beginButton: new Button({
                 text: "Aceptar",
@@ -350,43 +453,54 @@ export default class IncubacionDetail extends Controller {
 
                     oDialog.close();
                     await oThat._cancelarIncubacion(oEvent, sMotivo);
-                }
+                },
             }),
             endButton: new Button({
                 text: "Cerrar",
                 press: function () {
                     oDialog.close();
-                }
+                },
             }),
             afterClose: function () {
                 oDialog.destroy();
-            }
+            },
         });
 
         oDialog.open();
     }
 
-    private async _cancelarIncubacion(oEvent: any, sMotivo: string): Promise<void> {
+    private async _cancelarIncubacion(
+        oEvent: any,
+        sMotivo: string,
+    ): Promise<void> {
         try {
             const oThat = this;
-            const oData = oThat.getView()?.getModel("view").getProperty("/incubacion");
+            const oData = oThat
+                .getView()
+                ?.getModel("view")
+                .getProperty("/incubacion");
 
             const sId = oData.ID;
 
-            const response = await fetch(`${oThat.baseUrl}/Incubaciones('${sId}')/cancelar`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem('auth_token')}`
+            const response = await fetch(
+                `${oThat.baseUrl}/Incubaciones('${sId}')/cancelar`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                    },
+                    body: JSON.stringify({
+                        observacion: sMotivo,
+                    }),
                 },
-                body: JSON.stringify({
-                    observacion: sMotivo
-                })
-            });
+            );
 
             if (!response.ok) {
                 const result = await response.json();
-                throw new Error(result?.error?.message || "No se pudo cancelar la incubación");
+                throw new Error(
+                    result?.error?.message || "No se pudo cancelar la incubación",
+                );
             }
 
             MessageBox.success("¡Incubación cancelada correctamente!", {
@@ -395,12 +509,10 @@ export default class IncubacionDetail extends Controller {
                 onClose: function (sAction: string) {
                     oThat.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
                 },
-                dependentOn: oThat.getView()
+                dependentOn: oThat.getView(),
             });
-
         } catch (error: any) {
             MessageBox.error(error.message || "Error al cancelar la incubación");
         }
     }
-
 }

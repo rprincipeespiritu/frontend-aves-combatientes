@@ -1,6 +1,7 @@
 import Controller from "sap/ui/core/mvc/Controller";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageBox from "sap/m/MessageBox";
+import MessageToast from "sap/m/MessageToast";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/m/routing/Router";
 import Control from "sap/ui/core/Control";
@@ -67,7 +68,7 @@ export default class PlanesCruce extends Controller {
 
       const data = await response.json();
 
-      oModel.setProperty("/data", data.value || []);
+      oModel.setProperty("/data", this.normalizarPlanesDuplicados(data.value || []));
     } catch (error) {
       MessageBox.error("Error al cargar planes de cruce.");
     }
@@ -108,6 +109,126 @@ Detalle del cruce:
       this.getOwnerComponent() as UIComponent
     )?.getRouter() as Router;
     oRouter?.navTo("RouteLineaGallos");
+  }
+
+  private normalizarPlanesDuplicados(planes: any[]): any[] {
+    const planesPorPareja = new Map<string, any>();
+
+    for (const plan of planes) {
+      const machoId = plan.macho_ID || plan.macho?.ID || "";
+      const hembraId = plan.hembra_ID || plan.hembra?.ID || "";
+      const clave = `${machoId}|${hembraId}`;
+
+      if (!machoId || !hembraId) {
+        planesPorPareja.set(plan.ID || plan.codigo || clave, plan);
+        continue;
+      }
+
+      const actual = planesPorPareja.get(clave);
+      if (!actual || this.debeReemplazarPlanDuplicado(actual, plan)) {
+        planesPorPareja.set(clave, plan);
+      }
+    }
+
+    return Array.from(planesPorPareja.values());
+  }
+
+  private debeReemplazarPlanDuplicado(actual: any, candidato: any): boolean {
+    const actualCorrecto = this.codigoCoincideConTipo(actual);
+    const candidatoCorrecto = this.codigoCoincideConTipo(candidato);
+
+    if (actualCorrecto !== candidatoCorrecto) {
+      return candidatoCorrecto;
+    }
+
+    return String(candidato.fechaPropuesta || "") > String(actual.fechaPropuesta || "");
+  }
+
+  private codigoCoincideConTipo(plan: any): boolean {
+    const codigo = String(plan.codigo || "").toUpperCase();
+    const esCruceAbierto = plan.linea?.nombre === "Cruce abierto";
+
+    return esCruceAbierto ? codigo.startsWith("PCA") : codigo.startsWith("PC_") || codigo.startsWith("PC-");
+  }
+
+  public onEditarPlan(oEvent: any): void {
+    const oPlan = oEvent.getSource()?.getBindingContext("planes")?.getObject();
+    if (!oPlan?.ID || !oPlan?.linea_ID) return;
+
+    const oRouter = (
+      this.getOwnerComponent() as UIComponent
+    )?.getRouter() as Router;
+    oRouter?.navTo("RouteLineaGallosCruceEdit", {
+      lineaId: oPlan.linea_ID,
+      planId: oPlan.ID,
+    });
+  }
+
+  public onEliminarPlan(oEvent: any): void {
+    const oPlan = oEvent.getSource()?.getBindingContext("planes")?.getObject();
+    if (!oPlan?.ID) return;
+
+    MessageBox.confirm(`Se eliminara el plan ${oPlan.codigo || oPlan.ID}.`, {
+      actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+      emphasizedAction: MessageBox.Action.OK,
+      onClose: async (action: string) => {
+        if (action !== MessageBox.Action.OK) return;
+
+        try {
+          const response = await fetch(
+            `http://localhost:4004/api/avecombatiente/PlanesCruces('${oPlan.ID}')`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ estado: "ELIMINADO" }),
+            },
+          );
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data?.error?.message || "No se pudo eliminar el plan.");
+          }
+
+          MessageToast.show("Plan de cruce eliminado.");
+          await this.cargarPlanes();
+        } catch (error: any) {
+          MessageBox.error(error.message || "No se pudo eliminar el plan de cruce.");
+        }
+      },
+    });
+  }
+
+  public async onNuevoCruceAbierto(): Promise<void> {
+    try {
+      const response = await fetch(
+        "http://localhost:4004/api/avecombatiente/obtenerLineaCruceAbierto",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok || !data?.lineaId) {
+        throw new Error(data?.error?.message || "No se pudo preparar el cruce abierto.");
+      }
+
+      const oRouter = (
+        this.getOwnerComponent() as UIComponent
+      )?.getRouter() as Router;
+      oRouter?.navTo("RoutelineaGallosCruceCreate", {
+        lineaId: data.lineaId,
+      });
+    } catch (error: any) {
+      MessageBox.error(error.message || "No se pudo iniciar el cruce abierto.");
+    }
   }
 
   public onNavBack(): void {

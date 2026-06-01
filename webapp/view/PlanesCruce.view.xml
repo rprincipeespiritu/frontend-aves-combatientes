@@ -28,7 +28,12 @@
                     <Title text="Historial de Cruces" />
                     <ToolbarSpacer />
                     <Button
-                        text="Nuevo Plan"
+                        text="Cruce abierto"
+                        icon="sap-icon://chain-link"
+                        type="Transparent"
+                        press=".onNuevoCruceAbierto" />
+                    <Button
+                        text="Nuevo Plan por Linaje"
                         icon="sap-icon://add"
                         press=".onNuevoPlan" />
                 </Toolbar>
@@ -51,6 +56,9 @@
                         <Column>
                             <Text text="Codigo" />
                         </Column>
+                        <Column width="11rem">
+                            <Text text="Tipo" />
+                        </Column>
                         <Column>
                             <Text text="Macho" />
                         </Column>
@@ -69,30 +77,60 @@
                         <Column>
                             <Text text="Fecha" />
                         </Column>
+                        <Column hAlign="Center" width="8rem">
+                            <Text text="Acciones" />
+                        </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem type="Active" press=".onSelectPlan">
                             <cells>
                                 <Text text="{= ${planes>codigo} || 'Sin codigo' }" />
-                                <Text text="{planes>macho/placa}" />
-                                <Text text="{planes>hembra/placa}" />
+                                <ObjectStatus
+                                    text="{ path: 'planes>linea/nombre', formatter: '.formatter.formatTipoCruceTexto' }"
+                                    state="{ path: 'planes>linea/nombre', formatter: '.formatter.formatTipoCruceState' }" />
+                                <ObjectIdentifier
+                                    title="{planes>macho/placa}"
+                                    text="{
+                                        parts: [
+                                            { path: 'planes>macho/nombre' },
+                                            { path: 'planes>macho/apodo' }
+                                        ],
+                                        formatter: '.formatter.formatAveNombre'
+                                    }" />
+                                <ObjectIdentifier
+                                    title="{planes>hembra/placa}"
+                                    text="{
+                                        parts: [
+                                            { path: 'planes>hembra/nombre' },
+                                            { path: 'planes>hembra/apodo' }
+                                        ],
+                                        formatter: '.formatter.formatAveNombre'
+                                    }" />
                                 <Text
                                     text="{
                                     path: 'planes>tipoParentesco',
                                     formatter: '.formatearParentesco'
                                 }" />
                                 <ObjectStatus
-                                    text="{planes>nivelRiesgo}"
-                                    state="{= ${planes>nivelRiesgo} === 'ALTO' ? 'Error' :
-                                          ${planes>nivelRiesgo} === 'MODERADO' ? 'Warning' :
-                                          'Success'}" />
+                                    text="{ path: 'planes>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
+                                    state="{ path: 'planes>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
                                 <ObjectStatus
-                                    text="{planes>decision}"
-                                    state="{= ${planes>decision} === 'NO_RECOMENDADO' ? 'Error' :
-                                          ${planes>decision} === 'OBSERVAR' ? 'Warning' :
-                                          'Success'}" />
+                                    text="{ path: 'planes>decision', formatter: '.formatter.formatDecisionTexto' }"
+                                    state="{ path: 'planes>decision', formatter: '.formatter.formatDecisionState' }" />
                                 <Text text="{planes>fechaPropuesta}" />
+                                <HBox justifyContent="Center">
+                                    <Button
+                                        icon="sap-icon://edit"
+                                        type="Transparent"
+                                        tooltip="Editar plan"
+                                        press=".onEditarPlan" />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        type="Transparent"
+                                        tooltip="Eliminar plan"
+                                        press=".onEliminarPlan" />
+                                </HBox>
                             </cells>
                         </ColumnListItem>
                     </items>
