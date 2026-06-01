@@ -19,7 +19,7 @@ type PlanIndicatorData = {
  * @namespace com.rprincipees.registroavescombate
  */
 export default class Component extends BaseComponent {
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl = window.APP_CONFIG?.API_BASE_URL || "";
   private readonly publicRoutes = new Set([
     "RouteLogin",
     "RouteRegister",

@@ -61,6 +61,7 @@ export default class AveDetail extends Controller {
             evaluaciones: [],
             evaluacionesPleito: [],
             archivosAve: [],
+            composicionLineas: [],
             archivosRestantes: this.maxArchivosAve,
             archivoViewer: {
                 title: "",
@@ -229,10 +230,53 @@ export default class AveDetail extends Controller {
 
             await this.cargarEvaluaciones();
             await this.cargarEvaluacionesPleito();
+            await this.cargarComposicionLineas();
             await this.cargarArchivosAve();
 
         } catch (error) {
             MessageBox.error("Error cargando el ave");
+        }
+    }
+
+    private async cargarComposicionLineas(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const response = await fetch(
+            `${this.baseUrl}/ComposicionesLineaAve?$filter=ave_ID eq '${this.aveId}'&$expand=linea&$orderby=porcentaje desc`,
+            { headers: { "Authorization": `Bearer ${this.authService.getToken()}` } }
+        );
+
+        if (!response.ok) {
+            oModel.setProperty("/composicionLineas", []);
+            return;
+        }
+
+        const data = await response.json();
+        oModel.setProperty("/composicionLineas", data.value || []);
+    }
+
+    public async onRecalcularComposicionLineas(): Promise<void> {
+        try {
+            const response = await fetch(
+                `${this.baseUrl}/Aves('${this.aveId}')/AveCombatienteService.recalcularComposicionLineas`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${this.authService.getToken()}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({}),
+                }
+            );
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data?.error?.message || "No se pudo recalcular la composición de líneas");
+            }
+
+            await this.cargarComposicionLineas();
+            MessageToast.show(data?.message || "Composición de líneas recalculada");
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo recalcular la composición de líneas");
         }
     }
 

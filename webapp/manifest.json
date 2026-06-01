@@ -257,6 +257,11 @@
           "pattern": "lineas-gallos/{lineaId}/nuevo-cruce",
           "name": "RoutelineaGallosCruceCreate",
           "target": "TargetLineaGallosCruceCreate"
+        },
+        {
+          "pattern": "lineas-gallos/{lineaId}/cruce/{planId}/edit",
+          "name": "RouteLineaGallosCruceEdit",
+          "target": "TargetLineaGallosCruceCreate"
         }
       ],
       "targets": {

@@ -13,7 +13,7 @@ import Event from "sap/ui/base/Event";
 import { AuthService } from "../services/AuthService";
 
 export default class Combates extends Controller {
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl = window.APP_CONFIG?.API_BASE_URL || "";
   private readonly limiteTemporalCombates = 10;
   private authService: AuthService;
   private _oUserMenuSheet: any;

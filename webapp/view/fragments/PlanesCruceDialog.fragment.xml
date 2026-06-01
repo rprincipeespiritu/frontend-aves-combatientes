@@ -19,12 +19,20 @@
                     <ObjectListItem
                             title="{planesCruce>codigoVisual}"
                             number="{planesCruce>porcentaje}"
-                            numberUnit="%"
-                            intro="{planesCruce>decision}">
+                            numberUnit="%">
+                        <firstStatus>
+                            <ObjectStatus
+                                    text="{planesCruce>decisionTexto}"
+                                    state="{planesCruce>decisionState}" />
+                        </firstStatus>
+                        <secondStatus>
+                            <ObjectStatus
+                                    text="{planesCruce>nivelRiesgoTexto}"
+                                    state="{planesCruce>nivelRiesgoState}" />
+                        </secondStatus>
                         <attributes>
                             <ObjectAttribute text="{planesCruce>descripcionVisual}" />
                             <ObjectAttribute text="{= 'Parentesco: ' + (${planesCruce>tipoParentesco} || 'Sin dato') }" />
-                            <ObjectAttribute text="{= 'Riesgo: ' + (${planesCruce>nivelRiesgo} || 'Sin dato') }" />
                         </attributes>
                     </ObjectListItem>
 

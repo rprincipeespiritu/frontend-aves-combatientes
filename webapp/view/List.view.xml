@@ -181,7 +181,7 @@
                                 <Text text="Género" />
                             </Column>
 
-                            <Column minScreenWidth="Tablet" demandPopin="true"
+                            <Column width="10rem" minScreenWidth="Tablet" demandPopin="true"
                                 visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Categoría" />
                             </Column>

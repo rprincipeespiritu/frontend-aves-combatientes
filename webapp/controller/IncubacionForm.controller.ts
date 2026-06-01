@@ -251,18 +251,101 @@ export default class IncubacionForm extends Controller {
       );
     }
 
-    const planes = (data.value || [])
+    const planes = this.normalizarPlanesCruceDisponibles(data.value || []);
+
+    this.getView()?.setModel(new JSONModel(planes), "planesCruce");
+  }
+
+  private normalizarPlanesCruceDisponibles(planes: any[]): any[] {
+    const planesPorPareja = new Map<string, any>();
+
+    (planes || [])
       .filter((plan: any) =>
         ["PROPUESTO", "APROBADO", "EJECUTADO"].includes(plan.estado),
       )
-      .map((plan: any) => ({
-        ...plan,
-        codigoVisual:
-          plan.codigo,
-        descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""} | ${plan.decision || ""} | ${plan.nivelRiesgo || ""}`,
-      }));
+      .forEach((plan: any) => {
+        const planVisual = this.mapPlanCruceVisual(plan);
+        const machoId = planVisual.macho_ID || planVisual.macho?.ID || "";
+        const hembraId = planVisual.hembra_ID || planVisual.hembra?.ID || "";
+        const clave = machoId && hembraId
+          ? `${machoId}|${hembraId}`
+          : planVisual.ID || planVisual.codigoVisual;
+        const planActual = planesPorPareja.get(clave);
 
-    this.getView()?.setModel(new JSONModel(planes), "planesCruce");
+        if (
+          !planActual ||
+          this.debeReemplazarPlanCruceDuplicado(planActual, planVisual)
+        ) {
+          planesPorPareja.set(clave, planVisual);
+        }
+      });
+
+    return Array.from(planesPorPareja.values());
+  }
+
+  private mapPlanCruceVisual(plan: any): any {
+    const decisionTexto = this.formatter.formatDecisionTexto(plan.decision);
+    const nivelRiesgoTexto = this.formatter.formatNivelRiesgoTexto(
+      plan.nivelRiesgo,
+    );
+
+    return {
+      ...plan,
+      codigoVisual: plan.codigo,
+      decisionTexto,
+      decisionState: this.formatter.formatDecisionState(plan.decision),
+      nivelRiesgoTexto,
+      nivelRiesgoState: this.formatter.formatNivelRiesgoState(
+        plan.nivelRiesgo,
+      ),
+      descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""}`,
+      busquedaVisual: [
+        plan.codigo,
+        plan.macho?.placa,
+        plan.macho?.nombre,
+        plan.hembra?.placa,
+        plan.hembra?.nombre,
+        plan.tipoParentesco,
+        plan.decision,
+        decisionTexto,
+        plan.nivelRiesgo,
+        nivelRiesgoTexto,
+      ]
+        .filter(Boolean)
+        .join(" "),
+    };
+  }
+
+  private debeReemplazarPlanCruceDuplicado(
+    actual: any,
+    candidato: any,
+  ): boolean {
+    const candidatoCoincide = this.codigoCoincideConTipoPlan(candidato);
+    const actualCoincide = this.codigoCoincideConTipoPlan(actual);
+
+    if (candidatoCoincide !== actualCoincide) {
+      return candidatoCoincide;
+    }
+
+    const fechaCandidato = new Date(
+      candidato.fechaPropuesta || candidato.createdAt || 0,
+    ).getTime();
+    const fechaActual = new Date(
+      actual.fechaPropuesta || actual.createdAt || 0,
+    ).getTime();
+
+    return fechaCandidato > fechaActual;
+  }
+
+  private codigoCoincideConTipoPlan(plan: any): boolean {
+    const codigo = String(plan.codigoVisual || plan.codigo || "").toUpperCase();
+    const esCruceAbierto = plan.linea?.nombre === "Cruce abierto";
+
+    if (esCruceAbierto) {
+      return codigo.startsWith("PCA_") || codigo.startsWith("PCA-");
+    }
+
+    return codigo.startsWith("PC_") || codigo.startsWith("PC-");
   }
 
   private async _onCreateMatched(): Promise<void> {
@@ -682,9 +765,12 @@ export default class IncubacionForm extends Controller {
           filters: [
             new Filter("codigoVisual", FilterOperator.Contains, sValue),
             new Filter("descripcionVisual", FilterOperator.Contains, sValue),
+            new Filter("busquedaVisual", FilterOperator.Contains, sValue),
             new Filter("tipoParentesco", FilterOperator.Contains, sValue),
             new Filter("nivelRiesgo", FilterOperator.Contains, sValue),
+            new Filter("nivelRiesgoTexto", FilterOperator.Contains, sValue),
             new Filter("decision", FilterOperator.Contains, sValue),
+            new Filter("decisionTexto", FilterOperator.Contains, sValue),
           ],
           and: false,
         }),

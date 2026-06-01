@@ -6,7 +6,7 @@
         xmlns:form="sap.f">
 
     <Page
-            title="Nuevo Plan de Cruce"
+            title="{cruce>/titulo}"
             showNavButton="true"
             navButtonPress=".onNavBack">
         <headerContent>
@@ -81,14 +81,13 @@
 
                         <ObjectStatus
                                 title="Nivel de riesgo"
-                                text="{cruce>/resultado/nivelRiesgo}"
-                                state="{cruce>/resultado/state}" />
+                                text="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
+                                state="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
 
                         <ObjectStatus
                                 title="Decision sugerida"
-                                text="{cruce>/resultado/decision}"
-                                state="{= ${cruce>/resultado/decision} === 'NO_RECOMENDADO' ? 'Error' :
-                                          ${cruce>/resultado/decision} === 'OBSERVAR' ? 'Warning' : 'Success'}" />
+                                text="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionTexto' }"
+                                state="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionState' }" />
 
                         <ObjectNumber
                                 number="{cruce>/resultado/porcentaje}"
@@ -112,7 +111,7 @@
                 <ToolbarSpacer/>
                 <Button
                                 visible="{cruce>/resultadoVisible}"
-                                text="Guardar Plan de Cruce"
+                                text="{cruce>/guardarTexto}"
                                 type="Emphasized"
                                 icon="sap-icon://save"
                                 press=".onGuardarPlanCruce"/>

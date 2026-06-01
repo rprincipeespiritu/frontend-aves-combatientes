@@ -89,6 +89,15 @@
                                 <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
                             </Select> -->
 
+                            <Label text="Línea principal"/>
+                            <ComboBox
+                                selectedKey="{update>/linea_ID}"
+                                placeholder="Selecciona una línea"
+                                showClearIcon="true"
+                                items="{lineas>/}">
+                                <core:Item key="{lineas>ID}" text="{lineas>nombre}"/>
+                            </ComboBox>
+
                             <Label text="Fecha Nacimiento" required="true"/>
                             <DatePicker value="{update>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueState="{update>/fecNacState}"
                             valueStateText="La fecha de nacimiento es requerida"/>

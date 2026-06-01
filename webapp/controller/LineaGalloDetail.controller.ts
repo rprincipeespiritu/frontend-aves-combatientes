@@ -160,6 +160,53 @@ export default class LineaGalloDetail extends Controller {
     });
   }
 
+  public onEditarPlan(oEvent: any): void {
+    const plan = oEvent.getSource()?.getBindingContext("detalle")?.getObject();
+    if (!plan?.ID) return;
+
+    const oRouter = (
+      this.getOwnerComponent() as UIComponent
+    )?.getRouter() as Router;
+    oRouter?.navTo("RouteLineaGallosCruceEdit", {
+      lineaId: this.lineaId,
+      planId: plan.ID,
+    });
+  }
+
+  public onEliminarPlan(oEvent: any): void {
+    const plan = oEvent.getSource()?.getBindingContext("detalle")?.getObject();
+    if (!plan?.ID) return;
+
+    MessageBox.confirm(`Se eliminara el plan ${plan.codigo || plan.ID}.`, {
+      actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+      emphasizedAction: MessageBox.Action.OK,
+      onClose: async (action: string) => {
+        if (action !== MessageBox.Action.OK) return;
+
+        try {
+          const response = await fetch(`${this.baseUrl}/PlanesCruces('${plan.ID}')`, {
+            method: "PATCH",
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ estado: "ELIMINADO" }),
+          });
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data?.error?.message || "No se pudo eliminar el plan.");
+          }
+
+          MessageToast.show("Plan de cruce eliminado.");
+          await this.cargarDetalle();
+        } catch (error: any) {
+          MessageBox.error(error.message || "No se pudo eliminar el plan de cruce.");
+        }
+      },
+    });
+  }
+
   public async onRefresh(): Promise<void> {
     //localStorage.setItem('filterIncProceso', "");
     await this.cargarDetalle();

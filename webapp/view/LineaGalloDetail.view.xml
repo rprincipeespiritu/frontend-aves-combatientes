@@ -73,7 +73,7 @@
                     </headerToolbar>
 
                     <columns>
-                        <Column>
+                        <Column  minScreenWidth="Desktop" demandPopin="true" >
                             <Text text="Código" />
                         </Column>
                         <Column>
@@ -94,34 +94,57 @@
                         <Column minScreenWidth="Desktop" demandPopin="true">
                             <Text text="Fecha" />
                         </Column>
+                        <Column hAlign="Center" width="8rem">
+                            <Text text="Acciones" />
+                        </Column>
                     </columns>
 
                     <items>
                         <ColumnListItem>
                             <cells>
                                 <Text text="{detalle>codigo}" />
-                                <Text text="{detalle>macho/placa}" />
-                                <Text text="{detalle>hembra/placa}" />
+                                <ObjectIdentifier
+                                    title="{detalle>macho/placa}"
+                                    text="{
+                                        parts: [
+                                            { path: 'detalle>macho/nombre' },
+                                            { path: 'detalle>macho/apodo' }
+                                        ],
+                                        formatter: '.formatter.formatAveNombre'
+                                    }" />
+                                <ObjectIdentifier
+                                    title="{detalle>hembra/placa}"
+                                    text="{
+                                        parts: [
+                                            { path: 'detalle>hembra/nombre' },
+                                            { path: 'detalle>hembra/apodo' }
+                                        ],
+                                        formatter: '.formatter.formatAveNombre'
+                                    }" />
                                 <Text
                                     text="{
                                     path: 'detalle>tipoParentesco',
                                     formatter: '.formatearParentesco'
                                 }" />
                                 <ObjectStatus
-                                    text="{detalle>nivelRiesgo}"
-                                    state="{
-                                        = ${detalle>nivelRiesgo} === 'ALTO' ? 'Error' :
-                                          ${detalle>nivelRiesgo} === 'MODERADO' ? 'Warning' :
-                                          'Success'
-                                    }" />
+                                    text="{ path: 'detalle>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
+                                    state="{ path: 'detalle>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
                                 <ObjectStatus
-                                    text="{detalle>decision}"
-                                    state="{
-                                        = ${detalle>decision} === 'NO_RECOMENDADO' ? 'Error' :
-                                          ${detalle>decision} === 'OBSERVAR' ? 'Warning' :
-                                          'Success'
-                                    }" />
+                                    text="{ path: 'detalle>decision', formatter: '.formatter.formatDecisionTexto' }"
+                                    state="{ path: 'detalle>decision', formatter: '.formatter.formatDecisionState' }" />
                                 <Text text="{detalle>fechaPropuesta}" />
+                                <HBox justifyContent="Center">
+                                    <Button
+                                        icon="sap-icon://edit"
+                                        type="Emphasized"
+                                        tooltip="Editar plan"
+                                        press=".onEditarPlan" />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        type="Transparent"
+                                        tooltip="Eliminar plan"
+                                        press=".onEliminarPlan" />
+                                </HBox>
                             </cells>
                         </ColumnListItem>
                     </items>

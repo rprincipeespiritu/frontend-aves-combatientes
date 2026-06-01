@@ -22,7 +22,7 @@ import Core from "sap/ui/core/Core";
 import { AuthService } from "../services/AuthService";
 
 export default class CombateForm extends Controller {
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl = window.APP_CONFIG?.API_BASE_URL || "";
   private authService: AuthService;
   private combateId: string | null = null;
   private selectedVideoFile?: File;
