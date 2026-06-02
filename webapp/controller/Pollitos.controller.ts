@@ -21,6 +21,10 @@ import Label from "sap/m/Label";
 import Text from "sap/m/Text";
 import VBox from "sap/m/VBox";
 import Button from "sap/m/Button";
+import List from "sap/m/List";
+import StandardListItem from "sap/m/StandardListItem";
+import SearchField from "sap/m/SearchField";
+import Bar from "sap/m/Bar";
 
 export default class Pollitos extends Controller {
     private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
@@ -30,6 +34,9 @@ export default class Pollitos extends Controller {
     private _oRegistrarAdultoDialog?: Dialog;
     private _oPlacaAdultoInput?: Input;
     private _criaIdRegistroAdulto = "";
+    private _oFiltroPadresDialog?: Dialog;
+    private _oFiltroPadresList?: List;
+    private filtroPadresSeleccionado: "padre" | "madre" = "padre";
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -237,6 +244,8 @@ export default class Pollitos extends Controller {
         const search = (this.byId("searchField") as any).getValue();
         const temporada = (this.byId("temporadaFilter") as any).getValue();
         const color = (this.byId("colorFilter") as any).getValue();
+        const padre = (this.byId("padreFilter") as any).getValue();
+        const madre = (this.byId("madreFilter") as any).getValue();
         const filters: Filter[] = [];
 
         if (search) {
@@ -251,6 +260,24 @@ export default class Pollitos extends Controller {
 
         if (temporada) filters.push(new Filter("temporada", FilterOperator.EQ, Number(temporada)));
         if (color) filters.push(new Filter("colorCintillo", FilterOperator.Contains, color.toUpperCase()));
+        if (padre) {
+            filters.push(new Filter({
+                filters: [
+                    new Filter("padre/placa", FilterOperator.Contains, padre),
+                    new Filter("padre/nombre", FilterOperator.Contains, padre)
+                ],
+                and: false
+            }));
+        }
+        if (madre) {
+            filters.push(new Filter({
+                filters: [
+                    new Filter("madre/placa", FilterOperator.Contains, madre),
+                    new Filter("madre/nombre", FilterOperator.Contains, madre)
+                ],
+                and: false
+            }));
+        }
 
         oBinding?.filter(filters);
     }
@@ -259,7 +286,114 @@ export default class Pollitos extends Controller {
         (this.byId("searchField") as any).setValue("");
         (this.byId("temporadaFilter") as any).setValue("");
         (this.byId("colorFilter") as any).setValue("");
+        (this.byId("padreFilter") as any).setValue("");
+        (this.byId("madreFilter") as any).setValue("");
         this.onBuscar();
+    }
+
+    public onValueHelpFiltroPadre(): void {
+        void this.abrirAyudaFiltroPadres("padre");
+    }
+
+    public onValueHelpFiltroMadre(): void {
+        void this.abrirAyudaFiltroPadres("madre");
+    }
+
+    private async abrirAyudaFiltroPadres(tipo: "padre" | "madre"): Promise<void> {
+        this.filtroPadresSeleccionado = tipo;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/AvesActivas`, {
+                headers: {
+                    "Authorization": `Bearer ${this.authService.getToken()}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data?.error?.message || "No se pudo cargar la ayuda de busqueda");
+            }
+
+            const sexo = tipo === "padre" ? "M" : "H";
+            const aves = (data.value || [])
+                .filter((ave: any) => ave.sexo === sexo && ave.padrote === true)
+                .sort((a: any, b: any) => String(a.placa || "").localeCompare(String(b.placa || "")));
+
+            this.getView()?.setModel(new JSONModel({ value: aves }), "avesFiltroPadres");
+
+            if (!this._oFiltroPadresDialog) {
+                const search = new SearchField({
+                    liveChange: (oEvent: any) => this.filtrarAyudaFiltroPadres(oEvent.getParameter("newValue")),
+                    search: (oEvent: any) => this.filtrarAyudaFiltroPadres(oEvent.getParameter("query")),
+                });
+
+                this._oFiltroPadresList = new List({
+                    mode: "SingleSelectMaster",
+                    items: {
+                        path: "avesFiltroPadres>/value",
+                        template: new StandardListItem({
+                            title: "{avesFiltroPadres>placa}",
+                            description: "{avesFiltroPadres>nombre}",
+                            type: "Active",
+                        }),
+                    },
+                    itemPress: (oEvent: any) => this.seleccionarAyudaFiltroPadres(oEvent.getParameter("listItem")),
+                });
+
+                this._oFiltroPadresDialog = new Dialog({
+                    contentWidth: "34rem",
+                    contentHeight: "28rem",
+                    subHeader: new Bar({
+                        contentMiddle: [search],
+                    }),
+                    content: [this._oFiltroPadresList],
+                    endButton: new Button({
+                        text: "Cerrar",
+                        press: () => this._oFiltroPadresDialog?.close(),
+                    }),
+                });
+                this.getView()?.addDependent(this._oFiltroPadresDialog);
+            }
+
+            this._oFiltroPadresDialog.setTitle(tipo === "padre" ? "Buscar padre" : "Buscar madre");
+            this.filtrarAyudaFiltroPadres("");
+            this._oFiltroPadresDialog.open();
+        } catch (error: any) {
+            MessageToast.show(error.message || "No se pudo cargar la ayuda de busqueda");
+        }
+    }
+
+    private filtrarAyudaFiltroPadres(query?: string): void {
+        const binding = this._oFiltroPadresList?.getBinding("items");
+        const value = String(query || "").trim();
+
+        if (!binding) return;
+        if (!value) {
+            binding.filter([]);
+            return;
+        }
+
+        binding.filter([
+            new Filter({
+                filters: [
+                    new Filter("placa", FilterOperator.Contains, value),
+                    new Filter("nombre", FilterOperator.Contains, value),
+                ],
+                and: false,
+            }),
+        ]);
+    }
+
+    private seleccionarAyudaFiltroPadres(item: StandardListItem): void {
+        const ave = item.getBindingContext("avesFiltroPadres")?.getObject() as any;
+        if (!ave) return;
+
+        const inputId = this.filtroPadresSeleccionado === "padre" ? "padreFilter" : "madreFilter";
+        const input = this.byId(inputId) as Input;
+        input.setValue(ave.placa || ave.nombre || "");
+        this.onBuscar();
+        this._oFiltroPadresDialog?.close();
     }
 
     public async onRefrescar(): Promise<void> {

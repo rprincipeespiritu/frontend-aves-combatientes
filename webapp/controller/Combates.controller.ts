@@ -38,7 +38,14 @@ export default class Combates extends Controller {
 
     this.getView()?.setModel(new JSONModel({
       busy: false,
+      todosCombates: [],
       combates: [],
+      filtros: {
+        busqueda: "",
+        tipo: "",
+        resultado: "",
+        video: "",
+      },
       limiteAlcanzado: false,
       limiteMensaje: "",
     }), "combates");
@@ -69,7 +76,8 @@ export default class Combates extends Controller {
       }
 
       const combates = data.value || [];
-      oModel.setProperty("/combates", combates);
+      oModel.setProperty("/todosCombates", combates);
+      this.aplicarFiltrosCombates();
       this.actualizarLimiteCombates(combates.length);
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo cargar combates.");
@@ -87,6 +95,88 @@ export default class Combates extends Controller {
 
     oModel.setProperty("/limiteAlcanzado", limiteAlcanzado);
     oModel.setProperty("/limiteMensaje", limiteMensaje);
+  }
+
+  public onFiltrarCombates(): void {
+    this.aplicarFiltrosCombates();
+  }
+
+  public onLimpiarFiltros(): void {
+    const oModel = this.getView()?.getModel("combates") as JSONModel;
+    oModel.setProperty("/filtros", {
+      busqueda: "",
+      tipo: "",
+      resultado: "",
+      video: "",
+    });
+    this.aplicarFiltrosCombates();
+  }
+
+  private aplicarFiltrosCombates(): void {
+    const oModel = this.getView()?.getModel("combates") as JSONModel;
+    const todosCombates = oModel.getProperty("/todosCombates") || [];
+    const filtros = oModel.getProperty("/filtros") || {};
+    const busqueda = this.normalizarTexto(filtros.busqueda);
+    const tipo = filtros.tipo || "";
+    const resultado = filtros.resultado || "";
+    const video = filtros.video || "";
+
+    const combatesFiltrados = todosCombates.filter((combate: any) => {
+      const coincideBusqueda = !busqueda || this.obtenerTextoBusquedaCombate(combate).includes(busqueda);
+      const coincideTipo = !tipo || combate.tipoCombate === tipo;
+      const coincideResultado = this.coincideResultadoFiltro(combate, resultado);
+      const coincideVideo = this.coincideVideoFiltro(combate, video);
+
+      return coincideBusqueda && coincideTipo && coincideResultado && coincideVideo;
+    });
+
+    oModel.setProperty("/combates", combatesFiltrados);
+  }
+
+  private obtenerTextoBusquedaCombate(combate: any): string {
+    return this.normalizarTexto([
+      combate?.codigo,
+      combate?.tipoCombate,
+      combate?.resultado,
+      combate?.evento,
+      combate?.ave?.placa,
+      combate?.ave?.nombre,
+      combate?.combatienteB?.placa,
+      combate?.combatienteB?.nombre,
+      combate?.nombreOponente,
+      combate?.propietarioOponente,
+      combate?.procedenciaOponente,
+    ].filter(Boolean).join(" "));
+  }
+
+  private coincideResultadoFiltro(combate: any, resultado: string): boolean {
+    if (!resultado) return true;
+    if (resultado === "SIN_RESULTADO") {
+      return !combate?.resultado || combate.resultado === "SIN_RESULTADO";
+    }
+    return combate?.resultado === resultado;
+  }
+
+  private coincideVideoFiltro(combate: any, video: string): boolean {
+    if (!video) return true;
+
+    const estado = combate?.videoEstadoCarga || "";
+    const tieneVideo = Boolean(combate?.videoUrl) || estado === "SUBIDO";
+
+    if (video === "CON_VIDEO") return tieneVideo;
+    if (video === "SIN_VIDEO") return !tieneVideo && !estado.startsWith("PENDIENTE");
+    if (video === "PENDIENTE") return estado.startsWith("PENDIENTE");
+
+    return true;
+  }
+
+  private normalizarTexto(valor?: string): string {
+    return (valor || "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
   }
 
   public onCrearCombate(): void {

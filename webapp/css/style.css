@@ -427,6 +427,45 @@
   line-height: 1.25;
 }
 
+.userMenuPlanStatus {
+  margin-top: 0.55rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  background: rgba(8, 119, 242, 0.08);
+}
+
+.userMenuPlanStatus .sapMObjStatusText,
+.userMenuPlanStatus .sapMObjStatusIcon {
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.userMenuPlanDays {
+  margin-top: 0.2rem;
+  color: var(--app-muted);
+  font-size: 0.78rem;
+}
+
+.userMenuSubscriptionLink {
+  margin-top: 0.3rem;
+}
+
+.userMenuSubscriptionLink .sapMBtnInner,
+.userMenuSubscriptionLink .sapMBtnInner.sapMBtnTransparent {
+  height: 1.75rem;
+  min-height: 1.75rem;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.userMenuSubscriptionLink .sapMBtnContent,
+.userMenuSubscriptionLink .sapMBtnIcon {
+  color: var(--app-blue) !important;
+  font-weight: 800;
+  line-height: 1.75rem;
+}
+
 .userMenuActions {
   gap: 0.75rem;
 }
@@ -946,4 +985,148 @@
 .userMenuMobileSheet .sapMBtnReject .sapMBtnInner:hover {
   border-color: #0854a0;
   background: #0854a0;
+}
+
+.planesCruceHeader {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid #c8d7e3;
+  column-gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.75rem;
+  row-gap: 0.5rem;
+}
+
+.planesCruceHeaderTitle {
+  min-width: 10rem;
+}
+
+.suscripcionStatusHeader {
+  gap: 0.65rem;
+}
+
+.suscripcionEstadoChip {
+  padding: 0.2rem 0.65rem;
+  border-radius: 1rem;
+  background: rgba(47, 184, 111, 0.1);
+}
+
+.suscripcionEstadoChip .sapMObjStatusText,
+.suscripcionEstadoChip .sapMObjStatusIcon {
+  font-weight: 900;
+}
+
+.suscripcionDates {
+  column-gap: 1.2rem;
+  row-gap: 0.75rem;
+}
+
+.planesCruceHeaderActions,
+.incubacionDetailFooter {
+  column-gap: 0.35rem;
+  row-gap: 0.35rem;
+}
+
+.combatesFilterPanel {
+  margin-bottom: 0.75rem;
+}
+
+.combatesFilterFields {
+  column-gap: 0.6rem;
+  margin-top: 0.6rem;
+  row-gap: 0.6rem;
+}
+
+@media (max-width: 37.5rem) {
+  .suscripcionStatusContent.sapUiMediumMargin {
+    margin: 0.9rem !important;
+  }
+
+  .suscripcionStatusHeader {
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
+
+  .suscripcionStatusHeader .sapMObjectIdentifier {
+    max-width: 100%;
+  }
+
+  .suscripcionStatusHeader .sapMObjectIdentifierTitle,
+  .suscripcionStatusHeader .sapMObjectIdentifierText {
+    white-space: normal;
+  }
+
+  .suscripcionDates {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .suscripcionDates .sapMObjectNumber,
+  .suscripcionDates .sapMObjectIdentifier {
+    margin-right: 0 !important;
+    min-width: 6rem;
+  }
+
+  .planesCruceHeader {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0.75rem 0.6rem;
+  }
+
+  .planesCruceHeaderTitle .sapMTitle {
+    white-space: normal;
+  }
+
+  .planesCruceHeaderActions {
+    justify-content: flex-start;
+  }
+
+  .planesCruceHeaderActions .sapMBtn {
+    max-width: 100%;
+  }
+
+  .planesCruceHeaderActions .sapMBtnContent {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .incubacionDetailFooter.sapMTB {
+    height: auto;
+    min-height: 3rem;
+    overflow-x: auto;
+    padding: 0.35rem 0.45rem;
+    white-space: nowrap;
+  }
+
+  .incubacionDetailFooter .sapMTBSpacer {
+    display: none;
+  }
+
+  .incubacionDetailFooter .sapMBtn {
+    flex: 0 0 auto;
+    margin-left: 0 !important;
+  }
+
+  .incubacionDetailFooter .sapMBtnInner {
+    min-width: 0;
+    padding-left: 0.55rem;
+    padding-right: 0.55rem;
+  }
+
+  .incubacionDetailFooter .sapMBtnContent {
+    font-size: 0.72rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .combatesFilterFields {
+    flex-direction: column;
+  }
+
+  .combatesFilterFields .sapMComboBoxBase,
+  .combatesFilterFields .sapMBtn {
+    width: 100% !important;
+  }
 }

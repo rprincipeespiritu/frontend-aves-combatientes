@@ -79,8 +79,14 @@ export default class Suscripcion extends Controller {
 
             oModel.setData({
                 ...data,
+                planFmt: this.formatearEnum(data.plan),
+                estadoFmt: this.formatearEnum(data.estado),
+                mensajeFmt: this.formatearMensajeSuscripcion(data.mensaje, data.plan),
                 fechaInicioFmt: this.formatearFecha(data.fechaInicio),
                 fechaFinFmt: this.formatearFecha(data.fechaFin),
+                maxAvesFmt: this.formatearLimite(data.maxAves),
+                maxPollitosFmt: this.formatearLimite(data.maxPollitos),
+                maxIncubacionesFmt: this.formatearLimite(data.maxIncubaciones),
                 estadoState: data.estado === "ACTIVA" ? "Success" : data.estado === "CANCELADA" ? "Warning" : "Error",
             });
         } catch (error: any) {
@@ -184,6 +190,31 @@ export default class Suscripcion extends Controller {
         const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (match) return `${match[3]}/${match[2]}/${match[1]}`;
         return fecha;
+    }
+
+    private formatearEnum(valor?: string): string {
+        return String(valor || "")
+            .toLowerCase()
+            .split("_")
+            .map((parte) => parte.charAt(0).toUpperCase() + parte.slice(1))
+            .join(" ");
+    }
+
+    private formatearLimite(valor?: number | string): string {
+        const numero = Number(valor || 0);
+        return numero >= 999999 ? "Ilimitado" : String(numero);
+    }
+
+    private formatearMensajeSuscripcion(mensaje?: string, plan?: string): string {
+        const texto = String(mensaje || "");
+        const planOriginal = String(plan || "");
+        const planFormateado = this.formatearEnum(planOriginal);
+
+        if (!texto || !planOriginal) {
+            return texto;
+        }
+
+        return texto.replace(new RegExp(planOriginal, "gi"), planFormateado);
     }
 
     public onRefrescar(): void {

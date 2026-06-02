@@ -24,6 +24,23 @@
             <VBox alignItems="Center" class="userMenuIdentity">
                 <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" class="userMenuName" />
                 <Text text="{user>/email}" textAlign="Center" class="userMenuEmail" />
+                <ObjectStatus
+                        text="{= 'Plan ' + ${planIndicator>/text} }"
+                        icon="{planIndicator>/icon}"
+                        state="{planIndicator>/state}"
+                        visible="{planIndicator>/visible}"
+                        class="userMenuPlanStatus" />
+                <Text
+                        text="{= ${planIndicator>/diasRestantes} !== undefined ? ${planIndicator>/diasRestantes} + ' dias restantes' : '' }"
+                        visible="{= ${planIndicator>/visible} &amp;&amp; ${planIndicator>/diasRestantes} !== undefined }"
+                        textAlign="Center"
+                        class="userMenuPlanDays" />
+                <Button
+                        text="Suscripcion"
+                        type="Transparent"
+                        icon="sap-icon://credit-card"
+                        press="onSubscriptionSettings"
+                        class="userMenuSubscriptionLink" />
             </VBox>
 
             <VBox class="userMenuActions">

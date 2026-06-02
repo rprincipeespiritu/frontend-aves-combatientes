@@ -9,7 +9,6 @@
         navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <f:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -52,6 +51,22 @@
                                     width="100%"
                                     liveChange="onBuscar"
                                     class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                                <Input
+                                    id="padreFilter"
+                                    placeholder="Padre"
+                                    width="100%"
+                                    showValueHelp="true"
+                                    valueHelpRequest="onValueHelpFiltroPadre"
+                                    liveChange="onBuscar"
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                                <Input
+                                    id="madreFilter"
+                                    placeholder="Madre"
+                                    width="100%"
+                                    showValueHelp="true"
+                                    valueHelpRequest="onValueHelpFiltroMadre"
+                                    liveChange="onBuscar"
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
                                 <Button text="Limpiar Filtros" press="onLimpiarFiltros"
                                     class="sapUiTinyMarginBottom" />
                             </items>
@@ -80,7 +95,7 @@
                             <Column width="6rem">
                                 <Text text="Cintillo" />
                             </Column>
-                            <Column width="6rem">
+                            <Column minScreenWidth="Desktop" demandPopin="true" width="6rem">
                                 <Text text="Color" />
                             </Column>
                             <Column width="8rem">

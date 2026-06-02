@@ -8,9 +8,6 @@
 
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}"
-                type="{planIndicator>/type}" visible="{planIndicator>/visible}"
-                class="planHeaderButton sapUiTinyMarginEnd" />
             <form:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -147,7 +144,7 @@
             </VBox>
         </content>
         <footer>
-            <Toolbar>
+            <Toolbar class="incubacionDetailFooter">
                 <ToolbarSpacer />
                 <Button text="Iniciar Incubación" type="Emphasized"
                     visible="{= ${view>/incubacion/estado} === 'PROGRAMADA' }"

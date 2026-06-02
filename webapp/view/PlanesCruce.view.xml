@@ -11,7 +11,6 @@
         navButtonPress=".onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <form:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -24,19 +23,21 @@
             <VBox class="sapUiMediumMargin">
 
                 <!-- Toolbar -->
-                <Toolbar>
-                    <Title text="Historial de Cruces" />
-                    <ToolbarSpacer />
-                    <Button
-                        text="Cruce abierto"
-                        icon="sap-icon://chain-link"
-                        type="Transparent"
-                        press=".onNuevoCruceAbierto" />
-                    <Button
-                        text="Nuevo Plan por Linaje"
-                        icon="sap-icon://add"
-                        press=".onNuevoPlan" />
-                </Toolbar>
+                <VBox>
+                    <Title text="Historial de Cruces" class="planesCruceHeaderTitle" />
+                    <HBox class="planesCruceHeaderActions" wrap="Wrap" justifyContent="End">
+                        <Button
+                            text="Cruce abierto"
+                            icon="sap-icon://chain-link"
+                            type="Transparent"
+                            press=".onNuevoCruceAbierto" />
+                        <Button
+                            text="Nuevo Plan por Linaje"
+                            icon="sap-icon://add"
+                            type="Emphasized"
+                            press=".onNuevoPlan" />
+                    </HBox>
+                </VBox>
 
                 <!-- Tabla -->
                 <Table
@@ -53,28 +54,28 @@
                     </headerToolbar>
 
                     <columns>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Codigo" />
                         </Column>
-                        <Column width="11rem">
+                        <Column>
                             <Text text="Tipo" />
                         </Column>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Macho" />
                         </Column>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Hembra" />
                         </Column>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Parentesco" />
                         </Column>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Riesgo" />
                         </Column>
                         <Column>
                             <Text text="Decision" />
                         </Column>
-                        <Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet">
                             <Text text="Fecha" />
                         </Column>
                         <Column hAlign="Center" width="8rem">
@@ -122,7 +123,7 @@
                                 <HBox justifyContent="Center">
                                     <Button
                                         icon="sap-icon://edit"
-                                        type="Transparent"
+                                        type="Emphasized"
                                         tooltip="Editar plan"
                                         press=".onEditarPlan" />
                                     <Button

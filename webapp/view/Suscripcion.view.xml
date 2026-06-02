@@ -10,7 +10,6 @@
         navButtonPress=".onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <f:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -21,18 +20,19 @@
 
         <content>
             <VBox class="sapUiMediumMargin" busy="{suscripcion>/busy}">
-                <Panel headerText="Estado de suscripcion">
-                    <VBox class="sapUiMediumMargin">
-                        <HBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="Center">
+                <Panel headerText="Estado de suscripcion" class="suscripcionStatusPanel">
+                    <VBox class="sapUiMediumMargin suscripcionStatusContent">
+                        <HBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="Start" class="suscripcionStatusHeader">
                             <ObjectIdentifier
-                                title="{= 'Plan ' + ${suscripcion>/plan} }"
-                                text="{suscripcion>/mensaje}" />
+                                title="{= 'Plan ' + ${suscripcion>/planFmt} }"
+                                text="{suscripcion>/mensajeFmt}" />
                             <ObjectStatus
-                                text="{suscripcion>/estado}"
-                                state="{suscripcion>/estadoState}" />
+                                text="{suscripcion>/estadoFmt}"
+                                state="{suscripcion>/estadoState}"
+                                class="suscripcionEstadoChip" />
                         </HBox>
 
-                        <HBox wrap="Wrap" class="sapUiMediumMarginTop">
+                        <HBox wrap="Wrap" class="sapUiMediumMarginTop suscripcionDates">
                             <ObjectNumber
                                 number="{suscripcion>/diasRestantes}"
                                 unit="dias restantes"
@@ -54,7 +54,7 @@
                             <TileContent>
                                 <NumericContent
                                     value="{suscripcion>/totalAves}"
-                                    scale="{= 'de ' + ${suscripcion>/maxAves} }"
+                                    scale="{= 'de ' + ${suscripcion>/maxAvesFmt} }"
                                     icon="images/icons/adult-bird.svg" />
                             </TileContent>
                         </GenericTile>
@@ -63,7 +63,7 @@
                             <TileContent>
                                 <NumericContent
                                     value="{suscripcion>/totalPollitos}"
-                                    scale="{= 'de ' + ${suscripcion>/maxPollitos} }"
+                                    scale="{= 'de ' + ${suscripcion>/maxPollitosFmt} }"
                                     icon="images/icons/young-chick.svg" />
                             </TileContent>
                         </GenericTile>
@@ -72,7 +72,7 @@
                             <TileContent>
                                 <NumericContent
                                     value="{suscripcion>/totalIncubaciones}"
-                                    scale="{= 'de ' + ${suscripcion>/maxIncubaciones} }"
+                                    scale="{= 'de ' + ${suscripcion>/maxIncubacionesFmt} }"
                                     icon="images/icons/incubation-eggs.svg" />
                             </TileContent>
                         </GenericTile>
