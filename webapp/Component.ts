@@ -118,15 +118,21 @@ export default class Component extends BaseComponent {
   private installGlobalAccountSettingsHandler(): void {
     const controllerPrototype = Controller.prototype as any;
 
-    if (controllerPrototype.onAccountSettings) {
-      return;
+    if (!controllerPrototype.onAccountSettings) {
+      controllerPrototype.onAccountSettings = function (): void {
+        this._oUserMenuPopover?.close?.();
+        this._oUserMenuSheet?.close?.();
+        this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteAccountSettings");
+      };
     }
 
-    controllerPrototype.onAccountSettings = function (): void {
-      this._oUserMenuPopover?.close?.();
-      this._oUserMenuSheet?.close?.();
-      this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteAccountSettings");
-    };
+    if (!controllerPrototype.onSubscriptionSettings) {
+      controllerPrototype.onSubscriptionSettings = function (): void {
+        this._oUserMenuPopover?.close?.();
+        this._oUserMenuSheet?.close?.();
+        this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteSuscripcion");
+      };
+    }
   }
 
   private async onRouteMatched(event: any): Promise<void> {

@@ -1,6 +1,7 @@
 <mvc:View
     controllerName="com.rprincipees.registroavescombate.controller.Combates"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
     xmlns="sap.m"
     xmlns:f="sap.f">
 
@@ -11,7 +12,6 @@
         busy="{combates>/busy}">
         <headerContent>
             <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
-            <Button text="{planIndicator>/text}" icon="{planIndicator>/icon}" type="{planIndicator>/type}" visible="{planIndicator>/visible}" class="planHeaderButton sapUiTinyMarginEnd" />
             <f:Avatar
                 id="userAvatar"
                 src="{user>/foto}"
@@ -22,6 +22,64 @@
 
         <content>
             <VBox class="sapUiMediumMargin">
+                <Panel
+                    headerText="Filtros"
+                    expandable="true"
+                    expanded="false"
+                    width="100%"
+                    class="combatesFilterPanel">
+                    <VBox class="sapUiSmallMargin">
+                        <SearchField
+                            width="100%"
+                            placeholder="Buscar por ave, rival, evento o resultado"
+                            value="{combates>/filtros/busqueda}"
+                            liveChange=".onFiltrarCombates"
+                            search=".onFiltrarCombates" />
+                        <HBox wrap="Wrap" class="combatesFilterFields">
+                            <ComboBox
+                                selectedKey="{combates>/filtros/tipo}"
+                                selectionChange=".onFiltrarCombates"
+                                placeholder="Tipo de pelea"
+                                width="12rem">
+                                <items>
+                                    <core:Item key="" text="Todos los tipos" />
+                                    <core:Item key="OFICIAL" text="Oficial" />
+                                    <core:Item key="PRUEBA" text="Entrenamiento" />
+                                </items>
+                            </ComboBox>
+                            <ComboBox
+                                selectedKey="{combates>/filtros/resultado}"
+                                selectionChange=".onFiltrarCombates"
+                                placeholder="Resultado"
+                                width="12rem">
+                                <items>
+                                    <core:Item key="" text="Todos los resultados" />
+                                    <core:Item key="VICTORIA" text="Victoria" />
+                                    <core:Item key="DERROTA" text="Derrota" />
+                                    <core:Item key="EMPATE" text="Empate" />
+                                    <core:Item key="DESCALIFICADO" text="Descalificado" />
+                                    <core:Item key="SIN_RESULTADO" text="Sin resultado" />
+                                </items>
+                            </ComboBox>
+                            <ComboBox
+                                selectedKey="{combates>/filtros/video}"
+                                selectionChange=".onFiltrarCombates"
+                                placeholder="Video"
+                                width="12rem">
+                                <items>
+                                    <core:Item key="" text="Todos los videos" />
+                                    <core:Item key="CON_VIDEO" text="Con video" />
+                                    <core:Item key="SIN_VIDEO" text="Sin video" />
+                                    <core:Item key="PENDIENTE" text="Pendiente" />
+                                </items>
+                            </ComboBox>
+                            <Button
+                                text="Limpiar filtros"
+                                icon="sap-icon://clear-filter"
+                                press=".onLimpiarFiltros" />
+                        </HBox>
+                    </VBox>
+                </Panel>
                 <Table
                     items="{combates>/combates}"
                     growing="true"
