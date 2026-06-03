@@ -1040,22 +1040,26 @@
 }
 
 .avePrincipalHeaderImage {
-  width: 9rem;
-  height: 9rem;
-  max-width: 32vw;
+  width: auto;
+  height: auto;
+  max-width: 14rem;
+  max-height: 14rem;
   border: 1px solid #d8e2ea;
   border-radius: 0.5rem;
   background: #f7fbff;
+  display: block;
   object-fit: contain;
 }
 
 .avePrincipalIdentificacionImage {
-  width: 12rem;
-  height: 12rem;
+  width: auto;
+  height: auto;
   max-width: 100%;
+  max-height: 14rem;
   border: 1px solid #d8e2ea;
   border-radius: 0.5rem;
   background: #f7fbff;
+  display: block;
   object-fit: contain;
 }
 
@@ -1151,13 +1155,12 @@
   }
 
   .avePrincipalHeaderImage {
-    width: 6.5rem;
-    height: 6.5rem;
-    max-width: 34vw;
+    max-width: 8.5rem;
+    max-height: 8.5rem;
   }
 
   .avePrincipalIdentificacionImage {
-    width: 10rem;
-    height: 10rem;
+    max-width: 10rem;
+    max-height: 10rem;
   }
 }
