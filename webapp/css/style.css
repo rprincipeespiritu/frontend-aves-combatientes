@@ -1039,6 +1039,26 @@
   row-gap: 0.6rem;
 }
 
+.avePrincipalHeaderImage {
+  width: 9rem;
+  height: 9rem;
+  max-width: 32vw;
+  border: 1px solid #d8e2ea;
+  border-radius: 0.5rem;
+  background: #f7fbff;
+  object-fit: contain;
+}
+
+.avePrincipalIdentificacionImage {
+  width: 12rem;
+  height: 12rem;
+  max-width: 100%;
+  border: 1px solid #d8e2ea;
+  border-radius: 0.5rem;
+  background: #f7fbff;
+  object-fit: contain;
+}
+
 @media (max-width: 37.5rem) {
   .suscripcionStatusContent.sapUiMediumMargin {
     margin: 0.9rem !important;
@@ -1128,5 +1148,16 @@
   .combatesFilterFields .sapMComboBoxBase,
   .combatesFilterFields .sapMBtn {
     width: 100% !important;
+  }
+
+  .avePrincipalHeaderImage {
+    width: 6.5rem;
+    height: 6.5rem;
+    max-width: 34vw;
+  }
+
+  .avePrincipalIdentificacionImage {
+    width: 10rem;
+    height: 10rem;
   }
 }
