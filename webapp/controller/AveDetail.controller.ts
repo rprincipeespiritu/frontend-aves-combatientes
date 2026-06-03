@@ -11,6 +11,7 @@ import Control from "sap/ui/mdc/Control";
 import Device from "sap/ui/Device";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
+import BusyDialog from "sap/m/BusyDialog";
 import {CategoriaAve, EstadoAve, IAve, SexoAve} from "com/rprincipees/registroavescombate/types/Models";
 import formatter from "../model/formatter";
 
@@ -23,6 +24,7 @@ export default class AveDetail extends Controller {
     private _oEvaluacionDialog: any;
     private _oEvaluacionPleitoDialog: any;
     private _oArchivoAveViewerDialog: any;
+    private _oUploadBusyDialog?: BusyDialog;
     private readonly maxArchivosAve: number = 3;
     public formatter = formatter;
 
@@ -66,8 +68,11 @@ export default class AveDetail extends Controller {
             archivoViewer: {
                 title: "",
                 nombreArchivo: "",
+                fotoId: "",
+                puedeUsarComoPrincipal: false,
                 tipo: "",
                 url: "",
+                urlOriginal: "",
                 html: ""
             },
             evaluacionDialogTitle: "Registrar evaluacion",
@@ -222,7 +227,7 @@ export default class AveDetail extends Controller {
                 colorNombre: ave.color?.nombre || "",
                 padreNombre: ave.padre ? `${ave.padre.placa} - ${ave.padre.nombre || ""}` : "Sin registro",
                 madreNombre: ave.madre ? `${ave.madre.placa} - ${ave.madre.nombre || ""}` : "Sin registro",
-                fotoPrincipal: ave.fotos?.find((f: any) => f.esPrincipal)?.thumbnailUrl || "",
+                fotoPrincipal: "",
                 pesajes: ave.pesajes || [],
                 peleas: ave.peleas || [],
                 editMode: false
@@ -348,9 +353,14 @@ export default class AveDetail extends Controller {
             estadoArchivoIcon: this.obtenerEstadoArchivoIcon(item.urlSharepoint)
         }));
         const archivos = [...fotos, ...videos].slice(0, this.maxArchivosAve);
+        const fotoPrincipal = fotos.find((foto: any) => foto.esPrincipal);
+        const fotoPrincipalUrl = fotoPrincipal
+            ? await this.obtenerUrlVisualizacionArchivo(fotoPrincipal.thumbnailUrl || fotoPrincipal.urlArchivo || "")
+            : "";
 
         oModel.setProperty("/archivosAve", archivos);
         oModel.setProperty("/archivosRestantes", this.maxArchivosAve - archivos.length);
+        oModel.setProperty("/fotoPrincipal", fotoPrincipalUrl);
     }
 
     private async cargarCatalogos(): Promise<void> {
@@ -882,6 +892,8 @@ export default class AveDetail extends Controller {
         }
 
         try {
+            this.abrirBusySubidaArchivos(files.slice(0, Math.max(disponibles, 0)).length);
+
             const agregados = new Set(actuales.map((archivo: any) => this.normalizarNombreArchivo(archivo.nombreArchivo)));
             let archivosRegistrados = 0;
             let archivosOmitidos = 0;
@@ -917,6 +929,8 @@ export default class AveDetail extends Controller {
             }
         } catch (error: any) {
             MessageBox.error(error.message || "No se pudo registrar el archivo.");
+        } finally {
+            this.cerrarBusySubidaArchivos();
         }
     }
 
@@ -969,10 +983,13 @@ export default class AveDetail extends Controller {
         const tipo = archivo.tipo || "ARCHIVO";
 
         oModel.setProperty("/archivoViewer", {
-            title: tipo === "VIDEO" ? "Video del ave" : "Imagen del ave",
+            title: this.obtenerTituloAveVisorArchivo(oModel),
             nombreArchivo,
+            fotoId: tipo === "IMAGEN" ? archivo.ID || "" : "",
+            puedeUsarComoPrincipal: tipo === "IMAGEN" && !!archivo.ID && !esPendiente,
             tipo,
             url,
+            urlOriginal: archivo.urlArchivo || archivo.urlSharepoint || "",
             html: this.crearHtmlVisorArchivo(tipo, url, nombreArchivo, esPendiente)
         });
 
@@ -995,6 +1012,58 @@ export default class AveDetail extends Controller {
         const oModel = this.getView()?.getModel("detail") as JSONModel;
         oModel.setProperty("/archivoViewer/html", "");
         oModel.setProperty("/archivoViewer/url", "");
+        oModel.setProperty("/archivoViewer/urlOriginal", "");
+        oModel.setProperty("/archivoViewer/fotoId", "");
+        oModel.setProperty("/archivoViewer/puedeUsarComoPrincipal", false);
+    }
+
+    public async onUsarArchivoComoImagenPrincipal(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const fotoId = oModel.getProperty("/archivoViewer/fotoId");
+        const url = oModel.getProperty("/archivoViewer/url");
+        const urlOriginal = oModel.getProperty("/archivoViewer/urlOriginal");
+
+        if (!fotoId) {
+            MessageBox.warning("Selecciona una imagen valida para usarla como principal.");
+            return;
+        }
+
+        try {
+            const headers = {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.authService.getToken()}`
+            };
+            const fotos = (oModel.getProperty("/archivosAve") || [])
+                .filter((archivo: any) => archivo.tipo === "IMAGEN" && archivo.ID);
+
+            await Promise.all(
+                fotos
+                    .filter((foto: any) => foto.ID !== fotoId && foto.esPrincipal)
+                    .map((foto: any) => fetch(`${this.baseUrl}/FotosAve('${foto.ID}')`, {
+                        method: "PATCH",
+                        headers,
+                        body: JSON.stringify({ esPrincipal: false })
+                    }))
+            );
+
+            const response = await fetch(`${this.baseUrl}/FotosAve('${fotoId}')`, {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify({ esPrincipal: true })
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data?.error?.message || "No se pudo establecer la imagen principal.");
+            }
+
+            oModel.setProperty("/fotoPrincipal", url || await this.obtenerUrlVisualizacionArchivo(urlOriginal || ""));
+            MessageToast.show("Imagen principal actualizada");
+            this._oArchivoAveViewerDialog?.close();
+            await this.cargarArchivosAve();
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo establecer la imagen principal.");
+        }
     }
 
     private detenerMediaArchivoAve(): void {
@@ -1059,6 +1128,13 @@ export default class AveDetail extends Controller {
         }
 
         return data.downloadUrl || url;
+    }
+
+    private obtenerTituloAveVisorArchivo(oModel: JSONModel): string {
+        const placa = String(oModel.getProperty("/placa") || "").trim();
+        const nombre = String(oModel.getProperty("/nombre") || "").trim();
+
+        return [placa, nombre].filter(Boolean).join(" - ") || "Archivo del ave";
     }
 
     private escapeHtml(value: string): string {
@@ -1155,6 +1231,25 @@ export default class AveDetail extends Controller {
         if (!response.ok) {
             throw new Error(`No se pudo subir ${file.name} a AWS S3.`);
         }
+    }
+
+    private abrirBusySubidaArchivos(totalArchivos: number): void {
+        if (!this._oUploadBusyDialog) {
+            this._oUploadBusyDialog = new BusyDialog({
+                title: "Procesando ...",
+                text: "Subiendo archivo al repositorio remoto",
+                showCancelButton: false
+            });
+            this.getView()?.addDependent(this._oUploadBusyDialog);
+        }
+
+        this._oUploadBusyDialog.setTitle("Procesando ...");
+        this._oUploadBusyDialog.setText("Subiendo archivo al repositorio remoto");
+        this._oUploadBusyDialog.open();
+    }
+
+    private cerrarBusySubidaArchivos(): void {
+        this._oUploadBusyDialog?.close();
     }
 
     private limpiarUploaderArchivosAveDetail(): void {

@@ -21,8 +21,17 @@
 
                 <!-- Header con foto y datos básicos -->
                 <HBox class="sapUiMediumMarginBottom" alignItems="Center">
-                    <Avatar src="{detail>/fotoPrincipal}" displaySize="XL"
-                        class="sapUiMediumMarginEnd" />
+                    <Image
+                        src="{detail>/fotoPrincipal}"
+                        visible="{= !!${detail>/fotoPrincipal} }"
+                        decorative="false"
+                        alt="{= ${detail>/placa} + ' ' + ${detail>/nombre} }"
+                        class="avePrincipalHeaderImage sapUiMediumMarginEnd" />
+                    <!-- <Avatar
+                        icon="sap-icon://picture"
+                        displaySize="XL"
+                        visible="{= !${detail>/fotoPrincipal} }"
+                        class="sapUiMediumMarginEnd" /> -->
                     <VBox>
                         <Title text="{detail>/nombre}" level="H2" />
                         <Text text="Placa: {detail>/placa}" />
@@ -42,6 +51,19 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
                         columnsL="2" columnsM="1">
                         <f:content>
+                            <!-- <Label text="Imagen" />
+                            <VBox>
+                                <Image
+                                    src="{detail>/fotoPrincipal}"
+                                    visible="{= !!${detail>/fotoPrincipal} }"
+                                    decorative="false"
+                                    alt="{= ${detail>/placa} + ' ' + ${detail>/nombre} }"
+                                    class="avePrincipalIdentificacionImage" />
+                                <Text
+                                    text="Sin imagen principal"
+                                    visible="{= !${detail>/fotoPrincipal} }" />
+                            </VBox> -->
+
                             <Label text="Placa" />
                             <ObjectStatus
                                 text="{

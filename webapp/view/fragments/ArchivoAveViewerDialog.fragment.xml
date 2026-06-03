@@ -17,6 +17,14 @@
                 <core:HTML content="{detail>/archivoViewer/html}" />
             </VBox>
         </content>
+        <beginButton>
+            <Button
+                text="Usar como imagen principal"
+                icon="sap-icon://favorite"
+                type="Emphasized"
+                visible="{detail>/archivoViewer/puedeUsarComoPrincipal}"
+                press=".onUsarArchivoComoImagenPrincipal" />
+        </beginButton>
         <endButton>
             <Button text="Cerrar" press=".onCerrarVisorArchivoAve" />
         </endButton>
