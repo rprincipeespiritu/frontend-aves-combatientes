@@ -90,6 +90,7 @@ export default class PlanesCruce extends Controller {
     const oPlan = oContext.getObject();
 
     const parentesco = this.formatearParentesco(oPlan.tipoParentesco as ParentescoAve);
+    const riesgo = formatter.formatNivelRiesgoTexto(oPlan.nivelRiesgo);
     MessageBox.information(
       `Codigo: ${oPlan.codigo || ""}
 
@@ -99,7 +100,7 @@ Detalle del cruce:
         Hembra: ${oPlan.hembra?.placa}
 
         Parentesco: ${parentesco}
-        Riesgo: ${oPlan.nivelRiesgo}
+        Riesgo: ${riesgo}
 
         Recomendación:
         ${oPlan.recomendacion}`,
