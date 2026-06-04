@@ -1005,6 +1005,38 @@ export default class AveDetail extends Controller {
         this._oArchivoAveViewerDialog.open();
     }
 
+    public async onVerFotoPrincipal(): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const url = oModel.getProperty("/fotoPrincipal");
+
+        if (!url) {
+            return;
+        }
+
+        const titulo = this.obtenerTituloAveVisorArchivo(oModel);
+        oModel.setProperty("/archivoViewer", {
+            title: titulo,
+            nombreArchivo: "Imagen principal",
+            fotoId: "",
+            puedeUsarComoPrincipal: false,
+            tipo: "IMAGEN",
+            url,
+            urlOriginal: url,
+            html: this.crearHtmlVisorArchivo("IMAGEN", url, titulo, false)
+        });
+
+        if (!this._oArchivoAveViewerDialog) {
+            this._oArchivoAveViewerDialog = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.ArchivoAveViewerDialog",
+                controller: this
+            });
+            this.getView()?.addDependent(this._oArchivoAveViewerDialog);
+        }
+
+        this._oArchivoAveViewerDialog.open();
+    }
+
     public onCerrarVisorArchivoAve(): void {
         this.detenerMediaArchivoAve();
         this._oArchivoAveViewerDialog?.close();

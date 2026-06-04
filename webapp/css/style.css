@@ -1047,8 +1047,15 @@
   border: 1px solid #d8e2ea;
   border-radius: 0.5rem;
   background: #f7fbff;
+  cursor: pointer;
   display: block;
   object-fit: contain;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.avePrincipalHeaderImage:hover {
+  box-shadow: 0 0.35rem 1rem rgba(0, 92, 150, 0.18);
+  transform: translateY(-1px);
 }
 
 .avePrincipalIdentificacionImage {

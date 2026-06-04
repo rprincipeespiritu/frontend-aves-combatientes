@@ -26,6 +26,7 @@
                         visible="{= !!${detail>/fotoPrincipal} }"
                         decorative="false"
                         alt="{= ${detail>/placa} + ' ' + ${detail>/nombre} }"
+                        press=".onVerFotoPrincipal"
                         class="avePrincipalHeaderImage sapUiMediumMarginEnd" />
                     <!-- <Avatar
                         icon="sap-icon://picture"
