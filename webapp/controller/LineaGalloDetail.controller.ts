@@ -121,7 +121,7 @@ export default class LineaGalloDetail extends Controller {
 
     try {
       const lineaResponse = await fetch(
-        `${this.baseUrl}/LineasAves(${this.lineaId})?$expand=aveFundador,aveFundadora`,
+        `${this.baseUrl}/LineasAves('${this.lineaId}')?$expand=aveFundador,aveFundadora`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
@@ -133,7 +133,7 @@ export default class LineaGalloDetail extends Controller {
       const linea = await lineaResponse.json();
 
       const planesResponse = await fetch(
-        `${this.baseUrl}/PlanesCruces?$filter=linea_ID eq ${this.lineaId}&$expand=macho,hembra`,
+        `${this.baseUrl}/PlanesCruces?$filter=linea_ID eq '${this.lineaId}'&$expand=macho,hembra`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
