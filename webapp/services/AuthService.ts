@@ -46,8 +46,11 @@ export interface AuthResponse {
 export class AuthService {
     private static instance: AuthService;
     private readonly inactivityTimeoutMs: number = 10 * 60 * 1000;
+    private readonly inactivityCheckIntervalMs: number = 30 * 1000;
     private inactivityTimer: number | null = null;
+    private inactivityCheckTimer: number | null = null;
     private inactivityStarted: boolean = false;
+    private inactivityClosing: boolean = false;
     private onInactivityTimeout?: () => void;
     private _token: string = "";
     private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
@@ -94,6 +97,7 @@ export class AuthService {
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
+                this.marcarActividad();
                 this.resetInactivityTimer();
             }
 
@@ -137,6 +141,7 @@ export class AuthService {
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
+                this.marcarActividad();
                 this.resetInactivityTimer();
             }
 
@@ -484,6 +489,9 @@ export class AuthService {
         eventos.forEach((evento) => {
             window.addEventListener(evento, this.registrarActividad, { passive: true });
         });
+        window.addEventListener("focus", this.verificarInactividad);
+        window.addEventListener("visibilitychange", this.verificarInactividad);
+        window.addEventListener("storage", this.sincronizarInactividadEntrePestanas);
 
         this.resetInactivityTimer();
     }
@@ -494,27 +502,57 @@ export class AuthService {
             return;
         }
 
-        localStorage.setItem("auth_last_activity", String(Date.now()));
+        this.marcarActividad();
         this.resetInactivityTimer();
     };
+
+    private marcarActividad(): void {
+        if (typeof Storage !== "undefined") {
+            localStorage.setItem("auth_last_activity", String(Date.now()));
+        }
+    }
 
     private resetInactivityTimer(): void {
         if (this.inactivityTimer) {
             window.clearTimeout(this.inactivityTimer);
             this.inactivityTimer = null;
         }
+        this.stopInactivityCheckTimer();
 
         if (!this.isAuthenticated() || typeof window === "undefined") {
             return;
+        }
+
+        const lastActivityStored = localStorage.getItem("auth_last_activity");
+        if (!lastActivityStored) {
+            this.marcarActividad();
         }
 
         const lastActivity = Number(localStorage.getItem("auth_last_activity") || Date.now());
         const elapsed = Date.now() - lastActivity;
         const remaining = Math.max(this.inactivityTimeoutMs - elapsed, 0);
 
+        if (remaining === 0) {
+            void this.cerrarPorInactividad();
+            return;
+        }
+
         this.inactivityTimer = window.setTimeout(() => {
             void this.cerrarPorInactividad();
         }, remaining);
+        this.startInactivityCheckTimer();
+    }
+
+    private startInactivityCheckTimer(): void {
+        this.stopInactivityCheckTimer();
+        this.inactivityCheckTimer = window.setInterval(this.verificarInactividad, this.inactivityCheckIntervalMs);
+    }
+
+    private stopInactivityCheckTimer(): void {
+        if (this.inactivityCheckTimer && typeof window !== "undefined") {
+            window.clearInterval(this.inactivityCheckTimer);
+        }
+        this.inactivityCheckTimer = null;
     }
 
     private stopInactivityTimer(): void {
@@ -522,11 +560,44 @@ export class AuthService {
             window.clearTimeout(this.inactivityTimer);
         }
         this.inactivityTimer = null;
+        this.stopInactivityCheckTimer();
     }
 
+    private verificarInactividad = (): void => {
+        if (!this.isAuthenticated()) {
+            this.stopInactivityTimer();
+            return;
+        }
+
+        const lastActivity = Number(localStorage.getItem("auth_last_activity") || 0);
+        if (!lastActivity) {
+            this.marcarActividad();
+            this.resetInactivityTimer();
+            return;
+        }
+
+        if (Date.now() - lastActivity >= this.inactivityTimeoutMs) {
+            void this.cerrarPorInactividad();
+        }
+    };
+
+    private sincronizarInactividadEntrePestanas = (event: StorageEvent): void => {
+        if (event.key === "auth_last_activity") {
+            this.resetInactivityTimer();
+        }
+
+        if (event.key === "auth_token" && !event.newValue) {
+            this.stopInactivityTimer();
+            this.onInactivityTimeout?.();
+        }
+    };
+
     private async cerrarPorInactividad(): Promise<void> {
+        if (this.inactivityClosing) return;
+        this.inactivityClosing = true;
         await this.logout();
         this.onInactivityTimeout?.();
+        this.inactivityClosing = false;
     }
 
     // Renovar token automáticamente
