@@ -16,6 +16,7 @@ import { ParentescoAve } from "../types/Models";
 export default class PlanesCruce extends Controller {
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
+  private _oLineageGuideDialog: any;
   private authService: AuthService;
   public formatter = formatter;
   private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
@@ -90,6 +91,7 @@ export default class PlanesCruce extends Controller {
     const oPlan = oContext.getObject();
 
     const parentesco = this.formatearParentesco(oPlan.tipoParentesco as ParentescoAve);
+    const tipoCruce = formatter.formatTipoFormacionCruceTexto(oPlan.tipoCruce, oPlan.linea?.nombre);
     const riesgo = formatter.formatNivelRiesgoTexto(oPlan.nivelRiesgo);
     MessageBox.information(
       `Codigo: ${oPlan.codigo || ""}
@@ -99,6 +101,7 @@ Detalle del cruce:
         Macho: ${oPlan.macho?.placa}
         Hembra: ${oPlan.hembra?.placa}
 
+        Tipo de formacion: ${tipoCruce}
         Parentesco: ${parentesco}
         Riesgo: ${riesgo}
 
@@ -246,6 +249,25 @@ Detalle del cruce:
       this.getOwnerComponent() as UIComponent
     )?.getRouter() as Router;
     oRouter?.navTo("RouteWelcome");
+  }
+
+  public async onOpenLineageGuide(): Promise<void> {
+    if (!this._oLineageGuideDialog) {
+      const oFragment = await Fragment.load({
+        id: this.getView()?.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.LineageGuideDialog",
+        controller: this,
+      });
+
+      this._oLineageGuideDialog = oFragment;
+      this.getView()?.addDependent(this._oLineageGuideDialog);
+    }
+
+    this._oLineageGuideDialog.open();
+  }
+
+  public onCloseLineageGuide(): void {
+    this._oLineageGuideDialog?.close();
   }
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {

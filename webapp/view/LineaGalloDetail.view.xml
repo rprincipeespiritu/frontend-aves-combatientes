@@ -82,6 +82,9 @@
                             <Text text="Hembra" />
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="Tipo" />
+                        </Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true">
                             <Text text="Parentesco" />
                         </Column>
                         <Column minScreenWidth="Desktop" demandPopin="true">
@@ -119,6 +122,21 @@
                                             { path: 'detalle>hembra/apodo' }
                                         ],
                                         formatter: '.formatter.formatAveNombre'
+                                    }" />
+                                <ObjectStatus
+                                    text="{
+                                        parts: [
+                                            { path: 'detalle>tipoCruce' },
+                                            { path: 'detalle>linea/nombre' }
+                                        ],
+                                        formatter: '.formatter.formatTipoFormacionCruceTexto'
+                                    }"
+                                    state="{
+                                        parts: [
+                                            { path: 'detalle>tipoCruce' },
+                                            { path: 'detalle>linea/nombre' }
+                                        ],
+                                        formatter: '.formatter.formatTipoFormacionCruceState'
                                     }" />
                                 <Text
                                     text="{

@@ -50,6 +50,7 @@ export default {
                 return "Error";
             case "MODERADO":
             case "MEDIO":
+            case "BAJO_MODERADO":
                 return "Warning";
             case "BAJO":
                 return "Success";
@@ -81,6 +82,41 @@ export default {
 
     formatTipoCruceState(lineaNombre: string | null | undefined): string {
         return lineaNombre === "Cruce abierto" ? "Information" : "Success";
+    },
+
+    formatTipoFormacionCruceTexto(value: string | null | undefined, lineaNombre?: string | null): string {
+        const key = String(value || "").toUpperCase();
+        const labels: Record<string, string> = {
+            CRUCE_ABIERTO: "Cruce abierto",
+            CRUCE_POR_LINAJE: "Cruce por linaje",
+            LINEBREEDING: "Linebreeding",
+            INBREEDING: "Inbreeding",
+            OUTCROSS: "Outcross",
+            BACKCROSS: "Backcross",
+        };
+
+        if (labels[key]) {
+            return labels[key];
+        }
+
+        return lineaNombre === "Cruce abierto" ? "Cruce abierto" : (lineaNombre ? "Por linaje" : formatEnumText(value));
+    },
+
+    formatTipoFormacionCruceState(value: string | null | undefined, lineaNombre?: string | null): string {
+        switch (String(value || "").toUpperCase()) {
+            case "INBREEDING":
+                return "Error";
+            case "LINEBREEDING":
+            case "BACKCROSS":
+                return "Warning";
+            case "CRUCE_POR_LINAJE":
+                return "Success";
+            case "OUTCROSS":
+            case "CRUCE_ABIERTO":
+                return "Information";
+            default:
+                return lineaNombre ? (lineaNombre === "Cruce abierto" ? "Information" : "Success") : "None";
+        }
     },
 
     formatAveNombre(nombre: string | null | undefined, apodo: string | null | undefined): string {

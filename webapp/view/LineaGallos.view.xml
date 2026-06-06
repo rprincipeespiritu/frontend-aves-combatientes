@@ -29,6 +29,11 @@
                             <Title text="Linajes registrados ({= ${lineas>/data}.length})"/>
                             <ToolbarSpacer/>
                             <Button
+                                    icon="sap-icon://sys-help"
+                                    type="Transparent"
+                                    tooltip="Ver guia de lineas y cruces"
+                                    press=".onOpenLineageGuide"/>
+                            <Button
                                     text=""
                                     icon="sap-icon://add"
                                     type="Emphasized"
