@@ -1029,6 +1029,38 @@
   row-gap: 0.35rem;
 }
 
+.lineageGuidePanel {
+  width: 100%;
+}
+
+.lineageGuidePanel .sapMPanelContent {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.lineageGuideContent {
+  gap: 0.5rem;
+}
+
+.lineageGuideList {
+  border: 1px solid rgba(42, 88, 135, 0.14);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.lineageGuideItem {
+  padding: 0.55rem 0.75rem;
+}
+
+.lineageGuideItem .sapMObjectIdentifierTitle,
+.lineageGuideItem .sapMObjectIdentifierText {
+  white-space: normal;
+}
+
+.lineageGuideItem .sapMObjectIdentifierText {
+  color: var(--app-muted);
+  line-height: 1.35;
+}
+
 .combatesFilterPanel {
   margin-bottom: 0.75rem;
 }
@@ -1040,22 +1072,28 @@
 }
 
 .avePrincipalHeaderImage {
-  width: auto;
-  height: auto;
-  max-width: 14rem;
-  max-height: 14rem;
+  width: 9.5rem;
+  height: 9.5rem;
   border: 1px solid #d8e2ea;
-  border-radius: 0.5rem;
+  border-radius: 50%;
   background: #f7fbff;
   cursor: pointer;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .avePrincipalHeaderImage:hover {
   box-shadow: 0 0.35rem 1rem rgba(0, 92, 150, 0.18);
   transform: translateY(-1px);
+}
+
+.avePrincipalHeaderImage:focus,
+.avePrincipalHeaderImage:active,
+.avePrincipalHeaderImage.sapMImgFocusable:focus {
+  border-radius: 50%;
+  outline: none;
+  box-shadow: 0 0 0 0.12rem rgba(10, 110, 209, 0.35);
 }
 
 .avePrincipalIdentificacionImage {
@@ -1123,6 +1161,14 @@
     text-overflow: ellipsis;
   }
 
+  .lineageGuidePanel .sapMPanelContent {
+    padding: 0.7rem;
+  }
+
+  .lineageGuideItem {
+    padding: 0.5rem 0.6rem;
+  }
+
   .incubacionDetailFooter.sapMTB {
     height: auto;
     min-height: 3rem;
@@ -1162,8 +1208,8 @@
   }
 
   .avePrincipalHeaderImage {
-    max-width: 8.5rem;
-    max-height: 8.5rem;
+    width: 7.5rem;
+    height: 7.5rem;
   }
 
   .avePrincipalIdentificacionImage {

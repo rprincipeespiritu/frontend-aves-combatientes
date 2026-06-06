@@ -1,0 +1,95 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        title="Guia de formacion de lineas y cruces"
+        contentWidth="44rem"
+        contentHeight="70%"
+        stretchOnPhone="true"
+        resizable="true"
+        draggable="true"
+        class="lineageGuideDialog">
+        <ScrollContainer
+            width="100%"
+            height="100%"
+            vertical="true">
+            <VBox class="lineageGuideContent sapUiMediumMargin">
+                <Title text="Como se forman las grandes lineas" level="H4"/>
+                <List showSeparators="Inner" class="lineageGuideList">
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="1. Ave fundador" text="Un gallo o gallina con rasgos sobresalientes se usa como base. No basta con que un individuo sea bueno; lo importante es que transmita."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="2. Cruces familiares controlados" text="Se cruzan descendientes relacionados para fijar caracteristicas. Por ejemplo, hijos, nietos o medios hermanos, siempre midiendo si los rasgos se mantienen o si aparece debilidad."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="3. Seleccion por descendencia" text="El verdadero valor de una linea se confirma cuando varias crias, de diferentes nidadas, muestran un patron parecido."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="4. Refresco de sangre" text="Cuando la linea se cierra demasiado, se introduce otra familia compatible para recuperar vigor, fertilidad o estructura."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="5. Consolidacion" text="Despues del refresco, se vuelve a seleccionar hacia el tipo original. Ahi nace una sublinea o una nueva rama."/>
+                        </VBox>
+                    </CustomListItem>
+                </List>
+
+                <Title text="Tipos principales de formacion o cruces" level="H4" class="sapUiSmallMarginTop"/>
+                <List showSeparators="Inner" class="lineageGuideList">
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Cruce abierto" text="Padres sin relacion o sin pertenecer a una linea comun. Sirve para crear base nueva o probar compatibilidad."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Cruce por linaje" text="Al menos uno de los padres pertenece a una linea definida. Busca continuar o reforzar esa familia."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Linebreeding" text="Cruce familiar moderado. Por ejemplo, nieta con abuelo, sobrino con tia, medios hermanos. Busca fijar rasgos sin cerrar demasiado la sangre."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Inbreeding" text="Cruce muy cerrado, como padre con hija, madre con hijo o hermanos completos. Fija rapido, pero aumenta riesgos: baja fertilidad, menor vigor, defectos ocultos."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Outcross" text="Cruce con una linea totalmente distinta. Se usa para refrescar o combinar virtudes, pero puede producir resultados menos predecibles."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Backcross" text="Volver a cruzar una cria con uno de los padres o con la linea original. Sirve para recuperar el tipo de una linea despues de mezclarla."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Cruce compensatorio" text="Se elige una linea para corregir defectos de otra: tamano, salud, fertilidad, estructura, temperamento, etc."/>
+                        </VBox>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <VBox class="lineageGuideItem">
+                            <ObjectIdentifier title="Formacion sintetica" text="Se combinan dos o mas lineas y luego se selecciona durante generaciones hasta crear una familia nueva estable."/>
+                        </VBox>
+                    </CustomListItem>
+                </List>
+            </VBox>
+        </ScrollContainer>
+        <endButton>
+            <Button text="Cerrar" press=".onCloseLineageGuide"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

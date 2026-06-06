@@ -21,11 +21,15 @@
 
         <content>
             <VBox class="sapUiMediumMargin">
-
                 <!-- Toolbar -->
                 <VBox>
                     <Title text="Historial de Cruces" class="planesCruceHeaderTitle" />
                     <HBox class="planesCruceHeaderActions" wrap="Wrap" justifyContent="End">
+                        <Button
+                            text="Guia"
+                            icon="sap-icon://sys-help"
+                            type="Transparent"
+                            press=".onOpenLineageGuide" />
                         <Button
                             text="Cruce abierto"
                             icon="sap-icon://chain-link"
@@ -88,8 +92,20 @@
                             <cells>
                                 <Text text="{= ${planes>codigo} || 'Sin codigo' }" />
                                 <ObjectStatus
-                                    text="{ path: 'planes>linea/nombre', formatter: '.formatter.formatTipoCruceTexto' }"
-                                    state="{ path: 'planes>linea/nombre', formatter: '.formatter.formatTipoCruceState' }" />
+                                    text="{
+                                        parts: [
+                                            { path: 'planes>tipoCruce' },
+                                            { path: 'planes>linea/nombre' }
+                                        ],
+                                        formatter: '.formatter.formatTipoFormacionCruceTexto'
+                                    }"
+                                    state="{
+                                        parts: [
+                                            { path: 'planes>tipoCruce' },
+                                            { path: 'planes>linea/nombre' }
+                                        ],
+                                        formatter: '.formatter.formatTipoFormacionCruceState'
+                                    }" />
                                 <ObjectIdentifier
                                     title="{planes>macho/placa}"
                                     text="{

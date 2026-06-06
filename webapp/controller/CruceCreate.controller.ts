@@ -62,6 +62,7 @@ export default class CruceCreate extends Controller {
             cruceAbierto: false,
             macho_ID: "",
             hembra_ID: "",
+            tipoCruce: "",
             tipoParentesco: "",
             parentescoTexto: "",
             objetivoCruce: "",
@@ -147,10 +148,12 @@ export default class CruceCreate extends Controller {
             oModel.setProperty("/madrePlaca", plan.hembra?.placa || "");
             oModel.setProperty("/madreNombre", plan.hembra?.nombre || plan.hembra?.apodo || "");
             oModel.setProperty("/tipoParentesco", plan.tipoParentesco || "");
+            oModel.setProperty("/tipoCruce", plan.tipoCruce || "");
             oModel.setProperty("/parentescoTexto", parentescoTexto);
             oModel.setProperty("/objetivoCruce", plan.objetivoCruce || "");
             oModel.setProperty("/resultadoVisible", true);
             oModel.setProperty("/resultado", {
+                tipoCruce: plan.tipoCruce,
                 nivelRiesgo: plan.nivelRiesgo,
                 porcentaje: plan.porcentaje,
                 ancestrosComunes: plan.ancestrosComunes,
@@ -260,6 +263,7 @@ export default class CruceCreate extends Controller {
     private limpiarAnalisis(): void {
         const oModel = this.getView()?.getModel("cruce") as JSONModel;
         oModel.setProperty("/tipoParentesco", "");
+        oModel.setProperty("/tipoCruce", "");
         oModel.setProperty("/parentescoTexto", "");
         oModel.setProperty("/resultado", {});
         oModel.setProperty("/resultadoVisible", false);
@@ -286,7 +290,8 @@ export default class CruceCreate extends Controller {
                 body: JSON.stringify({
                     macho_ID: data.macho_ID,
                     hembra_ID: data.hembra_ID,
-                    generaciones: 5
+                    generaciones: 5,
+                    linea_ID: this.lineaId || null
                 })
             });
 
@@ -297,6 +302,7 @@ export default class CruceCreate extends Controller {
             const resultado = await response.json();
             const parentescoTexto = this.obtenerTextoParentesco(resultado.tipoParentesco);
 
+            oModel.setProperty("/tipoCruce", resultado.tipoCruce);
             oModel.setProperty("/tipoParentesco", resultado.tipoParentesco);
             oModel.setProperty("/parentescoTexto", parentescoTexto);
             oModel.setProperty("/resultado", resultado);
@@ -361,6 +367,7 @@ export default class CruceCreate extends Controller {
             linea_ID: this.lineaId,
             macho_ID: oModel.getProperty("/macho_ID"),
             hembra_ID: oModel.getProperty("/hembra_ID"),
+            tipoCruce: resultado.tipoCruce || oModel.getProperty("/tipoCruce"),
             tipoParentesco: oModel.getProperty("/tipoParentesco"),
             objetivoCruce: oModel.getProperty("/objetivoCruce"),
             nivelRiesgo: resultado.nivelRiesgo,

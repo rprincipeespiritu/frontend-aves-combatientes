@@ -79,6 +79,11 @@
                     <VBox class="sapUiMediumMargin">
 
                         <ObjectStatus
+                                title="Tipo de formación"
+                                text="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceTexto' }"
+                                state="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceState' }" />
+
+                        <ObjectStatus
                                 title="Nivel de riesgo"
                                 text="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
                                 state="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />

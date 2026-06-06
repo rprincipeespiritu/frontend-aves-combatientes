@@ -22,6 +22,7 @@ export default class LineaGallos extends Controller {
     private authService: AuthService;
     private _oUserMenuSheet: any;
     private _oUserMenuPopover: any;
+    private _oLineageGuideDialog: any;
     public formatter = formatter;
 
     public onInit(): void {
@@ -221,6 +222,25 @@ export default class LineaGallos extends Controller {
         //localStorage.setItem('filterIncProceso', "");
         await this.cargarLineas();
         MessageToast.show("Datos actualizados");
+    }
+
+    public async onOpenLineageGuide(): Promise<void> {
+        if (!this._oLineageGuideDialog) {
+            const oFragment = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.LineageGuideDialog",
+                controller: this
+            });
+
+            this._oLineageGuideDialog = oFragment;
+            this.getView()?.addDependent(this._oLineageGuideDialog);
+        }
+
+        this._oLineageGuideDialog.open();
+    }
+
+    public onCloseLineageGuide(): void {
+        this._oLineageGuideDialog?.close();
     }
 
     public formatearEstado(estado: EstadoLinea): string {
