@@ -20,6 +20,7 @@ import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import Core from "sap/ui/core/Core";
 import { AuthService } from "../services/AuthService";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class CombateForm extends Controller {
   private baseUrl = "http://localhost:4004/api/avecombatiente";
@@ -302,6 +303,16 @@ export default class CombateForm extends Controller {
       payload.videoSizeBytes = null;
       payload.videoEstadoCarga = null;
     }
+
+    const detalleConfirmacion = [
+      `Fecha: ${new Date(form.fecha).toLocaleString()}`,
+      `Combatiente A: ${form.placaCombA || form.combatienteATexto || form.ave_ID}`,
+      `Combatiente B: ${form.ambosPropios ? form.placaCombB || form.combatienteBTexto || form.combatienteB_ID : form.nombreOponente}`,
+    ].filter(Boolean).join("\n");
+    const confirmado = this.combateId
+      ? await ConfirmationService.confirmUpdate("el combate", detalleConfirmacion)
+      : await ConfirmationService.confirmCreate("el combate", detalleConfirmacion);
+    if (!confirmado) return;
 
     oModel.setProperty("/busy", true);
     try {

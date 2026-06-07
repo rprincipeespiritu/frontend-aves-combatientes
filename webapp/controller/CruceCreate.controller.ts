@@ -18,6 +18,7 @@ import List from "sap/m/List";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import formatter from "../model/formatter";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class CruceCreate extends Controller {
 
@@ -385,6 +386,11 @@ export default class CruceCreate extends Controller {
         let error: any;
         try {
             const editMode = oModel.getProperty("/editMode");
+            const confirmed = editMode
+                ? await ConfirmationService.confirmUpdate("el plan de cruce", `Codigo: ${body.codigo}`)
+                : await ConfirmationService.confirmCreate("el plan de cruce", `Codigo: ${body.codigo}`);
+            if (!confirmed) return;
+
             const response = await fetch(editMode ? `${this.baseUrl}/PlanesCruces('${this.planId}')` : `${this.baseUrl}/PlanesCruces`, {
                 method: editMode ? "PATCH" : "POST",
                 headers: {
