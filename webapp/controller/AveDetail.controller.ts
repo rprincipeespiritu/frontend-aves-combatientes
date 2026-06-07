@@ -14,6 +14,7 @@ import Popover from "sap/m/Popover";
 import BusyDialog from "sap/m/BusyDialog";
 import {CategoriaAve, EstadoAve, IAve, SexoAve} from "com/rprincipees/registroavescombate/types/Models";
 import formatter from "../model/formatter";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
@@ -682,6 +683,11 @@ export default class AveDetail extends Controller {
             usuario_ID: usuario._id
         };
 
+        const confirmado = evaluacionEditId
+            ? await ConfirmationService.confirmUpdate("la evaluacion reproductiva")
+            : await ConfirmationService.confirmCreate("la evaluacion reproductiva");
+        if (!confirmado) return;
+
         try {
             const response = await fetch(evaluacionEditId
                 ? `${this.baseUrl}/EvaluacionesAves('${evaluacionEditId}')`
@@ -806,6 +812,11 @@ export default class AveDetail extends Controller {
             recomendacion: evaluacion.recomendacion || null,
             usuario_ID: usuario._id
         };
+
+        const confirmado = evaluacionEditId
+            ? await ConfirmationService.confirmUpdate("la evaluacion de pleito", `Fecha: ${evaluacion.fecha}`)
+            : await ConfirmationService.confirmCreate("la evaluacion de pleito", `Fecha: ${evaluacion.fecha}`);
+        if (!confirmado) return;
 
         try {
             const response = await fetch(evaluacionEditId
@@ -1059,6 +1070,9 @@ export default class AveDetail extends Controller {
             MessageBox.warning("Selecciona una imagen valida para usarla como principal.");
             return;
         }
+
+        const confirmado = await ConfirmationService.confirmUpdate("la imagen principal del ave");
+        if (!confirmado) return;
 
         try {
             const headers = {

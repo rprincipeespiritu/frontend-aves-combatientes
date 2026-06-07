@@ -16,6 +16,7 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import ActionSheet from "sap/m/ActionSheet";
 import Control from "sap/ui/mdc/Control";
 import Popover from "sap/m/Popover";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class AveUpdate extends Controller {
     private authService: AuthService;
@@ -394,6 +395,11 @@ export default class AveUpdate extends Controller {
             if (data.padre_ID) payload.padre_ID = data.padre_ID;
             if (data.madre_ID) payload.madre_ID = data.madre_ID;
 
+            const confirmed = await ConfirmationService.confirmUpdate(
+                "el ave",
+                `Placa: ${payload.placa}${payload.nombre ? `\nNombre: ${payload.nombre}` : ""}`
+            );
+            if (!confirmed) return;
 
             const response = await fetch(`${oThat.baseUrl}/Aves('${oThat.aveId}')`, {
                 method: "PATCH",

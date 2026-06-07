@@ -16,6 +16,7 @@ import Popover from "sap/m/Popover";
 import ActionSheet from "sap/m/ActionSheet";
 import Control from "sap/ui/core/Control";
 import Device from "sap/ui/Device";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class PollitoForm extends Controller {
     private authService: AuthService;
@@ -464,6 +465,16 @@ export default class PollitoForm extends Controller {
 
         if (data.padre_ID) payload.padre_ID = data.padre_ID;
         if (data.madre_ID) payload.madre_ID = data.madre_ID;
+
+        const detalleConfirmacion = [
+            `Cintillo: ${payload.cintillo}`,
+            payload.nombre ? `Nombre: ${payload.nombre}` : "",
+            `Temporada: ${payload.temporada}`
+        ].filter(Boolean).join("\n");
+        const confirmado = this.pollitoId
+            ? await ConfirmationService.confirmUpdate("el ave joven", detalleConfirmacion)
+            : await ConfirmationService.confirmCreate("el ave joven", detalleConfirmacion);
+        if (!confirmado) return;
         
         try {
             const url = this.pollitoId ? `${this.baseUrl}/Crias('${this.pollitoId}')` : `${this.baseUrl}/Crias`;

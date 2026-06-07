@@ -17,6 +17,7 @@ import Button from "sap/m/Button";
 import Device from "sap/ui/Device";
 import Control from "sap/ui/core/Control";
 import { AuthService } from "../services/AuthService";
+import ConfirmationService from "../services/ConfirmationService";
 import Select from "sap/m/Select";
 import Item from "sap/ui/core/Item";
 
@@ -184,6 +185,9 @@ export default class PollitoDetail extends Controller {
     }
 
     private async registrarComoAveAdulta(placa: string, genero: string): Promise<void> {
+        const confirmado = await ConfirmationService.confirmCreate("el ave adulta", `Placa: ${placa}`);
+        if (!confirmado) return;
+
         try {
             const response = await fetch(`${this.baseUrl}/registrarCriaComoAve`, {
                 method: "POST",

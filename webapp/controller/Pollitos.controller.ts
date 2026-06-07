@@ -25,6 +25,7 @@ import List from "sap/m/List";
 import StandardListItem from "sap/m/StandardListItem";
 import SearchField from "sap/m/SearchField";
 import Bar from "sap/m/Bar";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class Pollitos extends Controller {
     private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
@@ -212,6 +213,9 @@ export default class Pollitos extends Controller {
     }
 
     private async registrarComoAveAdulta(criaId: string, placa: string): Promise<void> {
+        const confirmado = await ConfirmationService.confirmCreate("el ave adulta", `Placa: ${placa}`);
+        if (!confirmado) return;
+
         try {
             const response = await fetch(`${this.baseUrl}/registrarCriaComoAve`, {
                 method: "POST",

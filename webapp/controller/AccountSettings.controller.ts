@@ -9,6 +9,7 @@ import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
 import Control from "sap/ui/core/Control";
 import { AuthService } from "../services/AuthService";
+import ConfirmationService from "../services/ConfirmationService";
 
 export default class AccountSettings extends Controller {
   private authService: AuthService;
@@ -101,6 +102,9 @@ export default class AccountSettings extends Controller {
       return;
     }
 
+    const confirmado = await ConfirmationService.confirmUpdate("tu perfil de usuario", `Email: ${perfil.email}`);
+    if (!confirmado) return;
+
     oModel.setProperty("/busy", true);
 
     try {
@@ -135,6 +139,9 @@ export default class AccountSettings extends Controller {
       MessageBox.warning("La nueva contrasena y la confirmacion no coinciden");
       return;
     }
+
+    const confirmado = await ConfirmationService.confirmUpdate("tu contrasena");
+    if (!confirmado) return;
 
     oModel.setProperty("/busy", true);
 
