@@ -316,7 +316,7 @@ export default class CombateForm extends Controller {
 
     oModel.setProperty("/busy", true);
     try {
-      const url = this.combateId ? `${this.baseUrl}/Peleas('${this.combateId}')` : `${this.baseUrl}/Peleas`;
+      const url = this.combateId ? `${this.baseUrl}/Peleas('${this.combateId}')` : `${this.baseUrl}/registrarCombate`;
       const response = await fetch(url, {
         method: this.combateId ? "PATCH" : "POST",
         headers: this.getHeaders(),
