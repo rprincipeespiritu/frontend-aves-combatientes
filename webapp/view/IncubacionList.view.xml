@@ -59,7 +59,8 @@
                         <cells>
                             <Text text="{view>codigo}" />
                             <!-- <Text text="{view>fechaIncubacion}" /> -->
-                            <Text text="{ path: 'view>fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
+                            <ObjectStatus text="{view>fechaIncubacion}" state="Information" />
+                            <!-- <Text text="{ path: 'view>fechaIncubacion', formatter: '.formatter.formatDateTime' }" /> -->
                             <Text text="{ path: 'view>fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
                             <Text text="{ path: 'view>fechaEclosion', formatter: '.formatter.formatDateTime' }" />
                             <!-- <Text text="{view>padre/placa} {view>padre/nombre}" />

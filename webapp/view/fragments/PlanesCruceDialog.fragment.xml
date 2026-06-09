@@ -2,11 +2,16 @@
         xmlns="sap.m"
         xmlns:core="sap.ui.core">
 
-    <Dialog title="Seleccionar plan de cruce" contentWidth="42rem">
+    <Dialog
+            title="Seleccionar plan de cruce"
+            contentWidth="42rem"
+            stretchOnPhone="true"
+            class="planCruceDialog">
         <content>
-            <VBox class="sapUiMediumMargin">
+            <VBox class="planCruceDialogContent">
                 <SearchField
                         width="100%"
+                        class="planCruceDialogSearch"
                         placeholder="Buscar por codigo, placas, riesgo o decision"
                         liveChange=".onSearchPlanesCruce" />
 
@@ -16,25 +21,37 @@
                         mode="SingleSelectMaster"
                         selectionChange=".onSeleccionarPlanCruceDialog">
 
-                    <ObjectListItem
-                            title="{planesCruce>codigoVisual}"
-                            number="{planesCruce>porcentaje}"
-                            numberUnit="%">
-                        <firstStatus>
-                            <ObjectStatus
-                                    text="{planesCruce>decisionTexto}"
-                                    state="{planesCruce>decisionState}" />
-                        </firstStatus>
-                        <secondStatus>
-                            <ObjectStatus
-                                    text="{planesCruce>nivelRiesgoTexto}"
-                                    state="{planesCruce>nivelRiesgoState}" />
-                        </secondStatus>
-                        <attributes>
-                            <ObjectAttribute text="{planesCruce>descripcionVisual}" />
-                            <ObjectAttribute text="{= 'Parentesco: ' + (${planesCruce>tipoParentesco} || 'Sin dato') }" />
-                        </attributes>
-                    </ObjectListItem>
+                    <CustomListItem type="Active">
+                        <HBox class="planCruceOption" alignItems="Start" justifyContent="SpaceBetween">
+                            <VBox class="planCruceOptionMain">
+                                <Text
+                                        text="{planesCruce>codigoVisual}"
+                                        class="planCruceCode"
+                                        wrapping="true" />
+                                <Text
+                                        text="{planesCruce>descripcionVisual}"
+                                        class="planCrucePair"
+                                        wrapping="true" />
+                                <Text
+                                        text="{planesCruce>parentescoVisual}"
+                                        class="planCruceMeta"
+                                        wrapping="true" />
+                            </VBox>
+
+                            <VBox class="planCruceOptionStatus" alignItems="End">
+                                <ObjectStatus
+                                        text="{planesCruce>decisionTexto}"
+                                        state="{planesCruce>decisionState}" />
+                                <ObjectStatus
+                                        text="{planesCruce>nivelRiesgoTexto}"
+                                        state="{planesCruce>nivelRiesgoState}" />
+                                <Text
+                                        text="{planesCruce>porcentajeVisual}"
+                                        class="planCrucePercent"
+                                        visible="{= !!${planesCruce>porcentajeVisual} }" />
+                            </VBox>
+                        </HBox>
+                    </CustomListItem>
 
                 </List>
             </VBox>

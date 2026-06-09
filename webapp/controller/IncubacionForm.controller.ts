@@ -288,17 +288,29 @@ export default class IncubacionForm extends Controller {
     const nivelRiesgoTexto = this.formatter.formatNivelRiesgoTexto(
       plan.nivelRiesgo,
     );
+    const parentescoTexto = this.formatParentescoPlanCruce(
+      plan.tipoParentesco,
+    );
+    const tipoCruceTexto = this.formatter.formatTipoFormacionCruceTexto(
+      plan.tipoCruce,
+      plan.linea?.nombre,
+    );
+    const descripcionVisual = this.formatParejaPlanCruce(plan);
 
     return {
       ...plan,
-      codigoVisual: plan.codigo,
+      codigoVisual: plan.codigo || "Plan sin código",
       decisionTexto,
       decisionState: this.formatter.formatDecisionState(plan.decision),
       nivelRiesgoTexto,
       nivelRiesgoState: this.formatter.formatNivelRiesgoState(
         plan.nivelRiesgo,
       ),
-      descripcionVisual: `${plan.macho?.placa || ""} ${plan.macho?.nombre || ""} x ${plan.hembra?.placa || ""} ${plan.hembra?.nombre || ""}`,
+      tipoCruceTexto,
+      parentescoTexto,
+      parentescoVisual: `Parentesco: ${parentescoTexto || "Sin dato"}`,
+      porcentajeVisual: this.formatPorcentajePlanCruce(plan.porcentaje),
+      descripcionVisual,
       busquedaVisual: [
         plan.codigo,
         plan.macho?.placa,
@@ -306,6 +318,9 @@ export default class IncubacionForm extends Controller {
         plan.hembra?.placa,
         plan.hembra?.nombre,
         plan.tipoParentesco,
+        parentescoTexto,
+        plan.tipoCruce,
+        tipoCruceTexto,
         plan.decision,
         decisionTexto,
         plan.nivelRiesgo,
@@ -314,6 +329,62 @@ export default class IncubacionForm extends Controller {
         .filter(Boolean)
         .join(" "),
     };
+  }
+
+  private formatParejaPlanCruce(plan: any): string {
+    const macho = [plan.macho?.placa, plan.macho?.nombre]
+      .map((valor) => String(valor || "").trim())
+      .filter(Boolean)
+      .join(" ");
+    const hembra = [plan.hembra?.placa, plan.hembra?.nombre]
+      .map((valor) => String(valor || "").trim())
+      .filter(Boolean)
+      .join(" ");
+
+    if (macho && hembra) {
+      return `${macho} x ${hembra}`;
+    }
+
+    return macho || hembra || "Reproductores sin dato";
+  }
+
+  private formatParentescoPlanCruce(value: string | null | undefined): string {
+    const labels: Record<string, string> = {
+      SIN_PARENTESCO: "Sin parentesco",
+      PADRE_HIJA: "Padre con hija",
+      MADRE_HIJO: "Madre con hijo",
+      HERMANOS_COMPLETOS: "Hermanos completos",
+      MEDIOS_HERMANOS: "Medios hermanos",
+      ABUELO_NIETA: "Abuelo con nieta",
+      ABUELA_NIETO: "Abuela con nieto",
+      TIO_SOBRINA: "Tío con sobrina",
+      TIA_SOBRINO: "Tía con sobrino",
+      PRIMOS: "Primos",
+      LINEA_COMUN: "Línea común",
+    };
+    const key = String(value || "").toUpperCase();
+
+    if (labels[key]) {
+      return labels[key];
+    }
+
+    return this.formatter.formatDecisionTexto(value);
+  }
+
+  private formatPorcentajePlanCruce(value: number | string | null | undefined): string {
+    if (value === null || value === undefined || value === "") {
+      return "";
+    }
+
+    const porcentaje = Number(value);
+
+    if (!Number.isFinite(porcentaje)) {
+      return "";
+    }
+
+    return `Consang. ${porcentaje.toLocaleString("es-PE", {
+      maximumFractionDigits: 2,
+    })}%`;
   }
 
   private debeReemplazarPlanCruceDuplicado(
