@@ -44,8 +44,10 @@
                             <Label text="Primer combatiente" />
                             <Link text="{= ${detalle>/combate/ave/placa} + ' - ' + (${detalle>/combate/ave/nombre} || 'Sin nombre') }" press=".onVerCombatienteA" />
 
-                            <Label text="Segundo combatiente / Rival" />
+                            <Label text="Segundo combatiente" visible="{= ${detalle>/combate/ambosPropios}}"/>
                             <Link text="{= ${detalle>/combate/combatienteB/placa} + ' - ' + (${detalle>/combate/combatienteB/nombre} || 'Sin nombre') }" press=".onVerCombatienteB" visible="{= ${detalle>/combate/ambosPropios}}" />
+
+                            <Label text="Rival" visible="{= !${detalle>/combate/ambosPropios}}"/>
                             <Text text="{path: 'detalle>/combate', formatter: '.formatearRival'}" visible="{= !${detalle>/combate/ambosPropios}}"/>
 
                             <Label text="Propietario rival" />
