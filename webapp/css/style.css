@@ -1179,6 +1179,26 @@
   object-fit: contain;
 }
 
+.genealogiaImageViewer {
+  align-items: center;
+  background: #f7fbff;
+  border: 1px solid rgba(42, 88, 135, 0.14);
+  border-radius: 0.75rem;
+  display: flex;
+  height: 25rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.genealogiaImageViewer img {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
+}
+
 @media (max-width: 37.5rem) {
   .suscripcionStatusContent.sapUiMediumMargin {
     margin: 0.9rem !important;
@@ -1286,6 +1306,11 @@
   .avePrincipalIdentificacionImage {
     max-width: 10rem;
     max-height: 10rem;
+  }
+
+  .genealogiaImageViewer {
+    height: calc(100vh - 9.5rem);
+    min-height: 18rem;
   }
 
   .planCruceDialogContent {
