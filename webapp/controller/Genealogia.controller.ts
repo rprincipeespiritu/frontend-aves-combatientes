@@ -8,6 +8,7 @@ import { IAve } from "../types/Models";
 import Fragment from "sap/ui/core/Fragment";
 import Dialog from "sap/m/Dialog";
 import Input from "sap/m/Input";
+import List from "sap/m/List";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import Popover from "sap/m/Popover";
@@ -55,6 +56,7 @@ export default class Genealogia extends Controller {
   private _oPadresDialog: any;
   private _oUserMenuPopover: any;
   private _oUserMenuSheet: any;
+  private _oImagenAveDialog: Dialog;
 
   public onInit(): void {
     this.authService = AuthService.getInstance();
@@ -86,6 +88,11 @@ export default class Genealogia extends Controller {
         hermanos: [],
         mediosHermanosPadre: [],
         mediosHermanosMadre: [],
+        imagenViewer: {
+          title: "",
+          nombreArchivo: "",
+          html: "",
+        },
       }),
       "genealogia",
     );
@@ -524,6 +531,7 @@ export default class Genealogia extends Controller {
 
         nodes.push({
           key,
+          aveId: nodo.aveId,
           title: nodo.placa,
           description: descripcion,
           icon: nodo.faltante ? "sap-icon://question-mark" : "sap-icon://customer",
@@ -637,6 +645,106 @@ export default class Genealogia extends Controller {
     (this.getOwnerComponent() as UIComponent)
       ?.getRouter()
       ?.navTo("RouteAveDetail", { aveId: nodo.aveId });
+  }
+
+  public async onVerImagenAve(oEvent: any): Promise<void> {
+    const nodo = oEvent
+      .getSource()
+      ?.getBindingContext("genealogia")
+      ?.getObject();
+
+    if (!nodo?.aveId) {
+      MessageToast.show("No hay ave registrada en esta posicion.");
+      return;
+    }
+
+    const oModel = this.getView()?.getModel("genealogia") as JSONModel;
+    oModel.setProperty("/busy", true);
+
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/FotosAve?$filter=ave_ID eq ${nodo.aveId}&$orderby=esPrincipal desc,createdAt desc`,
+        { headers: this.getHeaders() },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error?.message || data?.message || "No se pudo obtener la imagen del ave.",
+        );
+      }
+
+      const fotos = data.value || [];
+      const foto = fotos.find((item: any) => item.esPrincipal) || fotos[0];
+
+      const urlArchivo = foto?.thumbnailUrl || foto?.urlArchivo || foto?.urlSharepoint || foto?.url || "";
+
+      if (!urlArchivo) {
+        MessageBox.information("Esta ave no tiene una imagen registrada.");
+        return;
+      }
+
+      const urlImagen = await this.obtenerUrlVisualizacionArchivo(urlArchivo);
+      const titulo = `${nodo.title || "Ave"}${nodo.description ? ` - ${String(nodo.description).split("|")[0].trim()}` : ""}`;
+
+      oModel.setProperty("/imagenViewer/title", titulo);
+      oModel.setProperty("/imagenViewer/nombreArchivo", foto.nombreArchivo || "Imagen del ave");
+      oModel.setProperty("/imagenViewer/html", this.crearHtmlImagenAve(urlImagen, foto.nombreArchivo || titulo));
+
+      await this.abrirVisorImagenAve();
+    } catch (error: any) {
+      MessageBox.error(error.message || "No se pudo mostrar la imagen del ave.");
+    } finally {
+      oModel.setProperty("/busy", false);
+    }
+  }
+
+  private async abrirVisorImagenAve(): Promise<void> {
+    if (!this._oImagenAveDialog) {
+      this._oImagenAveDialog = (await Fragment.load({
+        id: this.getView()?.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.GenealogiaImagenAveDialog",
+        controller: this,
+      })) as Dialog;
+
+      this.getView()?.addDependent(this._oImagenAveDialog);
+    }
+
+    this._oImagenAveDialog.open();
+  }
+
+  public onCerrarVisorImagenAve(): void {
+    this._oImagenAveDialog?.close();
+  }
+
+  private async obtenerUrlVisualizacionArchivo(url: string): Promise<string> {
+    if (!url || !String(url).includes(".s3.")) return url;
+
+    const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
+      method: "POST",
+      headers: this.getHeaders(),
+      body: JSON.stringify({ fileUrl: url }),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error?.message || data?.message || "No se pudo preparar la imagen.");
+    }
+
+    return data.downloadUrl || url;
+  }
+
+  private crearHtmlImagenAve(src: string, nombre: string): string {
+    return `<div class="genealogiaImageViewer"><img src="${this.escapeHtml(src)}" alt="${this.escapeHtml(nombre)}" /></div>`;
+  }
+
+  private escapeHtml(value: string): string {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   public onSeleccionarHermano(oEvent: any): void {

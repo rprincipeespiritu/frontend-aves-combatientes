@@ -214,7 +214,8 @@
                             icon="{genealogia>icon}"
                             shape="{genealogia>shape}"
                             width="{genealogia>width}"
-                            status="{genealogia>status}">
+                            status="{genealogia>status}"
+                            press=".onVerImagenAve">
                             <graph:attributes>
                                 <graph:ElementAttribute label="Rol" value="{genealogia>rol}" />
                                 <graph:ElementAttribute label="Sexo" value="{genealogia>sexo}" />

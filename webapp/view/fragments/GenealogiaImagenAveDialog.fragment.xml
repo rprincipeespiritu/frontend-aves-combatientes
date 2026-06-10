@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        title="{genealogia>/imagenViewer/title}"
+        contentWidth="44rem"
+        contentHeight="30rem"
+        stretchOnPhone="true"
+        resizable="true"
+        draggable="true">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <ObjectStatus
+                    text="{genealogia>/imagenViewer/nombreArchivo}"
+                    icon="sap-icon://picture"
+                    state="Information"
+                    class="sapUiTinyMarginBottom" />
+                <core:HTML
+                    sanitizeContent="false"
+                    content="{genealogia>/imagenViewer/html}" />
+            </VBox>
+        </content>
+        <endButton>
+            <Button text="Cerrar" press=".onCerrarVisorImagenAve" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
