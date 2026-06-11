@@ -196,10 +196,18 @@
                                         justifyContent="SpaceBetween"
                                         class="pollitoMobileHeader">
                                         <VBox>
+                                            <Label text="Cintillo" />
                                             <ObjectStatus text="{pollitos>cintillo}" state="Information" />
-                                            <Text
+                                           <!-- <Text
                                                 text="{pollitos>aveGenerada/placa}"
-                                                class="pollitoMobilePlate" />
+                                                class="pollitoMobilePlate" /> -->
+                                        </VBox>
+                                        <VBox>
+                                            <Label text="Placa" />
+                                            <ObjectStatus text="{pollitos>aveGenerada/placa}" state="Information" />
+                                            <!--<Text
+                                                    text="{pollitos>aveGenerada/placa}"
+                                                    class="pollitoMobilePlate" />-->
                                         </VBox>
                                         <HBox
                                             alignItems="Center"
@@ -231,7 +239,7 @@
                                             <Label text="Temporada" />
                                             <Text text="{pollitos>temporada}" />
                                         </VBox>
-                                        <VBox class="pollitoMobileField">
+                                        <!--<VBox class="pollitoMobileField">
                                             <Label text="Nombre" />
                                             <Text text="{pollitos>nombre}" />
                                         </VBox>
@@ -248,7 +256,7 @@
                                             <ObjectStatus
                                                 text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
                                                 state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
-                                        </VBox>
+                                        </VBox>-->
                                         <VBox class="pollitoMobileField pollitoMobileFieldWide">
                                             <Label text="Padre" />
                                             <Text text="{pollitos>padre/placa}" />

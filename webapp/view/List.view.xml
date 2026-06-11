@@ -76,7 +76,13 @@
                     <VBox>
 
                         <!-- Tabla -->
-                        <Table id="avesTable" width="100%" inset="false" items="{aves>/value}" class="sapUiMediumMarginTop">
+                        <Table
+                            id="avesTable"
+                            width="100%"
+                            inset="false"
+                            items="{aves>/value}"
+                            visible="{= !${device>/system/phone} }"
+                            class="sapUiMediumMarginTop">
 
                             <headerToolbar>
                                 <OverflowToolbar>
@@ -195,6 +201,124 @@
                                 </ColumnListItem>
                             </items>
                         </Table>
+
+                        <List
+                            items="{aves>/value}"
+                            noDataText="Sin datos"
+                            visible="{device>/system/phone}"
+                            class="avesAdultasMobileList sapUiSmallMarginTop">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title text="Aves Registradas ({= ${aves>/value}.length})" />
+                                    <ToolbarSpacer />
+                                    <Button
+                                        icon="sap-icon://download"
+                                        press="onDescargarPlantilla"
+                                        type="Emphasized"
+                                        tooltip="Descargar plantilla" />
+                                    <Button
+                                        icon="sap-icon://upload"
+                                        press="onSubirDatos"
+                                        type="Emphasized"
+                                        tooltip="Subir datos" />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <items>
+                                <CustomListItem
+                                    type="Navigation"
+                                    press="onAvePress"
+                                    class="aveAdultaMobileItem">
+                                    <VBox class="aveAdultaMobileCard">
+                                        <HBox
+                                            alignItems="Start"
+                                            justifyContent="SpaceBetween"
+                                            class="aveAdultaMobileHeader">
+                                            <VBox>
+                                                <ObjectStatus text="{aves>placa}" state="Information" />
+                                                <Text
+                                                    text="{aves>nombre}"
+                                                    class="aveAdultaMobileName" />
+                                            </VBox>
+                                            <HBox
+                                                alignItems="Center"
+                                                renderType="Bare"
+                                                class="aveAdultaMobileActions">
+                                                <Button
+                                                    icon="sap-icon://edit"
+                                                    type="Emphasized"
+                                                    tooltip="Editar"
+                                                    press="onEditarAveInline" />
+                                                <Button
+                                                    icon="sap-icon://delete"
+                                                    type="Transparent"
+                                                    tooltip="Eliminar"
+                                                    press="onEliminarAveInline" />
+                                            </HBox>
+                                        </HBox>
+
+                                        <FlexBox
+                                            wrap="Wrap"
+                                            renderType="Div"
+                                            class="aveAdultaMobileGrid">
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Fecha Nac." />
+                                                <Text
+                                                    text="{
+                                                        path: 'aves>fechaNacimiento',
+                                                        formatter: '.formatearFecha'
+                                                    }" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Genero" />
+                                                <Text
+                                                    text="{
+                                                        path: 'aves>sexo',
+                                                        formatter: '.formatearSexo'
+                                                    }" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Categoria" />
+                                                <Text
+                                                    text="{
+                                                        path: 'aves>categoria',
+                                                        formatter: '.formatearCategoria'
+                                                    }" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Estado" />
+                                                <ObjectStatus
+                                                    text="{
+                                                        path: 'aves>estado',
+                                                        formatter: '.formatearEstado'
+                                                    }"
+                                                    state="{= ${aves>estado} === 'ACTIVO' ? 'Success' :
+                                                        ${aves>estado} === 'PRESTADO' ? 'Information' :
+                                                        ${aves>estado} === 'RETIRADO' ? 'Information' :
+                                                        ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Cria" />
+                                                <CheckBox selected="{aves>cria}" editable="false" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField">
+                                                <Label text="Padrote" />
+                                                <CheckBox selected="{aves>padrote}" editable="false" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField aveAdultaMobileFieldWide">
+                                                <Label text="Padre" />
+                                                <Text text="{aves>padre/placa}" />
+                                                <Text text="{aves>padre/nombre}" class="aveAdultaMobileMuted" />
+                                            </VBox>
+                                            <VBox class="aveAdultaMobileField aveAdultaMobileFieldWide">
+                                                <Label text="Madre" />
+                                                <Text text="{aves>madre/placa}" />
+                                                <Text text="{aves>madre/nombre}" class="aveAdultaMobileMuted" />
+                                            </VBox>
+                                        </FlexBox>
+                                    </VBox>
+                                </CustomListItem>
+                            </items>
+                        </List>
                     </VBox>
                 </Panel>
             </VBox>
