@@ -1179,6 +1179,68 @@
   object-fit: contain;
 }
 
+.pollitosMobileList {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.pollitoMobileItem {
+  border-bottom: 1px solid rgba(42, 88, 135, 0.14);
+}
+
+.pollitoMobileCard {
+  box-sizing: border-box;
+  padding: 0.75rem 0.85rem;
+  width: 100%;
+}
+
+.pollitoMobileHeader {
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.pollitoMobilePlate {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  margin-top: 0.2rem;
+}
+
+.pollitoMobileActions {
+  flex: 0 0 auto;
+  gap: 0.25rem;
+}
+
+.pollitoMobileGrid {
+  column-gap: 0.85rem;
+  row-gap: 0.6rem;
+}
+
+.pollitoMobileField {
+  box-sizing: border-box;
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 6.8rem;
+}
+
+.pollitoMobileField .sapMLabel {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+  line-height: 1.1;
+}
+
+.pollitoMobileField .sapMText,
+.pollitoMobileField .sapMObjStatusText {
+  font-size: 0.82rem;
+  line-height: 1.2;
+}
+
+.pollitoMobileFieldWide {
+  flex-basis: 100%;
+}
+
+.pollitoMobileMuted {
+  color: var(--app-muted);
+}
+
 .genealogiaImageViewer {
   align-items: center;
   background: #f7fbff;
