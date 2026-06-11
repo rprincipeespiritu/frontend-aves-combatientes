@@ -80,6 +80,7 @@
                         inset="false"
                         busy="{table>/busy}"
                         items="{pollitos>/value}"
+                        visible="{= !${device>/system/phone} }"
                         class="sapUiMediumMarginTop">
 
                         <headerToolbar>
@@ -95,31 +96,31 @@
                             <Column width="6rem">
                                 <Text text="Cintillo" />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true" width="6rem">
-                                <Text text="Color" />
+                            <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
+                                <Text text="Color cintillo" />
                             </Column>
                             <Column width="8rem">
                                 <Text text="Placa" />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Temporada" />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Nombre" />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Genero" />
                             </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Fecha Nac." />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Padre" />
                             </Column>
-                            <Column minScreenWidth="Desktop" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true">
                                 <Text text="Madre" />
                             </Column>
-                            <Column minScreenWidth="Tablet" demandPopin="true">
+                            <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Estado" />
                             </Column>
                             <Column width="8rem" hAlign="Center">
@@ -130,10 +131,9 @@
                         <items>
                             <ColumnListItem type="Navigation" press="onPollitoPress">
                                 <cells>
-                                    <Text text="{pollitos>cintillo}" />
-                                    <ObjectStatus text="{pollitos>colorCintillo}"
-                                        state="Information" />
-                                    <Text text="{pollitos>aveGenerada/placa}" />
+                                    <ObjectStatus text="{pollitos>cintillo}" state="Information" />
+                                    <ObjectStatus text="{pollitos>colorCintillo}" state="Information" />
+                                    <ObjectStatus text="{pollitos>aveGenerada/placa}" state="Information" />
                                     <Text text="{pollitos>temporada}" />
                                     <Text text="{pollitos>nombre}" />
                                     <Text
@@ -167,6 +167,103 @@
                             </ColumnListItem>
                         </items>
                     </Table>
+
+                    <List
+                        busy="{table>/busy}"
+                        items="{pollitos>/value}"
+                        noDataText="Sin datos"
+                        visible="{device>/system/phone}"
+                        class="pollitosMobileList sapUiSmallMarginTop">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="Pollitos registrados ({= ${pollitos>/value}.length})" />
+                                <ToolbarSpacer />
+                                <Button
+                                    text="Excel"
+                                    icon="sap-icon://excel-attachment"
+                                    press="onExportarExcel"
+                                    type="Emphasized" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <items>
+                            <CustomListItem
+                                type="Navigation"
+                                press="onPollitoPress"
+                                class="pollitoMobileItem">
+                                <VBox class="pollitoMobileCard">
+                                    <HBox
+                                        alignItems="Start"
+                                        justifyContent="SpaceBetween"
+                                        class="pollitoMobileHeader">
+                                        <VBox>
+                                            <ObjectStatus text="{pollitos>cintillo}" state="Information" />
+                                            <Text
+                                                text="{pollitos>aveGenerada/placa}"
+                                                class="pollitoMobilePlate" />
+                                        </VBox>
+                                        <HBox
+                                            alignItems="Center"
+                                            renderType="Bare"
+                                            class="pollitoMobileActions"
+                                            visible="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? false : true}">
+                                            <Button
+                                                icon="sap-icon://edit"
+                                                type="Emphasized"
+                                                tooltip="Editar"
+                                                press="onEditarPollito" />
+                                            <Button
+                                                icon="sap-icon://delete"
+                                                type="Transparent"
+                                                tooltip="Eliminar"
+                                                press="onEliminarPollito" />
+                                        </HBox>
+                                    </HBox>
+
+                                    <FlexBox
+                                        wrap="Wrap"
+                                        renderType="Div"
+                                        class="pollitoMobileGrid">
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Color cintillo" />
+                                            <ObjectStatus text="{pollitos>colorCintillo}" state="Information" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Temporada" />
+                                            <Text text="{pollitos>temporada}" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Nombre" />
+                                            <Text text="{pollitos>nombre}" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Genero" />
+                                            <Text text="{path: 'pollitos>sexo', formatter: '.formatearSexo'}" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Fecha Nac." />
+                                            <Text text="{path: 'pollitos>fechaNacimiento', formatter: '.formatearFecha'}" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField">
+                                            <Label text="Estado" />
+                                            <ObjectStatus
+                                                text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
+                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField pollitoMobileFieldWide">
+                                            <Label text="Padre" />
+                                            <Text text="{pollitos>padre/placa}" />
+                                            <Text text="{pollitos>padre/nombre}" class="pollitoMobileMuted" />
+                                        </VBox>
+                                        <VBox class="pollitoMobileField pollitoMobileFieldWide">
+                                            <Label text="Madre" />
+                                            <Text text="{pollitos>madre/placa}" />
+                                            <Text text="{pollitos>madre/nombre}" class="pollitoMobileMuted" />
+                                        </VBox>
+                                    </FlexBox>
+                                </VBox>
+                            </CustomListItem>
+                        </items>
+                    </List>
                 </Panel>
             </VBox>
         </content>

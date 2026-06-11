@@ -410,7 +410,7 @@ export default class PollitoForm extends Controller {
         oModel.setProperty("/fecNacState", "None");
 
         // Validar placa padre
-        if (!data.placaPadre) {
+        /*if (!data.placaPadre) {
             oModel.setProperty("/placaPadreState", "Error");
             MessageToast.show("El padre es requerido");
             return;
@@ -424,6 +424,8 @@ export default class PollitoForm extends Controller {
             return;
         }
         oModel.setProperty("/placaMadreState", "None");
+
+         */
 
         const usuario = JSON.parse(authUser);
         const payload: any = {
@@ -489,18 +491,18 @@ export default class PollitoForm extends Controller {
 
             if (!response.ok) {
                 const error = await response.json();
-                MessageBox.error(error.error?.message || "Error guardando el pollito");
+                MessageBox.error(error.error?.message || "Error guardando la ave");
                 return;
             }
 
-            MessageBox.success(this.pollitoId ? "Pollito actualizado" : "Pollito registrado", {
+            MessageBox.success(this.pollitoId ? "Ave actualizado exitosamente !!!" : "Ave registrado exitosamente !!!", {
                 actions: [MessageBox.Action.OK],
                 emphasizedAction: MessageBox.Action.OK,
                 onClose: () => this.onNavBack(),
                 dependentOn: this.getView()
             });
         } catch (error) {
-            MessageBox.error("No se pudo guardar el pollito");
+            MessageBox.error("No se pudo guardar la ave");
         }
     }
 
