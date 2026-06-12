@@ -239,7 +239,7 @@
                                                 <ObjectStatus text="{aves>placa}" state="Information" />
 
                                                 <Label text="Nombre" design="Bold"/>
-                                                <ObjectStatus text="{aves>nombre}" class="aveAdultaMobileName" />
+                                                <ObjectStatus text="{aves>nombre}" state="Information" class="aveAdultaMobileName" />
                                             </VBox>
                                             <HBox
                                                 alignItems="Center"
