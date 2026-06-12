@@ -244,7 +244,10 @@ export default class Pollitos extends Controller {
 
     public onBuscar(): void {
         const oTable = this.byId("pollitosTable") as Table;
-        const oBinding = oTable.getBinding("items");
+        const aBindings = [
+            oTable?.getBinding("items"),
+            (this.byId("pollitosMobileList") as any)?.getBinding("items")
+        ];
         const search = (this.byId("searchField") as any).getValue();
         const temporada = (this.byId("temporadaFilter") as any).getValue();
         const color = (this.byId("colorFilter") as any).getValue();
@@ -283,7 +286,7 @@ export default class Pollitos extends Controller {
             }));
         }
 
-        oBinding?.filter(filters);
+        aBindings.forEach((oBinding: any) => oBinding?.filter(filters));
     }
 
     public onLimpiarFiltros(): void {

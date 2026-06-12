@@ -45,6 +45,24 @@
                                 </layoutData>
                             </Switch>
 
+                            <Label text="¿Tienes los datos obligatorios de las aves?" required="true" />
+                            <Switch
+                                state="{combate>/form/tieneDatosObligatoriosAves}"
+                                customTextOn="Si"
+                                customTextOff="No"
+                                change=".onTieneDatosObligatoriosAvesChange">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                            </Switch>
+
+                            <Label text="" visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
+                            <MessageStrip
+                                text="Puedes registrar el combate con placa o nombre manual. Si luego completas el ave, podras asociarla desde una edicion posterior."
+                                type="Information"
+                                showIcon="true"
+                                visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
+
                             <Label text="Fecha" required="true" />
                             <DateTimePicker
                                 value="{combate>/form/fecha}"
@@ -61,26 +79,28 @@
                             <Label text="Primer combatiente" required="true" />
                             <Input
                                 value="{combate>/form/placaCombA}"
-                                placeholder="Seleccionar ave de tu galpon o criadero"
+                                placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del primer combatiente' }"
                                 showValueHelp="true"
-                                valueHelpOnly="true"
+                                valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
                                 valueHelpRequest=".onValueHelpCombatienteA"
+                                liveChange=".onCombatienteAManualLiveChange"
                                 description="{combate>/form/nombreCombA}" />
 
                             <Label text="Segundo combatiente" required="true" visible="{combate>/form/ambosPropios}" />
                             <Input
                                 value="{combate>/form/placaCombB}"
-                                placeholder="Seleccionar ave de tu galpon o criadero"
+                                placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del segundo combatiente' }"
                                 showValueHelp="true"
-                                valueHelpOnly="true"
+                                valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
                                 valueHelpRequest=".onValueHelpCombatienteB"
+                                liveChange=".onCombatienteBManualLiveChange"
                                 visible="{combate>/form/ambosPropios}"
                                 description="{combate>/form/nombreCombB}" />
                             
-                            <Label text="Combatiente rival" required="false" visible="{= !${combate>/form/ambosPropios}}" />
+                            <Label text="Combatiente rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
                             <Input value="{combate>/form/nombreOponente}" placeholder="Ingrese nombre o placa del rival externo" visible="{= !${combate>/form/ambosPropios}}" />
 
-                            <Label text="Propietario rival" required="false" visible="{= !${combate>/form/ambosPropios}}" />
+                            <Label text="Propietario rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
                             <Input value="{combate>/form/propietarioOponente}" placeholder="Ingrese nombre del propietario rival externo" visible="{= !${combate>/form/ambosPropios}}" />
 
                             <Label text="Procedencia rival" visible="{= !${combate>/form/ambosPropios}}" />

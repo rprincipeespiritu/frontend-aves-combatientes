@@ -141,8 +141,10 @@ export default class Combates extends Controller {
       combate?.evento,
       combate?.ave?.placa,
       combate?.ave?.nombre,
+      combate?.combatienteATexto,
       combate?.combatienteB?.placa,
       combate?.combatienteB?.nombre,
+      combate?.combatienteBTexto,
       combate?.nombreOponente,
       combate?.propietarioOponente,
       combate?.procedenciaOponente,
@@ -290,9 +292,32 @@ export default class Combates extends Controller {
   public formatearRival(combate: any): string {
     if (!combate) return "";
     if (combate.ambosPropios !== false) {
-      return combate.combatienteB?.placa || combate.nombreOponente || "";
+      return combate.combatienteB?.placa || combate.combatienteBTexto || combate.nombreOponente || "";
     }
     return combate.nombreOponente || "";
+  }
+
+  public formatearCombatienteATitulo(combate: any): string {
+    if (!combate) return "";
+    return combate.ave?.placa || combate.combatienteATexto || "Sin placa";
+  }
+
+  public formatearCombatienteATexto(combate: any): string {
+    if (!combate) return "";
+    return combate.ave?.nombre || (!combate.ave?.placa ? "" : combate.combatienteATexto || "");
+  }
+
+  public formatearCombatienteBTitulo(combate: any): string {
+    if (!combate) return "";
+    if (combate.ambosPropios !== false) {
+      return combate.combatienteB?.placa || combate.combatienteBTexto || "Sin placa";
+    }
+    return combate.nombreOponente || "";
+  }
+
+  public formatearCombatienteBTexto(combate: any): string {
+    if (!combate || combate.ambosPropios === false) return "";
+    return combate.combatienteB?.nombre || "";
   }
 
   public formatearPropietarioRival(combate: any): string {

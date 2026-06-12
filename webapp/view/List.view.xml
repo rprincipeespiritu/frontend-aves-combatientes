@@ -203,6 +203,7 @@
                         </Table>
 
                         <List
+                            id="avesMobileList"
                             items="{aves>/value}"
                             noDataText="Sin datos"
                             visible="{device>/system/phone}"
@@ -234,10 +235,11 @@
                                             justifyContent="SpaceBetween"
                                             class="aveAdultaMobileHeader">
                                             <VBox>
+                                                <Label text="Placa" design="Bold"/>
                                                 <ObjectStatus text="{aves>placa}" state="Information" />
-                                                <Text
-                                                    text="{aves>nombre}"
-                                                    class="aveAdultaMobileName" />
+
+                                                <Label text="Nombre" design="Bold"/>
+                                                <ObjectStatus text="{aves>nombre}" class="aveAdultaMobileName" />
                                             </VBox>
                                             <HBox
                                                 alignItems="Center"
