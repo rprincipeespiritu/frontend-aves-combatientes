@@ -235,9 +235,23 @@ export default class CombateDetail extends Controller {
     if (!combate) return "";
     if (combate.ambosPropios !== false) {
       const ave = combate.combatienteB;
-      return ave ? `${ave.placa || "Sin placa"} - ${ave.nombre || "Sin nombre"}` : combate.nombreOponente || "";
+      return ave ? `${ave.placa || "Sin placa"} - ${ave.nombre || "Sin nombre"}` : combate.combatienteBTexto || combate.nombreOponente || "";
     }
     return combate.nombreOponente || "";
+  }
+
+  public formatearCombatienteA(combate: any): string {
+    if (!combate) return "";
+    const ave = combate.ave;
+    if (ave) return `${ave.placa || "Sin placa"} - ${ave.nombre || "Sin nombre"}`;
+    return combate.combatienteATexto || "Sin datos";
+  }
+
+  public formatearCombatienteB(combate: any): string {
+    if (!combate) return "";
+    const ave = combate.combatienteB;
+    if (ave) return `${ave.placa || "Sin placa"} - ${ave.nombre || "Sin nombre"}`;
+    return combate.combatienteBTexto || "Sin datos";
   }
 
   public formatearPropietarioRival(combate: any): string {

@@ -118,9 +118,9 @@
                             <cells>
                                 <Text text="{path: 'combates>fecha', formatter: '.formatearFecha'}" />
                                 <ObjectStatus text="{path: 'combates>tipoCombate', formatter: '.formatearTipo'}" state="{= ${combates>tipoCombate} === 'OFICIAL' ? 'Success' : 'Information'}" />
-                                <ObjectIdentifier title="{= ${combates>ave/placa} || 'Sin placa' }" text="{combates>ave/nombre}" />
+                                <ObjectIdentifier title="{path: 'combates>', formatter: '.formatearCombatienteATitulo'}" text="{path: 'combates>', formatter: '.formatearCombatienteATexto'}" />
                                 <VBox>
-                                    <ObjectIdentifier title="{= ${combates>combatienteB/placa} || 'Sin placa' }" text="{combates>combatienteB/nombre}" visible="{= ${combates>ambosPropios}}" />
+                                    <ObjectIdentifier title="{path: 'combates>', formatter: '.formatearCombatienteBTitulo'}" text="{path: 'combates>', formatter: '.formatearCombatienteBTexto'}" visible="{= ${combates>ambosPropios}}" />
                                     <Text text="{path: 'combates>', formatter: '.formatearRival'}" visible="{= !${combates>ambosPropios}}"/>
                                 </VBox>
                                 <Text text="{path: 'combates>', formatter: '.formatearPropietarioRival'}" />

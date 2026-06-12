@@ -169,6 +169,7 @@
                     </Table>
 
                     <List
+                        id="pollitosMobileList"
                         busy="{table>/busy}"
                         items="{pollitos>/value}"
                         noDataText="Sin datos"
@@ -196,18 +197,15 @@
                                         justifyContent="SpaceBetween"
                                         class="pollitoMobileHeader">
                                         <VBox>
-                                            <Label text="Cintillo" />
+                                            <Label text="Cintillo" design="Bold" />
                                             <ObjectStatus text="{pollitos>cintillo}" state="Information" />
-                                           <!-- <Text
+
+                                            <Label text="Placa" design="Bold"/>
+                                            <ObjectStatus text="{pollitos>aveGenerada/placa}" state="Information" />
+
+                                            <!-- <Text
                                                 text="{pollitos>aveGenerada/placa}"
                                                 class="pollitoMobilePlate" /> -->
-                                        </VBox>
-                                        <VBox>
-                                            <Label text="Placa" />
-                                            <ObjectStatus text="{pollitos>aveGenerada/placa}" state="Information" />
-                                            <!--<Text
-                                                    text="{pollitos>aveGenerada/placa}"
-                                                    class="pollitoMobilePlate" />-->
                                         </VBox>
                                         <HBox
                                             alignItems="Center"

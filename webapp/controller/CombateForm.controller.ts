@@ -151,7 +151,10 @@ export default class CombateForm extends Controller {
       nombreCombA: "",
       combatienteB_ID: "",
       combatienteBTexto: "",
+      placaCombB: "",
+      nombreCombB: "",
       ambosPropios: true,
+      tieneDatosObligatoriosAves: true,
       fecha: now.toISOString().slice(0, 19),
       tipoCombate: "PRUEBA",
       lugar: "",
@@ -224,12 +227,13 @@ export default class CombateForm extends Controller {
         ...this.getEmptyForm(),
         ...data,
         ambosPropios: data.ambosPropios !== false,
+        tieneDatosObligatoriosAves: !!(data.ave_ID || data.ave?.ID),
         ave_ID: data.ave_ID || data.ave?.ID || "",
         combatienteB_ID: data.combatienteB_ID || data.combatienteB?.ID || "",
-        combatienteATexto: this.formatearAveSeleccionada(data.ave),
+        combatienteATexto: data.combatienteATexto || this.formatearAveSeleccionada(data.ave),
         placaCombA: data.ave?.placa || "",
         nombreCombA: data.ave?.nombre || "",
-        combatienteBTexto: this.formatearAveSeleccionada(data.combatienteB),
+        combatienteBTexto: data.combatienteBTexto || this.formatearAveSeleccionada(data.combatienteB),
         placaCombB: data.combatienteB?.placa || "",
         nombreCombB: data.combatienteB?.nombre || "",
         nombreOponente: data.ambosPropios !== false ? "" : data.nombreOponente || "",
@@ -252,14 +256,32 @@ export default class CombateForm extends Controller {
 
     const oModel = this.getView()?.getModel("combate") as JSONModel;
     const form = oModel.getProperty("/form");
+    const requiereDatosObligatoriosAves = form.tieneDatosObligatoriosAves !== false;
+    const combatienteATexto = this.obtenerTextoCombatiente(form.placaCombA, form.combatienteATexto);
+    const combatienteBTexto = this.obtenerTextoCombatiente(form.placaCombB, form.combatienteBTexto);
 
-    if (!form.ave_ID || !form.fecha || !form.tipoCombate) {
-      MessageBox.warning("Selecciona el Combatiente A, fecha y tipo de combate.");
+    if (!form.fecha || !form.tipoCombate) {
+      MessageBox.warning("Indica fecha y tipo de combate.");
       return;
     }
 
-    if (form.ambosPropios && !form.combatienteB_ID) {
+    if (requiereDatosObligatoriosAves && !form.ave_ID) {
+      MessageBox.warning("Selecciona el Combatiente A.");
+      return;
+    }
+
+    if (!requiereDatosObligatoriosAves && !form.ave_ID && !combatienteATexto) {
+      MessageBox.warning("Ingresa la placa o nombre del Combatiente A.");
+      return;
+    }
+
+    if (requiereDatosObligatoriosAves && form.ambosPropios && !form.combatienteB_ID) {
       MessageBox.warning("Selecciona el Combatiente B cuando ambas aves son tuyas.");
+      return;
+    }
+
+    if (!requiereDatosObligatoriosAves && form.ambosPropios && !form.combatienteB_ID && !combatienteBTexto) {
+      MessageBox.warning("Ingresa la placa o nombre del Combatiente B.");
       return;
     }
 
@@ -268,16 +290,23 @@ export default class CombateForm extends Controller {
       return;
     }
 
-    if (!form.ambosPropios && (!form.nombreOponente || !form.propietarioOponente)) {
+    if (requiereDatosObligatoriosAves && !form.ambosPropios && (!form.nombreOponente || !form.propietarioOponente)) {
       MessageBox.warning("Ingresa el nombre del gallo rival y su propietario.");
       return;
     }
 
+    if (!requiereDatosObligatoriosAves && !form.ambosPropios && !form.nombreOponente) {
+      MessageBox.warning("Ingresa el nombre o placa del gallo rival.");
+      return;
+    }
+
     const payload: any = {
-      ave_ID: form.ave_ID,
-      combatienteB_ID: form.ambosPropios ? form.combatienteB_ID : null,
+      ave_ID: form.ave_ID || null,
+      combatienteATexto: form.ave_ID ? null : combatienteATexto || null,
+      combatienteB_ID: form.ambosPropios && form.combatienteB_ID ? form.combatienteB_ID : null,
+      combatienteBTexto: form.ambosPropios && !form.combatienteB_ID ? combatienteBTexto || null : null,
       ambosPropios: !!form.ambosPropios,
-      fecha: new Date(form.fecha).toISOString(),
+      fecha: this.formatearFechaPayload(form.fecha),
       tipoCombate: form.tipoCombate,
       lugar: form.lugar || null,
       evento: form.evento || null,
@@ -306,8 +335,8 @@ export default class CombateForm extends Controller {
 
     const detalleConfirmacion = [
       `Fecha: ${new Date(form.fecha).toLocaleString()}`,
-      `Combatiente A: ${form.placaCombA || form.combatienteATexto || form.ave_ID}`,
-      `Combatiente B: ${form.ambosPropios ? form.placaCombB || form.combatienteBTexto || form.combatienteB_ID : form.nombreOponente}`,
+      `Combatiente A: ${form.placaCombA || combatienteATexto || form.ave_ID}`,
+      `Combatiente B: ${form.ambosPropios ? form.placaCombB || combatienteBTexto || form.combatienteB_ID : form.nombreOponente}`,
     ].filter(Boolean).join("\n");
     const confirmado = this.combateId
       ? await ConfirmationService.confirmUpdate("el combate", detalleConfirmacion)
@@ -415,6 +444,40 @@ export default class CombateForm extends Controller {
     oModel.setProperty("/form/nombreCombB", "");
   }
 
+  public onTieneDatosObligatoriosAvesChange(): void {
+    const oModel = this.getView()?.getModel("combate") as JSONModel;
+    const tieneDatos = oModel.getProperty("/form/tieneDatosObligatoriosAves") !== false;
+
+    if (tieneDatos) {
+      return;
+    }
+
+    oModel.setProperty("/form/ave_ID", "");
+    oModel.setProperty("/form/nombreCombA", "");
+    oModel.setProperty("/form/combatienteB_ID", "");
+    oModel.setProperty("/form/nombreCombB", "");
+  }
+
+  public onCombatienteAManualLiveChange(oEvent: any): void {
+    const oModel = this.getView()?.getModel("combate") as JSONModel;
+    if (oModel.getProperty("/form/tieneDatosObligatoriosAves") !== false) return;
+
+    const value = String(oEvent.getParameter("value") || "");
+    oModel.setProperty("/form/ave_ID", "");
+    oModel.setProperty("/form/nombreCombA", "");
+    oModel.setProperty("/form/combatienteATexto", value);
+  }
+
+  public onCombatienteBManualLiveChange(oEvent: any): void {
+    const oModel = this.getView()?.getModel("combate") as JSONModel;
+    if (oModel.getProperty("/form/tieneDatosObligatoriosAves") !== false) return;
+
+    const value = String(oEvent.getParameter("value") || "");
+    oModel.setProperty("/form/combatienteB_ID", "");
+    oModel.setProperty("/form/nombreCombB", "");
+    oModel.setProperty("/form/combatienteBTexto", value);
+  }
+
   private abrirAyudaCombatiente(field: "A" | "B"): void {
     this.selectedCombatienteField = field;
 
@@ -514,6 +577,18 @@ export default class CombateForm extends Controller {
   private formatearAveSeleccionada(ave?: any): string {
     if (!ave) return "";
     return `${ave.placa || "Sin placa"} - ${ave.nombre || "Sin nombre"}`;
+  }
+
+  private obtenerTextoCombatiente(...valores: Array<string | undefined | null>): string {
+    return valores
+      .map((valor) => String(valor || "").trim())
+      .find(Boolean) || "";
+  }
+
+  private formatearFechaPayload(fecha: string): string {
+    const valor = String(fecha || "").trim();
+    if (!valor) return "";
+    return valor.slice(0, 19);
   }
 
   private esMismoCombatiente(combatienteAId?: string, combatienteBId?: string): boolean {

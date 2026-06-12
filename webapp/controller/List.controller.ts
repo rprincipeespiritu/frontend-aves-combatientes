@@ -408,7 +408,10 @@ export default class List extends Controller {
 
   private aplicarFiltros(): void {
     const oTable = this.byId("avesTable") as Table;
-    const oBinding = oTable.getBinding("items");
+    const aBindings = [
+      oTable?.getBinding("items"),
+      (this.byId("avesMobileList") as any)?.getBinding("items")
+    ];
 
     const aFilters: Filter[] = [];
 
@@ -464,7 +467,7 @@ export default class List extends Controller {
       aFilters.push(new Filter("padrote", FilterOperator.EQ, true));
     }
 
-    (oBinding as any)?.filter(aFilters);
+    aBindings.forEach((oBinding: any) => oBinding?.filter(aFilters));
   }
 
   public onLimpiarFiltros(): void {
