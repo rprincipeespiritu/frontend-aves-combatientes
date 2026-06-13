@@ -80,7 +80,7 @@
                         </OverflowToolbar>
                     </headerToolbar>
                     <columns>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="22%" visible="{= !${view>/editMode}}">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="22%" visible="{= ${view>/form/estado} === 'PROGRAMADA' }">
                             <Text text="Plan de cruce" />
                         </Column>
                         <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
