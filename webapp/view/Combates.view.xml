@@ -65,7 +65,7 @@
                                 selectedKey="{combates>/filtros/video}"
                                 selectionChange=".onFiltrarCombates"
                                 placeholder="Video"
-                                width="12rem">
+                                width="12rem" visible="{= !${device>/system/phone} }">
                                 <items>
                                     <core:Item key="" text="Todos los videos" />
                                     <core:Item key="CON_VIDEO" text="Con video" />
@@ -104,13 +104,13 @@
                     </headerToolbar>
                     <columns>
                         <Column><Text text="Fecha" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Tipo de Pelea" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Primer combatiente " /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Tipo de Pelea" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Primer combatiente " /></Column>
                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Segundo combatiente / Rival" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Propietario rival" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Resultado" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Evento" /></Column>
-                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Video" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Propietario rival" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Resultado" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Evento" visible="{= !${device>/system/phone} }" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Video" visible="{= !${device>/system/phone} }" /></Column>
                         <Column><Text text="Acciones" /></Column>
                     </columns>
                     <items>

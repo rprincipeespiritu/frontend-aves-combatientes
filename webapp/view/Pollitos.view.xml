@@ -255,12 +255,12 @@
                                                 text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
                                                 state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
                                         </VBox>-->
-                                        <VBox class="pollitoMobileField pollitoMobileFieldWide">
+                                        <VBox class="pollitoMobileField">
                                             <Label text="Padre" />
                                             <Text text="{pollitos>padre/placa}" />
                                             <Text text="{pollitos>padre/nombre}" class="pollitoMobileMuted" />
                                         </VBox>
-                                        <VBox class="pollitoMobileField pollitoMobileFieldWide">
+                                        <VBox class="pollitoMobileField">
                                             <Label text="Madre" />
                                             <Text text="{pollitos>madre/placa}" />
                                             <Text text="{pollitos>madre/nombre}" class="pollitoMobileMuted" />

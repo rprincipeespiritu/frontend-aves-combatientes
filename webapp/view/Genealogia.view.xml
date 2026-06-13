@@ -156,7 +156,7 @@
                     <Panel
                         headerText="Medios hermanos por madre"
                         width="32rem"
-                        class="sapUiSmallMarginBottom">
+                        class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
                         <List
                             noDataText="No hay medios hermanos por madre."
                             items="{genealogia>/mediosHermanosMadre}">

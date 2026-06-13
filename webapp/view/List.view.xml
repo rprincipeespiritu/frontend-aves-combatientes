@@ -306,12 +306,12 @@
                                                 <Label text="Padrote" />
                                                 <CheckBox selected="{aves>padrote}" editable="false" />
                                             </VBox>
-                                            <VBox class="aveAdultaMobileField aveAdultaMobileFieldWide">
+                                            <VBox class="aveAdultaMobileField">
                                                 <Label text="Padre" />
                                                 <Text text="{aves>padre/placa}" />
                                                 <Text text="{aves>padre/nombre}" class="aveAdultaMobileMuted" />
                                             </VBox>
-                                            <VBox class="aveAdultaMobileField aveAdultaMobileFieldWide">
+                                            <VBox class="aveAdultaMobileField">
                                                 <Label text="Madre" />
                                                 <Text text="{aves>madre/placa}" />
                                                 <Text text="{aves>madre/nombre}" class="aveAdultaMobileMuted" />
