@@ -109,8 +109,8 @@
                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Segundo combatiente / Rival" /></Column>
                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Propietario rival" /></Column>
                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Resultado" /></Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Evento" visible="{= !${device>/system/phone} }" /></Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Video" visible="{= !${device>/system/phone} }" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !${device>/system/phone} }" ><Text text="Evento" /></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true" visible="{= !${device>/system/phone} }" ><Text text="Video" /></Column>
                         <Column><Text text="Acciones" /></Column>
                     </columns>
                     <items>
