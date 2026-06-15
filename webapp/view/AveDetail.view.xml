@@ -257,7 +257,7 @@
                 </Panel>                
 
                 <Panel headerText="Composición de lí­neas" expandable="true" expanded="true"
-                    class="sapUiSmallMarginTop">
+                    class="sapUiSmallMarginTop" visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" >
                     <Table items="{detail>/composicionLineas}" noDataText="Sin composiciónn de lí­neas registrada">
                         <headerToolbar>
                             <OverflowToolbar class="sapUiTinyMarginTop">
