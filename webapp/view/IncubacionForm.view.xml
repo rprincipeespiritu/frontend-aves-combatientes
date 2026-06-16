@@ -24,7 +24,7 @@
                         <Label text="Código" />
                         <Text text="{view>/form/codigo}" />
 
-                        <Label text="Fecha Incubación" />
+                        <Label text="Fecha Incubación" required="true" />
                         <DateTimePicker id="DTP1" change="onfechaIncubacionChange"
                             value="{ path:'view>/form/fechaIncubacion', type:'sap.ui.model.type.DateTime', 'formatOptions': { 'pattern': 'dd/MM/yyyy HH:mm:ss' } }"
                             editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
@@ -80,31 +80,40 @@
                         </OverflowToolbar>
                     </headerToolbar>
                     <columns>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="22%" visible="{= ${view>/form/estado} === 'PROGRAMADA' }">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="22%"
+                            visible="{= ${view>/form/estado} === 'PROGRAMADA' &amp;&amp; ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <Text text="Plan de cruce" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}" >
                             <Text text="Padre" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}">
                             <Text text="Madre" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="12%">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO'}">
+                            <Text text="Padre" />
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO'}">
+                            <Text text="Madre" />
+                        </Column>
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="12%"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <Text text="Riesgo" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="10%">
+                        <Column demandPopin="true" minScreenWidth="Tablet" width="10%"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <Text text="% Consang." />
                         </Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8%">
                             <Text text="Total huevos" />
                         </Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8%">
                             <Text text="Fértiles" />
                         </Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8%">
                             <Text text="Nacidos" />
                         </Column>
-                        <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
+                        <Column minScreenWidth="Tablet" demandPopin="true" width="8%">
                             <Text text="No eclosionados" />
                         </Column>
                         <Column demandPopin="true" minScreenWidth="Tablet" width="12%"
@@ -117,15 +126,51 @@
                             <cells>
                                 <Input
                                     value="{view>codigo}"
-                                    placeholder="Seleccionar plan"
+                                    placeholder="{= ${view>/canUsePlanesCruce} ? 'Seleccionar plan' : 'Detalle manual' }"
                                     width="100%"
                                     showValueHelp="true"
-                                    valueHelpOnly="true"
+                                    valueHelpOnly="{view>/canUsePlanesCruce}"
                                     valueHelpRequest=".onValueHelpPlanCruce"
-                                    editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
-                                <ObjectIdentifier title="{view>placaPadre}"
+                                    editable="{= ${view>/form/estado} === 'PROGRAMADA' &amp;&amp; ${view>/canUsePlanesCruce} }" />
+                                <VBox>
+                                    <ObjectIdentifier
+                                        title="{view>placaPadre}"
+                                        text="{view>nombrePadre}"
+                                        visible="{view>/canUsePlanesCruce}" />
+                                    <Input
+                                        value="{view>placaPadre}"
+                                        description="{view>nombrePadre}"
+                                        placeholder="Seleccionar padre"
+                                        width="100%"
+                                        fieldWidth="55%"
+                                        showValueHelp="true"
+                                        valueHelpOnly="true"
+                                        valueHelpRequest=".onValueHelpPadre"
+                                        editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                        visible="{= !${view>/canUsePlanesCruce} }" />
+                                </VBox>
+                                <VBox>
+                                    <ObjectIdentifier
+                                        title="{view>placaMadre}"
+                                        text="{view>nombreMadre}"
+                                        visible="{view>/canUsePlanesCruce}" />
+                                    <Input
+                                        value="{view>placaMadre}"
+                                        description="{view>nombreMadre}"
+                                        placeholder="Seleccionar madre"
+                                        width="100%"
+                                        fieldWidth="55%"
+                                        showValueHelp="true"
+                                        valueHelpOnly="true"
+                                        valueHelpRequest=".onValueHelpMadre"
+                                        editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                        visible="{= !${view>/canUsePlanesCruce} }" />
+                                </VBox>
+                                <ObjectIdentifier
+                                    title="{view>placaPadre}"
                                     text="{view>nombrePadre}" />
-                                <ObjectIdentifier title="{view>placaMadre}"
+                                <ObjectIdentifier
+                                    title="{view>placaMadre}"
                                     text="{view>nombreMadre}" />
                                 <ObjectStatus
                                     text="{ path: 'view>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
