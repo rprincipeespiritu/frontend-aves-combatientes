@@ -141,10 +141,12 @@ export default class IncubacionDetail extends Controller {
             let detalles = incubacion.detalles;
             for (let index = 0; index < detalles.length; index++) {
                 const element = detalles[index];
-                element.placaPadre = element.padre.placa;
-                element.nombrePadre = element.padre.nombre;
-                element.placaMadre = element.madre.placa;
-                element.nombreMadre = element.madre.nombre;
+                element.placaPadre = element.padre?.placa || element.placaPadre || "";
+                element.nombrePadre = element.padre?.nombre || element.padre?.apodo || element.nombrePadre || "";
+                element.placaMadre = element.madre?.placa || element.placaMadre || "";
+                element.nombreMadre = element.madre?.nombre || element.madre?.apodo || element.nombreMadre || "";
+                element.padreResumen = this.formatAveResumen(element.placaPadre, element.nombrePadre);
+                element.madreResumen = this.formatAveResumen(element.placaMadre, element.nombreMadre);
             }
 
             oModel.setProperty("/incubacion", {
@@ -193,6 +195,17 @@ export default class IncubacionDetail extends Controller {
         };
 
         return estados[estado] || estado;
+    }
+
+    public formatAveResumen(placa?: string, nombre?: string): string {
+        const sPlaca = String(placa || "").trim();
+        const sNombre = String(nombre || "").trim();
+
+        if (sPlaca && sNombre) {
+            return `${sPlaca} - ${sNombre}`;
+        }
+
+        return sPlaca || sNombre || "Sin registro";
     }
 
     public onConfirmarIniciar(oEvent: any): void {

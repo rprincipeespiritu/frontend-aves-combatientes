@@ -126,10 +126,14 @@
                                     <cells>
                                         <!-- <Text text="{view>padre/placa} {view>padre/nombre}" /> -->
                                         <!-- <Text text="{view>placaPadre}" width="100%" /> -->
-                                        <ObjectStatus text="{view>placaPadre}" state="Information"/>
+                                        <ObjectStatus
+                                            text="{ parts: [{path: 'view>placaPadre'}, {path: 'view>nombrePadre'}], formatter: '.formatAveResumen' }"
+                                            state="Information"/>
                                         <!-- <Text text="{view>madre/placa} {view>madre/nombre}" /> -->
                                         <!-- <Text text="{view>placaMadre}" width="100%" /> -->
-                                        <ObjectStatus text="{view>placaMadre}" state="Information"/>
+                                        <ObjectStatus
+                                            text="{ parts: [{path: 'view>placaMadre'}, {path: 'view>nombreMadre'}], formatter: '.formatAveResumen' }"
+                                            state="Information"/>
                                         <Text text="{view>totalHuevos}" />
                                         <Text text="{view>huevosFertiles}" />
                                         <Text text="{view>huevosEclosionados}" />

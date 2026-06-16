@@ -49,10 +49,12 @@ export default class IncubacionForm extends Controller {
       fechaEclosion: null,
       estado: "Programada",
       observacion: "",
+      canUsePlanesCruce: true,
       detalles: [],
     };
 
     oViewModel.setProperty("/form", form);
+    oViewModel.setProperty("/canUsePlanesCruce", true);
     this.getView()?.setModel(oViewModel, "view");
 
     const oPicker = this.byId("DTP1") as DateTimePicker | undefined;
@@ -95,6 +97,7 @@ export default class IncubacionForm extends Controller {
 
       const oAve = oContext.getObject();
       const oModel = this.getView()?.getModel("view");
+      const sNombreAve = oAve.nombre || oAve.apodo || "";
 
       if (!oModel) {
         return;
@@ -104,11 +107,11 @@ export default class IncubacionForm extends Controller {
       if (oThat.helpSelected === "valueHelpPadre") {
         oModel.setProperty(`${this._sDetallePath}/padre_ID`, oAve.ID);
         oModel.setProperty(`${this._sDetallePath}/placaPadre`, oAve.placa);
-        oModel.setProperty(`${this._sDetallePath}/nombrePadre`, oAve.nombre);
+        oModel.setProperty(`${this._sDetallePath}/nombrePadre`, sNombreAve);
       } else if (oThat.helpSelected === "valueHelpMadre") {
         oModel.setProperty(`${this._sDetallePath}/madre_ID`, oAve.ID);
         oModel.setProperty(`${this._sDetallePath}/placaMadre`, oAve.placa);
-        oModel.setProperty(`${this._sDetallePath}/nombreMadre`, oAve.nombre);
+        oModel.setProperty(`${this._sDetallePath}/nombreMadre`, sNombreAve);
       }
       this._sDetallePath = null;
       oModel.refresh();
@@ -244,6 +247,13 @@ export default class IncubacionForm extends Controller {
     const data = await response.json();
 
     if (!response.ok) {
+      if (response.status === 403) {
+        this.getView()?.setModel(new JSONModel([]), "planesCruce");
+        const oModel = this.getView()?.getModel("view") as JSONModel;
+        oModel?.setProperty("/canUsePlanesCruce", false);
+        return;
+      }
+
       throw new Error(
         data?.error?.message ||
           data?.message ||
@@ -254,6 +264,8 @@ export default class IncubacionForm extends Controller {
     const planes = this.normalizarPlanesCruceDisponibles(data.value || []);
 
     this.getView()?.setModel(new JSONModel(planes), "planesCruce");
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    oModel?.setProperty("/canUsePlanesCruce", true);
   }
 
   private normalizarPlanesCruceDisponibles(planes: any[]): any[] {
@@ -267,9 +279,10 @@ export default class IncubacionForm extends Controller {
         const planVisual = this.mapPlanCruceVisual(plan);
         const machoId = planVisual.macho_ID || planVisual.macho?.ID || "";
         const hembraId = planVisual.hembra_ID || planVisual.hembra?.ID || "";
-        const clave = machoId && hembraId
-          ? `${machoId}|${hembraId}`
-          : planVisual.ID || planVisual.codigoVisual;
+        const clave =
+          machoId && hembraId
+            ? `${machoId}|${hembraId}`
+            : planVisual.ID || planVisual.codigoVisual;
         const planActual = planesPorPareja.get(clave);
 
         if (
@@ -288,9 +301,7 @@ export default class IncubacionForm extends Controller {
     const nivelRiesgoTexto = this.formatter.formatNivelRiesgoTexto(
       plan.nivelRiesgo,
     );
-    const parentescoTexto = this.formatParentescoPlanCruce(
-      plan.tipoParentesco,
-    );
+    const parentescoTexto = this.formatParentescoPlanCruce(plan.tipoParentesco);
     const tipoCruceTexto = this.formatter.formatTipoFormacionCruceTexto(
       plan.tipoCruce,
       plan.linea?.nombre,
@@ -303,9 +314,7 @@ export default class IncubacionForm extends Controller {
       decisionTexto,
       decisionState: this.formatter.formatDecisionState(plan.decision),
       nivelRiesgoTexto,
-      nivelRiesgoState: this.formatter.formatNivelRiesgoState(
-        plan.nivelRiesgo,
-      ),
+      nivelRiesgoState: this.formatter.formatNivelRiesgoState(plan.nivelRiesgo),
       tipoCruceTexto,
       parentescoTexto,
       parentescoVisual: `Parentesco: ${parentescoTexto || "Sin dato"}`,
@@ -371,7 +380,9 @@ export default class IncubacionForm extends Controller {
     return this.formatter.formatDecisionTexto(value);
   }
 
-  private formatPorcentajePlanCruce(value: number | string | null | undefined): string {
+  private formatPorcentajePlanCruce(
+    value: number | string | null | undefined,
+  ): string {
     if (value === null || value === undefined || value === "") {
       return "";
     }
@@ -437,6 +448,7 @@ export default class IncubacionForm extends Controller {
 
       oModel.setProperty("/busy", true);
       oModel.setProperty("/editMode", false);
+      oModel.setProperty("/canUsePlanesCruce", true);
       this.incubacionId = null;
 
       oModel.setProperty("/form", {
@@ -446,11 +458,13 @@ export default class IncubacionForm extends Controller {
         estado: "PROGRAMADA",
         observacion: "",
         eInputNacNoEcl: false,
+        canUsePlanesCruce: true,
         detalles: [],
       });
 
       await this._loadAvesPadrotes();
       await this._loadPlanesCruce();
+      void this.cargarSuscripcionResumen();
     } catch (error) {
       MessageBox.error(
         error instanceof Error ? error.message : "No se pudo cargar aves",
@@ -496,10 +510,10 @@ export default class IncubacionForm extends Controller {
       let detalles = incubacion.detalles;
       for (let index = 0; index < detalles.length; index++) {
         const element = detalles[index];
-        element.placaPadre = element.padre.placa;
-        element.nombrePadre = element.padre.nombre;
-        element.placaMadre = element.madre.placa;
-        element.nombreMadre = element.madre.nombre;
+        element.placaPadre = element.padre?.placa || "";
+        element.nombrePadre = element.padre?.nombre || element.padre?.apodo || "";
+        element.placaMadre = element.madre?.placa || "";
+        element.nombreMadre = element.madre?.nombre || element.madre?.apodo || "";
         element.planCruce_ID =
           element.planCruce_ID || element.planCruce?.ID || "";
         element.codigo = element.planCruce?.codigo || "";
@@ -517,6 +531,8 @@ export default class IncubacionForm extends Controller {
         eInputNacNoEcl: incubacion.eInputNacNoEcl,
         detalles: detalles,
       });
+
+      void this.cargarSuscripcionResumen();
     } catch (error) {
       MessageBox.error(
         error instanceof Error
@@ -526,6 +542,55 @@ export default class IncubacionForm extends Controller {
     } finally {
       oModel.setProperty("/busy", false);
     }
+  }
+
+  private async cargarSuscripcionResumen(): Promise<void> {
+    const oModel = this.getDashboardModel();
+    oModel.setProperty("/accesoSuscripcion", false);
+
+    try {
+      const response = await fetch(`${this.baseUrl}/obtenerSuscripcionActual`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      const data = await response.json();
+      if (!response.ok) return;
+
+      const tieneAcceso =
+        data.tieneSuscripcion !== false &&
+        ["ACTIVA", "CANCELADA"].includes(data.estado) &&
+        Number(data.diasRestantes || 0) >= 0;
+      const multimediaPremium =
+        tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan);
+
+      oModel.setProperty("/plan", data.plan || "");
+      oModel.setProperty("/estadoSuscripcion", data.estado || "");
+      oModel.setProperty("/accesoSuscripcion", tieneAcceso);
+      oModel.setProperty("/multimediaPremium", multimediaPremium);
+      oModel.refresh(true);
+    } catch (error) {
+      // El detalle del ave puede mostrarse aunque falle el resumen de suscripcion.
+    }
+  }
+
+  private getDashboardModel(): JSONModel {
+    let oModel = this.getOwnerComponent()?.getModel("dashboard") as JSONModel;
+
+    if (!oModel) {
+      oModel = new JSONModel({
+        plan: "",
+        estadoSuscripcion: "",
+        accesoSuscripcion: false
+      });
+      this.getOwnerComponent()?.setModel(oModel, "dashboard");
+    }
+
+    return oModel;
   }
 
   public onNavBack(): void {
@@ -542,9 +607,7 @@ export default class IncubacionForm extends Controller {
       const noEclosionados = Number(d.noEclosionados || 0);
 
       if (!d.padre_ID || !d.madre_ID) {
-        MessageBox.error(
-          `Debe seleccionar un plan de cruce en la fila ${i + 1}`,
-        );
+        MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
         return false;
       }
 
@@ -650,7 +713,10 @@ export default class IncubacionForm extends Controller {
             emphasizedAction: MessageBox.Action.OK,
             onClose: async function (sAction) {
               if (sAction === "OK") {
-                const bResult = await oThat.service.update(oThat.incubacionId, oPayload);
+                const bResult = await oThat.service.update(
+                  oThat.incubacionId,
+                  oPayload,
+                );
                 if (bResult.success) {
                   MessageBox.success("Incubacion actualizada exitosamente", {
                     actions: [MessageBox.Action.OK],
@@ -693,7 +759,6 @@ export default class IncubacionForm extends Controller {
               } else {
                 MessageBox.error(oThat.obtenerMensajeError(bResult));
               }
-
             }
           },
           dependentOn: this.getView(),
@@ -749,6 +814,8 @@ export default class IncubacionForm extends Controller {
 
   private aplicarPlanCruceEnDetalle(sPath: string, plan: any): void {
     const oModel = this.getView()?.getModel("view") as JSONModel;
+    const nombrePadre = plan.macho?.nombre || plan.macho?.apodo || "";
+    const nombreMadre = plan.hembra?.nombre || plan.hembra?.apodo || "";
 
     oModel.setProperty(`${sPath}/planCruce_ID`, plan.ID);
     oModel.setProperty(
@@ -760,18 +827,29 @@ export default class IncubacionForm extends Controller {
       plan.macho_ID || plan.macho?.ID || "",
     );
     oModel.setProperty(`${sPath}/placaPadre`, plan.macho?.placa || "");
-    oModel.setProperty(`${sPath}/nombrePadre`, plan.macho?.nombre || "");
+    oModel.setProperty(`${sPath}/nombrePadre`, nombrePadre);
     oModel.setProperty(
       `${sPath}/madre_ID`,
       plan.hembra_ID || plan.hembra?.ID || "",
     );
     oModel.setProperty(`${sPath}/placaMadre`, plan.hembra?.placa || "");
-    oModel.setProperty(`${sPath}/nombreMadre`, plan.hembra?.nombre || "");
+    oModel.setProperty(`${sPath}/nombreMadre`, nombreMadre);
     oModel.setProperty(`${sPath}/tipoParentesco`, plan.tipoParentesco || "");
     oModel.setProperty(`${sPath}/nivelRiesgo`, plan.nivelRiesgo || "");
     oModel.setProperty(`${sPath}/porcentaje`, plan.porcentaje ?? null);
     oModel.setProperty(`${sPath}/decision`, plan.decision || "");
     oModel.refresh();
+  }
+
+  public formatAveResumen(placa?: string, nombre?: string): string {
+    const sPlaca = String(placa || "").trim();
+    const sNombre = String(nombre || "").trim();
+
+    if (sPlaca && sNombre) {
+      return `${sPlaca} - ${sNombre}`;
+    }
+
+    return sPlaca || sNombre || "";
   }
 
   public async onValueHelpPlanCruce(oEvent: Event): Promise<void> {
