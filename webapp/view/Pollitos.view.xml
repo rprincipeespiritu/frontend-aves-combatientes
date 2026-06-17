@@ -85,7 +85,7 @@
 
                         <headerToolbar>
                             <OverflowToolbar>
-                                <Title text="Pollitos registrados ({= ${pollitos>/value}.length})" />
+                                <Title text="Pollitos registrados ({pollitos>/filteredCount})" />
                                 <ToolbarSpacer />
                                 <Button text="Exportar a Excel" icon="sap-icon://excel-attachment"
                                     press="onExportarExcel" type="Emphasized" />
@@ -177,7 +177,7 @@
                         class="pollitosMobileList sapUiSmallMarginTop">
                         <headerToolbar>
                             <OverflowToolbar>
-                                <Title text="Pollitos registrados ({= ${pollitos>/value}.length})" />
+                                <Title text="Pollitos registrados ({pollitos>/filteredCount})" />
                                 <ToolbarSpacer />
                                 <Button
                                     text="Excel"

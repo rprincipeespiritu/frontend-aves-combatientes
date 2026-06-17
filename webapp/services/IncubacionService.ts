@@ -101,10 +101,10 @@ export default class IncubacionService {
   }
 
   public async list(): Promise<IIncubacion[]> {
-    let url = `${this.baseUrl}/IncubacionesActivas?$orderby=createdAt desc`;
+    let url = `${this.baseUrl}/IncubacionesActivas?$orderby=fechaIncubacion desc`;
     let proceso = localStorage.getItem("filterIncProceso");
     if (proceso) {
-      url = `${this.baseUrl}/IncubacionesActivas?$filter=estado eq '${proceso}'&$orderby=createdAt desc`;
+      url = `${this.baseUrl}/IncubacionesActivas?$filter=estado eq '${proceso}'&$orderby=fechaIncubacion desc`;
     }
     const response = await fetch(url, {
       method: "GET",

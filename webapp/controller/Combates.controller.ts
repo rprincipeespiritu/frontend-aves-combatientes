@@ -75,7 +75,9 @@ export default class Combates extends Controller {
         throw new Error(data?.error?.message || "No se pudo cargar el historial de combates.");
       }
 
-      const combates = data.value || [];
+      const combates = (data.value || []).sort((a: any, b: any) =>
+        this.obtenerTiempoFecha(b.fecha) - this.obtenerTiempoFecha(a.fecha)
+      );
       oModel.setProperty("/todosCombates", combates);
       this.aplicarFiltrosCombates();
       this.actualizarLimiteCombates(combates.length);
@@ -84,6 +86,12 @@ export default class Combates extends Controller {
     } finally {
       oModel.setProperty("/busy", false);
     }
+  }
+
+  private obtenerTiempoFecha(fecha: string | Date): number {
+    if (!fecha) return 0;
+    const date = fecha instanceof Date ? fecha : new Date(fecha);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
   }
 
   private actualizarLimiteCombates(total: number): void {
@@ -252,9 +260,18 @@ export default class Combates extends Controller {
 
   public formatearFecha(fecha?: string): string {
     if (!fecha) return "";
+    const fechaLocal = this.extraerFechaLocal(fecha);
+    if (fechaLocal) return fechaLocal;
+
     const date = new Date(fecha);
     if (isNaN(date.getTime())) return fecha;
     return date.toLocaleDateString("es-PE");
+  }
+
+  private extraerFechaLocal(fecha: string): string {
+    const match = String(fecha || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return "";
+    return `${Number(match[3])}/${Number(match[2])}/${match[1]}`;
   }
 
   public formatearTipo(tipo?: string): string {

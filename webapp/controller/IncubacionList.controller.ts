@@ -15,6 +15,12 @@ import Fragment from "sap/ui/core/Fragment";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
 import {IIncubacion} from "../services/IncubacionService";
+import Filter from "sap/ui/model/Filter";
+import FilterOperator from "sap/ui/model/FilterOperator";
+import Table from "sap/m/Table";
+import SearchField from "sap/m/SearchField";
+import ComboBox from "sap/m/ComboBox";
+import DatePicker from "sap/m/DatePicker";
 
 export default class IncubacionList extends Controller {
   public formatter = formatter;
@@ -51,6 +57,7 @@ export default class IncubacionList extends Controller {
     const oModel = new JSONModel({
       busy: false,
       incubaciones: [],
+      filteredCount: 0,
     });
 
     this.getView()?.setModel(oModel, "view");
@@ -72,8 +79,12 @@ export default class IncubacionList extends Controller {
     oModel.setProperty("/busy", true);
 
     try {
-      const incubaciones = await this.service.list();
+      const incubaciones = (await this.service.list()).sort((a: any, b: any) =>
+        this.obtenerTiempo(b.fechaIncubacion) - this.obtenerTiempo(a.fechaIncubacion)
+      );
       oModel.setProperty("/incubaciones", incubaciones);
+      oModel.setProperty("/filteredCount", incubaciones.length);
+      this.aplicarFiltros();
     } catch (error) {
       MessageBox.error(
         error instanceof Error
@@ -149,6 +160,98 @@ export default class IncubacionList extends Controller {
     //localStorage.setItem('filterIncProceso', "");
     await this._loadData();
     MessageToast.show("Datos actualizados");
+  }
+
+  public onBuscar(): void {
+    this.aplicarFiltros();
+  }
+
+  public onFiltrarEstado(): void {
+    this.aplicarFiltros();
+  }
+
+  public onFiltrarFecha(): void {
+    this.aplicarFiltros();
+  }
+
+  public onLimpiarFiltros(): void {
+    (this.byId("searchField") as SearchField)?.setValue("");
+    (this.byId("estadoFilter") as ComboBox)?.setSelectedKey("");
+    (this.byId("fechaDesdeFilter") as DatePicker)?.setDateValue(null);
+    (this.byId("fechaHastaFilter") as DatePicker)?.setDateValue(null);
+    this.aplicarFiltros();
+  }
+
+  private aplicarFiltros(): void {
+    const oTable = this.byId("tblIncubaciones") as Table;
+    const oBinding = oTable?.getBinding("items") as any;
+    const aFilters: Filter[] = [];
+    const sBusqueda = ((this.byId("searchField") as SearchField)?.getValue() || "").trim();
+    const sEstado = (this.byId("estadoFilter") as ComboBox)?.getSelectedKey();
+    const dDesde = (this.byId("fechaDesdeFilter") as DatePicker)?.getDateValue();
+    const dHasta = (this.byId("fechaHastaFilter") as DatePicker)?.getDateValue();
+
+    if (sBusqueda) {
+      aFilters.push(
+        new Filter({
+          filters: [
+            new Filter("codigo", FilterOperator.Contains, sBusqueda),
+            new Filter("estado", FilterOperator.Contains, sBusqueda.toUpperCase()),
+          ],
+          and: false,
+        }),
+      );
+    }
+
+    if (sEstado) {
+      aFilters.push(new Filter("estado", FilterOperator.EQ, sEstado));
+    }
+
+    if (dDesde || dHasta) {
+      const inicio = dDesde ? this.inicioDelDia(dDesde).getTime() : Number.NEGATIVE_INFINITY;
+      const fin = dHasta ? this.finDelDia(dHasta).getTime() : Number.POSITIVE_INFINITY;
+
+      aFilters.push(
+        new Filter({
+          path: "fechaIncubacion",
+          test: (value: string | Date) => {
+            const tiempo = this.obtenerTiempo(value);
+            return tiempo >= inicio && tiempo <= fin;
+          },
+        }),
+      );
+    }
+
+    oBinding?.filter(aFilters);
+    this.actualizarContadorFiltrado();
+  }
+
+  private actualizarContadorFiltrado(): void {
+    const oBinding = (this.byId("tblIncubaciones") as Table)?.getBinding("items") as any;
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+
+    if (!oModel) return;
+
+    const count = oBinding?.getLength?.() ?? (oModel.getProperty("/incubaciones") || []).length;
+    oModel.setProperty("/filteredCount", count);
+  }
+
+  private obtenerTiempo(fecha: string | Date): number {
+    if (!fecha) return 0;
+    const date = fecha instanceof Date ? fecha : new Date(fecha);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
+  }
+
+  private inicioDelDia(fecha: Date): Date {
+    const date = new Date(fecha);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  private finDelDia(fecha: Date): Date {
+    const date = new Date(fecha);
+    date.setHours(23, 59, 59, 999);
+    return date;
   }
 
   public onNavBack(): void {

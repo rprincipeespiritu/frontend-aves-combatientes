@@ -57,7 +57,7 @@
                                     <core:Item key="VICTORIA" text="Victoria" />
                                     <core:Item key="DERROTA" text="Derrota" />
                                     <core:Item key="EMPATE" text="Empate" />
-                                    <core:Item key="DESCALIFICADO" text="Descalificado" />
+                                    <!--<core:Item key="DESCALIFICADO" text="Descalificado" />-->
                                     <core:Item key="SIN_RESULTADO" text="Sin resultado" />
                                 </items>
                             </ComboBox>
