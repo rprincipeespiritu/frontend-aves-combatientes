@@ -65,7 +65,7 @@ export default class Pollitos extends Controller {
         oTableModel?.setProperty("/busy", true);
 
         try {
-            const response = await fetch(`${this.baseUrl}/Crias?$expand=padre,madre,aveGenerada`, {
+            const response = await fetch(`${this.baseUrl}/Crias?$expand=padre,madre,aveGenerada&$orderby=fechaNacimiento desc`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${this.authService.getToken()}`,
@@ -78,13 +78,21 @@ export default class Pollitos extends Controller {
             }
 
             const data = await response.json();
-            const pollitos = (data.value || []).filter((cria: any) => cria.estado !== "ELIMINADO");
-            this.getView()?.setModel(new JSONModel({ value: pollitos }), "pollitos");
+            const pollitos = (data.value || [])
+                .filter((cria: any) => cria.estado !== "ELIMINADO")
+                .sort((a: any, b: any) => this.obtenerTiempoFecha(b.fechaNacimiento) - this.obtenerTiempoFecha(a.fechaNacimiento));
+            this.getView()?.setModel(new JSONModel({ value: pollitos, filteredCount: pollitos.length }), "pollitos");
         } catch (error: any) {
             MessageToast.show(error.message || "Error cargando pollitos");
         } finally {
             oTableModel?.setProperty("/busy", false);
         }
+    }
+
+    private obtenerTiempoFecha(fecha: string | Date): number {
+        if (!fecha) return 0;
+        const date = fecha instanceof Date ? fecha : new Date(fecha);
+        return isNaN(date.getTime()) ? 0 : date.getTime();
     }
 
     public onAgregarPollito(): void {
@@ -287,6 +295,19 @@ export default class Pollitos extends Controller {
         }
 
         aBindings.forEach((oBinding: any) => oBinding?.filter(filters));
+        this.actualizarContadorFiltrado();
+    }
+
+    private actualizarContadorFiltrado(): void {
+        const oTableBinding = (this.byId("pollitosTable") as Table)?.getBinding("items") as any;
+        const oMobileBinding = (this.byId("pollitosMobileList") as any)?.getBinding("items") as any;
+        const oBinding = oTableBinding || oMobileBinding;
+        const oModel = this.getView()?.getModel("pollitos") as JSONModel;
+
+        if (!oModel) return;
+
+        const count = oBinding?.getLength?.() ?? (oModel.getProperty("/value") || []).length;
+        oModel.setProperty("/filteredCount", count);
     }
 
     public onLimpiarFiltros(): void {

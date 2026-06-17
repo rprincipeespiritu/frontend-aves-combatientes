@@ -1,6 +1,7 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionList"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:core="sap.ui.core"
     xmlns:form="sap.f">
 
     <Page title="Incubaciones" showNavButton="true" navButtonPress="onNavBack">
@@ -15,10 +16,56 @@
         </headerContent>
 
         <content>
+            <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
+                <content>
+                    <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
+                        <items>
+                            <SearchField
+                                id="searchField"
+                                placeholder="Buscar por código o estado"
+                                width="100%"
+                                search="onBuscar"
+                                liveChange="onBuscar"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                            <ComboBox
+                                id="estadoFilter"
+                                placeholder="Filtrar por estado"
+                                width="100%"
+                                selectionChange="onFiltrarEstado"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                <core:Item key="PROGRAMADA" text="Programada" />
+                                <core:Item key="EN_PROCESO" text="En proceso" />
+                                <core:Item key="COMPLETADA" text="Completada" />
+                                <core:Item key="CANCELADA" text="Cancelada" />
+                            </ComboBox>
+                            <DatePicker
+                                id="fechaDesdeFilter"
+                                placeholder="Fecha incubación desde"
+                                displayFormat="dd/MM/yyyy"
+                                valueFormat="yyyy-MM-dd"
+                                change="onFiltrarFecha"
+                                width="100%"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                            <DatePicker
+                                id="fechaHastaFilter"
+                                placeholder="Fecha incubación hasta"
+                                displayFormat="dd/MM/yyyy"
+                                valueFormat="yyyy-MM-dd"
+                                change="onFiltrarFecha"
+                                width="100%"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                            <Button
+                                text="Limpiar Filtros"
+                                press="onLimpiarFiltros"
+                                class="sapUiTinyMarginBottom" />
+                        </items>
+                    </FlexBox>
+                </content>
+            </Panel>
             <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
                 <headerToolbar>
                     <OverflowToolbar>
-                        <Title text="Incubaciones Registradas ({= ${view>/incubaciones}.length})"/>
+                        <Title text="Incubaciones Registradas ({view>/filteredCount})"/>
                         <ToolbarSpacer/>
                         <Button icon="sap-icon://add" type="Emphasized" press="onCreate" />
                         <Button icon="sap-icon://refresh" press="onRefresh"/>

@@ -225,7 +225,7 @@ export default class List extends Controller {
 
   private async initializeData(): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/AvesActivas?$expand=padre,madre`, {
+      const response = await fetch(`${this.baseUrl}/AvesActivas?$expand=padre,madre&$orderby=fechaNacimiento desc`, {
         method: "GET",
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -235,9 +235,17 @@ export default class List extends Controller {
 
       const mockAves: any = await response.json();
       mockAves.value = (mockAves.value || []).filter((ave: any) => ave.etapaVida !== "POLLITO");
+      mockAves.value.sort((a: any, b: any) => this.obtenerTiempoFecha(b.fechaNacimiento) - this.obtenerTiempoFecha(a.fechaNacimiento));
+      mockAves.filteredCount = mockAves.value.length;
       const oAvesModel = new JSONModel(mockAves)
       this.getView()?.setModel(oAvesModel, "aves");
     } catch (error) { }
+  }
+
+  private obtenerTiempoFecha(fecha: string | Date): number {
+    if (!fecha) return 0;
+    const date = fecha instanceof Date ? fecha : new Date(fecha);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
   }
 
   // === OPERACIONES CRUD ===
@@ -468,6 +476,19 @@ export default class List extends Controller {
     }
 
     aBindings.forEach((oBinding: any) => oBinding?.filter(aFilters));
+    this.actualizarContadorFiltrado();
+  }
+
+  private actualizarContadorFiltrado(): void {
+    const oTableBinding = (this.byId("avesTable") as Table)?.getBinding("items") as any;
+    const oMobileBinding = (this.byId("avesMobileList") as any)?.getBinding("items") as any;
+    const oBinding = oTableBinding || oMobileBinding;
+    const oModel = this.getView()?.getModel("aves") as JSONModel;
+
+    if (!oModel) return;
+
+    const count = oBinding?.getLength?.() ?? (oModel.getProperty("/value") || []).length;
+    oModel.setProperty("/filteredCount", count);
   }
 
   public onLimpiarFiltros(): void {

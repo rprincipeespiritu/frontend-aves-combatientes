@@ -153,9 +153,18 @@ export default class CombateDetail extends Controller {
 
   public formatearFecha(fecha?: string): string {
     if (!fecha) return "";
+    const fechaLocal = this.extraerFechaLocal(fecha);
+    if (fechaLocal) return fechaLocal;
+
     const date = new Date(fecha);
     if (isNaN(date.getTime())) return fecha;
     return date.toLocaleDateString("es-PE");
+  }
+
+  private extraerFechaLocal(fecha: string): string {
+    const match = String(fecha || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return "";
+    return `${Number(match[3])}/${Number(match[2])}/${match[1]}`;
   }
 
   public formatearTipo(tipo?: string): string {

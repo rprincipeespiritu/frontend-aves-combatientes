@@ -142,7 +142,6 @@ export default class CombateForm extends Controller {
 
   private getEmptyForm(): any {
     const now = new Date();
-    now.setSeconds(0, 0);
 
     return {
       ave_ID: "",
@@ -155,7 +154,7 @@ export default class CombateForm extends Controller {
       nombreCombB: "",
       ambosPropios: true,
       tieneDatosObligatoriosAves: true,
-      fecha: now.toISOString().slice(0, 19),
+      fecha: this.formatearFechaInput(now),
       tipoCombate: "PRUEBA",
       lugar: "",
       evento: "",
@@ -239,7 +238,7 @@ export default class CombateForm extends Controller {
         nombreOponente: data.ambosPropios !== false ? "" : data.nombreOponente || "",
         propietarioOponente: data.ambosPropios !== false ? "" : data.propietarioOponente || "",
         procedenciaOponente: data.ambosPropios !== false ? "" : data.procedenciaOponente || "",
-        fecha: data.fecha ? new Date(data.fecha).toISOString().slice(0, 19) : this.getEmptyForm().fecha,
+        fecha: data.fecha ? this.formatearFechaInput(data.fecha) : this.getEmptyForm().fecha,
         premioDinero: data.premioDinero ?? "",
         resultado: data.resultado || "",
         videoSizeLabel: data.videoSizeBytes ? this.formatearTamanioArchivo(data.videoSizeBytes) : "",
@@ -266,22 +265,22 @@ export default class CombateForm extends Controller {
     }
 
     if (requiereDatosObligatoriosAves && !form.ave_ID) {
-      MessageBox.warning("Selecciona el Combatiente A.");
+      MessageBox.warning("Selecciona el Primer Combatiente.");
       return;
     }
 
     if (!requiereDatosObligatoriosAves && !form.ave_ID && !combatienteATexto) {
-      MessageBox.warning("Ingresa la placa o nombre del Combatiente A.");
+      MessageBox.warning("Ingresa la placa o nombre del Primer Combatiente.");
       return;
     }
 
     if (requiereDatosObligatoriosAves && form.ambosPropios && !form.combatienteB_ID) {
-      MessageBox.warning("Selecciona el Combatiente B cuando ambas aves son tuyas.");
+      MessageBox.warning("Selecciona el Segundo Combatiente cuando ambas aves son tuyas.");
       return;
     }
 
     if (!requiereDatosObligatoriosAves && form.ambosPropios && !form.combatienteB_ID && !combatienteBTexto) {
-      MessageBox.warning("Ingresa la placa o nombre del Combatiente B.");
+      MessageBox.warning("Ingresa la placa o nombre del Segundo Combatiente.");
       return;
     }
 
@@ -334,9 +333,9 @@ export default class CombateForm extends Controller {
     }
 
     const detalleConfirmacion = [
-      `Fecha: ${new Date(form.fecha).toLocaleString()}`,
-      `Combatiente A: ${form.placaCombA || combatienteATexto || form.ave_ID}`,
-      `Combatiente B: ${form.ambosPropios ? form.placaCombB || combatienteBTexto || form.combatienteB_ID : form.nombreOponente}`,
+      `Fecha: ${this.formatearFechaDisplay(form.fecha)}`,
+      `Primer Combatiente: ${form.placaCombA || combatienteATexto || form.ave_ID}`,
+      `Segundo Combatiente: ${form.ambosPropios ? form.placaCombB || combatienteBTexto || form.combatienteB_ID : form.nombreOponente}`,
     ].filter(Boolean).join("\n");
     const confirmado = this.combateId
       ? await ConfirmationService.confirmUpdate("el combate", detalleConfirmacion)
@@ -588,7 +587,34 @@ export default class CombateForm extends Controller {
   private formatearFechaPayload(fecha: string): string {
     const valor = String(fecha || "").trim();
     if (!valor) return "";
-    return valor.slice(0, 19);
+    const fechaInput = this.formatearFechaInput(valor);
+    return fechaInput ? `${fechaInput}T00:00:00` : "";
+  }
+
+  private formatearFechaInput(fecha: string | Date): string {
+    if (fecha instanceof Date) {
+      if (isNaN(fecha.getTime())) return "";
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, "0");
+      const day = String(fecha.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    const valor = String(fecha || "").trim();
+    if (!valor) return "";
+    const match = valor.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+
+    const date = new Date(valor);
+    if (isNaN(date.getTime())) return "";
+    return this.formatearFechaInput(date);
+  }
+
+  private formatearFechaDisplay(fecha: string | Date): string {
+    const fechaInput = this.formatearFechaInput(fecha);
+    if (!fechaInput) return "";
+    const [year, month, day] = fechaInput.split("-");
+    return `${day}/${month}/${year}`;
   }
 
   private esMismoCombatiente(combatienteAId?: string, combatienteBId?: string): boolean {
