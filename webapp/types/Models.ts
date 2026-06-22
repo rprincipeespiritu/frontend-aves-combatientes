@@ -16,6 +16,7 @@ export interface IAve {
   estado: EstadoAve;
   observaciones?: string;
   fotoUrl?: string;
+  fotoPrincipal?: string;
   created?: Date;
   modified?: Date;
 }

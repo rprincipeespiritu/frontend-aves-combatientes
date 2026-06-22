@@ -41,6 +41,8 @@ export default class List extends Controller {
   private _oUserMenuSheet: any;
   private _oUserMenuPopover: any;
   private _oPadresDialog: Dialog;
+  private _oImagenAveDialog: Dialog;
+  private _ignorarNavegacionAve: boolean = false;
   private importTemplateColumns = [
     "placa",
     "nombre",
@@ -225,21 +227,90 @@ export default class List extends Controller {
 
   private async initializeData(): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/AvesActivas?$expand=padre,madre&$orderby=fechaNacimiento desc`, {
+      const response = await fetch(`${this.baseUrl}/AvesActivas?$expand=padre,madre,fotos($filter=esPrincipal eq true;$select=thumbnailUrl,urlSharepoint,esPrincipal)&$orderby=fechaNacimiento desc`, {
         method: "GET",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Authorization': `Bearer ${this.authService.getToken()}`,
           "Content-Type": "application/json",
         },
       });
 
       const mockAves: any = await response.json();
       mockAves.value = (mockAves.value || []).filter((ave: any) => ave.etapaVida !== "POLLITO");
+      await Promise.all(mockAves.value.map(async (ave: any) => {
+        const fotoPrincipal = (ave.fotos || []).find((foto: any) => foto.esPrincipal);
+        const urlFoto = fotoPrincipal?.thumbnailUrl || fotoPrincipal?.urlSharepoint || "";
+        ave.fotoPrincipal = await this.obtenerUrlVisualizacionFoto(urlFoto);
+      }));
       mockAves.value.sort((a: any, b: any) => this.obtenerTiempoFecha(b.fechaNacimiento) - this.obtenerTiempoFecha(a.fechaNacimiento));
       mockAves.filteredCount = mockAves.value.length;
       const oAvesModel = new JSONModel(mockAves)
       this.getView()?.setModel(oAvesModel, "aves");
     } catch (error) { }
+  }
+
+  private async obtenerUrlVisualizacionFoto(url: string): Promise<string> {
+    if (!url || !String(url).includes(".s3.")) return url;
+
+    try {
+      const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.authService.getToken()}`
+        },
+        body: JSON.stringify({ fileUrl: url })
+      });
+      const data = await response.json();
+      return response.ok ? data.downloadUrl || url : "";
+    } catch {
+      return "";
+    }
+  }
+
+  public async onVerImagenAve(oEvent: Event): Promise<void> {
+    (oEvent as any).cancelBubble?.();
+    this._ignorarNavegacionAve = true;
+    setTimeout(() => {
+      this._ignorarNavegacionAve = false;
+    }, 100);
+
+    const ave = oEvent.getSource().getBindingContext("aves")?.getObject() as any;
+    if (!ave?.fotoPrincipal) {
+      MessageBox.information("Esta ave no tiene una imagen principal registrada.");
+      return;
+    }
+
+    const titulo = [ave.placa, ave.nombre].filter(Boolean).join(" - ") || "Imagen del ave";
+    this.getView()?.setModel(new JSONModel({
+      title: titulo,
+      nombreArchivo: "Imagen principal",
+      html: `<div class="aveMediaViewer"><img src="${this.escapeHtml(ave.fotoPrincipal)}" alt="${this.escapeHtml(titulo)}" /></div>`
+    }), "imagenAveViewer");
+
+    if (!this._oImagenAveDialog) {
+      this._oImagenAveDialog = await Fragment.load({
+        id: this.getView()?.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.ListaAveImagenDialog",
+        controller: this
+      }) as Dialog;
+      this.getView()?.addDependent(this._oImagenAveDialog);
+    }
+
+    this._oImagenAveDialog.open();
+  }
+
+  public onCerrarImagenAveDialog(): void {
+    this._oImagenAveDialog?.close();
+  }
+
+  private escapeHtml(value: string): string {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
   private obtenerTiempoFecha(fecha: string | Date): number {
@@ -615,6 +686,11 @@ export default class List extends Controller {
 
   // Cambia onAvePress para navegar al detalle
   public onAvePress(oEvent: Event): void {
+    if (this._ignorarNavegacionAve) {
+      this._ignorarNavegacionAve = false;
+      return;
+    }
+
     const oItem = oEvent.getSource();
     const oContext = (oItem as any)?.getBindingContext("aves");
     const oAve = oContext?.getObject() as any;

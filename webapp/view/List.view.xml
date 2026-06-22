@@ -2,6 +2,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
     xmlns:f="sap.f">
 
     <Page title="{i18n>titleListPage}" titleAlignment="Center" showNavButton="true" navButtonPress="onNavBack">
@@ -26,49 +27,87 @@
                 <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
 
                     <content>
-                        <VBox>
-
-                            <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
-                                <items>
-                                    <SearchField id="searchField" tooltip="Buscar por Nombre y Placa del Ave" placeholder="Nombre y Placa del Ave" width="100%" search="onBuscar" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-
-                                    <ComboBox id="generoFilter" placeholder="Filtrar por Género" width="100%" selectionChange="onFiltrarGenero" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="M" text="Macho" />
-                                        <core:Item key="H" text="Hembra" />
-                                    </ComboBox>
-
-                                    <ComboBox id="categoriaFilter" placeholder="Filtrar por Categoría" width="100%" selectionChange="onFiltrarCategoria" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="BUENO" text="Bueno" />
-                                        <core:Item key="EXCELENTE" text="Excelente" />
-                                        <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
-                                    </ComboBox>
-                                </items>
-                            </FlexBox>
-
-                            <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
-                                <items>
-                                    <Input id="inputPadres" placeholder="Seleccionar Padre/Madre" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onAbrirPopupPadres" width="100%" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-
-                                    <ComboBox id="estadoFilter" placeholder="Filtrar por Estado" width="100%" selectionChange="onFiltrarEstado" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <core:Item key="ACTIVO" text="Activo" />
-                                        <core:Item key="VENDIDO" text="Vendido" />
-                                        <core:Item key="PRESTADO" text="Prestado" />
-                                        <core:Item key="RETIRADO" text="Retirado" />
-                                        <core:Item key="FALLECIDO" text="Fallecido" />
-                                    </ComboBox>
-
-                                    <CheckBox id="padroteFilter" text="Padrote" select="onSelectPadrote" class="sapUiTinyMarginEnd sapUiTinyMarginBottom sapUiTinyMarginTop" />
-
-                                    <Button text="Limpiar Filtros" press="onLimpiarFiltros" class="sapUiTinyMarginBottom" />
-
-                                </items>
-                            </FlexBox>
-
-                            <!--<HBox width="100%" justifyContent="End">
-                                <Button text="Limpiar Filtros" press="onLimpiarFiltros"/>
-                            </HBox>-->
-
-                        </VBox>
+                        <form:Form editable="true" class="sapUiSmallMargin">
+                            <form:layout>
+                                <form:ResponsiveGridLayout
+                                    labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                                    emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                    columnsXL="3" columnsL="2" columnsM="2"
+                                    singleContainerFullSize="false" />
+                            </form:layout>
+                            <form:formContainers>
+                                <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Buscar">
+                                            <form:fields>
+                                                <SearchField id="searchField" tooltip="Buscar por Nombre y Placa del Ave" placeholder="Nombre y Placa del Ave" width="100%" search="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Género">
+                                            <form:fields>
+                                                <ComboBox id="generoFilter" placeholder="Filtrar por Género" width="100%" selectionChange="onFiltrarGenero">
+                                                    <core:Item key="M" text="Macho" />
+                                                    <core:Item key="H" text="Hembra" />
+                                                </ComboBox>
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Categoría">
+                                            <form:fields>
+                                                <ComboBox id="categoriaFilter" placeholder="Filtrar por Categoría" width="100%" selectionChange="onFiltrarCategoria">
+                                                    <core:Item key="BUENO" text="Bueno" />
+                                                    <core:Item key="EXCELENTE" text="Excelente" />
+                                                    <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
+                                                </ComboBox>
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer>
+                                <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Padre/Madre">
+                                            <form:fields>
+                                                <Input id="inputPadres" placeholder="Seleccionar Padre/Madre" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onAbrirPopupPadres" width="100%" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Estado">
+                                            <form:fields>
+                                                <ComboBox id="estadoFilter" placeholder="Filtrar por Estado" width="100%" selectionChange="onFiltrarEstado">
+                                                    <core:Item key="ACTIVO" text="Activo" />
+                                                    <core:Item key="VENDIDO" text="Vendido" />
+                                                    <core:Item key="PRESTADO" text="Prestado" />
+                                                    <core:Item key="RETIRADO" text="Retirado" />
+                                                    <core:Item key="FALLECIDO" text="Fallecido" />
+                                                </ComboBox>
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Clasificación">
+                                            <form:fields>
+                                                <CheckBox id="padroteFilter" text="Padrote" select="onSelectPadrote" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement>
+                                            <form:fields>
+                                                <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer>
+                                <!-- <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Clasificación">
+                                            <form:fields>
+                                                <CheckBox id="padroteFilter" text="Padrote" select="onSelectPadrote" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement>
+                                            <form:fields>
+                                                <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer> -->
+                            </form:formContainers>
+                        </form:Form>
                     </content>
                 </Panel>
 
@@ -96,6 +135,10 @@
                             </headerToolbar>
 
                             <columns>
+                                <Column width="5rem" hAlign="Center">
+                                    <Text text="Imagen" />
+                                </Column>
+
                                 <Column width="8rem">
                                     <Text text="Placa" />
                                 </Column>
@@ -136,14 +179,22 @@
                                     <Text text="Madre" />
                                 </Column>
 
-                                <Column width="8rem" hAlign="Center">
+                                <!-- <Column width="8rem" hAlign="Center">
                                     <Text text="Acciones" />
-                                </Column>
+                                </Column> -->
                             </columns>
 
                             <items>
                                 <ColumnListItem type="Navigation" press="onAvePress">
                                     <cells>
+                                        <f:Avatar
+                                            src="{aves>fotoPrincipal}"
+                                            fallbackIcon="sap-icon://picture"
+                                            displayShape="Circle"
+                                            displaySize="S"
+                                            tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
+                                            press="onVerImagenAve" />
+
                                         <ObjectStatus text="{
                                             path: 'aves>placa'
                                             }" state="Information" />
@@ -192,11 +243,11 @@
                                             <Text text="{aves>madre/nombre}" />
                                         </VBox>
 
-                                        <HBox justifyContent="Center" width="100%" renderType="Bare">
+                                        <!-- <HBox justifyContent="Center" width="100%" renderType="Bare">
                                             <Button icon="sap-icon://edit" type="Emphasized" tooltip="Editar" press="onEditarAveInline" />
                                             <Button icon="sap-icon://delete" type="Transparent" tooltip="Eliminar" press="onEliminarAveInline" visible="true" />
-                                            <!-- <Button icon="sap-icon://detail-view" type="Emphasized" tooltip="Ver detalle" press="onAvePress" /> -->
-                                        </HBox>
+                                            <Button icon="sap-icon://detail-view" type="Emphasized" tooltip="Ver detalle" press="onAvePress" />
+                                        </HBox> -->
                                     </cells>
                                 </ColumnListItem>
                             </items>
@@ -234,14 +285,14 @@
                                             alignItems="Start"
                                             justifyContent="SpaceBetween"
                                             class="aveAdultaMobileHeader">
-                                            <VBox>
+                                            <HBox>
                                                 <Label text="Placa" design="Bold"/>
                                                 <ObjectStatus text="{aves>placa}" state="Information" />
 
                                                 <Label text="Nombre" design="Bold"/>
                                                 <ObjectStatus text="{aves>nombre}" state="Information" class="aveAdultaMobileName" />
-                                            </VBox>
-                                            <HBox
+                                            </HBox>
+                                            <!-- <HBox
                                                 alignItems="Center"
                                                 renderType="Bare"
                                                 class="aveAdultaMobileActions">
@@ -255,21 +306,21 @@
                                                     type="Transparent"
                                                     tooltip="Eliminar"
                                                     press="onEliminarAveInline" />
-                                            </HBox>
+                                            </HBox> -->
                                         </HBox>
 
                                         <FlexBox
                                             wrap="Wrap"
                                             renderType="Div"
                                             class="aveAdultaMobileGrid">
-                                            <VBox class="aveAdultaMobileField">
+                                            <!-- <VBox class="aveAdultaMobileField">
                                                 <Label text="Fecha Nac." />
                                                 <Text
                                                     text="{
                                                         path: 'aves>fechaNacimiento',
                                                         formatter: '.formatearFecha'
                                                     }" />
-                                            </VBox>
+                                            </VBox> -->
                                             <VBox class="aveAdultaMobileField">
                                                 <Label text="Genero" />
                                                 <Text
@@ -298,10 +349,10 @@
                                                         ${aves>estado} === 'RETIRADO' ? 'Information' :
                                                         ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}" />
                                             </VBox>
-                                            <VBox class="aveAdultaMobileField">
+                                            <!-- <VBox class="aveAdultaMobileField">
                                                 <Label text="Cria" />
                                                 <CheckBox selected="{aves>cria}" editable="false" />
-                                            </VBox>
+                                            </VBox> -->
                                             <VBox class="aveAdultaMobileField">
                                                 <Label text="Padrote" />
                                                 <CheckBox selected="{aves>padrote}" editable="false" />

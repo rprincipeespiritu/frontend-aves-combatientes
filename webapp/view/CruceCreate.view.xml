@@ -97,6 +97,12 @@
                                 number="{cruce>/resultado/porcentaje}"
                                 unit="% consanguinidad"/>
 
+                        <ObjectStatus
+                                visible="{= !${cruce>/cruceAbierto} &amp;&amp; ${cruce>/resultado/porcentajeLinajeProyectado} !== undefined }"
+                                title="Continuidad del linaje"
+                                text="{= ${cruce>/resultado/porcentajeLinajeProyectado} + '% proyectado (minimo ' + ${cruce>/resultado/porcentajeMinimoLinaje} + '%)' }"
+                                state="{= ${cruce>/resultado/cumplePorcentajeLinaje} ? 'Success' : 'Error' }" />
+
                         <Text text="{cruce>/resultado/descripcion}" />
 
                         <MessageStrip
