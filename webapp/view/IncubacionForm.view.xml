@@ -84,16 +84,16 @@
                             visible="{= ${view>/form/estado} === 'PROGRAMADA' &amp;&amp; ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <Text text="Plan de cruce" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}" >
+                        <Column width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}" >
                             <Text text="Padre" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}">
+                        <Column width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}">
                             <Text text="Madre" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO'}">
+                        <Column width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO' || ${view>/form/estado} === 'FINALIZADA'}">
                             <Text text="Padre" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet" width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO'}">
+                        <Column width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO' || ${view>/form/estado} === 'FINALIZADA'}">
                             <Text text="Madre" />
                         </Column>
                         <Column demandPopin="true" minScreenWidth="Tablet" width="12%"

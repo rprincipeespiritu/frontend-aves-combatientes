@@ -79,9 +79,12 @@ export default class IncubacionList extends Controller {
     oModel.setProperty("/busy", true);
 
     try {
-      const incubaciones = (await this.service.list()).sort((a: any, b: any) =>
-        this.obtenerTiempo(b.fechaIncubacion) - this.obtenerTiempo(a.fechaIncubacion)
-      );
+      const incubaciones = (await this.service.list()).sort((a: any, b: any) => {
+        const diferenciaEstado = this.obtenerPrioridadEstado(a.estado) - this.obtenerPrioridadEstado(b.estado);
+        if (diferenciaEstado !== 0) return diferenciaEstado;
+
+        return this.obtenerTiempo(a.fechaEclosion) - this.obtenerTiempo(b.fechaEclosion);
+      });
       oModel.setProperty("/incubaciones", incubaciones);
       oModel.setProperty("/filteredCount", incubaciones.length);
       this.aplicarFiltros();
@@ -252,6 +255,18 @@ export default class IncubacionList extends Controller {
     const date = new Date(fecha);
     date.setHours(23, 59, 59, 999);
     return date;
+  }
+
+  private obtenerPrioridadEstado(estado?: string): number {
+    const prioridades: Record<string, number> = {
+      EN_PROCESO: 0,
+      PROGRAMADA: 1,
+      COMPLETADA: 2,
+      FINALIZADA: 2,
+      CANCELADA: 3,
+    };
+
+    return prioridades[String(estado || "").toUpperCase()] ?? 4;
   }
 
   public onNavBack(): void {
