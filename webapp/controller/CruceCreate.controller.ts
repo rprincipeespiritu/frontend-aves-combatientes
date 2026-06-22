@@ -308,6 +308,13 @@ export default class CruceCreate extends Controller {
             oModel.setProperty("/parentescoTexto", parentescoTexto);
             oModel.setProperty("/resultado", resultado);
             oModel.setProperty("/resultadoVisible", true);
+
+            if (!data.cruceAbierto && resultado.cumplePorcentajeLinaje === false && mostrarMensajes) {
+                MessageBox.warning(
+                    `La descendencia proyectada tendria ${resultado.porcentajeLinajeProyectado}% del linaje. ` +
+                    `Se requiere al menos ${resultado.porcentajeMinimoLinaje}% para continuar trabajandolo.`
+                );
+            }
             return true;
 
         } catch (error) {
@@ -361,6 +368,14 @@ export default class CruceCreate extends Controller {
 
         if (!resultado || !resultado.nivelRiesgo) {
             MessageBox.warning("Primero analiza el cruce.");
+            return;
+        }
+
+        if (!oModel.getProperty("/cruceAbierto") && resultado.cumplePorcentajeLinaje === false) {
+            MessageBox.warning(
+                `Este cruce proyecta ${resultado.porcentajeLinajeProyectado}% del linaje y el minimo aceptable es ` +
+                `${resultado.porcentajeMinimoLinaje}%. Selecciona otros reproductores.`
+            );
             return;
         }
 

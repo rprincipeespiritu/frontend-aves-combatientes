@@ -3,6 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
     xmlns:f="sap.f">
 
     <Page title="Gestion de Aves Jóvenes" titleAlignment="Center" showNavButton="true"
@@ -29,48 +30,69 @@
 
                 <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
                     <content>
-                        <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
-                            <items>
-                                <SearchField
-                                    id="searchField"
-                                    placeholder="Buscar por cintillo o nombre"
-                                    width="100%"
-                                    search="onBuscar"
-                                    liveChange="onBuscar"
-                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                <Input
-                                    id="colorFilter"
-                                    placeholder="Color de cintillo"
-                                    width="100%"
-                                    liveChange="onBuscar"
-                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                <Input
-                                    id="temporadaFilter"
-                                    placeholder="Temporada"
-                                    type="Number"
-                                    width="100%"
-                                    liveChange="onBuscar"
-                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                <Input
-                                    id="padreFilter"
-                                    placeholder="Padre"
-                                    width="100%"
-                                    showValueHelp="true"
-                                    valueHelpRequest="onValueHelpFiltroPadre"
-                                    liveChange="onBuscar"
-                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                <Input
-                                    id="madreFilter"
-                                    placeholder="Madre"
-                                    width="100%"
-                                    showValueHelp="true"
-                                    valueHelpRequest="onValueHelpFiltroMadre"
-                                    liveChange="onBuscar"
-                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                <Button text="Limpiar Filtros" press="onLimpiarFiltros"
-                                    class="sapUiTinyMarginBottom" />
-                            </items>
-                        </FlexBox>
+                        <form:Form editable="true" class="sapUiSmallMargin">
+                            <form:layout>
+                                <form:ResponsiveGridLayout
+                                    labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                                    emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                    columnsXL="3" columnsL="2" columnsM="2"
+                                    singleContainerFullSize="false" />
+                            </form:layout>
+                            <form:formContainers>
+                                <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Buscar">
+                                            <form:fields>
+                                                <SearchField id="searchField" placeholder="Buscar por cintillo o nombre" width="100%" search="onBuscar" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Color de cintillo">
+                                            <form:fields>
+                                                <Input id="colorFilter" placeholder="Color de cintillo" width="100%" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Temporada">
+                                            <form:fields>
+                                                <Input id="temporadaFilter" placeholder="Temporada" type="Number" width="100%" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer>
+                                <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Padre">
+                                            <form:fields>
+                                                <Input id="padreFilter" placeholder="Padre" width="100%" showValueHelp="true" valueHelpRequest="onValueHelpFiltroPadre" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Madre">
+                                            <form:fields>
+                                                <Input id="madreFilter" placeholder="Madre" width="100%" showValueHelp="true" valueHelpRequest="onValueHelpFiltroMadre" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement>
+                                            <form:fields>
+                                                <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer>
+                                <!-- <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Madre">
+                                            <form:fields>
+                                                <Input id="madreFilter" placeholder="Madre" width="100%" showValueHelp="true" valueHelpRequest="onValueHelpFiltroMadre" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement>
+                                            <form:fields>
+                                                <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer> -->
+                            </form:formContainers>
+                        </form:Form>
                     </content>
                 </Panel>
                 <Panel>

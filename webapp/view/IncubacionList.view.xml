@@ -2,12 +2,13 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.f">
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form">
 
     <Page title="Incubaciones" showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
-            <form:Avatar
+            <f:Avatar
                     id="userAvatar"
                     src="{user>/foto}"
                     displaySize="XS"
@@ -18,48 +19,64 @@
         <content>
             <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
                 <content>
-                    <FlexBox wrap="Wrap" alignItems="Center" renderType="Div">
-                        <items>
-                            <SearchField
-                                id="searchField"
-                                placeholder="Buscar por código o estado"
-                                width="100%"
-                                search="onBuscar"
-                                liveChange="onBuscar"
-                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                            <ComboBox
-                                id="estadoFilter"
-                                placeholder="Filtrar por estado"
-                                width="100%"
-                                selectionChange="onFiltrarEstado"
-                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                <core:Item key="PROGRAMADA" text="Programada" />
-                                <core:Item key="EN_PROCESO" text="En proceso" />
-                                <core:Item key="COMPLETADA" text="Completada" />
-                                <core:Item key="CANCELADA" text="Cancelada" />
-                            </ComboBox>
-                            <DatePicker
-                                id="fechaDesdeFilter"
-                                placeholder="Fecha incubación desde"
-                                displayFormat="dd/MM/yyyy"
-                                valueFormat="yyyy-MM-dd"
-                                change="onFiltrarFecha"
-                                width="100%"
-                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                            <DatePicker
-                                id="fechaHastaFilter"
-                                placeholder="Fecha incubación hasta"
-                                displayFormat="dd/MM/yyyy"
-                                valueFormat="yyyy-MM-dd"
-                                change="onFiltrarFecha"
-                                width="100%"
-                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                            <Button
-                                text="Limpiar Filtros"
-                                press="onLimpiarFiltros"
-                                class="sapUiTinyMarginBottom" />
-                        </items>
-                    </FlexBox>
+                    <form:Form editable="true" class="sapUiSmallMargin">
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                labelSpanXL="3" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+                                emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                columnsXL="3" columnsL="2" columnsM="2"
+                                singleContainerFullSize="false" />
+                        </form:layout>
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Buscar">
+                                        <form:fields>
+                                            <SearchField id="searchField" placeholder="Buscar por código o estado" width="100%" search="onBuscar" liveChange="onBuscar" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Estado">
+                                        <form:fields>
+                                            <ComboBox id="estadoFilter" placeholder="Filtrar por estado" width="100%" selectionChange="onFiltrarEstado">
+                                                <core:Item key="PROGRAMADA" text="Programada" />
+                                                <core:Item key="EN_PROCESO" text="En proceso" />
+                                                <core:Item key="COMPLETADA" text="Completada" />
+                                                <core:Item key="CANCELADA" text="Cancelada" />
+                                            </ComboBox>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="Desde">
+                                        <form:fields>
+                                            <DatePicker id="fechaDesdeFilter" placeholder="Fecha incubación desde" displayFormat="dd/MM/yyyy" valueFormat="yyyy-MM-dd" change="onFiltrarFecha" width="100%" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Hasta">
+                                        <form:fields>
+                                            <DatePicker id="fechaHastaFilter" placeholder="Fecha incubación hasta" displayFormat="dd/MM/yyyy" valueFormat="yyyy-MM-dd" change="onFiltrarFecha" width="100%" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                            <!-- <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement>
+                                        <form:fields>
+                                            <Button text="Limpiar Filtros" icon="sap-icon://clear-filter" press="onLimpiarFiltros" />
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer> -->
+                        </form:formContainers>
+                    </form:Form>
                 </content>
             </Panel>
             <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
