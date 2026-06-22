@@ -282,16 +282,26 @@
                                     class="aveAdultaMobileItem">
                                     <VBox class="aveAdultaMobileCard">
                                         <HBox
-                                            alignItems="Start"
-                                            justifyContent="SpaceBetween"
+                                            alignItems="Center"
                                             class="aveAdultaMobileHeader">
-                                            <HBox>
-                                                <Label text="Placa" design="Bold"/>
-                                                <ObjectStatus text="{aves>placa}" state="Information" />
-
-                                                <Label text="Nombre" design="Bold"/>
-                                                <ObjectStatus text="{aves>nombre}" state="Information" class="aveAdultaMobileName" />
-                                            </HBox>
+                                            <f:Avatar
+                                                src="{aves>fotoPrincipal}"
+                                                fallbackIcon="sap-icon://picture"
+                                                displayShape="Circle"
+                                                displaySize="S"
+                                                tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
+                                                press="onVerImagenAve"
+                                                class="aveAdultaMobileAvatar" />
+                                            <VBox class="aveAdultaMobileIdentity">
+                                                <Text
+                                                    text="{= ${aves>nombre} || 'Sin nombre' }"
+                                                    wrapping="true"
+                                                    class="aveAdultaMobileTitle" />
+                                                <HBox alignItems="Center" wrap="Wrap" class="aveAdultaMobilePlateRow">
+                                                    <Label text="Placa:" />
+                                                    <ObjectStatus text="{aves>placa}" state="Information" />
+                                                </HBox>
+                                            </VBox>
                                             <!-- <HBox
                                                 alignItems="Center"
                                                 renderType="Bare"
