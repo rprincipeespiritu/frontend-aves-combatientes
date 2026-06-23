@@ -89,6 +89,41 @@ export default class PollitoDetail extends Controller {
         (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RoutePollitoEdit", { pollitoId: this.pollitoId });
     }
 
+    public async onEliminar(): Promise<void> {
+        const data = (this.getView()?.getModel("detail") as JSONModel).getData();
+        const identificador = this.formatearIdentificador(data);
+        const confirmado = await ConfirmationService.confirmDelete(
+            "el pollito",
+            identificador ? `Identificador: ${identificador}` : undefined
+        );
+        if (!confirmado) return;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/eliminarCria`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.authService.getToken()}`
+                },
+                body: JSON.stringify({ criaId: this.pollitoId })
+            });
+
+            const result = await response.json();
+            if (!response.ok || result?.success === false) {
+                throw new Error(result?.error?.message || result?.message || "No se pudo eliminar el pollito");
+            }
+
+            MessageBox.success("Pollito eliminado correctamente", {
+                actions: [MessageBox.Action.OK],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: () => this.onNavBack(),
+                dependentOn: this.getView()
+            });
+        } catch (error: any) {
+            MessageBox.error(error.message || "Error eliminando el pollito");
+        }
+    }
+
     public onRegistrarComoAveAdulta(): void {
         const data = (this.getView()?.getModel("detail") as JSONModel).getData();
         this.abrirDialogoRegistroAdulto(data);

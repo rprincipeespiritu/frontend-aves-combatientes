@@ -57,7 +57,9 @@ export default class AveUpdate extends Controller {
                 placa: "", nombre: "", apodo: "", sexo: "M",
                 estado: "ACTIVO", ubicacion: "", raza: "",
                 color: "", tipoAve: "", fechaNacimiento: "",
-                fechaCompra: "", padre_ID: "", madre_ID: "", linea_ID: "",
+                fechaCompra: "", fechaFallecimiento: "",
+                fechaFallecimientoState: "None",
+                padre_ID: "", madre_ID: "", linea_ID: "",
                 procedencia: "", criador: "", valorCompra: "",
                 valorActual: "", observaciones: "", placaState: "None",
                 categoria: "BUENO"
@@ -263,11 +265,19 @@ export default class AveUpdate extends Controller {
         if (oSelectedItem) {
             const sNombre = oSelectedItem.getTitle();
             const sPlaca = oSelectedItem.getDescription();
+            const oAveSeleccionada = oSelectedItem.getBindingContext("avesPadres")?.getObject() as any;
+            const oModel = this.getView()?.getModel("update") as JSONModel;
             let oInput: Input | undefined;
             if(oThat.helpSelected === "valueHelpPadre") {
                 oInput = this.byId("inputPadre") as Input;
+                oModel.setProperty("/padrePlaca", sPlaca);
+                oModel.setProperty("/padreNombre", sNombre);
+                oModel.setProperty("/padre_ID", oAveSeleccionada?.ID || null);
             } else if(oThat.helpSelected === "valueHelpMadre"){
                 oInput = this.byId("inputMadre") as Input;
+                oModel.setProperty("/madrePlaca", sPlaca);
+                oModel.setProperty("/madreNombre", sNombre);
+                oModel.setProperty("/madre_ID", oAveSeleccionada?.ID || null);
             }
             if (oInput) {
                 oInput.setValue(sPlaca);
@@ -278,6 +288,28 @@ export default class AveUpdate extends Controller {
 
         this._oPadresDialog?.close();
 
+    }
+
+    public onEstadoChange(): void {
+        const oModel = this.getView()?.getModel("update") as JSONModel;
+        if (oModel.getProperty("/estado") !== "FALLECIDO") {
+            oModel.setProperty("/fechaFallecimiento", "");
+            oModel.setProperty("/fechaFallecimientoState", "None");
+        }
+    }
+
+    public onQuitarPadre(): void {
+        const oModel = this.getView()?.getModel("update") as JSONModel;
+        oModel.setProperty("/padre_ID", null);
+        oModel.setProperty("/padrePlaca", "");
+        oModel.setProperty("/padreNombre", "");
+    }
+
+    public onQuitarMadre(): void {
+        const oModel = this.getView()?.getModel("update") as JSONModel;
+        oModel.setProperty("/madre_ID", null);
+        oModel.setProperty("/madrePlaca", "");
+        oModel.setProperty("/madreNombre", "");
     }
 
     public onCerrarPopupPadres(): void {
@@ -336,6 +368,13 @@ export default class AveUpdate extends Controller {
             }
             oModel.setProperty("/fecNacState", "None");
 
+            if (data.estado === "FALLECIDO" && !data.fechaFallecimiento) {
+                oModel.setProperty("/fechaFallecimientoState", "Error");
+                MessageToast.show("La fecha de fallecimiento es requerida");
+                return;
+            }
+            oModel.setProperty("/fechaFallecimientoState", "None");
+
             const authUser = localStorage.getItem("auth_user");
             if (!authUser) {
                 MessageToast.show("No se encontró la sesión del usuario");
@@ -362,6 +401,9 @@ export default class AveUpdate extends Controller {
                 observaciones: data.observaciones || null,
                 fechaNacimiento: data.fechaNacimiento || null,
                 fechaCompra: data.fechaCompra || null,
+                fechaFallecimiento: data.estado === "FALLECIDO"
+                    ? data.fechaFallecimiento || null
+                    : null,
                 linea_ID: data.linea_ID || null,
                 valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
                 valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
@@ -392,8 +434,8 @@ export default class AveUpdate extends Controller {
                 data.madre_ID = oMadre[0].ID;
             }
 
-            if (data.padre_ID) payload.padre_ID = data.padre_ID;
-            if (data.madre_ID) payload.madre_ID = data.madre_ID;
+            payload.padre_ID = data.padre_ID || null;
+            payload.madre_ID = data.madre_ID || null;
 
             const confirmed = await ConfirmationService.confirmUpdate(
                 "el ave",

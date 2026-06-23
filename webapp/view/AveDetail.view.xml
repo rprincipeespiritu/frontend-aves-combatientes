@@ -103,6 +103,15 @@
                                 state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
                                    ${detail>/estado} === 'VENDIDO' ? 'Warning' :
                                    ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
+                            <Label text="Fecha de fallecimiento"
+                                visible="{= ${detail>/estado} === 'FALLECIDO' }" />
+                            <Text
+                                text="{
+                                    path: 'detail>/fechaFallecimiento',
+                                    formatter: '.formatearFecha'
+                                }"
+                                visible="{= ${detail>/estado} === 'FALLECIDO' }" />
+
                             <!-- <Text
                                 text="{
                                     path: 'detail>/estado',

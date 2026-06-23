@@ -100,6 +100,8 @@
                     press="onRegistrarComoAveAdulta"
                     visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}" />
                 <Button text="Editar" icon="sap-icon://edit" type="Emphasized" press="onEditar"  visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                <Button text="Eliminar" icon="sap-icon://delete" type="Transparent"
+                    press="onEliminar" visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}"/>
                 <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
         </footer>
