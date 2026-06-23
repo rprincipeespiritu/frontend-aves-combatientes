@@ -430,22 +430,47 @@ export default class Pollitos extends Controller {
     }
 
     public onExportarExcel(): void {
-        const oTable = this.byId("pollitosTable") as any;
-        const oBinding = oTable.getBinding("items");
-        const data = oBinding.getContexts().map((context: any) => context.getObject());
+        const controlId = Device.system.phone ? "pollitosMobileList" : "pollitosTable";
+        const binding = (this.byId(controlId) as any)?.getBinding("items");
+        const length = binding?.getLength?.() || 0;
+        const data = (binding?.getContexts(0, length) || []).map((context: any) => {
+            const pollito = context.getObject();
+            return {
+                cintillo: pollito.cintillo || "",
+                colorCintillo: pollito.colorCintillo || "",
+                temporada: pollito.temporada || "",
+                placa: pollito.placa || pollito.aveGenerada?.placa || "",
+                nombre: pollito.nombre || "",
+                sexo: pollito.sexo || "",
+                fechaNacimiento: this.formatearFecha(pollito.fechaNacimiento),
+                padre: pollito.padre
+                    ? [pollito.padre.placa, pollito.padre.nombre].filter(Boolean).join(" ")
+                    : "",
+                madre: pollito.madre
+                    ? [pollito.madre.placa, pollito.madre.nombre].filter(Boolean).join(" ")
+                    : "",
+                estado: pollito.estado || "",
+                aveGenerada: pollito.aveGenerada?.placa || ""
+            };
+        });
+
+        if (!data.length) {
+            MessageToast.show("No hay aves jóvenes para exportar");
+            return;
+        }
 
         const columns = [
             { label: "Cintillo", property: "cintillo" },
             { label: "Color cintillo", property: "colorCintillo" },
             { label: "Temporada", property: "temporada" },
+            { label: "Placa", property: "placa" },
             { label: "Nombre", property: "nombre" },
             { label: "Sexo", property: "sexo" },
             { label: "Fecha nacimiento", property: "fechaNacimiento" },
-            { label: "Padre", property: "padre/placa" },
-            { label: "Madre", property: "madre/placa" }
-            ,
+            { label: "Padre", property: "padre" },
+            { label: "Madre", property: "madre" },
             { label: "Estado", property: "estado" },
-            { label: "Ave generada", property: "aveGenerada/placa" }
+            { label: "Ave generada", property: "aveGenerada" }
         ];
 
         const sheet = new Spreadsheet({
@@ -454,7 +479,10 @@ export default class Pollitos extends Controller {
             fileName: "pollitos.xlsx"
         });
 
-        sheet.build().finally(() => sheet.destroy());
+        sheet
+            .build()
+            .catch(() => MessageBox.error("No se pudo generar el archivo Excel"))
+            .finally(() => sheet.destroy());
     }
 
     public formatearIdentificador(pollito: any): string {

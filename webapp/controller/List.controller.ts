@@ -711,10 +711,11 @@ export default class List extends Controller {
   }
 
   public onExportarExcel = (): void => {
-    const oTable = this.byId("avesTable") as any;
-    const oBinding = oTable.getBinding("items");
+    const sControlId = Device.system.phone ? "avesMobileList" : "avesTable";
+    const oBinding = (this.byId(sControlId) as any)?.getBinding("items");
+    const iLength = oBinding?.getLength?.() || 0;
 
-    const aData = oBinding.getContexts().map((oContext: any) => {
+    const aData = (oBinding?.getContexts(0, iLength) || []).map((oContext: any) => {
       const o = oContext.getObject();
 
       return {
@@ -730,6 +731,11 @@ export default class List extends Controller {
         madre: o.madre ? o.madre.placa + " " + o.madre?.nombre : ""
       };
     });
+
+    if (!aData.length) {
+      MessageToast.show("No hay aves para exportar");
+      return;
+    }
 
     const aCols = [
       { label: "Placa", property: "placa" },
@@ -753,9 +759,10 @@ export default class List extends Controller {
 
     const oSheet = new Spreadsheet(oSettings);
 
-    oSheet.build().finally(() => {
-      oSheet.destroy();
-    });
+    oSheet
+      .build()
+      .catch(() => MessageBox.error("No se pudo generar el archivo Excel"))
+      .finally(() => oSheet.destroy());
   }
 
   public onDescargarPlantilla(): void {

@@ -128,9 +128,9 @@
                                     <Title text="Aves Registradas ({aves>/filteredCount})" />
                                     <ToolbarSpacer />
                                     <!-- <Button text="{= ${device>/system/phone} ? 'Editar' : 'Editar Seleccionada'}" enabled="{= ${table>/selectedIndex} >= 0}" press="onEditarAve" visible="false" /> -->
-                                    <Button text="{= ${device>/system/phone} ? '' : 'Descargar plantilla'}" icon="sap-icon://download" press="onDescargarPlantilla" type="Emphasized" />
-                                    <Button text="{= ${device>/system/phone} ? '' : 'Subir datos'}" icon="sap-icon://upload" press="onSubirDatos" type="Emphasized" />
-                                    <!-- <Button text="{= ${device>/system/phone} ? '' : 'Exportar a Excel'}" icon="sap-icon://excel-attachment" press="onExportarExcel" type="Emphasized" /> -->
+                                    <!-- <Button text="{= ${device>/system/phone} ? '' : 'Descargar plantilla'}" icon="sap-icon://download" press="onDescargarPlantilla" type="Emphasized" />
+                                    <Button text="{= ${device>/system/phone} ? '' : 'Subir datos'}" icon="sap-icon://upload" press="onSubirDatos" type="Emphasized" /> -->
+                                    <Button text="{= ${device>/system/phone} ? '' : 'Exportar a Excel'}" icon="sap-icon://excel-attachment" press="onExportarExcel" type="Emphasized" tooltip="Exportar a Excel" />
                                 </OverflowToolbar>
                             </headerToolbar>
 
@@ -263,7 +263,7 @@
                                 <OverflowToolbar>
                                     <Title text="Aves Registradas ({aves>/filteredCount})" />
                                     <ToolbarSpacer />
-                                    <Button
+                                    <!--<Button
                                         icon="sap-icon://download"
                                         press="onDescargarPlantilla"
                                         type="Emphasized"
@@ -272,7 +272,8 @@
                                         icon="sap-icon://upload"
                                         press="onSubirDatos"
                                         type="Emphasized"
-                                        tooltip="Subir datos" />
+                                        tooltip="Subir datos" />-->
+                                    <Button text="{= ${device>/system/phone} ? '' : 'Exportar a Excel'}" icon="sap-icon://excel-attachment" press="onExportarExcel" type="Emphasized" tooltip="Exportar a Excel" />
                                 </OverflowToolbar>
                             </headerToolbar>
                             <items>

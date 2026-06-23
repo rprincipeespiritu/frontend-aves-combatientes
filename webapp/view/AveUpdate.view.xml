@@ -41,13 +41,22 @@
                             <CheckBox selected="{update>/cria}"/>
 
                             <Label text="Estado"/>
-                            <Select selectedKey="{update>/estado}">
+                            <Select selectedKey="{update>/estado}" change=".onEstadoChange">
                                 <core:Item key="ACTIVO" text="Activo"/>
                                 <core:Item key="VENDIDO" text="Vendido"/>
                                 <core:Item key="PRESTADO" text="Prestado"/>
                                 <core:Item key="RETIRADO" text="Retirado"/>
                                 <core:Item key="FALLECIDO" text="Fallecido"/>
                             </Select>
+
+                            <Label text="Fecha de fallecimiento" required="true"
+                                visible="{= ${update>/estado} === 'FALLECIDO' }"/>
+                            <DatePicker value="{update>/fechaFallecimiento}"
+                                valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
+                                placeholder="Seleccionar fecha"
+                                valueState="{update>/fechaFallecimientoState}"
+                                valueStateText="La fecha de fallecimiento es requerida"
+                                visible="{= ${update>/estado} === 'FALLECIDO' }"/>
 
                             <Label text="Ubicación"/>
                             <Input value="{update>/ubicacion}" placeholder="Ubicación actual"/>
@@ -112,7 +121,8 @@
                     <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
                         <f:content>
                             <Label text="Padre"/>
-                            <Input
+                            <HBox width="100%" alignItems="Center" renderType="Bare">
+                                <Input
                                     id="inputPadre"
                                     placeholder="Seleccionar Padre"
                                     value="{update>/padrePlaca}"
@@ -121,9 +131,18 @@
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpPadre"
                                     width="100%"/>
+                                <Button
+                                    icon="sap-icon://decline"
+                                    type="Transparent"
+                                    tooltip="Quitar padre"
+                                    visible="{= !!${update>/padrePlaca} }"
+                                    press="onQuitarPadre"
+                                    class="sapUiTinyMarginBegin"/>
+                            </HBox>
 
                             <Label text="Madre"/>
-                            <Input
+                            <HBox width="100%" alignItems="Center" renderType="Bare">
+                                <Input
                                     id="inputMadre"
                                     placeholder="Seleccionar Madre"
                                     value="{update>/madrePlaca}"
@@ -132,6 +151,14 @@
                                     valueHelpOnly="true"
                                     valueHelpRequest="onValueHelpMadre"
                                     width="100%"/>
+                                <Button
+                                    icon="sap-icon://decline"
+                                    type="Transparent"
+                                    tooltip="Quitar madre"
+                                    visible="{= !!${update>/madrePlaca} }"
+                                    press="onQuitarMadre"
+                                    class="sapUiTinyMarginBegin"/>
+                            </HBox>
 
                             <Label text="Lugar de Procedencia"/>
                             <Input value="{update>/procedencia}" placeholder="Lugar de procedencia"/>

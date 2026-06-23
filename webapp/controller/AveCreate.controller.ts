@@ -54,7 +54,9 @@ export default class AveCreate extends Controller {
                 placa: "", nombre: "", apodo: "", sexo: "M",
                 estado: "ACTIVO", ubicacion: "", raza: "",
                 color: "", tipoAve: "", fechaNacimiento: "",
-                fechaCompra: "", padre_ID: "", madre_ID: "", linea_ID: "",
+                fechaCompra: "", fechaFallecimiento: "",
+                fechaFallecimientoState: "None",
+                padre_ID: "", madre_ID: "", linea_ID: "",
                 procedencia: "", criador: "", valorCompra: "",
                 valorActual: "", observaciones: "", placaState: "None",
                 categoria: "BUENO", placaPadre: "", placaMadre: "",
@@ -115,6 +117,14 @@ export default class AveCreate extends Controller {
             this._oUserMenuPopover.openBy(oSource);
         }
 
+    }
+
+    public onEstadoChange(): void {
+        const oModel = this.getView()?.getModel("create") as JSONModel;
+        if (oModel.getProperty("/estado") !== "FALLECIDO") {
+            oModel.setProperty("/fechaFallecimiento", "");
+            oModel.setProperty("/fechaFallecimientoState", "None");
+        }
     }
 
     public async onLogout(): Promise<void> {
@@ -302,6 +312,13 @@ export default class AveCreate extends Controller {
             }
             oModel.setProperty("/fecNacState", "None");
 
+            if (data.estado === "FALLECIDO" && !data.fechaFallecimiento) {
+                oModel.setProperty("/fechaFallecimientoState", "Error");
+                MessageToast.show("La fecha de fallecimiento es requerida");
+                return;
+            }
+            oModel.setProperty("/fechaFallecimientoState", "None");
+
             const authUser = localStorage.getItem("auth_user");
             if (!authUser) {
                 MessageToast.show("No se encontró la sesión del usuario");
@@ -328,6 +345,9 @@ export default class AveCreate extends Controller {
                 observaciones: data.observaciones || null,
                 fechaNacimiento: data.fechaNacimiento || null,
                 fechaCompra: data.fechaCompra || null,
+                fechaFallecimiento: data.estado === "FALLECIDO"
+                    ? data.fechaFallecimiento || null
+                    : null,
                 linea_ID: data.linea_ID || null,
                 valorCompra: data.valorCompra ? parseFloat(data.valorCompra) : null,
                 valorActual: data.valorActual ? parseFloat(data.valorActual) : null,
