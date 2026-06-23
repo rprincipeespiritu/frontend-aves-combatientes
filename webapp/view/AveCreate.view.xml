@@ -46,13 +46,22 @@
                             <CheckBox selected="{create>/cria}" />
 
                             <Label text="Estado" />
-                            <Select selectedKey="{create>/estado}">
+                            <Select selectedKey="{create>/estado}" change=".onEstadoChange">
                                 <core:Item key="ACTIVO" text="Activo" />
                                 <core:Item key="VENDIDO" text="Vendido" />
                                 <core:Item key="PRESTADO" text="Prestado" />
                                 <core:Item key="RETIRADO" text="Retirado" />
                                 <core:Item key="FALLECIDO" text="Fallecido" />
                             </Select>
+
+                            <Label text="Fecha de fallecimiento" required="true"
+                                visible="{= ${create>/estado} === 'FALLECIDO' }" />
+                            <DatePicker value="{create>/fechaFallecimiento}"
+                                valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
+                                placeholder="Seleccionar fecha"
+                                valueState="{create>/fechaFallecimientoState}"
+                                valueStateText="La fecha de fallecimiento es requerida"
+                                visible="{= ${create>/estado} === 'FALLECIDO' }" />
 
                             <Label text="Ubicación" />
                             <Input value="{create>/ubicacion}" placeholder="Ubicación actual" />

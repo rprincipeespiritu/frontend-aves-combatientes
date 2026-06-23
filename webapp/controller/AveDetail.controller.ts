@@ -55,7 +55,7 @@ export default class AveDetail extends Controller {
             editMode: false,
             placa: "", nombre: "", apodo: "", sexo: "",
             estado: "", ubicacion: "", razaNombre: "", colorNombre: "",
-            fechaNacimiento: "", procedencia: "", criador: "",
+            fechaNacimiento: "", fechaFallecimiento: "", procedencia: "", criador: "",
             valorCompra: 0, valorActual: 0, observaciones: "",
             totalPeleas: 0, peleasGanadas: 0, porcentajeVictorias: "0%",
             pesoActual: 0, edad: 0, pesajes: [], peleas: [],

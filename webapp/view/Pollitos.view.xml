@@ -110,7 +110,7 @@
                                 <Title text="Pollitos registrados ({pollitos>/filteredCount})" />
                                 <ToolbarSpacer />
                                 <Button text="Exportar a Excel" icon="sap-icon://excel-attachment"
-                                    press="onExportarExcel" type="Emphasized" />
+                                    press="onExportarExcel" type="Emphasized" tooltip="Exportar a Excel" />
                             </OverflowToolbar>
                         </headerToolbar>
 
@@ -145,9 +145,6 @@
                             <Column minScreenWidth="Tablet" demandPopin="true" visible="{= ${device>/system/phone} ? false : true}">
                                 <Text text="Estado" />
                             </Column>
-                            <Column width="8rem" hAlign="Center">
-                                <Text text="Acciones" />
-                            </Column>
                         </columns>
 
                         <items>
@@ -173,18 +170,6 @@
                                     <ObjectStatus
                                         text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
                                         state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
-                                    <HBox justifyContent="Center" width="100%" renderType="Bare"  visible="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? false : true}">
-                                        <!-- <Button
-                                        icon="sap-icon://accept"
-                                        type="Emphasized"
-                                        tooltip="Registrar como ave adulta"
-                                        press="onRegistrarComoAveAdulta"
-                                        visible="{= ${pollitos>estado} !== 'REGISTRADA_ADULTA'}" /> -->
-                                        <Button icon="sap-icon://edit" type="Emphasized"
-                                            tooltip="Editar" press="onEditarPollito" />
-                                        <Button icon="sap-icon://delete" type="Transparent"
-                                            tooltip="Eliminar" press="onEliminarPollito" />
-                                    </HBox>
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -202,10 +187,11 @@
                                 <Title text="Pollitos registrados ({pollitos>/filteredCount})" />
                                 <ToolbarSpacer />
                                 <Button
-                                    text="Excel"
+                                    text=""
                                     icon="sap-icon://excel-attachment"
                                     press="onExportarExcel"
-                                    type="Emphasized" />
+                                    type="Emphasized"
+                                    tooltip="Exportar a Excel" />
                             </OverflowToolbar>
                         </headerToolbar>
                         <items>
@@ -229,22 +215,6 @@
                                                 text="{pollitos>aveGenerada/placa}"
                                                 class="pollitoMobilePlate" /> -->
                                         </VBox>
-                                        <HBox
-                                            alignItems="Center"
-                                            renderType="Bare"
-                                            class="pollitoMobileActions"
-                                            visible="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? false : true}">
-                                            <Button
-                                                icon="sap-icon://edit"
-                                                type="Emphasized"
-                                                tooltip="Editar"
-                                                press="onEditarPollito" />
-                                            <Button
-                                                icon="sap-icon://delete"
-                                                type="Transparent"
-                                                tooltip="Eliminar"
-                                                press="onEliminarPollito" />
-                                        </HBox>
                                     </HBox>
 
                                     <FlexBox
