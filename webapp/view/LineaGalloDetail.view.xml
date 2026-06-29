@@ -33,27 +33,54 @@
 
                 </ObjectHeader>
 
-                <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
-                    columnsL="2" columnsM="1">
-                    <f:content>
-                        <Label text="Objetivo" />
-                        <Text text="{detalle>/linea/objetivo}" />
-
-                        <Label text="Descripción" />
-                        <Text text="{detalle>/linea/descripcion}" />
-
-                        <Label text="Padre Fundador" />
-                        <Link text="{detalle>/linea/aveFundador/placa} {detalle>/linea/aveFundador/nombre}"
-                            press="onVerPadre" />
-                        <!-- <Text text="{detalle>/linea/aveFundador/placa}" /> -->
-
-                        <Label text="Madre Fundadora" />
-                        <Link text="{detalle>/linea/aveFundadora/placa} {detalle>/linea/aveFundadora/nombre}"
-                            press="onVerMadre" />
-                        <!-- <Text text="{detalle>/linea/aveFundadora/placa}" /> -->
-
-                    </f:content>
-                </f:SimpleForm>
+                <f:Form editable="false" class="sapUiSmallMargin">
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="4"
+                            labelSpanS="12"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            adjustLabelSpan="false"
+                            singleContainerFullSize="false" />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Objetivo">
+                                    <f:fields>
+                                        <Text text="{detalle>/linea/objetivo}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Descripción">
+                                    <f:fields>
+                                        <Text text="{detalle>/linea/descripcion}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Padre Fundador">
+                                    <f:fields>
+                                        <Link
+                                            text="{detalle>/linea/aveFundador/placa} {detalle>/linea/aveFundador/nombre}"
+                                            press="onVerPadre" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Madre Fundadora">
+                                    <f:fields>
+                                        <Link
+                                            text="{detalle>/linea/aveFundadora/placa} {detalle>/linea/aveFundadora/nombre}"
+                                            press="onVerMadre" />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
 
                 <Table
                     items="{detalle>/planes}"

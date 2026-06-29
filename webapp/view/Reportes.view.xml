@@ -24,25 +24,59 @@
             <VBox class="sapUiMediumMargin" busy="{reportes>/busy}">
 
                 <Panel headerText="Opciones de reporte">
-                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" columnsL="3"
-                        columnsM="2">
-                        <f:content>
-                            <Label text="Reporte" />
-                            <Select selectedKey="{reportes>/tipoReporte}" change=".onGenerarReporte">
-                                <core:Item key="CRUCES_INCUBACION" text="Cruces e incubaciones" />
-                                <core:Item key="PLANES" text="Planes de cruce" />
-                                <core:Item key="AVES" text="Aves" />
-                            </Select>
-
-                            <Label text="Fecha desde" />
-                            <DatePicker value="{reportes>/fechaDesde}" displayFormat="dd/MM/yyyy"
-                                valueFormat="yyyy-MM-dd" />
-
-                            <Label text="Fecha hasta" />
-                            <DatePicker value="{reportes>/fechaHasta}" displayFormat="dd/MM/yyyy"
-                                valueFormat="yyyy-MM-dd" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="3"
+                          columnsL="3"
+                          columnsM="2"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Reporte" />
+                              </f:label>
+                              <f:fields>
+                                <Select selectedKey="{reportes>/tipoReporte}" change=".onGenerarReporte">
+                                    <core:Item key="CRUCES_INCUBACION" text="Cruces e incubaciones" />
+                                    <core:Item key="PLANES" text="Planes de cruce" />
+                                    <core:Item key="AVES" text="Aves" />
+                                </Select>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Fecha desde" />
+                              </f:label>
+                              <f:fields>
+                                <DatePicker value="{reportes>/fechaDesde}" displayFormat="dd/MM/yyyy"
+                                    valueFormat="yyyy-MM-dd" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Fecha hasta" />
+                              </f:label>
+                              <f:fields>
+                                <DatePicker value="{reportes>/fechaHasta}" displayFormat="dd/MM/yyyy"
+                                    valueFormat="yyyy-MM-dd" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
 
                     <Toolbar>
                         <ToolbarSpacer />

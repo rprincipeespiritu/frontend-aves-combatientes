@@ -25,35 +25,69 @@
         <content>
             <VBox class="sapUiMediumMargin" busy="{genealogia>/busy}">
                 <Panel headerText="Seleccion de ave">
-                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" columnsL="3"
-                        columnsM="2">
-                        <f:content>
-                            <Label text="Ave" />
-                            <Input
-                                id="inputAve"
-                                placeholder="Seleccionar Ave"
-                                value="{genealogia>/placa}"
-                                description="{genealogia>/nombre}"
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="onValueHelpAve"
-                                width="100%" />
-                            <!-- <Select
-                                selectedKey="{genealogia>/aveSeleccionadaId}"
-                                change=".onSeleccionarAve"
-                                items="{genealogia>/aves}">
-                                <core:Item
-                                    key="{genealogia>ID}"
-                                    text="{= ${genealogia>placa} + ' - ' + (${genealogia>nombre} || 'Sin nombre') }" />
-                            </Select> -->
-
-                            <Label text="Generaciones" />
-                            <ObjectStatus text="Hasta 5 generaciones" state="Information" />
-
-                            <Label text="Ancestros encontrados" />
-                            <ObjectNumber number="{genealogia>/resumen/ancestrosIdentificados}" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="3"
+                          columnsL="3"
+                          columnsM="2"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Ave" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    id="inputAve"
+                                    placeholder="Seleccionar Ave"
+                                    value="{genealogia>/placa}"
+                                    description="{genealogia>/nombre}"
+                                    showValueHelp="true"
+                                    valueHelpOnly="true"
+                                    valueHelpRequest="onValueHelpAve"
+                                    width="100%" />
+                                <!-- <Select
+                                    selectedKey="{genealogia>/aveSeleccionadaId}"
+                                    change=".onSeleccionarAve"
+                                    items="{genealogia>/aves}">
+                                    <core:Item
+                                        key="{genealogia>ID}"
+                                        text="{= ${genealogia>placa} + ' - ' + (${genealogia>nombre} || 'Sin nombre') }" />
+                                </Select> -->
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Generaciones" />
+                              </f:label>
+                              <f:fields>
+                                <ObjectStatus text="Hasta 5 generaciones" state="Information" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Ancestros encontrados" />
+                              </f:label>
+                              <f:fields>
+                                <ObjectNumber number="{genealogia>/resumen/ancestrosIdentificados}" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
 
                     <Toolbar>
                         <ToolbarSpacer />

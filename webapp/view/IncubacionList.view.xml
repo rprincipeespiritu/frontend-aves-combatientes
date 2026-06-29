@@ -134,12 +134,12 @@
                             <ObjectStatus text="{
                                         path: 'view>estado',
                                         formatter: '.formatearEstado'
-                                    }" state="{= ${view>estado} === 'EN_PROCESO' ? 'Success' :
+                                    }" state="{= ${view>estado} === 'EN_PROCESO' ? 'Warning' :
                                              ${view>estado} === 'PROGRAMADA' ? 'Information' :
-                                             ${view>estado} === 'COMPLETADA' ? 'Warning' :
+                                             ${view>estado} === 'COMPLETADA' ? 'Success' :
                                              ${view>estado} === 'CANCELADA' ? 'Error' : 'Error'}"/>
                             <HBox>
-                                <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" enabled="{= ${view>estado} !== 'COMPLETADA' &amp;&amp; ${view>estado} !== 'CANCELADA' }" />
+                                <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" visible="{= ${view>estado} !== 'COMPLETADA' &amp;&amp; ${view>estado} !== 'CANCELADA' }" />
                                 <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
                                 <Button icon="sap-icon://detail-view" type="Emphasized" press="onDetail"/>
                             </HBox>

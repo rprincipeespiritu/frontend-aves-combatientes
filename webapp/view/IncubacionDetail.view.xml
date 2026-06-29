@@ -31,122 +31,158 @@
                             path: 'view>/incubacion/estado',
                             formatter: '.formatearEstado'
                         }"
-                        state="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Success' :
+                        state="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Warning' :
                             ${view>/incubacion/estado} === 'PROGRAMADA' ? 'Information' :
-                            ${view>/incubacion/estado} === 'COMPLETADA' ? 'Warning' :
+                            ${view>/incubacion/estado} === 'COMPLETADA' ? 'Success' :
                             ${view>/incubacion/estado} === 'CANCELADA' ? 'Error' : 'Error'}" />
                 </HBox>
 
-                <f:SimpleForm editable="false" layout="ResponsiveGridLayout"
-                    class="sapUiMediumMarginTop">
+                <f:Form editable="false" class="sapUiMediumMarginTop incubacionDetailForm">
+                  <f:layout>
+                    <f:ResponsiveGridLayout
+                      labelSpanXL="3"
+                      labelSpanL="3"
+                      labelSpanM="4"
+                      labelSpanS="12"
+                      emptySpanXL="0"
+                      emptySpanL="0"
+                      emptySpanM="0"
+                      emptySpanS="0"
+                      columnsXL="2"
+                      columnsL="2"
+                      columnsM="1"
+                      singleContainerFullSize="false" />
+                  </f:layout>
+                  <f:formContainers>
+                    <f:FormContainer>
+                      <f:formElements>
+                        <f:FormElement>
+                          <f:fields>
+                            <Title text="Datos Generales" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Código" />
+                          </f:label>
+                          <f:fields>
+                            <Text text="{view>/incubacion/codigo}" />
+                            <!-- <Label text="Estado" /> -->
+                            <!-- <ObjectStatus text="{view>/incubacion/estado}" /> -->
+                            <!-- <ObjectStatus text="{
+                                            path: 'view>/incubacion/estado',
+                                            formatter: '.formatearEstado'
+                                        }" state="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Success' :
+                                                 ${view>/incubacion/estado} === 'PROGRAMADA' ? 'Information' :
+                                                 ${view>/incubacion/estado} === 'COMPLETADA' ? 'Information' :
+                                                 ${view>/incubacion/estado} === 'CANCELADA' ? 'Warning' : 'Error'}"/> -->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Incubación" />
+                          </f:label>
+                          <f:fields>
+                            <Text
+                                text="{ path: 'view>/incubacion/fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Pre Nacimiento" />
+                          </f:label>
+                          <f:fields>
+                            <Text
+                                text="{ path: 'view>/incubacion/fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Eclosión Estimada" />
+                          </f:label>
+                          <f:fields>
+                            <Text
+                                text="{ path: 'view>/incubacion/fechaEclosion', formatter: '.formatter.formatDateTime' }" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }">
+                          <f:label>
+                            <Label text="Fecha Fin Incubación"
+                                visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
+                          </f:label>
+                          <f:fields>
+                            <Text
+                                text="{ path: 'view>/incubacion/fechaFinIncubacion', formatter: '.formatter.formatDateTime' }"
+                                visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Observaciones" />
+                          </f:label>
+                          <f:fields>
+                            <TextArea value="{view>/incubacion/observaciones}" rows="4" editable="false" />
+                            <!--<Text
+                            text="{view>/incubacion/observaciones}" />-->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement visible="{= ${view>/incubacion/estado} === 'CANCELADA' }">
+                          <f:label>
+                            <Label text="Motivo de cancelación"
+                                visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
+                          </f:label>
+                          <f:fields>
+                            <Text text="{view>/incubacion/motivoCancelacion}"
+                                visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
+                          </f:fields>
+                        </f:FormElement>
+                      </f:formElements>
+                    </f:FormContainer>
+                  </f:formContainers>
+                </f:Form>
 
-                    <f:content>
-                        <Title text="Datos Generales" />
-
-                        <Label text="Código" />
-                        <Text text="{view>/incubacion/codigo}" />
-
-                        <!-- <Label text="Estado" /> -->
-                        <!-- <ObjectStatus text="{view>/incubacion/estado}" /> -->
-                        <!-- <ObjectStatus text="{
-                                        path: 'view>/incubacion/estado',
-                                        formatter: '.formatearEstado'
-                                    }" state="{= ${view>/incubacion/estado} === 'EN_PROCESO' ? 'Success' :
-                                             ${view>/incubacion/estado} === 'PROGRAMADA' ? 'Information' :
-                                             ${view>/incubacion/estado} === 'COMPLETADA' ? 'Information' :
-                                             ${view>/incubacion/estado} === 'CANCELADA' ? 'Warning' : 'Error'}"/> -->
-
-                        <Label text="Fecha Incubación" />
-                        <Text
-                            text="{ path: 'view>/incubacion/fechaIncubacion', formatter: '.formatter.formatDateTime' }" />
-
-                        <Label text="Fecha Pre Nacimiento" />
-                        <Text
-                            text="{ path: 'view>/incubacion/fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
-
-                        <Label text="Fecha Eclosión Estimada" />
-                        <Text
-                            text="{ path: 'view>/incubacion/fechaEclosion', formatter: '.formatter.formatDateTime' }" />
-
-                        <Label text="Fecha Fin Incubación"
-                            visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
-                        <Text
-                            text="{ path: 'view>/incubacion/fechaFinIncubacion', formatter: '.formatter.formatDateTime' }"
-                            visible="{= ${view>/incubacion/estado} === 'COMPLETADA' }" />
-
-                        <Label text="Observaciones" />
-                        <TextArea value="{view>/incubacion/observaciones}" rows="4" editable="false" />
-                        <!--<Text
-                        text="{view>/incubacion/observaciones}" />-->
-
-                        <Label text="Motivo de cancelación"
-                            visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
-                        <Text text="{view>/incubacion/motivoCancelacion}"
-                            visible="{= ${view>/incubacion/estado} === 'CANCELADA' }" />
-
-                        <Label text="Detalle" />
-                        <Table id="tblIncubacionesDetalle" items="{view>/incubacion/detalles}"
-                            busy="{view>/busy}">
-                            <headerToolbar>
-                                <OverflowToolbar>
-                                    <!-- <Title text="Incubaciones Registradas ({=
-                                    ${view>/incubaciones}.length})"/> -->
-                                    <ToolbarSpacer />
-                                    <!-- <Button icon="sap-icon://refresh" enabled="{=
-                                    ${table>/selectedIndex} >= 0}" press="onRefresh"/> -->
-                                    <!-- <Button icon="sap-icon://add" type="Emphasized"
-                                    press="onAddDetalle" /> -->
-                                </OverflowToolbar>
-                            </headerToolbar>
-                            <columns>
-                                <Column>
-                                    <Text text="Padre" />
-                                </Column>
-                                <Column>
-                                    <Text text="Madre" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
-                                    <Text text="Total huevos" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
-                                    <Text text="Fértiles" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
-                                    <Text text="Nacidos" />
-                                </Column>
-                                <Column minScreenWidth="Tablet" demandPopin="true" width="12%">
-                                    <Text text="No eclosionados" />
-                                </Column>
-                                <!-- <Column demandPopin="true" minScreenWidth="Tablet" width="12%">
-                                    <Text text="Acciones" />
-                                </Column> -->
-                            </columns>
-                            <items>
-                                <ColumnListItem>
-                                    <cells>
-                                        <!-- <Text text="{view>padre/placa} {view>padre/nombre}" /> -->
-                                        <!-- <Text text="{view>placaPadre}" width="100%" /> -->
-                                        <ObjectStatus
-                                            text="{ parts: [{path: 'view>placaPadre'}, {path: 'view>nombrePadre'}], formatter: '.formatAveResumen' }"
-                                            state="Information"/>
-                                        <!-- <Text text="{view>madre/placa} {view>madre/nombre}" /> -->
-                                        <!-- <Text text="{view>placaMadre}" width="100%" /> -->
-                                        <ObjectStatus
-                                            text="{ parts: [{path: 'view>placaMadre'}, {path: 'view>nombreMadre'}], formatter: '.formatAveResumen' }"
-                                            state="Information"/>
-                                        <Text text="{view>totalHuevos}" />
-                                        <Text text="{view>huevosFertiles}" />
-                                        <Text text="{view>huevosEclosionados}" />
-                                        <Text text="{view>huevosNoEclosionados}" />
-                                        <!-- <Button icon="sap-icon://delete" type="Transparent"
-                                        press=".onDeleteDetalle" /> -->
-                                    </cells>
-                                </ColumnListItem>
-                            </items>
-                        </Table>
-
-                    </f:content>
-                </f:SimpleForm>
+                <Panel
+                    headerText="Detalle de Incubación"
+                    class="sapUiMediumMarginTop incubacionDetailTablePanel">
+                    <Table
+                        id="tblIncubacionesDetalle"
+                        class="incubacionDetailTable"
+                        items="{view>/incubacion/detalles}"
+                        busy="{view>/busy}">
+                        <columns>
+                            <Column width="26%">
+                                <Text text="Padre" />
+                            </Column>
+                            <Column width="26%">
+                                <Text text="Madre" />
+                            </Column>
+                            <Column hAlign="Center" width="12rem">
+                                <Text text="Total Huevos" />
+                            </Column>
+                            <Column hAlign="Center" width="10rem">
+                                <Text text="Fértiles" />
+                            </Column>
+                            <Column hAlign="Center" width="10rem">
+                                <Text text="Nacidos" />
+                            </Column>
+                            <Column hAlign="Center" width="13rem">
+                                <Text text="No Eclosionados" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem vAlign="Middle">
+                                <cells>
+                                    <ObjectIdentifier title="{view>placaPadre}" text="{view>nombrePadre}" />
+                                    <ObjectIdentifier title="{view>placaMadre}" text="{view>nombreMadre}" />
+                                    <ObjectNumber number="{view>totalHuevos}" textAlign="Center" />
+                                    <ObjectNumber number="{view>huevosFertiles}" textAlign="Center" />
+                                    <ObjectNumber number="{view>huevosEclosionados}" textAlign="Center" />
+                                    <ObjectNumber number="{view>huevosNoEclosionados}" textAlign="Center" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
             </VBox>
         </content>
         <footer>

@@ -30,56 +30,150 @@
                 </HBox>
 
                 <Panel headerText="Identificacion" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Cintillo" />
-                            <Text text="{detail>/cintillo}" />
-
-                            <Label text="Color de cintillo" />
-                            <Text text="{detail>/colorCintillo}" />                            
-                            
-                            <Label text="Temporada" />
-                            <Text text="{detail>/temporada}" />
-
-                            <Label text="Nombre" />
-                            <Text text="{detail>/nombre}" />
-
-                            <Label text="Genero" />
-                            <Text text="{path: 'detail>/sexo', formatter: '.formatearSexo'}" />
-
-                            <Label text="Fecha nacimiento" />
-                            <Text text="{path: 'detail>/fechaNacimiento', formatter: '.formatearFecha'}" />
-
-                            <Label text="Color del ave" />
-                            <Text text="{detail>/color}" />
-
-                            <Label text="Ubicacion" />
-                            <Text text="{detail>/ubicacion}" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Cintillo" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/cintillo}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Color de cintillo" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/colorCintillo}" />                            
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Temporada" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/temporada}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Nombre" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/nombre}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Genero" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{path: 'detail>/sexo', formatter: '.formatearSexo'}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Fecha nacimiento" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{path: 'detail>/fechaNacimiento', formatter: '.formatearFecha'}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Color del ave" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/color}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Ubicacion" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detail>/ubicacion}" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Origen genealogico" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Padre" />
-                            <VBox>
-                                <Text text="{detail>/padre/placa}" />
-                                <Text text="{detail>/padre/nombre}" />
-                            </VBox>
-
-                            <Label text="Madre" />
-                            <VBox>
-                                <Text text="{detail>/madre/placa}" />
-                                <Text text="{detail>/madre/nombre}" />
-                            </VBox>
-
-                            <Label text="Ave adulta generada" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}" />                            
-                            <Link text="{detail>/aveGenerada/placa} {detail>/aveGenerada/nombre}"
-                                press="onVerAve" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}"/>
-                            
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Padre" />
+                              </f:label>
+                              <f:fields>
+                                <VBox>
+                                    <Text text="{detail>/padre/placa}" />
+                                    <Text text="{detail>/padre/nombre}" />
+                                </VBox>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Madre" />
+                              </f:label>
+                              <f:fields>
+                                <VBox>
+                                    <Text text="{detail>/madre/placa}" />
+                                    <Text text="{detail>/madre/nombre}" />
+                                </VBox>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}">
+                              <f:label>
+                                <Label text="Ave adulta generada" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}" />                            
+                              </f:label>
+                              <f:fields>
+                                <Link text="{detail>/aveGenerada/placa} {detail>/aveGenerada/nombre}"
+                                    press="onVerAve" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">

@@ -20,114 +20,214 @@
         <content>
             <VBox class="sapUiMediumMargin">
                 <Panel headerText="Identificacion" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Cintillo" required="true" />
-                            <Input
-                                value="{pollito>/cintillo}"
-                                placeholder="Ej: 001"
-                                valueState="{pollito>/cintilloState}"
-                                valueStateText="El cintillo es requerido" 
-                                change="onChangeCintillo"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Color de cintillo" required="true" />
-                            <Input
-                                value="{pollito>/colorCintillo}"
-                                placeholder="Ej: Rojo, Azul, Verde"
-                                valueState="{pollito>/colorCintilloState}"
-                                valueStateText="El color de cintillo es requerido" 
-                                change="onChangeColorCintillo"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Placa" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
-                            <Input
-                                value="{pollito>/aveGenerada/placa}"
-                                placeholder="Ej: 001"
-                                valueState="{pollito>/cintilloState}"
-                                valueStateText="El cintillo es requerido" 
-                                change="onChangeCintillo"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Cintillo" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{pollito>/cintillo}"
+                                    placeholder="Ej: 001"
+                                    valueState="{pollito>/cintilloState}"
+                                    valueStateText="El cintillo es requerido" 
+                                    change="onChangeCintillo"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Color de cintillo" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{pollito>/colorCintillo}"
+                                    placeholder="Ej: Rojo, Azul, Verde"
+                                    valueState="{pollito>/colorCintilloState}"
+                                    valueStateText="El color de cintillo es requerido" 
+                                    change="onChangeColorCintillo"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}">
+                              <f:label>
+                                <Label text="Placa" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{pollito>/aveGenerada/placa}"
+                                    placeholder="Ej: 001"
+                                    valueState="{pollito>/cintilloState}"
+                                    valueStateText="El cintillo es requerido" 
+                                    change="onChangeCintillo"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"
+                                    visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}">
+                              <f:label>
+                                <Label text="Estado" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
+                              </f:label>
+                              <f:fields>
+                                <ObjectStatus text="{pollito>/estadoTexto}"
+                                state="{= ${pollito>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" 
                                 visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
-                            
-                            <Label text="Estado" visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
-                            <ObjectStatus text="{pollito>/estadoTexto}"
-                            state="{= ${pollito>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" 
-                            visible="{= ${pollito>/estado} === 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Temporada" required="true" />
-                            <Input
-                                value="{pollito>/temporada}"
-                                type="Number"
-                                placeholder="Año"
-                                valueState="{pollito>/temporadaState}"
-                                valueStateText="La temporada es requerida" 
-                                change="onChangeTemporada"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Nombre o alias" />
-                            <Input value="{pollito>/nombre}" placeholder="Opcional" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Genero"/>
-                            <Select selectedKey="{pollito>/sexo}" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}">
-                                <core:Item key="" text="" />
-                                <core:Item key="M" text="Macho" />
-                                <core:Item key="H" text="Hembra" />
-                            </Select>
-
-                            <Label text="Fecha nacimiento" required="true" />
-                            <DatePicker
-                                value="{pollito>/fechaNacimiento}"
-                                valueFormat="yyyy-MM-dd"
-                                displayFormat="dd/MM/yyyy"
-                                valueState="{pollito>/fecNacState}"
-                                valueStateText="La fecha de nacimiento es requerida" 
-                                change="onChangeFecNac"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Color del ave" />
-                            <Input value="{pollito>/color}" placeholder="Color observado" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Ubicacion" />
-                            <Input value="{pollito>/ubicacion}" placeholder="Jaula, lote o ambiente" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-                        </f:content>
-                    </f:SimpleForm>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Temporada" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{pollito>/temporada}"
+                                    type="Number"
+                                    placeholder="Año"
+                                    valueState="{pollito>/temporadaState}"
+                                    valueStateText="La temporada es requerida" 
+                                    change="onChangeTemporada"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Nombre o alias" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{pollito>/nombre}" placeholder="Opcional" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Genero"/>
+                              </f:label>
+                              <f:fields>
+                                <Select selectedKey="{pollito>/sexo}" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}">
+                                    <core:Item key="" text="" />
+                                    <core:Item key="M" text="Macho" />
+                                    <core:Item key="H" text="Hembra" />
+                                </Select>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Fecha nacimiento" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <DatePicker
+                                    value="{pollito>/fechaNacimiento}"
+                                    valueFormat="yyyy-MM-dd"
+                                    displayFormat="dd/MM/yyyy"
+                                    valueState="{pollito>/fecNacState}"
+                                    valueStateText="La fecha de nacimiento es requerida" 
+                                    change="onChangeFecNac"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Color del ave" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{pollito>/color}" placeholder="Color observado" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Ubicacion" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{pollito>/ubicacion}" placeholder="Jaula, lote o ambiente" editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Origen genealogico" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Padre" required="false"/>
-                            <Input
-                                id="inputPadre"
-                                value="{pollito>/placaPadre}"
-                                description="{pollito>/nombrePadre}"
-                                placeholder="Seleccionar padre"
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="onValueHelpPadre"
-                                width="100%" 
-                                valueState="{pollito>/placaPadreState}"
-                                valueStateText="El padre es requerido"
-                                change="onChangePlacaPadre"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-
-                            <Label text="Madre" required="false"/>
-                            <Input
-                                id="inputMadre"
-                                value="{pollito>/placaMadre}"
-                                description="{pollito>/nombreMadre}"
-                                placeholder="Seleccionar madre"
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="onValueHelpMadre"
-                                width="100%" 
-                                valueState="{pollito>/placaMadreState}"
-                                valueStateText="La Madre es requerida"
-                                change="onChangePlacaMadre"
-                                editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Padre" required="false"/>
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    id="inputPadre"
+                                    value="{pollito>/placaPadre}"
+                                    description="{pollito>/nombrePadre}"
+                                    placeholder="Seleccionar padre"
+                                    showValueHelp="true"
+                                    valueHelpOnly="true"
+                                    valueHelpRequest="onValueHelpPadre"
+                                    width="100%" 
+                                    valueState="{pollito>/placaPadreState}"
+                                    valueStateText="El padre es requerido"
+                                    change="onChangePlacaPadre"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Madre" required="false"/>
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    id="inputMadre"
+                                    value="{pollito>/placaMadre}"
+                                    description="{pollito>/nombreMadre}"
+                                    placeholder="Seleccionar madre"
+                                    showValueHelp="true"
+                                    valueHelpOnly="true"
+                                    valueHelpRequest="onValueHelpMadre"
+                                    width="100%" 
+                                    valueState="{pollito>/placaMadreState}"
+                                    valueStateText="La Madre es requerida"
+                                    change="onChangePlacaMadre"
+                                    editable="{= ${pollito>/estado} !== 'REGISTRADA_ADULTA'}"/>
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
