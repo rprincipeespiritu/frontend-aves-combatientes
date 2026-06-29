@@ -83,7 +83,7 @@
                     <HBox wrap="Wrap" justifyContent="SpaceAround">
                         <Panel headerText="Basico" width="20rem" class="sapUiSmallMargin">
                             <VBox class="sapUiMediumMargin">
-                                <ObjectStatus text="Criadero pequeno" state="Information" />
+                                <ObjectStatus text="Criadero pequeño" state="Information" />
                                 <Text text="100 aves adultas" />
                                 <Text text="200 aves jovenes" />
                                 <Text text="50 incubaciones" />

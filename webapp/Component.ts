@@ -3,6 +3,7 @@ import Controller from "sap/ui/core/mvc/Controller";
 import { createDeviceModel } from "./model/models";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
+import BusyDialog from "sap/m/BusyDialog";
 
 type PlanIndicatorData = {
   visible: boolean;
@@ -21,6 +22,10 @@ type PlanIndicatorData = {
  */
 export default class Component extends BaseComponent {
   private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private static fetchBusyDialog: BusyDialog | null = null;
+  private static pendingFetchRequests = 0;
+  private static fetchWrapped = false;
+  private static fetchBusyDialogOpened = false;
   private readonly publicRoutes = new Set([
     "RouteLogin",
     "RouteRegister",
@@ -95,6 +100,7 @@ export default class Component extends BaseComponent {
   public init(): void {
     // call the base component's init function
     super.init();
+    this.installGlobalFetchBusyDialog();
     this.installGlobalAccountSettingsHandler();
 
     // set the device model
@@ -113,6 +119,49 @@ export default class Component extends BaseComponent {
       void this.onRouteMatched(event);
     });
     this.getRouter().initialize();
+  }
+
+  private installGlobalFetchBusyDialog(): void {
+    if (Component.fetchWrapped || typeof window === "undefined" || typeof window.fetch !== "function") {
+      return;
+    }
+
+    const nativeFetch = window.fetch.bind(window);
+    Component.fetchWrapped = true;
+
+    window.fetch = async (...args: Parameters<typeof fetch>): Promise<Response> => {
+      this.openFetchBusyDialog();
+      try {
+        return await nativeFetch(...args);
+      } finally {
+        this.closeFetchBusyDialog();
+      }
+    };
+  }
+
+  private openFetchBusyDialog(): void {
+    Component.pendingFetchRequests += 1;
+
+    if (!Component.fetchBusyDialog) {
+      Component.fetchBusyDialog = new BusyDialog({
+        title: "Procesando",
+        text: "Espere por favor...",
+      });
+    }
+
+    if (!Component.fetchBusyDialogOpened) {
+      Component.fetchBusyDialog.open();
+      Component.fetchBusyDialogOpened = true;
+    }
+  }
+
+  private closeFetchBusyDialog(): void {
+    Component.pendingFetchRequests = Math.max(0, Component.pendingFetchRequests - 1);
+
+    if (Component.pendingFetchRequests === 0 && Component.fetchBusyDialog && Component.fetchBusyDialogOpened) {
+      Component.fetchBusyDialog.close();
+      Component.fetchBusyDialogOpened = false;
+    }
   }
 
   private installGlobalAccountSettingsHandler(): void {

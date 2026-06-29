@@ -135,7 +135,7 @@
                             </headerToolbar>
 
                             <columns>
-                                <Column width="5rem" hAlign="Center">
+                                <Column width="5rem" hAlign="Center" visible="{= ${planIndicator>/plan} === 'PREMIUM' }">
                                     <Text text="Imagen" />
                                 </Column>
 
@@ -189,11 +189,12 @@
                                     <cells>
                                         <f:Avatar
                                             src="{aves>fotoPrincipal}"
-                                            fallbackIcon="sap-icon://picture"
-                                            displayShape="Circle"
-                                            displaySize="S"
-                                            tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
-                                            press="onVerImagenAve" />
+                                        fallbackIcon="sap-icon://picture"
+                                        displayShape="Circle"
+                                        displaySize="S"
+                                        tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
+                                        visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
+                                        press="onVerImagenAve" />
 
                                         <ObjectStatus text="{
                                             path: 'aves>placa'
@@ -287,12 +288,13 @@
                                             class="aveAdultaMobileHeader">
                                             <f:Avatar
                                                 src="{aves>fotoPrincipal}"
-                                                fallbackIcon="sap-icon://picture"
-                                                displayShape="Circle"
-                                                displaySize="S"
-                                                tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
-                                                press="onVerImagenAve"
-                                                class="aveAdultaMobileAvatar" />
+                                            fallbackIcon="sap-icon://picture"
+                                            displayShape="Circle"
+                                            displaySize="S"
+                                            tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
+                                            visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
+                                            press="onVerImagenAve"
+                                            class="aveAdultaMobileAvatar" />
                                             <VBox class="aveAdultaMobileIdentity">
                                                 <Text
                                                     text="{= ${aves>nombre} || 'Sin nombre' }"

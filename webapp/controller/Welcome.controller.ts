@@ -302,7 +302,7 @@ export default class Welcome extends Controller {
       case "PROGRAMADA":
         return "Information";
       case "EN_PROCESO":
-        return "Success";
+        return "Warning";
       case "COMPLETADA":
         return "Success";
       case "CANCELADA":

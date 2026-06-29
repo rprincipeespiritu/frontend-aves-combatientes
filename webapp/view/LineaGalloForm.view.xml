@@ -21,48 +21,92 @@
 
         <content>
 
-            <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                <f:content>
-                    <Label text="Nombre de la línea"/>
-                    <Input
-                            value="{linea>/nombre}"
-                            placeholder="Ejemplo: Línea Trueno"/>
-
-                    <Label text="Descripción" class="sapUiSmallMarginTop"/>
-                    <TextArea
-                            value="{linea>/descripcion}"
-                            rows="3" width="auto"/>
-
-                    <Label text="Objetivo de la línea" class="sapUiSmallMarginTop"/>
-                    <TextArea
-                            value="{linea>/objetivo}"
-                            rows="4"
-                            placeholder="Ejemplo: fijar velocidad, casta, resistencia, fertilidad..."/>
-
-                    <Label text="Padre Fundador"/>
-                    <Input
-                            id="inputPadreLinea"
-                            placeholder="Seleccionar Padre Fundador"
-                            value="{linea>/aveFundadorPlaca}"
-                            description="{linea>/aveFundadorNombre}"
-                            showValueHelp="true"
-                            valueHelpOnly="true"
-                            valueHelpRequest="onValueHelpPadre"
-                            width="100%"/>
-
-                    <Label text="Madre Fundadora"/>
-                    <Input
-                            id="inputMadreLinea"
-                            placeholder="Seleccionar Madre Fundadora"
-                            value="{linea>/aveFundadoraPlaca}"
-                            description="{linea>/aveFundadoraNombre}"
-                            showValueHelp="true"
-                            valueHelpOnly="true"
-                            valueHelpRequest="onValueHelpMadre"
-                            width="100%"/>
-
-                </f:content>
-            </f:SimpleForm>
+            <f:Form editable="true" class="sapUiSmallMargin">
+              <f:layout>
+                <f:ResponsiveGridLayout
+                  labelSpanXL="3"
+                  labelSpanL="3"
+                  labelSpanM="4"
+                  labelSpanS="12"
+                  emptySpanXL="0"
+                  emptySpanL="0"
+                  emptySpanM="0"
+                  emptySpanS="0"
+                  columnsXL="2"
+                  columnsL="2"
+                  columnsM="1"
+                  singleContainerFullSize="false" />
+              </f:layout>
+              <f:formContainers>
+                <f:FormContainer>
+                  <f:formElements>
+                    <f:FormElement>
+                      <f:label>
+                        <Label text="Nombre de la línea"/>
+                      </f:label>
+                      <f:fields>
+                        <Input
+                                value="{linea>/nombre}"
+                                placeholder="Ejemplo: Línea Trueno"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement>
+                      <f:label>
+                        <Label text="Descripción" class="sapUiSmallMarginTop"/>
+                      </f:label>
+                      <f:fields>
+                        <TextArea
+                                value="{linea>/descripcion}"
+                                rows="3" width="auto"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement>
+                      <f:label>
+                        <Label text="Objetivo de la línea" class="sapUiSmallMarginTop"/>
+                      </f:label>
+                      <f:fields>
+                        <TextArea
+                                value="{linea>/objetivo}"
+                                rows="4"
+                                placeholder="Ejemplo: fijar velocidad, casta, resistencia, fertilidad..."/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement>
+                      <f:label>
+                        <Label text="Padre Fundador"/>
+                      </f:label>
+                      <f:fields>
+                        <Input
+                                id="inputPadreLinea"
+                                placeholder="Seleccionar Padre Fundador"
+                                value="{linea>/aveFundadorPlaca}"
+                                description="{linea>/aveFundadorNombre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpPadre"
+                                width="100%"/>
+                      </f:fields>
+                    </f:FormElement>
+                    <f:FormElement>
+                      <f:label>
+                        <Label text="Madre Fundadora"/>
+                      </f:label>
+                      <f:fields>
+                        <Input
+                                id="inputMadreLinea"
+                                placeholder="Seleccionar Madre Fundadora"
+                                value="{linea>/aveFundadoraPlaca}"
+                                description="{linea>/aveFundadoraNombre}"
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="onValueHelpMadre"
+                                width="100%"/>
+                      </f:fields>
+                    </f:FormElement>
+                  </f:formElements>
+                </f:FormContainer>
+              </f:formContainers>
+            </f:Form>
 
         </content>
         <footer>

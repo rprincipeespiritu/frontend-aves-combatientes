@@ -25,109 +25,201 @@
         <content>
             <VBox class="sapUiMediumMargin">
                 <Panel headerText="Datos del combate">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="3" columnsM="2">
-                        <f:content>
-
-                            <Label text="Tipo de Pelea" required="true" />
-                            <Select selectedKey="{combate>/form/tipoCombate}" width="100%" change=".onTipoCombateChange">
-                                <core:Item key="PRUEBA" text="Entrenamiento" />
-                                <core:Item key="OFICIAL" text="Oficial" />
-                            </Select>
-
-                            <Label text="¿Eres propietario de ambas aves?" required="true" />
-                            <Switch
-                                state="{combate>/form/ambosPropios}"
-                                customTextOn="Si"
-                                customTextOff="No"
-                                change=".onAmbosPropiosChange">
-                                <layoutData>
-                                    <FlexItemData growFactor="1" />
-                                </layoutData>
-                            </Switch>
-
-                            <Label text="¿Tienes los datos obligatorios de las aves?" required="true" />
-                            <Switch
-                                state="{combate>/form/tieneDatosObligatoriosAves}"
-                                customTextOn="Si"
-                                customTextOff="No"
-                                change=".onTieneDatosObligatoriosAvesChange">
-                                <layoutData>
-                                    <FlexItemData growFactor="1" />
-                                </layoutData>
-                            </Switch>
-
-                            <Label text="" visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
-                            <MessageStrip
-                                text="Puedes registrar el combate con placa o nombre manual. Si luego completas el ave, podras asociarla desde una edicion posterior."
-                                type="Information"
-                                showIcon="true"
-                                visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
-
-                            <Label text="Fecha" required="true" />
-                            <DatePicker
-                                value="{combate>/form/fecha}"
-                                valueFormat="yyyy-MM-dd"
-                                displayFormat="dd/MM/yyyy"
-                                width="100%" />
-
-                            <Label text="Evento" />
-                            <Input value="{combate>/form/evento}" placeholder="Torneo, entrenamiento, visita" />
-
-                            <Label text="Lugar" />
-                            <Input value="{combate>/form/lugar}" placeholder="Galpon, ciudad o recinto" />
-
-                            <Label text="Primer combatiente" required="true" />
-                            <Input
-                                value="{combate>/form/placaCombA}"
-                                placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del primer combatiente' }"
-                                showValueHelp="true"
-                                valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
-                                valueHelpRequest=".onValueHelpCombatienteA"
-                                liveChange=".onCombatienteAManualLiveChange"
-                                description="{combate>/form/nombreCombA}" />
-
-                            <Label text="Segundo combatiente" required="true" visible="{combate>/form/ambosPropios}" />
-                            <Input
-                                value="{combate>/form/placaCombB}"
-                                placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del segundo combatiente' }"
-                                showValueHelp="true"
-                                valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
-                                valueHelpRequest=".onValueHelpCombatienteB"
-                                liveChange=".onCombatienteBManualLiveChange"
-                                visible="{combate>/form/ambosPropios}"
-                                description="{combate>/form/nombreCombB}" />
-                            
-                            <Label text="Combatiente rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
-                            <Input value="{combate>/form/nombreOponente}" placeholder="Ingrese nombre o placa del rival externo" visible="{= !${combate>/form/ambosPropios}}" />
-
-                            <Label text="Propietario rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
-                            <Input value="{combate>/form/propietarioOponente}" placeholder="Ingrese nombre del propietario rival externo" visible="{= !${combate>/form/ambosPropios}}" />
-
-                            <Label text="Procedencia rival" visible="{= !${combate>/form/ambosPropios}}" />
-                            <Input value="{combate>/form/procedenciaOponente}" placeholder="Ingrese nombre del criadero rival externo" visible="{= !${combate>/form/ambosPropios}}" />
-
-                            <Label text="Resultado" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" />
-                            <Select selectedKey="{combate>/form/resultado}" width="100%" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" >
-                                <core:Item key="" text="Sin resultado" />
-                                <core:Item key="VICTORIA" text="Victoria" />
-                                <core:Item key="DERROTA" text="Derrota" />
-                                <core:Item key="EMPATE" text="Empate" />
-                                <core:Item key="DESCALIFICADO" text="Descalificado" />
-                            </Select>
-                            
-                            <!-- <Label text="Premio" />
-                            <Input value="{combate>/form/premioDinero}" type="Number" placeholder="Monto en PEN" /> -->
-
-                            <!-- <Label text="Metodo" />
-                            <Input value="{combate>/form/metodoVictoria}" placeholder="Puntos, abandono, decision" /> -->
-
-                            <Label text="Lesiones" />
-                            <Input value="{combate>/form/lesiones}" placeholder="Sin lesiones, leve, etc." />
-
-                            <Label text="Observaciones" />
-                            <TextArea value="{combate>/form/observaciones}" rows="3" placeholder="Notas del combate" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="3"
+                          columnsL="3"
+                          columnsM="2"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Tipo de Pelea" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Select selectedKey="{combate>/form/tipoCombate}" width="100%" change=".onTipoCombateChange">
+                                    <core:Item key="PRUEBA" text="Entrenamiento" />
+                                    <core:Item key="OFICIAL" text="Oficial" />
+                                </Select>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="¿Eres propietario de ambas aves?" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Switch
+                                    state="{combate>/form/ambosPropios}"
+                                    customTextOn="Si"
+                                    customTextOff="No"
+                                    change=".onAmbosPropiosChange">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                </Switch>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="¿Tienes los datos obligatorios de las aves?" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Switch
+                                    state="{combate>/form/tieneDatosObligatoriosAves}"
+                                    customTextOn="Si"
+                                    customTextOff="No"
+                                    change=".onTieneDatosObligatoriosAvesChange">
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" />
+                                    </layoutData>
+                                </Switch>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${combate>/form/tieneDatosObligatoriosAves}}">
+                              <f:label>
+                                <Label text="" visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
+                              </f:label>
+                              <f:fields>
+                                <MessageStrip
+                                    text="Puedes registrar el combate con placa o nombre manual. Si luego completas el ave, podras asociarla desde una edicion posterior."
+                                    type="Information"
+                                    showIcon="true"
+                                    visible="{= !${combate>/form/tieneDatosObligatoriosAves}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Fecha" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <DatePicker
+                                    value="{combate>/form/fecha}"
+                                    valueFormat="yyyy-MM-dd"
+                                    displayFormat="dd/MM/yyyy"
+                                    width="100%" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Evento" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/evento}" placeholder="Torneo, entrenamiento, visita" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Lugar" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/lugar}" placeholder="Galpon, ciudad o recinto" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Primer combatiente" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{combate>/form/placaCombA}"
+                                    placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del primer combatiente' }"
+                                    showValueHelp="true"
+                                    valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
+                                    valueHelpRequest=".onValueHelpCombatienteA"
+                                    liveChange=".onCombatienteAManualLiveChange"
+                                    description="{combate>/form/nombreCombA}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{combate>/form/ambosPropios}">
+                              <f:label>
+                                <Label text="Segundo combatiente" required="true" visible="{combate>/form/ambosPropios}" />
+                              </f:label>
+                              <f:fields>
+                                <Input
+                                    value="{combate>/form/placaCombB}"
+                                    placeholder="{= ${combate>/form/tieneDatosObligatoriosAves} ? 'Seleccionar ave de tu galpon o criadero' : 'Ingrese placa o nombre del segundo combatiente' }"
+                                    showValueHelp="true"
+                                    valueHelpOnly="{combate>/form/tieneDatosObligatoriosAves}"
+                                    valueHelpRequest=".onValueHelpCombatienteB"
+                                    liveChange=".onCombatienteBManualLiveChange"
+                                    visible="{combate>/form/ambosPropios}"
+                                    description="{combate>/form/nombreCombB}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${combate>/form/ambosPropios}}">
+                              <f:label>
+                                <Label text="Combatiente rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/nombreOponente}" placeholder="Ingrese nombre o placa del rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${combate>/form/ambosPropios}}">
+                              <f:label>
+                                <Label text="Propietario rival" required="{combate>/form/tieneDatosObligatoriosAves}" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/propietarioOponente}" placeholder="Ingrese nombre del propietario rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${combate>/form/ambosPropios}}">
+                              <f:label>
+                                <Label text="Procedencia rival" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/procedenciaOponente}" placeholder="Ingrese nombre del criadero rival externo" visible="{= !${combate>/form/ambosPropios}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}">
+                              <f:label>
+                                <Label text="Resultado" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" />
+                              </f:label>
+                              <f:fields>
+                                <Select selectedKey="{combate>/form/resultado}" width="100%" visible="{= !${combate>/form/ambosPropios} &amp;&amp; ${combate>/form/tipoCombate} === 'OFICIAL'}" >
+                                    <core:Item key="" text="Sin resultado" />
+                                    <core:Item key="VICTORIA" text="Victoria" />
+                                    <core:Item key="DERROTA" text="Derrota" />
+                                    <core:Item key="EMPATE" text="Empate" />
+                                    <core:Item key="DESCALIFICADO" text="Descalificado" />
+                                </Select>
+                                <!-- <Label text="Premio" />
+                                <Input value="{combate>/form/premioDinero}" type="Number" placeholder="Monto en PEN" /> -->
+                                <!-- <Label text="Metodo" />
+                                <Input value="{combate>/form/metodoVictoria}" placeholder="Puntos, abandono, decision" /> -->
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Lesiones" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{combate>/form/lesiones}" placeholder="Sin lesiones, leve, etc." />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Observaciones" />
+                              </f:label>
+                              <f:fields>
+                                <TextArea value="{combate>/form/observaciones}" rows="3" placeholder="Notas del combate" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Video de la pelea" class="sapUiMediumMarginTop"

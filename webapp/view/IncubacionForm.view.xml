@@ -19,53 +19,101 @@
 
         <content>
             <VBox class="sapUiMediumMargin" busy="{view>/busy}">
-                <f:SimpleForm editable="true" layout="ResponsiveGridLayout">
-                    <f:content>
-                        <Label text="Código" />
-                        <Text text="{view>/form/codigo}" />
-
-                        <Label text="Fecha Incubación" required="true" />
-                        <DateTimePicker id="DTP1" change="onfechaIncubacionChange"
-                            value="{ path:'view>/form/fechaIncubacion', type:'sap.ui.model.type.DateTime', 'formatOptions': { 'pattern': 'dd/MM/yyyy HH:mm:ss' } }"
-                            editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
-                            class="sapUiSmallMarginBottom" />
-                        <!-- <DatePicker value="{view>/form/fechaIncubacion}"
-                        valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueHelpOnly="true" /> -->
-
-                        <Label text="Fecha Pre Nacimiento" />
-                        <DateTimePicker id="DTP2" editable="false"
-                            value="{ path:'view>/form/fechaPreNacimiento', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }"
-                            class="sapUiSmallMarginBottom" />
-                        <!-- <DatePicker value="{view>/form/fechaPreNacimiento}"
-                        valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" /> -->
-
-                        <Label text="Fecha Eclosión Estimada" />
-                        <DateTimePicker id="DTP3" editable="false"
-                            value="{ path:'view>/form/fechaEclosion', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }"
-                            class="sapUiSmallMarginBottom" />
-                        <!-- <DatePicker value="{view>/form/fechaEclosion}" valueFormat="yyyy-MM-dd"
-                        displayFormat="dd/MM/yyyy" /> -->
-
-                        <Label text="Estado" />
-                        <Text
-                            text="{
-                                    path: 'view>/form/estado',
-                                    formatter: '.formatearEstado'
-                                }" />
-                        <!-- <Select selectedKey="{view>/form/estado}" editable="false">
-                            <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="Programada" />
-                            <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="En proceso" />
-                            <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="Finalizada" />
-                            <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="Cancelada" />
-                        </Select> -->
-
-                        <Label text="Observación" />
-                        <TextArea value="{view>/form/observaciones}" rows="4"
-                            editable="{= ${view>/form/estado} !== 'COMPLETADA' &amp;&amp;  ${view>/form/estado} !== 'CANCELADA'}" />
-
-
-                    </f:content>
-                </f:SimpleForm>
+                <f:Form editable="true" class="sapUiSmallMargin">
+                  <f:layout>
+                    <f:ResponsiveGridLayout
+                      labelSpanXL="3"
+                      labelSpanL="3"
+                      labelSpanM="4"
+                      labelSpanS="12"
+                      emptySpanXL="0"
+                      emptySpanL="0"
+                      emptySpanM="0"
+                      emptySpanS="0"
+                      columnsXL="2"
+                      columnsL="2"
+                      columnsM="1"
+                      singleContainerFullSize="false" />
+                  </f:layout>
+                  <f:formContainers>
+                    <f:FormContainer>
+                      <f:formElements>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Código" />
+                          </f:label>
+                          <f:fields>
+                            <Text text="{view>/form/codigo}" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Incubación" required="true" />
+                          </f:label>
+                          <f:fields>
+                            <DateTimePicker id="DTP1" change="onfechaIncubacionChange"
+                                value="{ path:'view>/form/fechaIncubacion', type:'sap.ui.model.type.DateTime', 'formatOptions': { 'pattern': 'dd/MM/yyyy HH:mm:ss' } }"
+                                editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                class="sapUiSmallMarginBottom" />
+                            <!-- <DatePicker value="{view>/form/fechaIncubacion}"
+                            valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueHelpOnly="true" /> -->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Pre Nacimiento" />
+                          </f:label>
+                          <f:fields>
+                            <DateTimePicker id="DTP2" editable="false"
+                                value="{ path:'view>/form/fechaPreNacimiento', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }"
+                                class="sapUiSmallMarginBottom" />
+                            <!-- <DatePicker value="{view>/form/fechaPreNacimiento}"
+                            valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" /> -->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha Eclosión Estimada" />
+                          </f:label>
+                          <f:fields>
+                            <DateTimePicker id="DTP3" editable="false"
+                                value="{ path:'view>/form/fechaEclosion', type:'sap.ui.model.type.DateTime', formatOptions: { 'pattern': 'dd/MM/yyyy HH:mm:ss' }  }"
+                                class="sapUiSmallMarginBottom" />
+                            <!-- <DatePicker value="{view>/form/fechaEclosion}" valueFormat="yyyy-MM-dd"
+                            displayFormat="dd/MM/yyyy" /> -->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Estado" />
+                          </f:label>
+                          <f:fields>
+                            <Text
+                                text="{
+                                        path: 'view>/form/estado',
+                                        formatter: '.formatearEstado'
+                                    }" />
+                            <!-- <Select selectedKey="{view>/form/estado}" editable="false">
+                                <core:Item xmlns:core="sap.ui.core" key="PROGRAMADA" text="Programada" />
+                                <core:Item xmlns:core="sap.ui.core" key="EN_PROCESO" text="En proceso" />
+                                <core:Item xmlns:core="sap.ui.core" key="FINALIZADA" text="Finalizada" />
+                                <core:Item xmlns:core="sap.ui.core" key="CANCELADA" text="Cancelada" />
+                            </Select> -->
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Observación" />
+                          </f:label>
+                          <f:fields>
+                            <TextArea value="{view>/form/observaciones}" rows="4"
+                                editable="{= ${view>/form/estado} !== 'COMPLETADA' &amp;&amp;  ${view>/form/estado} !== 'CANCELADA'}" />
+                          </f:fields>
+                        </f:FormElement>
+                      </f:formElements>
+                    </f:FormContainer>
+                  </f:formContainers>
+                </f:Form>
                 <Label text="Detalle" />
                 <Table id="tblIncubacionesDetalle" items="{view>/form/detalles}" busy="{view>/busy}">
                     <headerToolbar>

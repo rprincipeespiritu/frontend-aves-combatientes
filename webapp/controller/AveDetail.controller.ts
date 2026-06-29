@@ -1346,7 +1346,7 @@ export default class AveDetail extends Controller {
     public formatearEstado(estado: EstadoAve): string {
         const estados = {
             [EstadoAve.Activo]: "Activo",
-            [EstadoAve.Inactivo]: "Inactivo",
+            [EstadoAve.Fallecido]: "Fallecido",
             [EstadoAve.Entrenamiento]: "En Entrenamiento",
             [EstadoAve.Competencia]: "En Competencia",
             [EstadoAve.Retirado]: "Retirado",
