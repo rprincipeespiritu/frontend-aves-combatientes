@@ -34,36 +34,77 @@
                 </HBox>
 
                 <Panel headerText="Datos personales">
-                    <f:SimpleForm
-                        editable="true"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="3"
-                        labelSpanL="3"
-                        labelSpanM="4"
-                        labelSpanS="12"
-                        columnsXL="2"
-                        columnsL="2"
-                        columnsM="1">
-                        <f:content>
-                            <Label text="Usuario" />
-                            <Input value="{account>/perfil/username}" maxLength="50" />
-
-                            <Label text="Email" required="true" />
-                            <Input value="{account>/perfil/email}" type="Email" maxLength="100" />
-
-                            <Label text="Nombre" required="true" />
-                            <Input value="{account>/perfil/nombre}" maxLength="100" />
-
-                            <Label text="Apellido" required="true" />
-                            <Input value="{account>/perfil/apellido}" maxLength="200" />
-
-                            <Label text="Telefono" />
-                            <Input value="{account>/perfil/telefono}" type="Tel" maxLength="20" />
-
-                            <Label text="Direccion" />
-                            <TextArea value="{account>/perfil/direccion}" rows="3" growing="true" maxLength="300" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Usuario" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/perfil/username}" maxLength="50" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Email" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/perfil/email}" type="Email" maxLength="100" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Nombre" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/perfil/nombre}" maxLength="100" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Apellido" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/perfil/apellido}" maxLength="200" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Telefono" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/perfil/telefono}" type="Tel" maxLength="20" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Direccion" />
+                              </f:label>
+                              <f:fields>
+                                <TextArea value="{account>/perfil/direccion}" rows="3" growing="true" maxLength="300" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                     <Toolbar>
                         <ToolbarSpacer />
                         <Button text="Guardar cambios" icon="sap-icon://save" type="Emphasized" press=".onGuardarPerfil" />
@@ -71,27 +112,53 @@
                 </Panel>
 
                 <Panel headerText="Seguridad" class="sapUiMediumMarginTop">
-                    <f:SimpleForm
-                        editable="true"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="3"
-                        labelSpanL="3"
-                        labelSpanM="4"
-                        labelSpanS="12"
-                        columnsXL="2"
-                        columnsL="2"
-                        columnsM="1">
-                        <f:content>
-                            <Label text="Contrasena actual" required="true" />
-                            <Input value="{account>/password/actual}" type="Password" />
-
-                            <Label text="Nueva contrasena" required="true" />
-                            <Input value="{account>/password/nueva}" type="Password" />
-
-                            <Label text="Confirmar contrasena" required="true" />
-                            <Input value="{account>/password/confirmacion}" type="Password" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Contrasena actual" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/password/actual}" type="Password" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Nueva contrasena" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/password/nueva}" type="Password" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Confirmar contrasena" required="true" />
+                              </f:label>
+                              <f:fields>
+                                <Input value="{account>/password/confirmacion}" type="Password" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                     <Toolbar>
                         <ToolbarSpacer />
                         <Button text="Actualizar contrasena" icon="sap-icon://key" type="Emphasized" press=".onCambiarPassword" />

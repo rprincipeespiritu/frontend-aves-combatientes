@@ -1,202 +1,413 @@
 <mvc:View controllerName="com.rprincipees.registroavescombate.controller.AveUpdate"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
-    xmlns:core="sap.ui.core"
-    xmlns:form="sap.f">
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:core="sap.ui.core"
+  xmlns:form="sap.f">
 
-    <Page title="Actualizar Ave" showNavButton="true" navButtonPress="onNavBack">
-        <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
-            <form:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
-        </headerContent>
-        <content>
-            <VBox class="sapUiMediumMargin">
+  <Page title="Actualizar Ave" showNavButton="true" navButtonPress="onNavBack">
+    <headerContent>
+      <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+      <form:Avatar
+        id="userAvatar"
+        src="{user>/foto}"
+        displaySize="XS"
+        press="onUserMenuPress"
+        class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+    </headerContent>
+    <content>
+      <VBox class="sapUiMediumMargin">
 
-                <!-- Identificación -->
-                <Panel headerText="Identificación" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Placa" required="true"/>
-                            <Input id="placa" value="{update>/placa}" placeholder="Ej: GAL-001" valueState="{update>/placaState}" valueStateText="La placa es requerida"/>
+        <!-- Identificación -->
+        <Panel headerText="Identificación" expandable="false">
+          <f:Form editable="true" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Placa" required="true" />
+                    </f:label>
+                    <f:fields>
+                      <Input id="placa" value="{update>/placa}" placeholder="Ej: GAL-001"
+                        valueState="{update>/placaState}" valueStateText="La placa es requerida" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Nombre" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/nombre}" placeholder="Nombre del ave" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Apodo" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/apodo}" placeholder="Apodo" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Género" required="true" />
+                    </f:label>
+                    <f:fields>
+                      <Select selectedKey="{update>/sexo}">
+                        <core:Item key="M" text="Macho" />
+                        <core:Item key="H" text="Hembra" />
+                      </Select>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Cría" />
+                    </f:label>
+                    <f:fields>
+                      <CheckBox selected="{update>/cria}" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Estado" />
+                    </f:label>
+                    <f:fields>
+                      <Select selectedKey="{update>/estado}" change=".onEstadoChange">
+                        <core:Item key="ACTIVO" text="Activo" />
+                        <core:Item key="VENDIDO" text="Vendido" />
+                        <core:Item key="PRESTADO" text="Prestado" />
+                        <core:Item key="RETIRADO" text="Retirado" />
+                        <core:Item key="FALLECIDO" text="Fallecido" />
+                      </Select>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement visible="{= ${update>/estado} === 'FALLECIDO' }">
+                    <f:label>
+                      <Label text="Fecha de fallecimiento" required="true"
+                        visible="{= ${update>/estado} === 'FALLECIDO' }" />
+                    </f:label>
+                    <f:fields>
+                      <DatePicker value="{update>/fechaFallecimiento}"
+                        valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
+                        placeholder="Seleccionar fecha"
+                        valueState="{update>/fechaFallecimientoState}"
+                        valueStateText="La fecha de fallecimiento es requerida"
+                        visible="{= ${update>/estado} === 'FALLECIDO' }" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Ubicación" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/ubicacion}" placeholder="Ubicación actual" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Padrote" />
+                    </f:label>
+                    <f:fields>
+                      <CheckBox selected="{update>/padrote}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Calificación" />
+                    </f:label>
+                    <f:fields>
+                      <Select selectedKey="{update>/categoria}">
+                        <core:Item key="BUENO" text="Bueno" />
+                        <core:Item key="EXCELENTE" text="Excelente" />
+                        <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
+                      </Select>
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                            <Label text="Nombre"/>
-                            <Input value="{update>/nombre}" placeholder="Nombre del ave"/>
+        <!-- Características físicas -->
+        <Panel headerText="Características" expandable="true" expanded="true"
+          class="sapUiSmallMarginTop">
+          <f:Form editable="true" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Raza" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/raza}" placeholder="Raza" />
+                      <!-- <Select id="razaSelect" selectedKey="{update>/raza_ID}"
+                      items="{razas>/}">
+                                    <core:Item key="{razas>ID}" text="{razas>nombre}"/>
+                                </Select> -->
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Color" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/color}" placeholder="Color" />
+                      <!-- <Select id="colorSelect" selectedKey="{update>/color_ID}"
+                      items="{colores>/}">
+                                    <core:Item key="{colores>ID}" text="{colores>nombre}"/>
+                                </Select> -->
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Tipo Ave" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/tipoAve}" placeholder="Tipo Ave" />
+                      <!-- <Select id="tipoAveSelect" selectedKey="{update>/tipoAve_ID}"
+                      items="{tiposAve>/}">
+                                    <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
+                                </Select> -->
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Línea principal" />
+                    </f:label>
+                    <f:fields>
+                      <ComboBox
+                        selectedKey="{update>/linea_ID}"
+                        placeholder="Selecciona una línea"
+                        showClearIcon="true"
+                        items="{lineas>/}">
+                        <core:Item key="{lineas>ID}" text="{lineas>nombre}" />
+                      </ComboBox>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Fecha Nacimiento" required="true" />
+                    </f:label>
+                    <f:fields>
+                      <DatePicker value="{update>/fechaNacimiento}" valueFormat="yyyy-MM-dd"
+                        displayFormat="dd/MM/yyyy" valueState="{update>/fecNacState}"
+                        valueStateText="La fecha de nacimiento es requerida" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Fecha Compra" />
+                    </f:label>
+                    <f:fields>
+                      <DatePicker value="{update>/fechaCompra}" valueFormat="yyyy-MM-dd"
+                        displayFormat="dd/MM/yyyy" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                            <Label text="Apodo"/>
-                            <Input value="{update>/apodo}" placeholder="Apodo"/>
+        <!-- Genealogía -->
+        <Panel headerText="Genealogía" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+          <f:Form editable="true" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Padre" />
+                    </f:label>
+                    <f:fields>
+                      <HBox width="100%" alignItems="Center" renderType="Bare">
+                        <Input
+                          id="inputPadre"
+                          placeholder="Seleccionar Padre"
+                          value="{update>/padrePlaca}"
+                          description="{update>/padreNombre}"
+                          showValueHelp="true"
+                          valueHelpOnly="true"
+                          valueHelpRequest="onValueHelpPadre"
+                          width="100%" />
+                        <Button
+                          icon="sap-icon://decline"
+                          type="Transparent"
+                          tooltip="Quitar padre"
+                          visible="{= !!${update>/padrePlaca} }"
+                          press="onQuitarPadre"
+                          class="sapUiTinyMarginBegin" />
+                      </HBox>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Madre" />
+                    </f:label>
+                    <f:fields>
+                      <HBox width="100%" alignItems="Center" renderType="Bare">
+                        <Input
+                          id="inputMadre"
+                          placeholder="Seleccionar Madre"
+                          value="{update>/madrePlaca}"
+                          description="{update>/madreNombre}"
+                          showValueHelp="true"
+                          valueHelpOnly="true"
+                          valueHelpRequest="onValueHelpMadre"
+                          width="100%" />
+                        <Button
+                          icon="sap-icon://decline"
+                          type="Transparent"
+                          tooltip="Quitar madre"
+                          visible="{= !!${update>/madrePlaca} }"
+                          press="onQuitarMadre"
+                          class="sapUiTinyMarginBegin" />
+                      </HBox>
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Lugar de Procedencia" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/procedencia}" placeholder="Lugar de procedencia" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Criador de Procedencia" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/criador}" placeholder="Nombre del criador" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                            <Label text="Género" required="true"/>
-                            <Select selectedKey="{update>/sexo}">
-                                <core:Item key="M" text="Macho"/>
-                                <core:Item key="H" text="Hembra"/>
-                            </Select>
+        <!-- Información financiera -->
+        <Panel headerText="Información Financiera" expandable="true" expanded="true"
+          class="sapUiSmallMarginTop">
+          <f:Form editable="true" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Valor Compra (S/.)" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/valorCompra}" type="Number" placeholder="0.00" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Valor Actual (S/.)" />
+                    </f:label>
+                    <f:fields>
+                      <Input value="{update>/valorActual}" type="Number" placeholder="0.00" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                            <Label text="Cría"/>
-                            <CheckBox selected="{update>/cria}"/>
+        <!-- Observaciones -->
+        <Panel headerText="Observaciones" expandable="true" expanded="true"
+          class="sapUiSmallMarginTop">
+          <VBox class="sapUiSmallMargin">
+            <TextArea value="{update>/observaciones}" rows="4" width="100%"
+              placeholder="Observaciones adicionales..." />
+          </VBox>
+        </Panel>
 
-                            <Label text="Estado"/>
-                            <Select selectedKey="{update>/estado}" change=".onEstadoChange">
-                                <core:Item key="ACTIVO" text="Activo"/>
-                                <core:Item key="VENDIDO" text="Vendido"/>
-                                <core:Item key="PRESTADO" text="Prestado"/>
-                                <core:Item key="RETIRADO" text="Retirado"/>
-                                <core:Item key="FALLECIDO" text="Fallecido"/>
-                            </Select>
-
-                            <Label text="Fecha de fallecimiento" required="true"
-                                visible="{= ${update>/estado} === 'FALLECIDO' }"/>
-                            <DatePicker value="{update>/fechaFallecimiento}"
-                                valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
-                                placeholder="Seleccionar fecha"
-                                valueState="{update>/fechaFallecimientoState}"
-                                valueStateText="La fecha de fallecimiento es requerida"
-                                visible="{= ${update>/estado} === 'FALLECIDO' }"/>
-
-                            <Label text="Ubicación"/>
-                            <Input value="{update>/ubicacion}" placeholder="Ubicación actual"/>
-
-                            <Label text="Padrote"/>
-                            <CheckBox selected="{update>/padrote}"/>
-
-                            <Label text="Calificación"/>
-                            <Select selectedKey="{update>/categoria}">
-                                <core:Item key="BUENO" text="Bueno"/>
-                                <core:Item key="EXCELENTE" text="Excelente"/>
-                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
-                            </Select>
-
-                        </f:content>
-                    </f:SimpleForm>
-                </Panel>
-
-                <!-- Características físicas -->
-                <Panel headerText="Características" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Raza"/>
-                            <Input value="{update>/raza}" placeholder="Raza"/>
-                            <!-- <Select id="razaSelect" selectedKey="{update>/raza_ID}" items="{razas>/}">
-                                <core:Item key="{razas>ID}" text="{razas>nombre}"/>
-                            </Select> -->
-
-                            <Label text="Color"/>
-                            <Input value="{update>/color}" placeholder="Color"/>
-                            <!-- <Select id="colorSelect" selectedKey="{update>/color_ID}" items="{colores>/}">
-                                <core:Item key="{colores>ID}" text="{colores>nombre}"/>
-                            </Select> -->
-
-                            <Label text="Tipo Ave"/>
-                            <Input value="{update>/tipoAve}" placeholder="Tipo Ave"/>
-                            <!-- <Select id="tipoAveSelect" selectedKey="{update>/tipoAve_ID}" items="{tiposAve>/}">
-                                <core:Item key="{tiposAve>ID}" text="{tiposAve>nombre}"/>
-                            </Select> -->
-
-                            <Label text="Línea principal"/>
-                            <ComboBox
-                                selectedKey="{update>/linea_ID}"
-                                placeholder="Selecciona una línea"
-                                showClearIcon="true"
-                                items="{lineas>/}">
-                                <core:Item key="{lineas>ID}" text="{lineas>nombre}"/>
-                            </ComboBox>
-
-                            <Label text="Fecha Nacimiento" required="true"/>
-                            <DatePicker value="{update>/fechaNacimiento}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueState="{update>/fecNacState}"
-                            valueStateText="La fecha de nacimiento es requerida"/>
-
-                            <Label text="Fecha Compra"/>
-                            <DatePicker value="{update>/fechaCompra}" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
-                        </f:content>
-                    </f:SimpleForm>
-                </Panel>
-
-                <!-- Genealogía -->
-                <Panel headerText="Genealogía" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Padre"/>
-                            <HBox width="100%" alignItems="Center" renderType="Bare">
-                                <Input
-                                    id="inputPadre"
-                                    placeholder="Seleccionar Padre"
-                                    value="{update>/padrePlaca}"
-                                    description="{update>/padreNombre}"
-                                    showValueHelp="true"
-                                    valueHelpOnly="true"
-                                    valueHelpRequest="onValueHelpPadre"
-                                    width="100%"/>
-                                <Button
-                                    icon="sap-icon://decline"
-                                    type="Transparent"
-                                    tooltip="Quitar padre"
-                                    visible="{= !!${update>/padrePlaca} }"
-                                    press="onQuitarPadre"
-                                    class="sapUiTinyMarginBegin"/>
-                            </HBox>
-
-                            <Label text="Madre"/>
-                            <HBox width="100%" alignItems="Center" renderType="Bare">
-                                <Input
-                                    id="inputMadre"
-                                    placeholder="Seleccionar Madre"
-                                    value="{update>/madrePlaca}"
-                                    description="{update>/madreNombre}"
-                                    showValueHelp="true"
-                                    valueHelpOnly="true"
-                                    valueHelpRequest="onValueHelpMadre"
-                                    width="100%"/>
-                                <Button
-                                    icon="sap-icon://decline"
-                                    type="Transparent"
-                                    tooltip="Quitar madre"
-                                    visible="{= !!${update>/madrePlaca} }"
-                                    press="onQuitarMadre"
-                                    class="sapUiTinyMarginBegin"/>
-                            </HBox>
-
-                            <Label text="Lugar de Procedencia"/>
-                            <Input value="{update>/procedencia}" placeholder="Lugar de procedencia"/>
-
-                            <Label text="Criador de Procedencia"/>
-                            <Input value="{update>/criador}" placeholder="Nombre del criador"/>
-                        </f:content>
-                    </f:SimpleForm>
-                </Panel>
-
-                <!-- Información financiera -->
-                <Panel headerText="Información Financiera" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Valor Compra (S/.)"/>
-                            <Input value="{update>/valorCompra}" type="Number" placeholder="0.00"/>
-
-                            <Label text="Valor Actual (S/.)"/>
-                            <Input value="{update>/valorActual}" type="Number" placeholder="0.00"/>
-                        </f:content>
-                    </f:SimpleForm>
-                </Panel>
-
-                <!-- Observaciones -->
-                <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <VBox class="sapUiSmallMargin">
-                        <TextArea value="{update>/observaciones}" rows="4" width="100%" placeholder="Observaciones adicionales..."/>
-                    </VBox>
-                </Panel>
-
-            </VBox>
-        </content>
-        <footer>
-            <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="Guardar" type="Emphasized" press="onGuardar"/>
-                <Button text="Cancelar" press="onNavBack"/>
-            </Toolbar>
-        </footer>
-    </Page>
+      </VBox>
+    </content>
+    <footer>
+      <Toolbar>
+        <ToolbarSpacer />
+        <Button text="Guardar" type="Emphasized" press="onGuardar" />
+        <Button text="Cancelar" press="onNavBack" />
+      </Toolbar>
+    </footer>
+  </Page>
 </mvc:View>

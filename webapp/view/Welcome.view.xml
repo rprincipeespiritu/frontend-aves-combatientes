@@ -58,7 +58,7 @@
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Linaje de Aves"
+                        <GenericTile class="sapUiSmallMarginTop dashboardPhotoIconTile" header="Linaje de Aves"
                             subheader="Registradas" press="onNavLineasGallosList"
                             visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
@@ -67,7 +67,7 @@
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Planes de Cruce"
+                        <GenericTile class="sapUiSmallMarginTop dashboardPhotoIconTile" header="Planes de Cruce"
                             subheader="Ver historial" press=".onVerPlanesCruce"
                             visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>

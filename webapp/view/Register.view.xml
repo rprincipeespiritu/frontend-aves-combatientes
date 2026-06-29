@@ -18,41 +18,127 @@
                             <VBox class="sapUiMediumMargin">
                                 <MessageStrip id="registerErrorMessage" text="" type="Error" visible="false" class="sapUiMediumMarginBottom"/>
 
-                                <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
-                                    <f:content>
-                                        <Title text="Información Básica"/>
+                                <f:Form editable="true" class="sapUiSmallMargin">
+                                  <f:layout>
+                                    <f:ResponsiveGridLayout
+                                      labelSpanXL="3"
+                                      labelSpanL="3"
+                                      labelSpanM="4"
+                                      labelSpanS="12"
+                                      emptySpanXL="0"
+                                      emptySpanL="0"
+                                      emptySpanM="0"
+                                      emptySpanS="0"
+                                      columnsXL="2"
+                                      columnsL="2"
+                                      columnsM="1"
+                                      singleContainerFullSize="false" />
+                                  </f:layout>
+                                  <f:formContainers>
+                                    <f:FormContainer>
+                                      <f:formElements>
+                                        <f:FormElement>
+                                          <f:fields>
+                                            <Title text="Información Básica"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Nombre de Usuario" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="usernameInput" placeholder="Usuario único" value="{/username}" valueState="{/usernameState}" valueStateText="{/usernameStateText}" change="onUsernameChange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Email" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="emailInput" type="Email" placeholder="usuario@ejemplo.com" value="{/email}" valueState="{/emailState}" valueStateText="{/emailStateText}" change="onEmailChange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Contraseña" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="passwordInput" type="Password" placeholder="Mínimo 8 caracteres" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" change="onPasswordChange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Confirmar Contraseña" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="confirmPasswordInput" type="Password" placeholder="Repite la contraseña" value="{/confirmPassword}" valueState="{/confirmPasswordState}" valueStateText="{/confirmPasswordStateText}" change="onConfirmPasswordChange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                      </f:formElements>
+                                    </f:FormContainer>
+                                  </f:formContainers>
+                                </f:Form>
 
-                                        <Label text="Nombre de Usuario" required="true"/>
-                                        <Input id="usernameInput" placeholder="Usuario único" value="{/username}" valueState="{/usernameState}" valueStateText="{/usernameStateText}" change="onUsernameChange"/>
-
-                                        <Label text="Email" required="true"/>
-                                        <Input id="emailInput" type="Email" placeholder="usuario@ejemplo.com" value="{/email}" valueState="{/emailState}" valueStateText="{/emailStateText}" change="onEmailChange"/>
-
-                                        <Label text="Contraseña" required="true"/>
-                                        <Input id="passwordInput" type="Password" placeholder="Mínimo 8 caracteres" value="{/password}" valueState="{/passwordState}" valueStateText="{/passwordStateText}" change="onPasswordChange"/>
-
-                                        <Label text="Confirmar Contraseña" required="true"/>
-                                        <Input id="confirmPasswordInput" type="Password" placeholder="Repite la contraseña" value="{/confirmPassword}" valueState="{/confirmPasswordState}" valueStateText="{/confirmPasswordStateText}" change="onConfirmPasswordChange"/>
-                                    </f:content>
-                                </f:SimpleForm>
-
-                                <f:SimpleForm layout="ResponsiveGridLayout" editable="true" columnsXL="2" columnsL="2" columnsM="1">
-                                    <f:content>
-                                        <Title text="Información Personal"/>
-
-                                        <Label text="Nombre" required="true"/>
-                                        <Input id="nombreInput" placeholder="Tu nombre" value="{/nombre}" valueState="{/nombreState}" valueStateText="{/nombreStateText}" change="onConfirmNombrehange"/>
-
-                                        <Label text="Apellido" required="true"/>
-                                        <Input id="apellidoInput" placeholder="Tu apellido" value="{/apellido}" valueState="{/apellidoState}" valueStateText="{/apellidoStateText}" change="onConfirmApellidoChange"/>
-
-                                        <Label text="Teléfono"/>
-                                        <Input id="telefonoInput" type="Tel" placeholder="+51 999 999 999" value="{/telefono}"/>
-
-                                        <Label text="Dirección"/>
-                                        <TextArea id="direccionInput" placeholder="Tu dirección completa" value="{/direccion}" rows="3"/>
-                                    </f:content>
-                                </f:SimpleForm>
+                                <f:Form editable="true" class="sapUiSmallMargin">
+                                  <f:layout>
+                                    <f:ResponsiveGridLayout
+                                      labelSpanXL="3"
+                                      labelSpanL="3"
+                                      labelSpanM="4"
+                                      labelSpanS="12"
+                                      emptySpanXL="0"
+                                      emptySpanL="0"
+                                      emptySpanM="0"
+                                      emptySpanS="0"
+                                      columnsXL="2"
+                                      columnsL="2"
+                                      columnsM="1"
+                                      singleContainerFullSize="false" />
+                                  </f:layout>
+                                  <f:formContainers>
+                                    <f:FormContainer>
+                                      <f:formElements>
+                                        <f:FormElement>
+                                          <f:fields>
+                                            <Title text="Información Personal"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Nombre" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="nombreInput" placeholder="Tu nombre" value="{/nombre}" valueState="{/nombreState}" valueStateText="{/nombreStateText}" change="onConfirmNombrehange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Apellido" required="true"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="apellidoInput" placeholder="Tu apellido" value="{/apellido}" valueState="{/apellidoState}" valueStateText="{/apellidoStateText}" change="onConfirmApellidoChange"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Teléfono"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <Input id="telefonoInput" type="Tel" placeholder="+51 999 999 999" value="{/telefono}"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                        <f:FormElement>
+                                          <f:label>
+                                            <Label text="Dirección"/>
+                                          </f:label>
+                                          <f:fields>
+                                            <TextArea id="direccionInput" placeholder="Tu dirección completa" value="{/direccion}" rows="3"/>
+                                          </f:fields>
+                                        </f:FormElement>
+                                      </f:formElements>
+                                    </f:FormContainer>
+                                  </f:formContainers>
+                                </f:Form>
 
                                 <CheckBox id="termsCheckBox" text="Acepto los términos y condiciones" selected="{/acceptTerms}" class="sapUiMediumMarginTop" select="onConfirmTermsCheckBoxChange"/>
 

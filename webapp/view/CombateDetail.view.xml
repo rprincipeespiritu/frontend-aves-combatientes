@@ -39,44 +39,129 @@
                 </ObjectHeader>
 
                 <Panel headerText="Combatientes" class="sapUiMediumMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Primer combatiente" />
-                            <Link text="{path: 'detalle>/combate', formatter: '.formatearCombatienteA'}" press=".onVerCombatienteA" visible="{= !!${detalle>/combate/ave_ID}}" />
-                            <Text text="{path: 'detalle>/combate', formatter: '.formatearCombatienteA'}" visible="{= !${detalle>/combate/ave_ID}}" />
-
-                            <Label text="Segundo combatiente" visible="{= ${detalle>/combate/ambosPropios}}"/>
-                            <Link text="{path: 'detalle>/combate', formatter: '.formatearCombatienteB'}" press=".onVerCombatienteB" visible="{= ${detalle>/combate/ambosPropios} &amp;&amp; !!${detalle>/combate/combatienteB_ID}}" />
-                            <Text text="{path: 'detalle>/combate', formatter: '.formatearCombatienteB'}" visible="{= ${detalle>/combate/ambosPropios} &amp;&amp; !${detalle>/combate/combatienteB_ID}}" />
-
-                            <Label text="Rival" visible="{= !${detalle>/combate/ambosPropios}}"/>
-                            <Text text="{path: 'detalle>/combate', formatter: '.formatearRival'}" visible="{= !${detalle>/combate/ambosPropios}}"/>
-
-                            <Label text="Propietario rival" />
-                            <Text text="{path: 'detalle>/combate', formatter: '.formatearPropietarioRival'}" />
-
-                            <Label text="Procedencia rival" visible="{= ${detalle>/combate/ambosPropios} === false}" />
-                            <Text text="{detalle>/combate/procedenciaOponente}" visible="{= ${detalle>/combate/ambosPropios} === false}" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Primer combatiente" />
+                              </f:label>
+                              <f:fields>
+                                <Link text="{path: 'detalle>/combate', formatter: '.formatearCombatienteA'}" press=".onVerCombatienteA" visible="{= !!${detalle>/combate/ave_ID}}" />
+                                <Text text="{path: 'detalle>/combate', formatter: '.formatearCombatienteA'}" visible="{= !${detalle>/combate/ave_ID}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= ${detalle>/combate/ambosPropios}}">
+                              <f:label>
+                                <Label text="Segundo combatiente" visible="{= ${detalle>/combate/ambosPropios}}"/>
+                              </f:label>
+                              <f:fields>
+                                <Link text="{path: 'detalle>/combate', formatter: '.formatearCombatienteB'}" press=".onVerCombatienteB" visible="{= ${detalle>/combate/ambosPropios} &amp;&amp; !!${detalle>/combate/combatienteB_ID}}" />
+                                <Text text="{path: 'detalle>/combate', formatter: '.formatearCombatienteB'}" visible="{= ${detalle>/combate/ambosPropios} &amp;&amp; !${detalle>/combate/combatienteB_ID}}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= !${detalle>/combate/ambosPropios}}">
+                              <f:label>
+                                <Label text="Rival" visible="{= !${detalle>/combate/ambosPropios}}"/>
+                              </f:label>
+                              <f:fields>
+                                <Text text="{path: 'detalle>/combate', formatter: '.formatearRival'}" visible="{= !${detalle>/combate/ambosPropios}}"/>
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Propietario rival" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{path: 'detalle>/combate', formatter: '.formatearPropietarioRival'}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement visible="{= ${detalle>/combate/ambosPropios} === false}">
+                              <f:label>
+                                <Label text="Procedencia rival" visible="{= ${detalle>/combate/ambosPropios} === false}" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/procedenciaOponente}" visible="{= ${detalle>/combate/ambosPropios} === false}" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Datos del combate" class="sapUiMediumMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Lugar" />
-                            <Text text="{detalle>/combate/lugar}" />
-
-                            <Label text="Metodo" />
-                            <Text text="{detalle>/combate/metodoVictoria}" />
-
-                            <Label text="Lesiones" />
-                            <Text text="{detalle>/combate/lesiones}" />
-
-                            <Label text="Observaciones" />
-                            <Text text="{detalle>/combate/observaciones}" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Lugar" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/lugar}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Metodo" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/metodoVictoria}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Lesiones" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/lesiones}" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Observaciones" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/observaciones}" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Video" class="sapUiMediumMarginTop"
@@ -85,18 +170,48 @@
                         sanitizeContent="false"
                         visible="{= !!${detalle>/combate/videoUrl}}"
                         content="{path: 'detalle>/combate', formatter: '.renderVideoPlayer'}" />
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Estado" />
-                            <ObjectStatus
-                                text="{path: 'detalle>/combate/videoEstadoCarga', formatter: '.formatearVideo'}"
-                                icon="{= ${detalle>/combate/videoUrl} ? 'sap-icon://video' : 'sap-icon://attachment' }"
-                                state="{= ${detalle>/combate/videoUrl} ? 'Information' : 'None' }" />
-
-                            <Label text="Archivo" />
-                            <Text text="{detalle>/combate/videoNombreArchivo}" />
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                      <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="3"
+                          labelSpanL="3"
+                          labelSpanM="4"
+                          labelSpanS="12"
+                          emptySpanXL="0"
+                          emptySpanL="0"
+                          emptySpanM="0"
+                          emptySpanS="0"
+                          columnsXL="2"
+                          columnsL="2"
+                          columnsM="1"
+                          singleContainerFullSize="false" />
+                      </f:layout>
+                      <f:formContainers>
+                        <f:FormContainer>
+                          <f:formElements>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Estado" />
+                              </f:label>
+                              <f:fields>
+                                <ObjectStatus
+                                    text="{path: 'detalle>/combate/videoEstadoCarga', formatter: '.formatearVideo'}"
+                                    icon="{= ${detalle>/combate/videoUrl} ? 'sap-icon://video' : 'sap-icon://attachment' }"
+                                    state="{= ${detalle>/combate/videoUrl} ? 'Information' : 'None' }" />
+                              </f:fields>
+                            </f:FormElement>
+                            <f:FormElement>
+                              <f:label>
+                                <Label text="Archivo" />
+                              </f:label>
+                              <f:fields>
+                                <Text text="{detalle>/combate/videoNombreArchivo}" />
+                              </f:fields>
+                            </f:FormElement>
+                          </f:formElements>
+                        </f:FormContainer>
+                      </f:formContainers>
+                    </f:Form>
                 </Panel>
             </VBox>
         </content>

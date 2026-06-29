@@ -49,102 +49,107 @@
 
                 <!-- Identificación -->
                 <Panel headerText="Identificación" expandable="false">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
-                        columnsL="2" columnsM="1">
-                        <f:content>
-                            <!-- <Label text="Imagen" />
-                            <VBox>
-                                <Image
-                                    src="{detail>/fotoPrincipal}"
-                                    visible="{= !!${detail>/fotoPrincipal} }"
-                                    decorative="false"
-                                    alt="{= ${detail>/placa} + ' ' + ${detail>/nombre} }"
-                                    class="avePrincipalIdentificacionImage" />
-                                <Text
-                                    text="Sin imagen principal"
-                                    visible="{= !${detail>/fotoPrincipal} }" />
-                            </VBox> -->
-
-                            <Label text="Placa" />
-                            <ObjectStatus
-                                text="{
-                                path: 'detail>/placa'
-                                }"
-                                state="Information" />
-
-                            <Label text="Nombre" />
-                            <Text text="{detail>/nombre}" />
-
-                            <Label text="Apodo" />
-                            <Text text="{detail>/apodo}" />
-
-                            <Label text="Género" />
-                            <ObjectStatus
-                                text="{
-                                path: 'detail>/sexo',
-                                formatter: '.formatearSexo'
-                                }"
-                                state="Information" />
-
-                            <!-- <Select selectedKey="{detail>/sexo}" enabled="{detail>/editMode}">
-                                <core:Item key="M" text="Macho"/>
-                                <core:Item key="H" text="Hembra"/>
-                            </Select> -->
-
-                            <Label text="Cría" />
-                            <CheckBox selected="{detail>/cria}" editable="false" />
-
-                            <Label text="Estado" />
-                            <ObjectStatus
-                                text="{
-                                    path: 'detail>/estado',
-                                    formatter: '.formatearEstado'
-                                }"
-                                state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
-                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
-                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
-                            <Label text="Fecha de fallecimiento"
-                                visible="{= ${detail>/estado} === 'FALLECIDO' }" />
-                            <Text
-                                text="{
-                                    path: 'detail>/fechaFallecimiento',
-                                    formatter: '.formatearFecha'
-                                }"
-                                visible="{= ${detail>/estado} === 'FALLECIDO' }" />
-
-                            <!-- <Text
-                                text="{
-                                    path: 'detail>/estado',
-                                    formatter: '.formatearEstado'
-                                }" /> -->
-                            <!-- <Select selectedKey="{detail>/estado}"
-                            enabled="{detail>/editMode}">
-                                <core:Item key="ACTIVO" text="Activo"/>
-                                <core:Item key="VENDIDO" text="Vendido"/>
-                                <core:Item key="FALLECIDO" text="Fallecido"/>
-                                <core:Item key="PRESTADO" text="Prestado"/>
-                            </Select> -->
-
-                            <Label text="Ubicación" />
-                            <Text text="{detail>/ubicacion}" editable="{detail>/editMode}" />
-
-                            <Label text="Padrote" />
-                            <CheckBox selected="{detail>/padrote}" editable="false" />
-
-                            <Label text="Calificación" />
-                            <Text
-                                text="{
-                                    path: 'detail>/categoria',
-                                    formatter: '.formatearCategoria'
-                                }" />
-                            <!-- <Select selectedKey="{detail>/categoria}" editable="false">
-                                <core:Item key="BUENO" text="Bueno"/>
-                                <core:Item key="EXCELENTE" text="Excelente"/>
-                                <core:Item key="EXTRAORDINARIO" text="Extraordinario"/>
-                            </Select> -->
-
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="2"
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                adjustLabelSpan="false"
+                                singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement label="Placa">
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{path: 'detail>/placa'}"
+                                                state="Information" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Nombre">
+                                        <f:fields>
+                                            <Text text="{detail>/nombre}" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Apodo">
+                                        <f:fields>
+                                            <Text text="{detail>/apodo}" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Género">
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{
+                                                    path: 'detail>/sexo',
+                                                    formatter: '.formatearSexo'
+                                                }"
+                                                state="Information" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Cría">
+                                        <f:fields>
+                                            <CheckBox selected="{detail>/cria}" editable="false" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement label="Estado">
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{
+                                                    path: 'detail>/estado',
+                                                    formatter: '.formatearEstado'
+                                                }"
+                                                state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
+                                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
+                                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Fecha de fallecimiento"
+                                        visible="{= ${detail>/estado} === 'FALLECIDO' }">
+                                        <f:fields>
+                                            <Text
+                                                text="{
+                                                    path: 'detail>/fechaFallecimiento',
+                                                    formatter: '.formatearFecha'
+                                                }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Ubicación">
+                                        <f:fields>
+                                            <Text text="{detail>/ubicacion}" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Padrote">
+                                        <f:fields>
+                                            <CheckBox selected="{detail>/padrote}" editable="false" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Calificación">
+                                        <f:fields>
+                                            <Text
+                                                text="{
+                                                    path: 'detail>/categoria',
+                                                    formatter: '.formatearCategoria'
+                                                }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <!-- Estadísticas -->
@@ -178,31 +183,59 @@
                 <!-- Características -->
                 <Panel headerText="Características Físicas" expandable="true" expanded="true"
                     class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="{detail>/editMode}"
-                        columnsL="2" columnsM="1">
-                        <f:content>
-                            <Label text="Raza" />
-                            <Text text="{detail>/raza}" visible="true" />
-
-                            <Label text="Color" />
-                            <Text text="{detail>/color}" visible="true" />
-
-                            <Label text="Tipo de Ave" />
-                            <Text text="{detail>/tipoAve}" visible="true" />
-
-                            <Label text="Fecha Nacimiento" />
-                            <Text
-                                text="{
-                                path: 'detail>/fechaNacimiento',
-                                formatter: '.formatearFecha'
-                            }" />
-                            <!-- <Text text="{detail>/fechaNacimiento}" visible="true" /> -->
-
-                            <Label text="Fecha Compra" />
-                            <Text text="{detail>/fechaCompra}" visible="true" />
-
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                                columnsXL="1"
+                                columnsL="1"
+                                columnsM="1"
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                adjustLabelSpan="false"
+                                singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement label="Raza">
+                                        <f:fields>
+                                            <Text text="{detail>/raza}" visible="true" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Color">
+                                        <f:fields>
+                                            <Text text="{detail>/color}" visible="true" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Tipo de Ave">
+                                        <f:fields>
+                                            <Text text="{detail>/tipoAve}" visible="true" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Fecha Nacimiento">
+                                        <f:fields>
+                                            <Text
+                                                text="{
+                                                    path: 'detail>/fechaNacimiento',
+                                                    formatter: '.formatearFecha'
+                                                }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Fecha Compra">
+                                        <f:fields>
+                                            <Text text="{detail>/fechaCompra}" visible="true" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <Panel headerText="Archivos del ave" expandable="true" expanded="true"
@@ -225,7 +258,7 @@
                         </HBox>
                         <Table items="{detail>/archivosAve}" noDataText="Sin archivos registrados">
                             <columns>
-                                <Column minScreenWidth="Desktop" demandPopin="true" >
+                                <Column minScreenWidth="Desktop" demandPopin="true">
                                     <Text text="Archivo" />
                                 </Column>
                                 <Column width="15%">
@@ -245,7 +278,8 @@
                                             <ObjectStatus
                                                 icon="{= ${detail>tipo} === 'IMAGEN' ? 'sap-icon://picture' : 'sap-icon://video'}"
                                                 state="Information" />
-                                            <Text text="{detail>nombreVisual}" class="sapUiSmallMarginBegin" />
+                                            <Text text="{detail>nombreVisual}"
+                                                class="sapUiSmallMarginBegin" />
                                         </HBox>
                                         <Button
                                             text="Ver"
@@ -263,11 +297,13 @@
                             </items>
                         </Table>
                     </VBox>
-                </Panel>                
+                </Panel>
 
                 <Panel headerText="Composición de lí­neas" expandable="true" expanded="true"
-                    class="sapUiSmallMarginTop" visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" >
-                    <Table items="{detail>/composicionLineas}" noDataText="Sin composiciónn de lí­neas registrada">
+                    class="sapUiSmallMarginTop"
+                    visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                    <Table items="{detail>/composicionLineas}"
+                        noDataText="Sin composiciónn de lí­neas registrada">
                         <headerToolbar>
                             <OverflowToolbar class="sapUiTinyMarginTop">
                                 <ToolbarSpacer />
@@ -429,31 +465,78 @@
                 <!-- Genealogía -->
                 <Panel headerText="Genealogía" expandable="true" expanded="true"
                     class="sapUiSmallMarginTop">
-                    <f:SimpleForm layout="ResponsiveGridLayout" editable="false" columnsL="2"
-                        columnsM="1">
-                        <f:content>
-                            <Label text="Padre" />
-                            <Link text="{detail>/padre/placa} {detail>/padre/nombre}"
-                                press="onVerPadre" />
-
-                            <Label text="Madre" />
-                            <Link text="{detail>/madre/placa} {detail>/madre/nombre}"
-                                press="onVerMadre" />
-
-                            <Label text="Procedencia" />
-                            <Input value="{detail>/procedencia}" editable="false" />
-
-                            <Label text="Criador" />
-                            <Input value="{detail>/criador}" editable="false" />
-
-                            <Label text="Arbol Genealógico"
-                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
-                            <Button icon="sap-icon://org-chart" type="Emphasized"
-                                press="onVerArbGen" width="5rem" tooltip="Ver Arbol Genealógico"
-                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
-
-                        </f:content>
-                    </f:SimpleForm>
+                    <f:Form editable="false" class="sapUiSmallMargin">
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="1"
+                                singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Padre" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Link
+                                                text="{detail>/padre/placa} {detail>/padre/nombre}"
+                                                press="onVerPadre" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Madre" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Link
+                                                text="{detail>/madre/placa} {detail>/madre/nombre}"
+                                                press="onVerMadre" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Procedencia" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Input value="{detail>/procedencia}" editable="false" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Criador" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Input value="{detail>/criador}" editable="false" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement
+                                        visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                                        <f:label>
+                                            <Label text="Arbol Genealógico"
+                                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Button icon="sap-icon://org-chart" type="Emphasized"
+                                                press="onVerArbGen" width="5rem"
+                                                tooltip="Ver Arbol Genealógico"
+                                                visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
+                    </f:Form>
                 </Panel>
 
                 <!-- Pesajes recientes -->

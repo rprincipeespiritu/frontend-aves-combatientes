@@ -154,6 +154,38 @@
   color: var(--app-blue);
 }
 
+.dashboardPhotoNumericContent {
+  position: relative;
+}
+
+.dashboardPhotoNumericContent .sapMNCInner {
+  position: relative;
+  width: 100%;
+}
+
+.dashboardPhotoNumericContent .sapMNCValue {
+  width: 100%;
+  text-align: center;
+}
+
+.dashboardPhotoNumericContent .sapMNCIconImage,
+.dashboardPhotoNumericContent img.sapMNCIconImage {
+  position: absolute;
+  left: 0.15rem;
+  bottom: -0.35rem;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  min-width: 2.25rem !important;
+  min-height: 2.25rem !important;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(8, 119, 242, 0.35),
+    0 0.2rem 0.5rem rgba(17, 62, 110, 0.22);
+  background: #ffffff;
+  object-fit: cover;
+}
+
 @media (max-width: 600px) {
   .welcomePageContent.sapUiMediumMargin {
     margin: 0.75rem !important;
@@ -323,6 +355,16 @@
     padding: 0 !important;
     margin: 0 !important;
     object-fit: contain;
+  }
+
+  .dashboardPhotoNumericContent .sapMNCIconImage,
+  .dashboardPhotoNumericContent img.sapMNCIconImage {
+    left: 0.05rem;
+    bottom: -0.2rem;
+    width: 1.95rem !important;
+    height: 1.95rem !important;
+    min-width: 1.95rem !important;
+    min-height: 1.95rem !important;
   }
 }
 
@@ -1029,6 +1071,27 @@
   row-gap: 0.35rem;
 }
 
+.incubacionDetailForm .sapUiFormResGridCont {
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(42, 88, 135, 0.14);
+  padding: 0.75rem 0.9rem;
+}
+
+.incubacionDetailTablePanel .sapMPanelContent {
+  padding: 0;
+}
+
+.incubacionDetailTable .sapMListTbl {
+  table-layout: fixed;
+}
+
+.incubacionDetailTable .sapMObjectIdentifierTitle,
+.incubacionDetailTable .sapMObjectIdentifierText {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .lineageGuidePanel {
   width: 100%;
 }
@@ -1435,6 +1498,18 @@
     font-size: 0.72rem;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .incubacionDetailForm .sapUiFormResGridCont {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .incubacionDetailTable .sapMListTblHeaderCell {
+    padding: 0.45rem 0.4rem;
+  }
+
+  .incubacionDetailTable .sapMListTblCell {
+    padding: 0.45rem 0.4rem;
   }
 
   .combatesFilterFields {

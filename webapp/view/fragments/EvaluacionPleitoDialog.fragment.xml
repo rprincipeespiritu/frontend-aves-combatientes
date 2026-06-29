@@ -6,46 +6,102 @@
     <Dialog title="{detail>/evaluacionPleitoDialogTitle}" contentWidth="42rem">
         <content>
             <VBox class="sapUiMediumMargin">
-                <f:SimpleForm
-                    editable="true"
-                    layout="ResponsiveGridLayout"
-                    columnsL="1"
-                    columnsM="1">
-                    <f:content>
-                        <Label text="Fecha" required="true" />
-                        <DatePicker
-                            value="{detail>/nuevaEvaluacionPleito/fecha}"
-                            valueFormat="yyyy-MM-dd"
-                            displayFormat="dd/MM/yyyy" />
-
-                        <Label text="Calificacion" required="true" />
-                        <Select selectedKey="{detail>/nuevaEvaluacionPleito/calificacion}">
-                            <core:Item key="PESIMO" text="Pesimo" />
-                            <core:Item key="REGULAR" text="Regular" />
-                            <core:Item key="BUENO" text="Bueno" />
-                            <core:Item key="EXCELENTE" text="Excelente" />
-                            <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
-                        </Select>
-
-                        <Label text="Bravura" />
-                        <Input value="{detail>/nuevaEvaluacionPleito/bravura}" type="Number" placeholder="1 - 10" />
-
-                        <Label text="Tecnica" />
-                        <Input value="{detail>/nuevaEvaluacionPleito/tecnica}" type="Number" placeholder="1 - 10" />
-
-                        <Label text="Resistencia" />
-                        <Input value="{detail>/nuevaEvaluacionPleito/resistencia}" type="Number" placeholder="1 - 10" />
-
-                        <Label text="Condicion fisica" />
-                        <Input value="{detail>/nuevaEvaluacionPleito/condicionFisica}" type="Number" placeholder="1 - 10" />
-
-                        <Label text="Observaciones" />
-                        <TextArea value="{detail>/nuevaEvaluacionPleito/observaciones}" rows="3" />
-
-                        <Label text="Recomendacion" />
-                        <TextArea value="{detail>/nuevaEvaluacionPleito/recomendacion}" rows="3" />
-                    </f:content>
-                </f:SimpleForm>
+                <f:Form editable="true" class="sapUiSmallMargin">
+                  <f:layout>
+                    <f:ResponsiveGridLayout
+                      labelSpanXL="3"
+                      labelSpanL="3"
+                      labelSpanM="4"
+                      labelSpanS="12"
+                      emptySpanXL="0"
+                      emptySpanL="0"
+                      emptySpanM="0"
+                      emptySpanS="0"
+                      columnsXL="1"
+                      columnsL="1"
+                      columnsM="1"
+                      singleContainerFullSize="false" />
+                  </f:layout>
+                  <f:formContainers>
+                    <f:FormContainer>
+                      <f:formElements>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fecha" required="true" />
+                          </f:label>
+                          <f:fields>
+                            <DatePicker
+                                value="{detail>/nuevaEvaluacionPleito/fecha}"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Calificacion" required="true" />
+                          </f:label>
+                          <f:fields>
+                            <Select selectedKey="{detail>/nuevaEvaluacionPleito/calificacion}">
+                                <core:Item key="PESIMO" text="Pesimo" />
+                                <core:Item key="REGULAR" text="Regular" />
+                                <core:Item key="BUENO" text="Bueno" />
+                                <core:Item key="EXCELENTE" text="Excelente" />
+                                <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
+                            </Select>
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Bravura" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacionPleito/bravura}" type="Number" placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Tecnica" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacionPleito/tecnica}" type="Number" placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Resistencia" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacionPleito/resistencia}" type="Number" placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Condicion fisica" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacionPleito/condicionFisica}" type="Number" placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Observaciones" />
+                          </f:label>
+                          <f:fields>
+                            <TextArea value="{detail>/nuevaEvaluacionPleito/observaciones}" rows="3" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Recomendacion" />
+                          </f:label>
+                          <f:fields>
+                            <TextArea value="{detail>/nuevaEvaluacionPleito/recomendacion}" rows="3" />
+                          </f:fields>
+                        </f:FormElement>
+                      </f:formElements>
+                    </f:FormContainer>
+                  </f:formContainers>
+                </f:Form>
             </VBox>
         </content>
 

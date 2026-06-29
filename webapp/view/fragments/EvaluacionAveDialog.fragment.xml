@@ -6,42 +6,93 @@
     <Dialog title="{detail>/evaluacionDialogTitle}" contentWidth="40%">
         <content>
             <VBox class="sapUiMediumMargin">
-                <f:SimpleForm                    
-                    editable="true"
-                    layout="ResponsiveGridLayout"
-                    columnsL="1"
-                    columnsM="1">
-                    <f:content>
-                        <Label text="Vigor" />
-                        <Input value="{detail>/nuevaEvaluacion/vigor}" type="Number"
-                            placeholder="1 - 10" />
-
-                        <Label text="Salud general" />
-                        <Input value="{detail>/nuevaEvaluacion/saludGeneral}" type="Number"
-                            placeholder="1 - 10" />
-
-                        <Label text="Fertilidad" />
-                        <Input value="{detail>/nuevaEvaluacion/fertilidad}" type="Number"
-                            placeholder="1 - 10" />
-
-                        <Label text="Desarrollo" />
-                        <Select selectedKey="{detail>/nuevaEvaluacion/desarrollo}">
-                            <core:Item key="EXCELENTE" text="Excelente" />
-                            <core:Item key="BUENO" text="Bueno" />
-                            <core:Item key="REGULAR" text="Regular" />
-                            <core:Item key="DEFICIENTE" text="Deficiente" />
-                        </Select>
-
-                        <Label text="Apto reproduccion" />
-                        <CheckBox selected="{detail>/nuevaEvaluacion/aptoReproduccion}" />
-
-                        <Label text="Defectos observados" />
-                        <Input value="{detail>/nuevaEvaluacion/defectosObservados}" />
-
-                        <Label text="Recomendacion" />
-                        <TextArea value="{detail>/nuevaEvaluacion/recomendacion}" rows="3" />
-                    </f:content>
-                </f:SimpleForm>
+                <f:Form editable="true" class="sapUiSmallMargin">
+                  <f:layout>
+                    <f:ResponsiveGridLayout
+                      labelSpanXL="3"
+                      labelSpanL="3"
+                      labelSpanM="4"
+                      labelSpanS="12"
+                      emptySpanXL="0"
+                      emptySpanL="0"
+                      emptySpanM="0"
+                      emptySpanS="0"
+                      columnsXL="1"
+                      columnsL="1"
+                      columnsM="1"
+                      singleContainerFullSize="false" />
+                  </f:layout>
+                  <f:formContainers>
+                    <f:FormContainer>
+                      <f:formElements>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Vigor" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacion/vigor}" type="Number"
+                                placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Salud general" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacion/saludGeneral}" type="Number"
+                                placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Fertilidad" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacion/fertilidad}" type="Number"
+                                placeholder="1 - 10" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Desarrollo" />
+                          </f:label>
+                          <f:fields>
+                            <Select selectedKey="{detail>/nuevaEvaluacion/desarrollo}">
+                                <core:Item key="EXCELENTE" text="Excelente" />
+                                <core:Item key="BUENO" text="Bueno" />
+                                <core:Item key="REGULAR" text="Regular" />
+                                <core:Item key="DEFICIENTE" text="Deficiente" />
+                            </Select>
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Apto reproduccion" />
+                          </f:label>
+                          <f:fields>
+                            <CheckBox selected="{detail>/nuevaEvaluacion/aptoReproduccion}" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Defectos observados" />
+                          </f:label>
+                          <f:fields>
+                            <Input value="{detail>/nuevaEvaluacion/defectosObservados}" />
+                          </f:fields>
+                        </f:FormElement>
+                        <f:FormElement>
+                          <f:label>
+                            <Label text="Recomendacion" />
+                          </f:label>
+                          <f:fields>
+                            <TextArea value="{detail>/nuevaEvaluacion/recomendacion}" rows="3" />
+                          </f:fields>
+                        </f:FormElement>
+                      </f:formElements>
+                    </f:FormContainer>
+                  </f:formContainers>
+                </f:Form>
             </VBox>
         </content>
 

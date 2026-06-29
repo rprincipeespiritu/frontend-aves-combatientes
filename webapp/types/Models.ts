@@ -103,7 +103,7 @@ export enum SexoAve {
 
 export enum EstadoAve {
   Activo = "ACTIVO",
-  Inactivo = "INACTIVO",
+  Fallecido = "FALLECIDO",
   Entrenamiento = "ENTRENAMIENTO",
   Competencia = "COMPETENCIA",
   Retirado = "RETIRADO",
