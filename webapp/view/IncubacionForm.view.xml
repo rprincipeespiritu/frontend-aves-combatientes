@@ -1,4 +1,4 @@
-﻿<mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionForm"
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.IncubacionForm"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
