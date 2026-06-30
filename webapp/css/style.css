@@ -1092,6 +1092,17 @@
   overflow-wrap: anywhere;
 }
 
+.incubacionDetailMobileList {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.incubacionDetailMobileCard {
+  box-sizing: border-box;
+  padding: 0.65rem 0.75rem;
+  width: 100%;
+}
+
 .lineageGuidePanel {
   width: 100%;
 }
@@ -1474,18 +1485,19 @@
   .incubacionDetailFooter.sapMTB {
     height: auto;
     min-height: 3rem;
-    overflow-x: auto;
+    overflow-x: visible;
     padding: 0.35rem 0.45rem;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .incubacionDetailFooter .sapMTBSpacer {
-    display: none;
+    display: block;
+    min-width: 0;
   }
 
   .incubacionDetailFooter .sapMBtn {
     flex: 0 0 auto;
-    margin-left: 0 !important;
+    margin-left: 0.3rem !important;
   }
 
   .incubacionDetailFooter .sapMBtnInner {
@@ -1510,6 +1522,16 @@
 
   .incubacionDetailTable .sapMListTblCell {
     padding: 0.45rem 0.4rem;
+  }
+
+  .incubacionDetailMobileCard .sapMText {
+    font-size: 0.82rem;
+    line-height: 1.2;
+  }
+
+  .incubacionDetailMobileCard .sapMObjStatusText {
+    font-size: 0.78rem;
+    line-height: 1.15;
   }
 
   .combatesFilterFields {

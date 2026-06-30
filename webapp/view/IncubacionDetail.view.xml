@@ -148,6 +148,7 @@
                         id="tblIncubacionesDetalle"
                         class="incubacionDetailTable"
                         items="{view>/incubacion/detalles}"
+                        visible="{= !${device>/system/phone} }"
                         busy="{view>/busy}">
                         <columns>
                             <Column width="26%">
@@ -182,6 +183,27 @@
                             </ColumnListItem>
                         </items>
                     </Table>
+                    <List
+                        class="incubacionDetailMobileList"
+                        items="{view>/incubacion/detalles}"
+                        visible="{device>/system/phone}"
+                        busy="{view>/busy}">
+                        <CustomListItem>
+                            <VBox class="incubacionDetailMobileCard">
+                                <Text
+                                    text="{= 'Padre: ' + (${view>placaPadre} || '-') + ' - ' + (${view>nombrePadre} || '-') }" />
+                                <Text
+                                    text="{= 'Madre: ' + (${view>placaMadre} || '-') + ' - ' + (${view>nombreMadre} || '-') }"
+                                    class="sapUiTinyMarginBottom" />
+                                <HBox justifyContent="SpaceBetween" wrap="Wrap">
+                                    <ObjectStatus text="{= 'Total: ' + (${view>totalHuevos} || 0) }" state="Information" />
+                                    <ObjectStatus text="{= 'Fértiles: ' + (${view>huevosFertiles} || 0) }" state="Success" />
+                                    <ObjectStatus text="{= 'Nacidos: ' + (${view>huevosEclosionados} || 0) }" state="Warning" />
+                                    <ObjectStatus text="{= 'No Eclos.: ' + (${view>huevosNoEclosionados} || 0) }" state="Error" />
+                                </HBox>
+                            </VBox>
+                        </CustomListItem>
+                    </List>
                 </Panel>
             </VBox>
         </content>
