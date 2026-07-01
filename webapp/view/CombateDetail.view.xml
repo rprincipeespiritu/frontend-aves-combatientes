@@ -22,8 +22,9 @@
         </headerContent>
 
         <content>
-            <VBox class="sapUiMediumMargin">
+            <VBox class="combateDetailContent sapUiSmallMargin">
                 <ObjectHeader
+                    class="combateDetailHeader"
                     title="{path: 'detalle>/combate/fecha', formatter: '.formatearFecha'}"
                     intro="{detalle>/combate/evento}"
                     number="{path: 'detalle>/combate/tipoCombate', formatter: '.formatearTipo'}"
@@ -38,8 +39,8 @@
                     </statuses>
                 </ObjectHeader>
 
-                <Panel headerText="Combatientes" class="sapUiMediumMarginTop">
-                    <f:Form editable="false" class="sapUiSmallMargin">
+                <Panel headerText="Combatientes" class="combateDetailPanel sapUiSmallMarginTop">
+                    <f:Form editable="false" class="combateDetailForm sapUiTinyMargin">
                       <f:layout>
                         <f:ResponsiveGridLayout
                           labelSpanXL="3"
@@ -106,8 +107,8 @@
                     </f:Form>
                 </Panel>
 
-                <Panel headerText="Datos del combate" class="sapUiMediumMarginTop">
-                    <f:Form editable="false" class="sapUiSmallMargin">
+                <Panel headerText="Datos del combate" class="combateDetailPanel sapUiSmallMarginTop">
+                    <f:Form editable="false" class="combateDetailForm sapUiTinyMargin">
                       <f:layout>
                         <f:ResponsiveGridLayout
                           labelSpanXL="3"
@@ -164,13 +165,13 @@
                     </f:Form>
                 </Panel>
 
-                <Panel headerText="Video" class="sapUiMediumMarginTop"
+                <Panel headerText="Video" class="combateDetailPanel sapUiSmallMarginTop"
                     visible="{dashboard>/multimediaPremium}">
                     <core:HTML
                         sanitizeContent="false"
                         visible="{= !!${detalle>/combate/videoUrl}}"
                         content="{path: 'detalle>/combate', formatter: '.renderVideoPlayer'}" />
-                    <f:Form editable="false" class="sapUiSmallMargin">
+                    <f:Form editable="false" class="combateDetailForm sapUiTinyMargin">
                       <f:layout>
                         <f:ResponsiveGridLayout
                           labelSpanXL="3"
@@ -216,7 +217,7 @@
             </VBox>
         </content>
         <footer>
-            <Toolbar>
+            <Toolbar class="combateDetailFooter">
                 <ToolbarSpacer />
                 <Button text="Editar" type="Emphasized" icon="sap-icon://edit" press=".onEditar" />
                 <Button text="Cancelar" press=".onNavBack" />

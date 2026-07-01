@@ -250,8 +250,12 @@
                             width="{genealogia>width}"
                             status="{genealogia>status}"
                             press=".onVerImagenAve">
+                            <graph:image>
+                                <graph:NodeImage src="{genealogia>image}" width="52" height="52" visible="{= ${genealogia>image} ? true : false}"/>
+                            </graph:image>
                             <graph:attributes>
                                 <graph:ElementAttribute label="Rol" value="{genealogia>rol}" />
+                                <graph:ElementAttribute label="Nombre" value="{genealogia>nombre}" />
                                 <graph:ElementAttribute label="Sexo" value="{genealogia>sexo}" />
                                 <graph:ElementAttribute label="Estado" value="{genealogia>estado}" />
                             </graph:attributes>
