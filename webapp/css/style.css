@@ -14,6 +14,34 @@
   --app-shadow: 0 0.9rem 2rem rgba(21, 47, 80, 0.14);
 }
 
+.genealogyNetworkGraph .sapSuiteUiCommonsNetworkGraphDivNodeImage {
+  position: absolute;
+  top: 2.15rem;
+  left: 0.5rem;
+  z-index: 2;
+  margin-right: 0;
+  padding-top: 0;
+}
+
+.genealogyNetworkGraph img.sapSuiteUiCommonsNetworkGraphDivNodeImage {
+  width: 52px !important;
+  height: 52px !important;
+  object-fit: cover;
+  border-radius: 0.2rem;
+  border: 1px solid #d5dadd;
+  background-color: #ffffff;
+}
+
+.genealogyNetworkGraph .sapSuiteUiCommonsNetworkGraphDivHeader {
+  position: relative;
+}
+
+.genealogyNetworkGraph .sapSuiteUiCommonsNetworkGraphDivAdditionalContent {
+  position: relative;
+  min-height: 3.9rem;
+  padding-left: 3.9rem;
+}
+
 .sapMApp,
 .sapMPage,
 .sapMPageBgStandard,
@@ -121,6 +149,42 @@
   min-width: min(100%, 34rem);
   flex: 1 1 34rem;
   margin-bottom: 1rem;
+}
+
+.combateDetailContent {
+  gap: 0.35rem;
+}
+
+.combateDetailHeader .sapMOH {
+  padding: 0.5rem 0.6rem;
+}
+
+.combateDetailHeader .sapMOHTitle {
+  font-size: 1.8rem;
+}
+
+.combateDetailHeader .sapMOHIntro {
+  margin-top: 0.1rem;
+}
+
+.combateDetailPanel .sapMPanelContent {
+  padding: 0.35rem 0.55rem;
+}
+
+.combateDetailForm .sapUiFormResGridCont {
+  padding: 0.2rem 0.25rem;
+}
+
+.combateDetailForm .sapUiFormResGridLbl > .sapMLabel,
+.combateDetailForm .sapMText,
+.combateDetailForm .sapMLnk {
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+}
+
+.combateDetailFooter.sapMTB {
+  min-height: 2.5rem;
+  padding: 0.2rem 0.35rem;
 }
 
 .sapMGenericTile {
