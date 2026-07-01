@@ -26,6 +26,12 @@ interface IAveGenealogia {
   fechaNacimiento?: string;
   padre_ID?: string;
   madre_ID?: string;
+  fotos?: Array<{
+    esPrincipal?: boolean;
+    thumbnailUrl?: string;
+    urlSharepoint?: string;
+  }>;
+  fotoPrincipalUrl?: string;
 }
 
 interface INodoGenealogia {
@@ -36,6 +42,7 @@ interface INodoGenealogia {
   iniciales: string;
   avatarIcon: string;
   avatarColor: string;
+  fotoUrl: string;
   sexo: string;
   rol: string;
   rama: string;
@@ -280,7 +287,7 @@ export default class Genealogia extends Controller {
 
     try {
       const response = await fetch(
-        `${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,estado,categoria,fechaNacimiento,padre_ID,madre_ID&$orderby=placa asc`,
+        `${this.baseUrl}/Aves?$select=ID,placa,nombre,sexo,estado,categoria,fechaNacimiento,padre_ID,madre_ID&$expand=fotos($filter=esPrincipal eq true;$select=esPrincipal,thumbnailUrl,urlSharepoint)&$orderby=placa asc`,
         { headers: this.getHeaders() },
       );
       const data = await response.json();
@@ -291,7 +298,20 @@ export default class Genealogia extends Controller {
         );
       }
 
-      const aves = data.value || [];
+      const aves = await Promise.all((data.value || []).map(async (ave: IAveGenealogia) => {
+        const fotoPrincipal = (ave.fotos || []).find((foto: any) => foto.esPrincipal) || ave.fotos?.[0];
+        const fotoPrincipalRawUrl =
+          fotoPrincipal?.thumbnailUrl ||
+          fotoPrincipal?.urlSharepoint ||
+          "";
+
+        const fotoPrincipalUrl = await this.obtenerUrlFotoNodo(fotoPrincipalRawUrl);
+
+        return {
+          ...ave,
+          fotoPrincipalUrl,
+        };
+      }));
       this.avesPorId = new Map(
         aves.map((ave: IAveGenealogia) => [ave.ID, ave]),
       );
@@ -511,6 +531,7 @@ export default class Genealogia extends Controller {
       avatarIcon: "",
       avatarColor:
         rol === "Madre" ? "Accent6" : rol === "Padre" ? "Accent5" : "Accent1",
+      fotoUrl: ave.fotoPrincipalUrl || "",
       generacion,
       faltante: false,
     };
@@ -535,13 +556,15 @@ export default class Genealogia extends Controller {
           title: nodo.placa,
           description: descripcion,
           icon: nodo.faltante ? "sap-icon://question-mark" : "sap-icon://customer",
+          image: nodo.fotoUrl || "",
           status: nodo.faltante ? "Faltante" : nodo.rol === "Madre" ? "Madre" : nodo.rol === "Padre" ? "Padre" : "Base",
           shape: "Box",
-          width: 190,
+          width: 236,
+          nombre: nodo.nombre || "Sin nombre",
           rol: nodo.rol,
           generacion: `G${nodo.generacion}`,
           sexo: nodo.sexo || "-",
-          estado: nodo.estado || "-",
+          estado: this.formatearEstado(nodo.estado),
         });
 
         if (nodo.parentId) {
@@ -573,6 +596,7 @@ export default class Genealogia extends Controller {
       iniciales: "",
       avatarIcon: "sap-icon://question-mark",
       avatarColor: "Accent10",
+      fotoUrl: "",
       sexo: "",
       rol,
       rama,
@@ -601,6 +625,18 @@ export default class Genealogia extends Controller {
     if (sexo === "M") return "Macho";
     if (sexo === "H") return "Hembra";
     return "";
+  }
+
+  private formatearEstado(estado?: string): string {
+    if (!estado) return "-";
+
+    return estado
+      .trim()
+      .toLowerCase()
+      .split(/[\s_-]+/)
+      .filter(Boolean)
+      .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+      .join(" ");
   }
 
   private formatearFecha(fecha?: string): string {
@@ -732,6 +768,16 @@ export default class Genealogia extends Controller {
     }
 
     return data.downloadUrl || url;
+  }
+
+  private async obtenerUrlFotoNodo(url: string): Promise<string> {
+    if (!url) return "";
+
+    try {
+      return await this.obtenerUrlVisualizacionArchivo(url);
+    } catch {
+      return "";
+    }
   }
 
   private crearHtmlImagenAve(src: string, nombre: string): string {
