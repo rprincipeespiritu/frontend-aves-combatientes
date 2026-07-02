@@ -19,12 +19,12 @@
   "sap.ui": {
     "technology": "UI5",
     "icons": {
-      "icon": "",
-      "favIcon": "",
-      "phone": "",
-      "phone@2": "",
-      "tablet": "",
-      "tablet@2": ""
+      "icon": "images/icons/adult-bird.svg",
+      "favIcon": "images/icons/adult-bird.svg",
+      "phone": "images/icons/adult-bird.svg",
+      "phone@2": "images/icons/adult-bird.svg",
+      "tablet": "images/icons/adult-bird.svg",
+      "tablet@2": "images/icons/adult-bird.svg"
     },
     "deviceTypes": {
       "desktop": true,
