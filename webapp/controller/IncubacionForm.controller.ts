@@ -790,7 +790,7 @@ export default class IncubacionForm extends Controller {
     const oModel = this.getView()?.getModel("view") as JSONModel;
     const aDetalles = oModel.getProperty("/form/detalles") || [];
 
-    aDetalles.push({
+    aDetalles.unshift({
       padre_ID: "",
       placaPadre: "",
       nombrePadre: "",
@@ -950,7 +950,7 @@ export default class IncubacionForm extends Controller {
 
     const oContext = oEvent.getSource().getBindingContext("view");
     const sPath = oContext.getPath(); // /detalles/0
-    const iIndex = parseInt(sPath.split("/")[2], 10);
+    const iIndex = parseInt(sPath.split("/")[3], 10);
 
     aDetalles.splice(iIndex, 1);
     oModel.setProperty("/form/detalles", aDetalles);
