@@ -127,6 +127,24 @@ export default class Reportes extends Controller {
     return Number(((parte / total) * 100).toFixed(2));
   }
 
+  private formatearTextoEnum(value: string | null | undefined): string {
+    if (!value) return "";
+
+    return String(value)
+      .toLowerCase()
+      .split("_")
+      .filter(Boolean)
+      .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+      .join(" ");
+  }
+
+  private formatearSexo(value: string | null | undefined): string {
+    const sexo = String(value || "").toUpperCase();
+    if (sexo === "M") return "Macho";
+    if (sexo === "H") return "Hembra";
+    return this.formatearTextoEnum(value);
+  }
+
   private async generarCrucesIncubacion(): Promise<any[]> {
     const incubaciones = await this.fetchOData(
       "Incubaciones?$expand=detalles($expand=padre,madre,planCruce)&$orderby=fechaIncubacion desc",
@@ -146,6 +164,9 @@ export default class Reportes extends Controller {
           parentesco:
             detalle.tipoParentesco || detalle.planCruce?.tipoParentesco || "",
           riesgo: detalle.nivelRiesgo || detalle.planCruce?.nivelRiesgo || "",
+          riesgoFmt: this.formatearTextoEnum(
+            detalle.nivelRiesgo || detalle.planCruce?.nivelRiesgo || "",
+          ),
           porcentajeConsanguinidad:
             detalle.porcentaje ?? detalle.planCruce?.porcentaje ?? 0,
           totalHuevos: detalle.totalHuevos || 0,
@@ -175,7 +196,9 @@ export default class Reportes extends Controller {
       placa: ave.placa,
       nombre: ave.nombre,
       sexo: ave.sexo,
+      sexoFmt: this.formatearSexo(ave.sexo),
       estado: ave.estado,
+      estadoFmt: this.formatearTextoEnum(ave.estado),
       raza: ave.raza,
       color: ave.color,
       fechaNacimiento: this.formatearFecha(ave.fechaNacimiento),
@@ -199,9 +222,12 @@ export default class Reportes extends Controller {
       hembra: plan.hembra?.placa || "",
       parentesco: plan.tipoParentesco,
       riesgo: plan.nivelRiesgo,
+      riesgoFmt: this.formatearTextoEnum(plan.nivelRiesgo),
       porcentajeConsanguinidad: plan.porcentaje || 0,
       decision: plan.decision,
+      decisionFmt: this.formatearTextoEnum(plan.decision),
       estado: plan.estado,
+      estadoFmt: this.formatearTextoEnum(plan.estado),
       recomendacion: plan.recomendacion,
     }));
   }
@@ -243,8 +269,8 @@ export default class Reportes extends Controller {
       AVES: [
         { label: "Placa", property: "placa" },
         { label: "Nombre", property: "nombre" },
-        { label: "Sexo", property: "sexo" },
-        { label: "Estado", property: "estado" },
+        { label: "Sexo", property: "sexoFmt" },
+        { label: "Estado", property: "estadoFmt" },
         { label: "Raza", property: "raza" },
         { label: "Color", property: "color" },
         { label: "Fecha nacimiento", property: "fechaNacimiento" },
@@ -264,14 +290,14 @@ export default class Reportes extends Controller {
         { label: "Macho", property: "macho" },
         { label: "Hembra", property: "hembra" },
         { label: "Parentesco", property: "parentesco" },
-        { label: "Riesgo", property: "riesgo" },
+        { label: "Riesgo", property: "riesgoFmt" },
         {
           label: "% consanguinidad",
           property: "porcentajeConsanguinidad",
           type: "number",
         },
-        { label: "Decision", property: "decision" },
-        { label: "Estado", property: "estado" },
+        { label: "Decision", property: "decisionFmt" },
+        { label: "Estado", property: "estadoFmt" },
         { label: "Recomendacion", property: "recomendacion" },
       ],
       CRUCES_INCUBACION: [
@@ -282,7 +308,7 @@ export default class Reportes extends Controller {
         { label: "Macho", property: "macho" },
         { label: "Hembra", property: "hembra" },
         { label: "Parentesco", property: "parentesco" },
-        { label: "Riesgo", property: "riesgo" },
+        { label: "Riesgo", property: "riesgoFmt" },
         {
           label: "% consanguinidad",
           property: "porcentajeConsanguinidad",

@@ -722,11 +722,11 @@ export default class List extends Controller {
         placa: o.placa,
         nombre: o.nombre,
         fechaNacimiento: this.formatearFecha(o.fechaNacimiento),
-        sexo: o.sexo,
-        categoria: o.categoria,
-        cria: o.cria,
-        estado: o.estado,
-        padrote: o.padrote,
+        sexo: this.formatearSexo(o.sexo),
+        categoria: this.formatearCategoria(o.categoria),
+        cria: o.cria ? "Sí" : "No",
+        estado: this.formatearEstado(o.estado),
+        padrote: o.padrote ? "Sí" : "No",
         padre: o.padre ? o.padre.placa + " " + o.padre?.nombre : "",
         madre: o.madre ? o.madre.placa + " " + o.madre?.nombre : ""
       };
@@ -740,11 +740,12 @@ export default class List extends Controller {
     const aCols = [
       { label: "Placa", property: "placa" },
       { label: "Nombre", property: "nombre" },
-      { label: "Fecha Nacimiento", property: "fechaNacimiento" },
+      { label: "Fecha de nacimiento", property: "fechaNacimiento" },
       { label: "Sexo", property: "sexo" },
-      { label: "Categoria", property: "categoria" },
+      { label: "Categoría", property: "categoria" },
       { label: "Estado", property: "estado" },
-      { label: "Cria", property: "cria" },
+      { label: "Cría", property: "cria" },
+      { label: "Padrote", property: "padrote" },
       { label: "Padre", property: "padre" },
       { label: "Madre", property: "madre" }
     ];

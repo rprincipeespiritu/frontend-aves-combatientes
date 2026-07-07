@@ -11,7 +11,6 @@ import Label from "sap/m/Label";
 import VBox from "sap/m/VBox";
 import Dialog from "sap/m/Dialog";
 import MessageToast from "sap/m/MessageToast";
-import TextArea from "sap/m/TextArea";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/m/routing/Router";
 import { AuthService } from "../services/AuthService";
@@ -24,6 +23,7 @@ import Popover from "sap/m/Popover";
 export default class IncubacionDetail extends Controller {
     private _oUserMenuSheet: any;
     private _oUserMenuPopover: any;
+    private _oFinalizarDialog: Dialog | null = null;
     private authService: AuthService;
     public formatter = formatter;
     private service = new IncubacionService();
@@ -35,6 +35,12 @@ export default class IncubacionDetail extends Controller {
         const oModel = new JSONModel({
             busy: false,
             incubacion: {},
+            finalizar: {
+                observacion: "",
+                detalles: [],
+            },
+            finalizarObservacion: "",
+            finalizarDetalles: [],
         });
 
         this.getView()?.setModel(oModel, "view");
@@ -299,9 +305,10 @@ export default class IncubacionDetail extends Controller {
         }
     }
 
-    public onConfirmarFinalizar(oEvent: Event): void {
+    public onConfirmarFinalizar(): void {
         const oThat = this;
-        const oData = oThat.getView()?.getModel("view").getProperty("/incubacion");
+        const oViewModel = oThat.getView()?.getModel("view") as JSONModel;
+        const oData = oViewModel.getProperty("/incubacion");
 
         const oFechaEclosion = new Date(oData.fechaEclosion || 0);
         const oFechaActual = new Date();
@@ -311,61 +318,129 @@ export default class IncubacionDetail extends Controller {
             return;
         }
 
-        const oTextAreaObservacion = new TextArea({
-            width: "100%",
-            rows: 4,
-            growing: false,
-            placeholder: "Observación(Opcional)",
+        const detallesFinalizacion = (oData?.detalles || []).map((detalle: any) => {
+            const huevosFertiles = Number(detalle.huevosFertiles || 0);
+            const huevosEclosionados = Number(detalle.huevosEclosionados || 0);
+            return {
+                ID: detalle.ID,
+                placaPadre: detalle.placaPadre || "",
+                nombrePadre: detalle.nombrePadre || "",
+                placaMadre: detalle.placaMadre || "",
+                nombreMadre: detalle.nombreMadre || "",
+                huevosFertiles,
+                huevosEclosionados,
+                huevosNoEclosionados: this.calcularNoEclosionados(
+                    huevosFertiles,
+                    huevosEclosionados,
+                ),
+            };
         });
 
-        const oDialog = new Dialog({
-            title: "Finalizar incubación",
-            type: "Message",
-            contentWidth: "auto",
-            contentHeight: "auto",
-            horizontalScrolling: false,
-            verticalScrolling: true,
-            content: [
-                new VBox({
-                    items: [
-                        new Label({
-                            text: "¿Seguro que desea Finalizar la Incubación; sino revise la opción de Edición?",
-                        }).addStyleClass("sapUiSmallMarginTop"),
+        oViewModel.setProperty("/finalizarObservacion", "");
+        oViewModel.setProperty("/finalizarDetalles", detallesFinalizacion);
+        // Backward-compatible model path in case an older cached fragment is rendered
+        oViewModel.setProperty("/finalizar/observacion", "");
+        oViewModel.setProperty("/finalizar/detalles", detallesFinalizacion);
 
-                        new Label({ text: "Observación" }).addStyleClass(
-                            "sapUiSmallMarginTop",
-                        ),
-                        oTextAreaObservacion,
-                    ],
-                }).addStyleClass("sapUiSmallMargin"),
-            ],
-            beginButton: new Button({
-                text: "Aceptar",
-                type: "Emphasized",
-                press: async function () {
-                    const sObservacion = oTextAreaObservacion.getValue().trim();
+        void this.abrirDialogoFinalizacion();
+    }
 
-                    oDialog.close();
-                    await oThat._finalizarIncubacion(oEvent, sObservacion);
-                },
-            }),
-            endButton: new Button({
-                text: "Cerrar",
-                press: function () {
-                    oDialog.close();
-                },
-            }),
-            afterClose: function () {
-                oDialog.destroy();
-            },
-        });
+    private async abrirDialogoFinalizacion(): Promise<void> {
+        if (!this._oFinalizarDialog) {
+            this._oFinalizarDialog = (await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.FinalizarIncubacionDialog",
+                controller: this,
+            })) as Dialog;
 
-        oDialog.open();
+            this.getView()?.addDependent(this._oFinalizarDialog);
+        }
+
+        this._oFinalizarDialog.open();
+    }
+
+    public onCerrarDialogoFinalizar(): void {
+        this._oFinalizarDialog?.close();
+    }
+
+    public onDetalleNacimientoChange(oEvent: Event): void {
+        const oSource = oEvent.getSource() as Input;
+        const oContext = oSource.getBindingContext("view");
+
+        if (!oContext) {
+            return;
+        }
+
+        const sDetallePath = oContext.getPath();
+        const oViewModel = this.getView()?.getModel("view") as JSONModel;
+        const huevosFertiles = Number(
+            oViewModel.getProperty(`${sDetallePath}/huevosFertiles`) || 0,
+        );
+        const huevosEclosionados = Number(
+            oViewModel.getProperty(`${sDetallePath}/huevosEclosionados`) || 0,
+        );
+
+        oViewModel.setProperty(
+            `${sDetallePath}/huevosNoEclosionados`,
+            this.calcularNoEclosionados(huevosFertiles, huevosEclosionados),
+        );
+    }
+
+    public async onConfirmarFinalizarDialog(): Promise<void> {
+        const oViewModel = this.getView()?.getModel("view") as JSONModel;
+        const detalles = oViewModel.getProperty("/finalizarDetalles") || [];
+
+        for (let i = 0; i < detalles.length; i++) {
+            const detalle = detalles[i];
+            const fertiles = Number(detalle.huevosFertiles || 0);
+            const eclosionados = Number(detalle.huevosEclosionados || 0);
+
+            if (eclosionados < 0) {
+                MessageBox.error(
+                    `Nacidos no puede ser negativo en el detalle ${i + 1}`,
+                );
+                return;
+            }
+
+            if (eclosionados > fertiles) {
+                MessageBox.error(
+                    `Nacidos no puede ser mayor a Fértiles en el detalle ${i + 1}`,
+                );
+                return;
+            }
+
+            detalle.huevosNoEclosionados = this.calcularNoEclosionados(
+                fertiles,
+                eclosionados,
+            );
+        }
+
+        oViewModel.setProperty("/finalizarDetalles", detalles);
+        oViewModel.setProperty("/finalizar/detalles", detalles);
+        this._oFinalizarDialog?.close();
+
+        await this._finalizarIncubacion(
+            String(
+                oViewModel.getProperty("/finalizarObservacion") ||
+                oViewModel.getProperty("/finalizar/observacion") ||
+                "",
+            ).trim(),
+            detalles,
+        );
+    }
+
+    private calcularNoEclosionados(
+        huevosFertiles: number | string,
+        huevosEclosionados: number | string,
+    ): number {
+        const fertiles = Number(huevosFertiles || 0);
+        const eclosionados = Number(huevosEclosionados || 0);
+        return Math.max(fertiles - eclosionados, 0);
     }
 
     private async _finalizarIncubacion(
-        oEvent: Event,
         observacion: string,
+        detallesFinalizacion: any[],
     ): Promise<void> {
         try {
             const oThat = this;
@@ -389,7 +464,7 @@ export default class IncubacionDetail extends Controller {
 
             BusyIndicator.show(0);
 
-            const sToken = localStorage.getItem("token");
+            await this._actualizarDetallesAntesDeFinalizar(sId, detallesFinalizacion);
 
             const response = await fetch(
                 `${oThat.baseUrl}/Incubaciones('${sId}')/finalizar`,
@@ -410,7 +485,7 @@ export default class IncubacionDetail extends Controller {
             if (!response.ok) {
                 const result = await response.json();
                 throw new Error(
-                    result?.error?.message || "No se pudo cancelar la incubación",
+                    result?.error?.message || "No se pudo finalizar la incubación",
                 );
             }
 
@@ -428,6 +503,77 @@ export default class IncubacionDetail extends Controller {
             BusyIndicator.hide();
             MessageBox.error(error.message || "Error al finalizar la incubación");
         }
+    }
+
+    private async _actualizarDetallesAntesDeFinalizar(
+        sId: string,
+        detallesFinalizacion: any[],
+    ): Promise<void> {
+        const oViewModel = this.getView()?.getModel("view") as JSONModel;
+        const detallesActuales = oViewModel.getProperty("/incubacion/detalles") || [];
+
+        const detallesActualizados = (detallesActuales || []).map((detalleActual: any) => {
+            const detalleConfirmado = (detallesFinalizacion || []).find(
+                (item: any) => item.ID && item.ID === detalleActual.ID,
+            ) || {};
+
+            const huevosFertiles = Number(
+                detalleConfirmado.huevosFertiles ?? detalleActual.huevosFertiles ?? 0,
+            );
+            const huevosEclosionados = Number(
+                detalleConfirmado.huevosEclosionados ?? detalleActual.huevosEclosionados ?? 0,
+            );
+
+            return {
+                ...detalleActual,
+                huevosFertiles,
+                huevosEclosionados,
+                huevosNoEclosionados: this.calcularNoEclosionados(
+                    huevosFertiles,
+                    huevosEclosionados,
+                ),
+            };
+        });
+
+        const payload = {
+            detalles: detallesActualizados.map((detalle: any) => ({
+                ID: detalle.ID || null,
+                padre_ID: detalle.padre_ID || detalle.padre?.ID || null,
+                madre_ID: detalle.madre_ID || detalle.madre?.ID || null,
+                planCruce_ID: detalle.planCruce_ID || detalle.planCruce?.ID || null,
+                tipoParentesco: detalle.tipoParentesco || null,
+                nivelRiesgo: detalle.nivelRiesgo || null,
+                porcentaje:
+                    detalle.porcentaje === undefined || detalle.porcentaje === null
+                        ? null
+                        : Number(detalle.porcentaje),
+                totalHuevos: Number(detalle.totalHuevos || 0),
+                huevosFertiles: Number(detalle.huevosFertiles || 0),
+                huevosEclosionados: Number(detalle.huevosEclosionados || 0),
+                huevosNoEclosionados: Number(detalle.huevosNoEclosionados || 0),
+                usuario_ID: detalle.usuario_ID || null,
+            })),
+        };
+
+        const response = await fetch(`${this.baseUrl}/Incubaciones(ID='${sId}')`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(
+                result?.error?.message ||
+                result?.message ||
+                "No se pudieron actualizar los nacimientos antes de finalizar",
+            );
+        }
+
+        oViewModel.setProperty("/incubacion/detalles", detallesActualizados);
     }
 
     public onConfirmarCancelar(oEvent: Event): void {

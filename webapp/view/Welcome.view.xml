@@ -58,6 +58,16 @@
                             </TileContent>
                         </GenericTile>
 
+                        <GenericTile class="sapUiSmallMarginTop" header="Aves Jóvenes"
+                            subheader="Registros por cintillo" press="onNavPollitos"
+                            visible="{dashboard>/accesoSuscripcion}">
+                            <TileContent>
+                                <NumericContent value="{dashboard>/totalPollitos}"
+                                    icon="images/icons/young-chick.svg" />
+                                <!-- <ImageContent src="sap-icon://collaborate" /> -->
+                            </TileContent>
+                        </GenericTile>
+
                         <GenericTile class="sapUiSmallMarginTop dashboardPhotoIconTile" header="Linaje de Aves"
                             subheader="Registradas" press="onNavLineasGallosList"
                             visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
@@ -87,7 +97,7 @@
 
                         <GenericTile class="sapUiSmallMarginTop" header="Incubaciones"
                             subheader="En proceso" press="onNavIncubationListProcess"
-                            visible="{dashboard>/accesoSuscripcion}">
+                            visible="false">
                             <TileContent>
                                 <NumericContent value="{dashboard>/incubacionesActivas}"
                                     icon="images/icons/hatching-process.svg" />
@@ -108,17 +118,7 @@
                             <TileContent>
                                 <ImageContent src="images/icons/genealogy.svg" />                                
                             </TileContent>
-                        </GenericTile>
-
-                        <GenericTile class="sapUiSmallMarginTop" header="Aves Jóvenes"
-                            subheader="Registros por cintillo" press="onNavPollitos"
-                            visible="{dashboard>/accesoSuscripcion}">
-                            <TileContent>
-                                <NumericContent value="{dashboard>/totalPollitos}"
-                                    icon="images/icons/young-chick.svg" />
-                                <!-- <ImageContent src="sap-icon://collaborate" /> -->
-                            </TileContent>
-                        </GenericTile>
+                        </GenericTile>                        
 
                         <GenericTile class="sapUiSmallMarginTop" header="Combates"
                             subheader="Registro de peleas" press="onVerCombates"
