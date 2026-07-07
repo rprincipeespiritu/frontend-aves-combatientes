@@ -129,9 +129,9 @@
                                         title="{= ${reportes>codigoIncubacion} || ${reportes>codigo} || ${reportes>placa} }"
                                         text="{= ${reportes>planCruce} || ${reportes>linea} || ${reportes>nombre} }" />
                                     <Text text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>nombre} : ${reportes>macho} }" />
-                                    <Text text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>sexo} : ${reportes>hembra} }" />
+                                    <Text text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>sexoFmt} : ${reportes>hembra} }" />
                                     <ObjectStatus
-                                        text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>estado} : (${reportes>riesgo} || ${reportes>decision}) }"
+                                        text="{= ${reportes>/tipoReporte} === 'AVES' ? ${reportes>estadoFmt} : (${reportes>riesgoFmt} || ${reportes>decisionFmt}) }"
                                         state="{= ${reportes>riesgo} === 'ALTO' || ${reportes>estado} === 'ELIMINADO' || ${reportes>estado} === 'FALLECIDO' ? 'Error' :
                                                       ${reportes>riesgo} === 'MEDIO' || ${reportes>riesgo} === 'MODERADO' || ${reportes>estado} === 'RETIRADO' ? 'Warning' : 'Success'}" />
                                     <ObjectNumber

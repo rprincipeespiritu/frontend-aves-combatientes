@@ -227,11 +227,15 @@
                                 <Input value="{view>totalHuevos}" type="Number"
                                     editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
                                 <Input value="{view>huevosFertiles}" type="Number"
-                                    editable="{= ${view>/form/estado} === 'EN_PROCESO' }" />
+                                    editable="{= ${view>/form/estado} === 'EN_PROCESO' }"
+                                    liveChange=".onDetalleHuevosChange"
+                                    change=".onDetalleHuevosChange" />
                                 <Input value="{view>huevosEclosionados}" type="Number"
-                                    editable="{view>/form/eInputNacNoEcl}" />
+                                    editable="{view>/form/eInputNacNoEcl}"
+                                    liveChange=".onDetalleHuevosChange"
+                                    change=".onDetalleHuevosChange" />
                                 <Input value="{view>huevosNoEclosionados}" type="Number"
-                                    editable="{view>/form/eInputNacNoEcl}" />
+                                    editable="false" />
                                 <Button icon="sap-icon://delete" type="Transparent"
                                     press=".onDeleteDetalle"
                                     visible="{= ${view>/form/estado} === 'PROGRAMADA' }" />

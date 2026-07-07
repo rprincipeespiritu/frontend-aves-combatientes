@@ -1,0 +1,72 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        title="Finalizar incubación"
+        contentWidth="62rem"
+        contentHeight="30rem"
+        draggable="true"
+        resizable="true"
+        stretchOnPhone="true"
+        horizontalScrolling="false"
+        verticalScrolling="true">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Text
+                    text="Confirma los nacimientos por detalle antes de finalizar la incubación."
+                    class="sapUiSmallMarginBottom" />
+                <Table
+                    items="{view>/finalizarDetalles}"
+                    class="sapUiTinyMarginBottom"
+                    autoPopinMode="true">
+                    <columns>
+                        <Column width="26%" importance="High">
+                            <Text text="Padre" />
+                        </Column>
+                        <Column width="26%" importance="High">
+                            <Text text="Madre" />
+                        </Column>
+                        <Column hAlign="Center" width="8rem" importance="Medium">
+                            <Text text="Fértiles" />
+                        </Column>
+                        <Column hAlign="Center" width="9rem" importance="High">
+                            <Text text="Nacidos" />
+                        </Column>
+                        <Column hAlign="Center" width="11rem" importance="Low">
+                            <Text text="No Eclosionados" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem vAlign="Middle">
+                            <cells>
+                                <ObjectIdentifier title="{view>placaPadre}" text="{view>nombrePadre}" />
+                                <ObjectIdentifier title="{view>placaMadre}" text="{view>nombreMadre}" />
+                                <ObjectNumber number="{view>huevosFertiles}" textAlign="Center" />
+                                <Input
+                                    value="{view>huevosEclosionados}"
+                                    type="Number"
+                                    textAlign="Center"
+                                    liveChange=".onDetalleNacimientoChange"
+                                    change=".onDetalleNacimientoChange" />
+                                <ObjectNumber number="{view>huevosNoEclosionados}" textAlign="Center" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+                <Label text="Observación (opcional)" class="sapUiTinyMarginTop" />
+                <TextArea
+                    value="{view>/finalizarObservacion}"
+                    rows="3"
+                    growing="false"
+                    width="100%"
+                    placeholder="Observación de cierre de incubación" />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Confirmar finalización" type="Emphasized" press=".onConfirmarFinalizarDialog" />
+        </beginButton>
+        <endButton>
+            <Button text="Cerrar" press=".onCerrarDialogoFinalizar" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>
