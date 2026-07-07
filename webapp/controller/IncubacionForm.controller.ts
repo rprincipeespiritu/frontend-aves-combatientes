@@ -519,6 +519,10 @@ export default class IncubacionForm extends Controller {
         element.codigo = element.planCruce?.codigo || "";
         element.decision =
           element.decision || element.planCruce?.decision || "";
+        element.huevosNoEclosionados = this.calcularNoEclosionados(
+          element.huevosFertiles,
+          element.huevosEclosionados,
+        );
       }
 
       oModel.setProperty("/form", {
@@ -602,9 +606,9 @@ export default class IncubacionForm extends Controller {
       const d = aDetalles[i];
 
       const totalHuevos = Number(d.totalHuevos || 0);
-      const fertiles = Number(d.fertiles || 0);
-      const nacidos = Number(d.nacidos || 0);
-      const noEclosionados = Number(d.noEclosionados || 0);
+      const fertiles = Number(d.huevosFertiles || 0);
+      const nacidos = Number(d.huevosEclosionados || 0);
+      const noEclosionados = Number(d.huevosNoEclosionados || 0);
 
       if (!d.padre_ID || !d.madre_ID) {
         MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
@@ -659,6 +663,14 @@ export default class IncubacionForm extends Controller {
 
       oData.codigo = `INC-${Date.now()}`;
 
+      (oData.detalles || []).forEach((detalle: any) => {
+        detalle.huevosNoEclosionados = this.calcularNoEclosionados(
+          detalle.huevosFertiles,
+          detalle.huevosEclosionados,
+        );
+      });
+      oModelLocal?.setProperty("/form/detalles", oData.detalles || []);
+
       if (!this._validarDetalles(oData.detalles || [])) {
         return;
       }
@@ -686,6 +698,13 @@ export default class IncubacionForm extends Controller {
         observaciones: oData.observaciones,
         usuario_ID: userId,
         detalles: (oData.detalles || []).map(function (d) {
+          const huevosFertiles = Number(d.huevosFertiles || 0);
+          const huevosEclosionados = Number(d.huevosEclosionados || 0);
+          const huevosNoEclosionados = oThat.calcularNoEclosionados(
+            huevosFertiles,
+            huevosEclosionados,
+          );
+
           return {
             padre_ID: d.padre_ID || null,
             madre_ID: d.madre_ID || null,
@@ -697,9 +716,9 @@ export default class IncubacionForm extends Controller {
                 ? null
                 : Number(d.porcentaje),
             totalHuevos: Number(d.totalHuevos || 0),
-            huevosFertiles: Number(d.huevosFertiles || 0),
-            huevosEclosionados: Number(d.huevosEclosionados || 0),
-            huevosNoEclosionados: Number(d.huevosNoEclosionados || 0),
+            huevosFertiles,
+            huevosEclosionados,
+            huevosNoEclosionados,
             usuario_ID: d.usuario_ID || userId,
           };
         }),
@@ -810,6 +829,42 @@ export default class IncubacionForm extends Controller {
     });
 
     oModel.setProperty("/form/detalles", aDetalles);
+  }
+
+  public onDetalleHuevosChange(oEvent: Event): void {
+    const oSource = oEvent.getSource() as Input;
+    const oContext = oSource?.getBindingContext("view");
+
+    if (!oContext) {
+      return;
+    }
+
+    this.recalcularNoEclosionadosEnDetalle(oContext.getPath());
+  }
+
+  private recalcularNoEclosionadosEnDetalle(sDetallePath: string): void {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    const huevosFertiles = Number(
+      oModel.getProperty(`${sDetallePath}/huevosFertiles`) || 0,
+    );
+    const huevosEclosionados = Number(
+      oModel.getProperty(`${sDetallePath}/huevosEclosionados`) || 0,
+    );
+
+    oModel.setProperty(
+      `${sDetallePath}/huevosNoEclosionados`,
+      this.calcularNoEclosionados(huevosFertiles, huevosEclosionados),
+    );
+  }
+
+  private calcularNoEclosionados(
+    huevosFertiles: number | string,
+    huevosEclosionados: number | string,
+  ): number {
+    const fertiles = Number(huevosFertiles || 0);
+    const eclosionados = Number(huevosEclosionados || 0);
+
+    return Math.max(fertiles - eclosionados, 0);
   }
 
   private aplicarPlanCruceEnDetalle(sPath: string, plan: any): void {
