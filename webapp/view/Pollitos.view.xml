@@ -169,7 +169,7 @@
                                     </VBox>
                                     <ObjectStatus
                                         text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
-                                        state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
+                                        state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -229,24 +229,12 @@
                                             <Label text="Temporada" />
                                             <Text text="{pollitos>temporada}" />
                                         </VBox>
-                                        <!--<VBox class="pollitoMobileField">
-                                            <Label text="Nombre" />
-                                            <Text text="{pollitos>nombre}" />
-                                        </VBox>
-                                        <VBox class="pollitoMobileField">
-                                            <Label text="Genero" />
-                                            <Text text="{path: 'pollitos>sexo', formatter: '.formatearSexo'}" />
-                                        </VBox>
-                                        <VBox class="pollitoMobileField">
-                                            <Label text="Fecha Nac." />
-                                            <Text text="{path: 'pollitos>fechaNacimiento', formatter: '.formatearFecha'}" />
-                                        </VBox>
                                         <VBox class="pollitoMobileField">
                                             <Label text="Estado" />
                                             <ObjectStatus
                                                 text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
-                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
-                                        </VBox>-->
+                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+                                        </VBox>
                                         <VBox class="pollitoMobileField">
                                             <Label text="Padre" />
                                             <Text text="{pollitos>padre/placa}" />

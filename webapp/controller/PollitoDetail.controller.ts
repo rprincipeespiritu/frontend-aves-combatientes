@@ -126,6 +126,10 @@ export default class PollitoDetail extends Controller {
 
     public onRegistrarComoAveAdulta(): void {
         const data = (this.getView()?.getModel("detail") as JSONModel).getData();
+        if (["FALLECIDO", "VENDIDO", "OBSEQUIADO"].includes(data?.estado)) {
+            MessageBox.warning("No se puede registrar como ave adulta porque el ave joven no está en estado Activa.");
+            return;
+        }
         this.abrirDialogoRegistroAdulto(data);
     }
 
@@ -220,6 +224,12 @@ export default class PollitoDetail extends Controller {
     }
 
     private async registrarComoAveAdulta(placa: string, genero: string): Promise<void> {
+        const data = (this.getView()?.getModel("detail") as JSONModel).getData();
+        if (["FALLECIDO", "VENDIDO", "OBSEQUIADO"].includes(data?.estado)) {
+            MessageBox.warning("No se puede registrar como ave adulta porque el ave joven no está en estado Activa.");
+            return;
+        }
+
         const confirmado = await ConfirmationService.confirmCreate("el ave adulta", `Placa: ${placa}`);
         if (!confirmado) return;
 
@@ -279,7 +289,11 @@ export default class PollitoDetail extends Controller {
     }
 
     public formatearEstado(estado: string): string {
-        return estado === "REGISTRADA_ADULTA" ? "Registrada como Ave Adulta" : "Activa";
+        if (estado === "REGISTRADA_ADULTA") return "Registrada como Ave Adulta";
+        if (estado === "FALLECIDO") return "Fallecido";
+        if (estado === "VENDIDO") return "Vendido";
+        if (estado === "OBSEQUIADO") return "Obsequiado";
+        return "Activa";
     }
 
     public onNavBack(): void {
