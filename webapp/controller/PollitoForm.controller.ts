@@ -59,6 +59,8 @@ export default class PollitoForm extends Controller {
             color: "",
             ubicacion: "",
             observaciones: "",
+            estado: "ACTIVA",
+            estadoTexto: "Activa",
             padre_ID: "",
             madre_ID: "",
             placaPadre: "",
@@ -544,6 +546,10 @@ export default class PollitoForm extends Controller {
     }
 
     public formatearEstado(estado: string): string {
-        return estado === "REGISTRADA_ADULTA" ? "Registrada como Ave Adulta" : "Activa";
+        if (estado === "REGISTRADA_ADULTA") return "Registrada como Ave Adulta";
+        if (estado === "FALLECIDO") return "Fallecido";
+        if (estado === "VENDIDO") return "Vendido";
+        if (estado === "OBSEQUIADO") return "Obsequiado";
+        return "Activa";
     }
 }

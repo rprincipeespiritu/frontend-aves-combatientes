@@ -441,7 +441,7 @@ export default class Pollitos extends Controller {
                 temporada: pollito.temporada || "",
                 placa: pollito.placa || pollito.aveGenerada?.placa || "",
                 nombre: pollito.nombre || "",
-                sexo: pollito.sexo || "",
+                sexo: this.formatearSexo(pollito.sexo),
                 fechaNacimiento: this.formatearFecha(pollito.fechaNacimiento),
                 padre: pollito.padre
                     ? [pollito.padre.placa, pollito.padre.nombre].filter(Boolean).join(" ")
@@ -449,7 +449,7 @@ export default class Pollitos extends Controller {
                 madre: pollito.madre
                     ? [pollito.madre.placa, pollito.madre.nombre].filter(Boolean).join(" ")
                     : "",
-                estado: pollito.estado || "",
+                estado: this.formatearEstado(pollito.estado),
                 aveGenerada: pollito.aveGenerada?.placa || ""
             };
         });
@@ -515,7 +515,11 @@ export default class Pollitos extends Controller {
     }
 
     public formatearEstado(estado: string): string {
-        return estado === "REGISTRADA_ADULTA" ? "Registrada como Ave Adulta" : "Activa";
+        if (estado === "REGISTRADA_ADULTA") return "Registrada como Ave Adulta";
+        if (estado === "FALLECIDO") return "Fallecido";
+        if (estado === "VENDIDO") return "Vendido";
+        if (estado === "OBSEQUIADO") return "Obsequiado";
+        return "Activa";
     }
 
     public onNavBack(): void {
