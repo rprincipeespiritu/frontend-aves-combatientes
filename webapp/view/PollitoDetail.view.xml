@@ -1,203 +1,223 @@
 <mvc:View
-    controllerName="com.rprincipees.registroavescombate.controller.PollitoDetail"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
-    xmlns:form="sap.f">
+  controllerName="com.rprincipees.registroavescombate.controller.PollitoDetail"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:form="sap.f">
 
-    <Page title="Detalle del Ave Jóven" showNavButton="true" navButtonPress="onNavBack" busy="{detail>/busy}">
-        <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
-            <form:Avatar
-                id="userAvatar"
-                src="{user>/foto}"
-                displaySize="XS"
-                press="onUserMenuPress"
-                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
-        </headerContent>
+  <Page title="Detalle del Ave Jóven" showNavButton="true" navButtonPress="onNavBack"
+    busy="{detail>/busy}">
+    <headerContent>
+      <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
+      <form:Avatar
+        id="userAvatar"
+        src="{user>/foto}"
+        displaySize="XS"
+        press="onUserMenuPress"
+        class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+    </headerContent>
 
-        <content>
-            <VBox class="sapUiMediumMargin">
-                <HBox class="sapUiMediumMarginBottom" alignItems="Center">
-                    <Avatar initials="{= ${detail>/cintillo} ? ${detail>/cintillo}.substring(0, 2) : 'CR'}" displaySize="XL" class="sapUiMediumMarginEnd" />
-                    <VBox>
-                        <Title text="{detail>/identificador}" level="H2" />
-                        <Text text="{detail>/nombre}" />
-                        <ObjectStatus
-                            text="{detail>/estadoTexto}"
-                            state="{= ${detail>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : 'Information'}" />
-                    </VBox>
-                </HBox>
+    <content>
+      <VBox class="sapUiMediumMargin">
+        <HBox class="sapUiMediumMarginBottom" alignItems="Center">
+          <Avatar initials="{= ${detail>/cintillo} ? ${detail>/cintillo}.substring(0, 2) : 'CR'}"
+            displaySize="XL" class="sapUiMediumMarginEnd" />
+          <VBox>
+            <Title text="{detail>/identificador}" level="H2" />
+            <Text text="{detail>/nombre}" />
+            <ObjectStatus
+              text="{detail>/estadoTexto}"
+              state="{= ${detail>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${detail>/estado} === 'FALLECIDO' ? 'Error' : ( ${detail>/estado} === 'VENDIDO' || ${detail>/estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+          </VBox>
+        </HBox>
 
-                <Panel headerText="Identificacion" expandable="false">
-                    <f:Form editable="false" class="sapUiSmallMargin">
-                      <f:layout>
-                        <f:ResponsiveGridLayout
-                          labelSpanXL="3"
-                          labelSpanL="3"
-                          labelSpanM="4"
-                          labelSpanS="12"
-                          emptySpanXL="0"
-                          emptySpanL="0"
-                          emptySpanM="0"
-                          emptySpanS="0"
-                          columnsXL="2"
-                          columnsL="2"
-                          columnsM="1"
-                          singleContainerFullSize="false" />
-                      </f:layout>
-                      <f:formContainers>
-                        <f:FormContainer>
-                          <f:formElements>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Cintillo" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/cintillo}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Color de cintillo" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/colorCintillo}" />                            
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Temporada" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/temporada}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Nombre" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/nombre}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Genero" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{path: 'detail>/sexo', formatter: '.formatearSexo'}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Fecha nacimiento" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{path: 'detail>/fechaNacimiento', formatter: '.formatearFecha'}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Color del ave" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/color}" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Ubicacion" />
-                              </f:label>
-                              <f:fields>
-                                <Text text="{detail>/ubicacion}" />
-                              </f:fields>
-                            </f:FormElement>
-                          </f:formElements>
-                        </f:FormContainer>
-                      </f:formContainers>
-                    </f:Form>
-                </Panel>
+        <Panel headerText="Identificacion" expandable="false">
+          <f:Form editable="false" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Cintillo" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/cintillo}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Color de cintillo" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/colorCintillo}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Estado" />
+                    </f:label>
+                    <f:fields>
+                      <ObjectStatus
+                        text="{detail>/estadoTexto}"
+                        state="{= ${detail>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${detail>/estado} === 'FALLECIDO' ? 'Error' : ( ${detail>/estado} === 'VENDIDO' || ${detail>/estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Temporada" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/temporada}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Nombre" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/nombre}" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Genero" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{path: 'detail>/sexo', formatter: '.formatearSexo'}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Fecha nacimiento" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{path: 'detail>/fechaNacimiento', formatter: '.formatearFecha'}" />
+                    </f:fields>
+                  </f:FormElement>                  
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Color del ave" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/color}" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Ubicacion" />
+                    </f:label>
+                    <f:fields>
+                      <Text text="{detail>/ubicacion}" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                <Panel headerText="Origen genealogico" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <f:Form editable="false" class="sapUiSmallMargin">
-                      <f:layout>
-                        <f:ResponsiveGridLayout
-                          labelSpanXL="3"
-                          labelSpanL="3"
-                          labelSpanM="4"
-                          labelSpanS="12"
-                          emptySpanXL="0"
-                          emptySpanL="0"
-                          emptySpanM="0"
-                          emptySpanS="0"
-                          columnsXL="2"
-                          columnsL="2"
-                          columnsM="1"
-                          singleContainerFullSize="false" />
-                      </f:layout>
-                      <f:formContainers>
-                        <f:FormContainer>
-                          <f:formElements>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Padre" />
-                              </f:label>
-                              <f:fields>
-                                <VBox>
-                                    <Text text="{detail>/padre/placa}" />
-                                    <Text text="{detail>/padre/nombre}" />
-                                </VBox>
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Madre" />
-                              </f:label>
-                              <f:fields>
-                                <VBox>
-                                    <Text text="{detail>/madre/placa}" />
-                                    <Text text="{detail>/madre/nombre}" />
-                                </VBox>
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}">
-                              <f:label>
-                                <Label text="Ave adulta generada" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}" />                            
-                              </f:label>
-                              <f:fields>
-                                <Link text="{detail>/aveGenerada/placa} {detail>/aveGenerada/nombre}"
-                                    press="onVerAve" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}"/>
-                              </f:fields>
-                            </f:FormElement>
-                          </f:formElements>
-                        </f:FormContainer>
-                      </f:formContainers>
-                    </f:Form>
-                </Panel>
+        <Panel headerText="Origen genealogico" expandable="true" expanded="true"
+          class="sapUiSmallMarginTop">
+          <f:Form editable="false" class="sapUiSmallMargin">
+            <f:layout>
+              <f:ResponsiveGridLayout
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="2"
+                columnsL="2"
+                columnsM="1"
+                singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+              <f:FormContainer>
+                <f:formElements>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Padre" />
+                    </f:label>
+                    <f:fields>
+                      <VBox>
+                        <Text text="{detail>/padre/placa}" />
+                        <Text text="{detail>/padre/nombre}" />
+                      </VBox>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Madre" />
+                    </f:label>
+                    <f:fields>
+                      <VBox>
+                        <Text text="{detail>/madre/placa}" />
+                        <Text text="{detail>/madre/nombre}" />
+                      </VBox>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}">
+                    <f:label>
+                      <Label text="Ave adulta generada"
+                        visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}" />
+                    </f:label>
+                    <f:fields>
+                      <Link text="{detail>/aveGenerada/placa} {detail>/aveGenerada/nombre}"
+                        press="onVerAve" visible="{= ${detail>/estado} === 'REGISTRADA_ADULTA'}" />
+                    </f:fields>
+                  </f:FormElement>
+                </f:formElements>
+              </f:FormContainer>
+            </f:formContainers>
+          </f:Form>
+        </Panel>
 
-                <Panel headerText="Observaciones" expandable="true" expanded="true" class="sapUiSmallMarginTop">
-                    <VBox class="sapUiSmallMargin">
-                        <Text text="{detail>/observaciones}" />
-                    </VBox>
-                </Panel>
-            </VBox>
-        </content>
+        <Panel headerText="Observaciones" expandable="true" expanded="true"
+          class="sapUiSmallMarginTop">
+          <VBox class="sapUiSmallMargin">
+            <Text text="{detail>/observaciones}" />
+          </VBox>
+        </Panel>
+      </VBox>
+    </content>
 
-        <footer>
-            <Toolbar>
-                <ToolbarSpacer />
-                <Button
-                    text="Registrar como ave adulta"
-                    icon="sap-icon://accept"
-                    type="Emphasized"
-                    press="onRegistrarComoAveAdulta"
-                    visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}" />
-                <Button text="Editar" icon="sap-icon://edit" type="Emphasized" press="onEditar"  visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}"/>
-                <Button text="Eliminar" icon="sap-icon://delete" type="Transparent"
-                    press="onEliminar" visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}"/>
-                <Button text="Cancelar" press="onNavBack" />
-            </Toolbar>
-        </footer>
-    </Page>
+    <footer>
+      <Toolbar>
+        <ToolbarSpacer />
+        <Button
+          text="Registrar como ave adulta"
+          icon="sap-icon://accept"
+          type="Emphasized"
+          press="onRegistrarComoAveAdulta"
+          visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA' &amp;&amp; ${detail>/estado} !== 'FALLECIDO' &amp;&amp; ${detail>/estado} !== 'VENDIDO' &amp;&amp; ${detail>/estado} !== 'OBSEQUIADO'}" />
+        <Button text="Editar" icon="sap-icon://edit" type="Emphasized" press="onEditar"
+          visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}" />
+        <Button text="Eliminar" icon="sap-icon://delete" type="Transparent"
+          press="onEliminar" visible="{= ${detail>/estado} !== 'REGISTRADA_ADULTA'}" />
+        <Button text="Cancelar" press="onNavBack" />
+      </Toolbar>
+    </footer>
+  </Page>
 </mvc:View>
