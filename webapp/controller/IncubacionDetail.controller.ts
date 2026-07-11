@@ -628,6 +628,29 @@ export default class IncubacionDetail extends Controller {
         oDialog.open();
     }
 
+    public onConfirmarReprogramar(): void {
+        const oData = this
+            .getView()
+            ?.getModel("view")
+            .getProperty("/incubacion");
+
+        if (!oData?.ID) {
+            MessageBox.error("No se encontró el ID de la incubación");
+            return;
+        }
+
+        if (oData.estado !== "CANCELADA") {
+            MessageBox.error(
+                "Solo se puede reprogramar una incubación cancelada",
+            );
+            return;
+        }
+
+        this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionReprogramar", {
+            id: this.incubacionId,
+        });
+    }
+
     private async _cancelarIncubacion(
         oEvent: any,
         sMotivo: string,

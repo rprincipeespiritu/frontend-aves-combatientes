@@ -190,6 +190,11 @@
           "target": "TargetIncubacionForm"
         },
         {
+          "pattern": "incubaciones/reprogramar/{id}",
+          "name": "RouteIncubacionReprogramar",
+          "target": "TargetIncubacionForm"
+        },
+        {
           "pattern": "incubaciones/detail/{id}",
           "name": "RouteIncubacionDetail",
           "target": "TargetIncubacionDetail"

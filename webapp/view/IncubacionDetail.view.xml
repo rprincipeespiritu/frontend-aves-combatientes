@@ -219,7 +219,10 @@
                 <Button text="Cancelar Incubación" type="Reject"
                     visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }"
                     press=".onConfirmarCancelar" />
-                    <Button icon="sap-icon://edit" type="Emphasized" tooltip="Editar" press="onEdit"
+                <Button text="Reprogramar" type="Emphasized"
+                    visible="{= ${view>/incubacion/estado} === 'CANCELADA' }"
+                    press=".onConfirmarReprogramar" />
+                <Button icon="sap-icon://edit" type="Emphasized" tooltip="Editar" press="onEdit"
                     visible="{= ${view>/incubacion/estado} !== 'COMPLETADA' &amp;&amp; ${view>/incubacion/estado} !== 'CANCELADA' }" />
                 <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
