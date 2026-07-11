@@ -65,7 +65,20 @@ export default class IncubacionService {
   }
 
   private getErrorMessage(data: any, fallback: string): string {
-    const errorMessage = data?.error?.message;
+    const error = data?.error;
+    const details = error?.details;
+
+    if (Array.isArray(details) && details.length > 0) {
+      const mensajes = details
+        .map((item: any) => item?.message || item?.rawMessage)
+        .filter(Boolean);
+
+      if (mensajes.length > 0) {
+        return mensajes.join("\n");
+      }
+    }
+
+    const errorMessage = error?.message;
 
     if (typeof errorMessage === "string") {
       return errorMessage;
@@ -75,11 +88,48 @@ export default class IncubacionService {
       return data.message;
     }
 
-    if (typeof data?.error === "string") {
-      return data.error;
+    if (typeof error === "string") {
+      return error;
     }
 
     return fallback;
+  }
+
+  private buildReprogramarDetallePayload(
+    detalle: any,
+    userId: string,
+  ): Record<string, any> {
+    const payload: Record<string, any> = {
+      padre_ID: detalle.padre_ID || detalle.padre?.ID,
+      madre_ID: detalle.madre_ID || detalle.madre?.ID,
+      totalHuevos: Number(detalle.totalHuevos || 0),
+      huevosFertiles: 0,
+      huevosEclosionados: 0,
+      huevosNoEclosionados: 0,
+      usuario_ID: detalle.usuario_ID || userId,
+    };
+
+    if (detalle.ID) {
+      payload.ID = detalle.ID;
+    }
+
+    if (detalle.planCruce_ID) {
+      payload.planCruce_ID = detalle.planCruce_ID;
+    }
+
+    if (detalle.tipoParentesco) {
+      payload.tipoParentesco = detalle.tipoParentesco;
+    }
+
+    if (detalle.nivelRiesgo) {
+      payload.nivelRiesgo = detalle.nivelRiesgo;
+    }
+
+    if (detalle.porcentaje !== undefined && detalle.porcentaje !== null) {
+      payload.porcentaje = Number(detalle.porcentaje);
+    }
+
+    return payload;
   }
 
   public static getInstance(): IncubacionService {
@@ -210,6 +260,124 @@ export default class IncubacionService {
           message: "Error de conexion",
         },
       } as IIncubacion;
+    }
+  }
+
+  public async reprogramar(
+    id: string,
+    payload: {
+      fechaIncubacion: string;
+      fechaPreNacimiento: string;
+      fechaEclosion: string;
+      observaciones?: string;
+      detalles: any[];
+    },
+  ): Promise<IIncubacion> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/Incubaciones('${id}')/reprogramar`,
+        {
+          method: "POST",
+          headers: this.buildHeaders(),
+          body: JSON.stringify({
+            fechaIncubacion: payload.fechaIncubacion,
+            fechaPreNacimiento: payload.fechaPreNacimiento,
+            fechaEclosion: payload.fechaEclosion,
+            observaciones: payload.observaciones || "",
+            detalles: (payload.detalles || []).map((detalle) =>
+              this.buildReprogramarDetallePayload(
+                detalle,
+                detalle.usuario_ID || "",
+              ),
+            ),
+          }),
+        },
+      );
+
+      const result = await this.parseResponse(response);
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: {
+            message: this.getErrorMessage(
+              result,
+              "No se pudo reprogramar la incubacion",
+            ),
+          },
+        } as IIncubacion;
+      }
+
+      return {
+        success: true,
+        message: typeof result?.value === "string" ? result.value : result,
+      } as IIncubacion;
+    } catch (error) {
+      console.error("Error reprogramando incubacion:", error);
+      return {
+        success: false,
+        error: {
+          message: "Error de conexion",
+        },
+      };
+    }
+  }
+
+  public async reprogramarConActualizacion(
+    id: string,
+    payload: {
+      fechaIncubacion: string;
+      fechaPreNacimiento: string;
+      fechaEclosion: string;
+      observaciones?: string;
+      detalles: any[];
+      usuario_ID: string;
+    },
+  ): Promise<IIncubacion> {
+    try {
+      const response = await fetch(this.buildEntityUrl(id), {
+        method: "PATCH",
+        headers: this.buildHeaders(),
+        body: JSON.stringify({
+          fechaIncubacion: payload.fechaIncubacion,
+          fechaPreNacimiento: payload.fechaPreNacimiento,
+          fechaEclosion: payload.fechaEclosion,
+          observaciones: payload.observaciones || "",
+          estado: "PROGRAMADA",
+          motivoCancelacion: "",
+          fechaFinIncubacion: null,
+          detalles: (payload.detalles || []).map((detalle) =>
+            this.buildReprogramarDetallePayload(detalle, payload.usuario_ID),
+          ),
+        }),
+      });
+
+      const result = await this.parseResponse(response);
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: {
+            message: this.getErrorMessage(
+              result,
+              "No se pudo reprogramar la incubacion",
+            ),
+          },
+        } as IIncubacion;
+      }
+
+      return {
+        ...result,
+        success: true,
+      };
+    } catch (error) {
+      console.error("Error reprogramando incubacion:", error);
+      return {
+        success: false,
+        error: {
+          message: "Error de conexion",
+        },
+      };
     }
   }
 

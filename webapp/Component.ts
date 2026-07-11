@@ -49,6 +49,7 @@ export default class Component extends BaseComponent {
     RouteIncubacionList: "Incubaciones",
     RouteIncubacionCreate: "Incubaciones",
     RouteIncubacionEdit: "Incubaciones",
+    RouteIncubacionReprogramar: "Incubaciones",
     RouteIncubacionDetail: "Incubaciones",
     RouteLineaGallos: "LineasAves",
     RouteLineaGalloCreate: "LineasAves",

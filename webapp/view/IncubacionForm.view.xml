@@ -5,7 +5,7 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:form="sap.f">
 
-    <Page title="{= ${view>/editMode} ? 'Editar Incubación' : 'Agregar Incubación' }"
+    <Page title="{= ${view>/reprogramarMode} ? 'Reprogramar Incubación' : (${view>/editMode} ? 'Editar Incubación' : 'Agregar Incubación') }"
         showNavButton="true" navButtonPress="onNavBack">
         <headerContent>
             <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />
@@ -53,7 +53,7 @@
                           <f:fields>
                             <DateTimePicker id="DTP1" change="onfechaIncubacionChange"
                                 value="{ path:'view>/form/fechaIncubacion', type:'sap.ui.model.type.DateTime', 'formatOptions': { 'pattern': 'dd/MM/yyyy HH:mm:ss' } }"
-                                editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                editable="{= ${view>/modoProgramada} }"
                                 class="sapUiSmallMarginBottom" />
                             <!-- <DatePicker value="{view>/form/fechaIncubacion}"
                             valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" valueHelpOnly="true" /> -->
@@ -107,7 +107,7 @@
                           </f:label>
                           <f:fields>
                             <TextArea value="{view>/form/observaciones}" rows="4"
-                                editable="{= ${view>/form/estado} !== 'COMPLETADA' &amp;&amp;  ${view>/form/estado} !== 'CANCELADA'}" />
+                                editable="{= (${view>/form/estado} !== 'COMPLETADA' &amp;&amp; ${view>/form/estado} !== 'CANCELADA') || ${view>/reprogramarMode} }" />
                           </f:fields>
                         </f:FormElement>
                       </f:formElements>
@@ -124,18 +124,18 @@
                             <!-- <Button icon="sap-icon://refresh" enabled="{=
                             ${table>/selectedIndex} >= 0}" press="onRefresh"/> -->
                             <Button icon="sap-icon://add" type="Emphasized" press="onAddDetalle"
-                                visible="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                visible="{= ${view>/modoProgramada} }" />
                         </OverflowToolbar>
                     </headerToolbar>
                     <columns>
                         <Column demandPopin="true" minScreenWidth="Tablet" width="22%"
-                            visible="{= ${view>/form/estado} === 'PROGRAMADA' &amp;&amp; ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            visible="{= ${view>/modoProgramada} &amp;&amp; ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <Text text="Plan de cruce" />
                         </Column>
-                        <Column width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}" >
+                        <Column width="20%" visible="{= ${view>/modoProgramada}}" >
                             <Text text="Padre" />
                         </Column>
-                        <Column width="20%" visible="{= ${view>/form/estado} === 'PROGRAMADA'}">
+                        <Column width="20%" visible="{= ${view>/modoProgramada}}">
                             <Text text="Madre" />
                         </Column>
                         <Column width="20%" visible="{= ${view>/form/estado} === 'EN_PROCESO' || ${view>/form/estado} === 'FINALIZADA'}">
@@ -165,7 +165,7 @@
                             <Text text="No eclosionados" />
                         </Column>
                         <Column demandPopin="true" minScreenWidth="Tablet" width="12%"
-                            visible="{= ${view>/form/estado} === 'PROGRAMADA' }">
+                            visible="{= ${view>/modoProgramada} }">
                             <Text text="Acciones" />
                         </Column>
                     </columns>
@@ -179,7 +179,7 @@
                                     showValueHelp="true"
                                     valueHelpOnly="{view>/canUsePlanesCruce}"
                                     valueHelpRequest=".onValueHelpPlanCruce"
-                                    editable="{= ${view>/form/estado} === 'PROGRAMADA' &amp;&amp; ${view>/canUsePlanesCruce} }" />
+                                    editable="{= ${view>/modoProgramada} &amp;&amp; ${view>/canUsePlanesCruce} }" />
                                 <VBox>
                                     <ObjectIdentifier
                                         title="{view>placaPadre}"
@@ -194,7 +194,7 @@
                                         showValueHelp="true"
                                         valueHelpOnly="true"
                                         valueHelpRequest=".onValueHelpPadre"
-                                        editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                        editable="{= ${view>/modoProgramada} }"
                                         visible="{= !${view>/canUsePlanesCruce} }" />
                                 </VBox>
                                 <VBox>
@@ -211,7 +211,7 @@
                                         showValueHelp="true"
                                         valueHelpOnly="true"
                                         valueHelpRequest=".onValueHelpMadre"
-                                        editable="{= ${view>/form/estado} === 'PROGRAMADA' }"
+                                        editable="{= ${view>/modoProgramada} }"
                                         visible="{= !${view>/canUsePlanesCruce} }" />
                                 </VBox>
                                 <ObjectIdentifier
@@ -225,7 +225,7 @@
                                     state="{ path: 'view>nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
                                 <ObjectNumber number="{view>porcentaje}" unit="%" />
                                 <Input value="{view>totalHuevos}" type="Number"
-                                    editable="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                    editable="{= ${view>/modoProgramada} }" />
                                 <Input value="{view>huevosFertiles}" type="Number"
                                     editable="{= ${view>/form/estado} === 'EN_PROCESO' }"
                                     liveChange=".onDetalleHuevosChange"
@@ -238,7 +238,7 @@
                                     editable="false" />
                                 <Button icon="sap-icon://delete" type="Transparent"
                                     press=".onDeleteDetalle"
-                                    visible="{= ${view>/form/estado} === 'PROGRAMADA' }" />
+                                    visible="{= ${view>/modoProgramada} }" />
                             </cells>
                         </ColumnListItem>
                     </items>
@@ -248,7 +248,7 @@
         <footer>
             <Toolbar>
                 <ToolbarSpacer />
-                <Button text="Guardar" type="Emphasized" press="onSave" />
+                <Button text="{= ${view>/reprogramarMode} ? 'Reprogramar' : 'Guardar' }" type="Emphasized" press="onSave" />
                 <Button text="Cancelar" class="sapUiTinyMarginBegin" press="onNavBack" />
             </Toolbar>
         </footer>

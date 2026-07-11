@@ -80,6 +80,9 @@ export default class IncubacionForm extends Controller {
     oRouter
       ?.getRoute("RouteIncubacionEdit")
       ?.attachPatternMatched(this._onEditMatched, this);
+    oRouter
+      ?.getRoute("RouteIncubacionReprogramar")
+      ?.attachPatternMatched(this._onReprogramarMatched, this);
   }
 
   public onSeleccionarPadre(oEvent: Event): void {
@@ -268,6 +271,142 @@ export default class IncubacionForm extends Controller {
     oModel?.setProperty("/canUsePlanesCruce", true);
   }
 
+  private obtenerPlanesCruceCargados(): any[] {
+    const planesModel = this.getView()?.getModel("planesCruce") as JSONModel;
+    const data = planesModel?.getData();
+
+    return Array.isArray(data) ? data : [];
+  }
+
+  private async obtenerPlanCrucePorId(planId: string): Promise<any | null> {
+    if (!planId) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/PlanesCruces(ID='${planId}')?$expand=macho,hembra,linea`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        return null;
+      }
+
+      return this.mapPlanCruceVisual(data);
+    } catch {
+      return null;
+    }
+  }
+
+  private aplicarPlanAlDetalle(detalle: any, plan: any): void {
+    if (!plan) {
+      return;
+    }
+
+    detalle.planCruce_ID = detalle.planCruce_ID || plan.ID || "";
+    detalle.codigo = plan.codigoVisual || plan.codigo || detalle.codigo || "";
+    detalle.tipoParentesco =
+      detalle.tipoParentesco || plan.tipoParentesco || "";
+    detalle.nivelRiesgo = detalle.nivelRiesgo || plan.nivelRiesgo || "";
+    if (detalle.porcentaje === undefined || detalle.porcentaje === null) {
+      detalle.porcentaje = plan.porcentaje ?? null;
+    }
+    detalle.decision = detalle.decision || plan.decision || "";
+  }
+
+  private async resolverPlanDeDetalle(
+    detalle: any,
+    planes: any[],
+  ): Promise<void> {
+    detalle.planCruce_ID =
+      detalle.planCruce_ID || detalle.planCruce?.ID || "";
+
+    if (detalle.planCruce?.codigo) {
+      this.aplicarPlanAlDetalle(
+        detalle,
+        this.mapPlanCruceVisual(detalle.planCruce),
+      );
+      return;
+    }
+
+    let plan =
+      planes.find((item) => item.ID === detalle.planCruce_ID) || null;
+
+    if (!plan && detalle.planCruce_ID) {
+      plan = await this.obtenerPlanCrucePorId(detalle.planCruce_ID);
+    }
+
+    if (!plan && detalle.padre_ID && detalle.madre_ID) {
+      plan =
+        planes.find(
+          (item) =>
+            (item.macho_ID || item.macho?.ID) === detalle.padre_ID &&
+            (item.hembra_ID || item.hembra?.ID) === detalle.madre_ID,
+        ) || null;
+    }
+
+    if (plan) {
+      this.aplicarPlanAlDetalle(detalle, plan);
+      return;
+    }
+
+    if (detalle.padre_ID && detalle.madre_ID) {
+      detalle.codigo = "Detalle manual";
+    }
+  }
+
+  private async prepararDetallesParaFormulario(
+    detalles: any[],
+    opciones?: { reiniciarConteoNacimiento?: boolean },
+  ): Promise<any[]> {
+    const planes = this.obtenerPlanesCruceCargados();
+    const preparados: any[] = [];
+
+    for (const element of detalles || []) {
+      const detalle = { ...element };
+
+      detalle.placaPadre = detalle.padre?.placa || detalle.placaPadre || "";
+      detalle.nombrePadre =
+        detalle.padre?.nombre ||
+        detalle.padre?.apodo ||
+        detalle.nombrePadre ||
+        "";
+      detalle.placaMadre = detalle.madre?.placa || detalle.placaMadre || "";
+      detalle.nombreMadre =
+        detalle.madre?.nombre ||
+        detalle.madre?.apodo ||
+        detalle.nombreMadre ||
+        "";
+      detalle.padre_ID = detalle.padre_ID || detalle.padre?.ID || "";
+      detalle.madre_ID = detalle.madre_ID || detalle.madre?.ID || "";
+
+      await this.resolverPlanDeDetalle(detalle, planes);
+
+      if (opciones?.reiniciarConteoNacimiento) {
+        detalle.huevosFertiles = 0;
+        detalle.huevosEclosionados = 0;
+        detalle.huevosNoEclosionados = 0;
+      } else {
+        detalle.huevosNoEclosionados = this.calcularNoEclosionados(
+          detalle.huevosFertiles,
+          detalle.huevosEclosionados,
+        );
+      }
+
+      preparados.push(detalle);
+    }
+
+    return preparados;
+  }
+
   private normalizarPlanesCruceDisponibles(planes: any[]): any[] {
     const planesPorPareja = new Map<string, any>();
 
@@ -448,6 +587,8 @@ export default class IncubacionForm extends Controller {
 
       oModel.setProperty("/busy", true);
       oModel.setProperty("/editMode", false);
+      oModel.setProperty("/reprogramarMode", false);
+      oModel.setProperty("/modoProgramada", true);
       oModel.setProperty("/canUsePlanesCruce", true);
       this.incubacionId = null;
 
@@ -493,6 +634,7 @@ export default class IncubacionForm extends Controller {
 
     oModel.setProperty("/busy", true);
     oModel.setProperty("/editMode", true);
+    oModel.setProperty("/reprogramarMode", false);
 
     try {
       await this._loadAvesPadrotes();
@@ -507,24 +649,11 @@ export default class IncubacionForm extends Controller {
         incubacion.eInputNacNoEcl = true;
       }
 
-      let detalles = incubacion.detalles;
-      for (let index = 0; index < detalles.length; index++) {
-        const element = detalles[index];
-        element.placaPadre = element.padre?.placa || "";
-        element.nombrePadre = element.padre?.nombre || element.padre?.apodo || "";
-        element.placaMadre = element.madre?.placa || "";
-        element.nombreMadre = element.madre?.nombre || element.madre?.apodo || "";
-        element.planCruce_ID =
-          element.planCruce_ID || element.planCruce?.ID || "";
-        element.codigo = element.planCruce?.codigo || "";
-        element.decision =
-          element.decision || element.planCruce?.decision || "";
-        element.huevosNoEclosionados = this.calcularNoEclosionados(
-          element.huevosFertiles,
-          element.huevosEclosionados,
-        );
-      }
+      let detalles = await this.prepararDetallesParaFormulario(
+        incubacion.detalles || [],
+      );
 
+      oModel.setProperty("/modoProgramada", incubacion.estado === "PROGRAMADA");
       oModel.setProperty("/form", {
         codigo: incubacion.codigo,
         fechaIncubacion: new Date(incubacion.fechaIncubacion) || "",
@@ -533,6 +662,81 @@ export default class IncubacionForm extends Controller {
         estado: incubacion.estado || "PROGRAMADA",
         observaciones: incubacion.observaciones || "",
         eInputNacNoEcl: incubacion.eInputNacNoEcl,
+        detalles: detalles,
+      });
+
+      void this.cargarSuscripcionResumen();
+    } catch (error) {
+      MessageBox.error(
+        error instanceof Error
+          ? error.message
+          : "No se pudo cargar la incubación",
+      );
+    } finally {
+      oModel.setProperty("/busy", false);
+    }
+  }
+
+  private async _onReprogramarMatched(oEvent: any): Promise<void> {
+    if (!this.authService.isAuthenticated()) {
+      const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+      oRouter?.navTo("RouteLogin");
+      return;
+    }
+
+    const sUserData = localStorage.getItem("auth_user");
+    if (sUserData) {
+      const oUser = JSON.parse(sUserData);
+      const oUserModel = new JSONModel(oUser);
+      this.getView()?.setModel(oUserModel, "user");
+    }
+
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    this.incubacionId = oEvent.getParameter("arguments").id;
+
+    oModel.setProperty("/busy", true);
+    oModel.setProperty("/editMode", true);
+    oModel.setProperty("/reprogramarMode", true);
+    oModel.setProperty("/modoProgramada", true);
+
+    try {
+      await this._loadAvesPadrotes();
+      await this._loadPlanesCruce();
+      const incubacion = await this.service.getById(this.incubacionId!);
+
+      if (incubacion.estado !== "CANCELADA") {
+        MessageBox.error(
+          "Solo se puede reprogramar una incubación cancelada",
+          {
+            onClose: () => {
+              this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionDetail", {
+                id: this.incubacionId,
+              });
+            },
+          },
+        );
+        return;
+      }
+
+      const detalles = await this.prepararDetallesParaFormulario(
+        incubacion.detalles || [],
+        { reiniciarConteoNacimiento: true },
+      );
+
+      if (detalles.length === 0) {
+        MessageBox.warning(
+          "La incubación no tiene detalles. Agregue al menos una pareja antes de reprogramar.",
+        );
+      }
+
+      oModel.setProperty("/form", {
+        codigo: incubacion.codigo,
+        fechaIncubacion: new Date(incubacion.fechaIncubacion) || "",
+        fechaPreNacimiento: new Date(incubacion.fechaPreNacimiento) || "",
+        fechaEclosion: new Date(incubacion.fechaEclosion) || "",
+        estado: incubacion.estado || "CANCELADA",
+        observaciones: incubacion.observaciones || "",
+        eInputNacNoEcl: false,
         detalles: detalles,
       });
 
@@ -598,6 +802,14 @@ export default class IncubacionForm extends Controller {
   }
 
   public onNavBack(): void {
+    const oModel = this.getView()?.getModel("view") as JSONModel;
+    if (oModel?.getProperty("/reprogramarMode") && this.incubacionId) {
+      this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionDetail", {
+        id: this.incubacionId,
+      });
+      return;
+    }
+
     this.getOwnerComponent()?.getRouter().navTo("RouteIncubacionList");
   }
 
@@ -610,12 +822,25 @@ export default class IncubacionForm extends Controller {
       const nacidos = Number(d.huevosEclosionados || 0);
       const noEclosionados = Number(d.huevosNoEclosionados || 0);
 
-      if (!d.padre_ID || !d.madre_ID) {
+      if (!d.padre_ID && !d.padre?.ID) {
         MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
         return false;
       }
 
-      if (d.padre_ID === d.madre_ID) {
+      if (!d.madre_ID && !d.madre?.ID) {
+        MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
+        return false;
+      }
+
+      const padreId = d.padre_ID || d.padre?.ID;
+      const madreId = d.madre_ID || d.madre?.ID;
+
+      if (!padreId || !madreId) {
+        MessageBox.error(`Debe seleccionar padre y madre en la fila ${i + 1}`);
+        return false;
+      }
+
+      if (padreId === madreId) {
         MessageBox.error(
           `Padre y madre no pueden ser iguales en la fila ${i + 1}`,
         );
@@ -661,7 +886,9 @@ export default class IncubacionForm extends Controller {
         return;
       }
 
-      oData.codigo = `INC-${Date.now()}`;
+      if (!this.incubacionId) {
+        oData.codigo = `INC-${Date.now()}`;
+      }
 
       (oData.detalles || []).forEach((detalle: any) => {
         detalle.huevosNoEclosionados = this.calcularNoEclosionados(
@@ -672,6 +899,11 @@ export default class IncubacionForm extends Controller {
       oModelLocal?.setProperty("/form/detalles", oData.detalles || []);
 
       if (!this._validarDetalles(oData.detalles || [])) {
+        return;
+      }
+
+      if (!oData.detalles || oData.detalles.length === 0) {
+        MessageBox.error("Debe incluir al menos un detalle de incubación");
         return;
       }
 
@@ -723,6 +955,55 @@ export default class IncubacionForm extends Controller {
           };
         }),
       };
+
+      if (oModelLocal?.getProperty("/reprogramarMode") && this.incubacionId) {
+        MessageBox.confirm(
+          "¿Desea reprogramar esta incubación con los datos indicados?",
+          {
+            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+            emphasizedAction: MessageBox.Action.YES,
+            onClose: async function (sAction) {
+              if (sAction !== MessageBox.Action.YES) {
+                return;
+              }
+
+              const bResult = await oThat.service.reprogramarConActualizacion(
+                oThat.incubacionId!,
+                {
+                  fechaIncubacion: oPayload.fechaIncubacion!,
+                  fechaPreNacimiento: oPayload.fechaPreNacimiento!,
+                  fechaEclosion: oPayload.fechaEclosion!,
+                  observaciones: oPayload.observaciones,
+                  usuario_ID: userId,
+                  detalles: (oData.detalles || []).map((d: any) =>
+                    oThat.mapDetalleParaReprogramar(d, userId),
+                  ),
+                },
+              );
+
+              if (bResult.success) {
+                MessageBox.success("Incubación reprogramada exitosamente", {
+                  actions: [MessageBox.Action.OK],
+                  emphasizedAction: MessageBox.Action.OK,
+                  onClose: function () {
+                    oThat
+                      .getOwnerComponent()
+                      ?.getRouter()
+                      .navTo("RouteIncubacionDetail", {
+                        id: oThat.incubacionId,
+                      });
+                  },
+                  dependentOn: oThat.getView(),
+                });
+              } else {
+                MessageBox.error(oThat.obtenerMensajeError(bResult));
+              }
+            },
+            dependentOn: this.getView(),
+          },
+        );
+        return;
+      }
 
       if (this.incubacionId) {
         MessageBox.information(
@@ -789,7 +1070,54 @@ export default class IncubacionForm extends Controller {
     }
   }
 
+  private mapDetalleParaReprogramar(detalle: any, userId: string): Record<string, any> {
+    const item: Record<string, any> = {
+      padre_ID: detalle.padre_ID || detalle.padre?.ID || null,
+      madre_ID: detalle.madre_ID || detalle.madre?.ID || null,
+      totalHuevos: Number(detalle.totalHuevos || 0),
+      huevosFertiles: 0,
+      huevosEclosionados: 0,
+      huevosNoEclosionados: 0,
+      usuario_ID: detalle.usuario_ID || userId,
+    };
+
+    if (detalle.ID) {
+      item.ID = detalle.ID;
+    }
+
+    const planCruceId = detalle.planCruce_ID || detalle.planCruce?.ID || "";
+    if (planCruceId) {
+      item.planCruce_ID = planCruceId;
+    }
+
+    if (detalle.tipoParentesco) {
+      item.tipoParentesco = detalle.tipoParentesco;
+    }
+
+    if (detalle.nivelRiesgo) {
+      item.nivelRiesgo = detalle.nivelRiesgo;
+    }
+
+    if (detalle.porcentaje !== undefined && detalle.porcentaje !== null) {
+      item.porcentaje = Number(detalle.porcentaje);
+    }
+
+    return item;
+  }
+
   private obtenerMensajeError(result: any): string {
+    const details = result?.error?.details;
+
+    if (Array.isArray(details) && details.length > 0) {
+      const mensajes = details
+        .map((item: any) => item?.message || item?.rawMessage)
+        .filter(Boolean);
+
+      if (mensajes.length > 0) {
+        return mensajes.join("\n");
+      }
+    }
+
     if (typeof result?.error?.message === "string") {
       return result.error.message;
     }
