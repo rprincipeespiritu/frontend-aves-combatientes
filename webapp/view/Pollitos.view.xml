@@ -210,10 +210,12 @@
 
                                             <Label text="Placa" design="Bold"/>
                                             <ObjectStatus text="{pollitos>aveGenerada/placa}" state="Information" />
-
-                                            <!-- <Text
-                                                text="{pollitos>aveGenerada/placa}"
-                                                class="pollitoMobilePlate" /> -->
+                                        </VBox>
+                                        <VBox alignItems="End" class="pollitoMobileEstado">
+                                            <Label text="Estado" design="Bold" />
+                                            <ObjectStatus
+                                                text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
+                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
                                         </VBox>
                                     </HBox>
 
@@ -228,12 +230,6 @@
                                         <VBox class="pollitoMobileField">
                                             <Label text="Temporada" />
                                             <Text text="{pollitos>temporada}" />
-                                        </VBox>
-                                        <VBox class="pollitoMobileField">
-                                            <Label text="Estado" />
-                                            <ObjectStatus
-                                                text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
-                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
                                         </VBox>
                                         <VBox class="pollitoMobileField">
                                             <Label text="Padre" />

@@ -1337,6 +1337,16 @@
   margin-bottom: 0.65rem;
 }
 
+.pollitoMobileEstado {
+  flex: 0 0 auto;
+  text-align: end;
+}
+
+.pollitoMobileEstado .sapMLabel {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+}
+
 .pollitoMobilePlate {
   color: var(--app-muted);
   font-size: 0.78rem;
