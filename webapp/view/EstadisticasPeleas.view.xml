@@ -63,6 +63,20 @@
                                     </f:FormElement>
                                     <f:FormElement>
                                         <f:label>
+                                            <Label text="Padrote" />
+                                        </f:label>
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{= ${estadisticas>/aveSeleccionada/padrote} ? 'Si' : 'No' }"
+                                                state="{= ${estadisticas>/aveSeleccionada/padrote} ? 'Success' : 'None' }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement>
+                                        <f:label>
                                             <Label text="Alcance" />
                                         </f:label>
                                         <f:fields>
@@ -70,10 +84,12 @@
                                                 selectedKey="{estadisticas>/alcance}"
                                                 change=".onCambiarAlcance"
                                                 width="100%">
-                                                <core:Item key="INDIVIDUO" text="Individuo seleccionado" />
+                                                <core:Item key="INDIVIDUO"
+                                                    text="Individuo seleccionado" />
                                                 <core:Item key="ASCENDIENTES" text="Ascendientes" />
                                                 <core:Item key="DESCENDIENTES" text="Descendientes" />
-                                                <core:Item key="HERMANOS_PRIMOS" text="Hermanos y primos" />
+                                                <core:Item key="HERMANOS_PRIMOS"
+                                                    text="Hermanos y primos" />
                                             </Select>
                                         </f:fields>
                                     </f:FormElement>
@@ -118,7 +134,8 @@
                 <Panel
                     headerText="{estadisticas>/tituloPanel}"
                     class="sapUiMediumMarginTop">
-                    <HBox wrap="Wrap" justifyContent="SpaceBetween" class="sapUiSmallMarginBottom estadisticasPeleasResumen">
+                    <HBox wrap="Wrap" justifyContent="SpaceBetween"
+                        class="sapUiSmallMarginBottom estadisticasPeleasResumen">
                         <ObjectIdentifier
                             title="{estadisticas>/aveSeleccionada/placa}"
                             text="{= (${estadisticas>/aveSeleccionada/nombre} || '') + (${estadisticas>/aveSeleccionada/fechaNacimientoFmt} ? ' - Nac. ' + ${estadisticas>/aveSeleccionada/fechaNacimientoFmt} : '') }" />
@@ -166,19 +183,22 @@
                                 layerSpacing="92" />
                         </graph:layoutAlgorithm>
                         <graph:statuses>
-                            <graph:Status key="Base" title="Ave seleccionada" backgroundColor="#fff0b3"
+                            <graph:Status key="Base" title="Ave seleccionada"
+                                backgroundColor="#fff0b3"
                                 borderColor="#d99a00" />
                             <graph:Status key="Padre" title="Padre" backgroundColor="#e5f2ff"
                                 borderColor="#0a6ed1" />
                             <graph:Status key="Madre" title="Madre" backgroundColor="#f4e8ff"
                                 borderColor="#8a3ffc" />
-                            <graph:Status key="Descendiente" title="Descendiente" backgroundColor="#e8f5e9"
+                            <graph:Status key="Descendiente" title="Descendiente"
+                                backgroundColor="#e8f5e9"
                                 borderColor="#2e7d32" />
                             <graph:Status key="Hermano" title="Hermano" backgroundColor="#fff3e0"
                                 borderColor="#ef6c00" />
                             <graph:Status key="Primo" title="Primo" backgroundColor="#fce4ec"
                                 borderColor="#c2185b" />
-                            <graph:Status key="Relacionado" title="Relacionado" backgroundColor="#eceff1"
+                            <graph:Status key="Relacionado" title="Relacionado"
+                                backgroundColor="#eceff1"
                                 borderColor="#607d8b" />
                             <graph:Status key="Linea" title="Relacion" borderColor="#6a7d90" />
                         </graph:statuses>
@@ -193,14 +213,17 @@
                                 status="{estadisticas>status}"
                                 press=".onSeleccionarNodoGrafo">
                                 <graph:image>
-                                    <graph:NodeImage src="{estadisticas>image}" width="52" height="52"
+                                    <graph:NodeImage src="{estadisticas>image}" width="52"
+                                        height="52"
                                         visible="{= ${estadisticas>image} ? true : false}" />
                                 </graph:image>
                                 <graph:attributes>
                                     <graph:ElementAttribute label="Rol" value="{estadisticas>rol}" />
-                                    <graph:ElementAttribute label="Nombre" value="{estadisticas>nombre}" />
+                                    <graph:ElementAttribute label="Nombre"
+                                        value="{estadisticas>nombre}" />
                                     <graph:ElementAttribute label="Sexo" value="{estadisticas>sexo}" />
-                                    <graph:ElementAttribute label="Estado" value="{estadisticas>estado}" />
+                                    <graph:ElementAttribute label="Estado"
+                                        value="{estadisticas>estado}" />
                                     <graph:ElementAttribute label="Peleas"
                                         value="{estadisticas>peleasFmt}" />
                                     <graph:ElementAttribute label="Hijos e hijas"
