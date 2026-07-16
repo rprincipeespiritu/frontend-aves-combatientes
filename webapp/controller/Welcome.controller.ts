@@ -574,6 +574,11 @@ export default class Welcome extends Controller {
     oRouter?.navTo("RouteGenealogia");
   }
 
+  public onVerEstadisticasPeleas(): void {
+    const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
+    oRouter?.navTo("RouteEstadisticasPeleas");
+  }
+
   public onVerSuscripcion(): void {
     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
     oRouter?.navTo("RouteSuscripcion");

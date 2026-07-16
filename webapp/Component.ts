@@ -1,6 +1,7 @@
 import BaseComponent from "sap/ui/core/UIComponent";
 import Controller from "sap/ui/core/mvc/Controller";
 import { createDeviceModel } from "./model/models";
+import formatter from "./model/formatter";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
 import BusyDialog from "sap/m/BusyDialog";
@@ -56,6 +57,7 @@ export default class Component extends BaseComponent {
     RouteLineaGalloEdit: "LineasAves",
     RouteLineaGalloDetail: "LineasAves",
     RouteGenealogia: "LineasAves",
+    RouteEstadisticasPeleas: "LineasAves",
     RoutePlanesCruce: "PlanesCruces",
     RoutelineaGallosCruceCreate: "PlanesCruces",
     RouteReportes: "Historial",
@@ -103,6 +105,7 @@ export default class Component extends BaseComponent {
     super.init();
     this.installGlobalFetchBusyDialog();
     this.installGlobalAccountSettingsHandler();
+    this.installGlobalFormatters();
 
     // set the device model
     this.setModel(createDeviceModel(), "device");
@@ -182,6 +185,18 @@ export default class Component extends BaseComponent {
         this._oUserMenuSheet?.close?.();
         this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteSuscripcion");
       };
+    }
+  }
+
+  private installGlobalFormatters(): void {
+    const controllerPrototype = Controller.prototype as any;
+
+    if (!controllerPrototype.formatearEstadoState) {
+      controllerPrototype.formatearEstadoState = formatter.formatEstadoAveState;
+    }
+
+    if (!controllerPrototype.formatearEstadoAveText) {
+      controllerPrototype.formatearEstadoAveText = formatter.formatEstadoAveText;
     }
   }
 

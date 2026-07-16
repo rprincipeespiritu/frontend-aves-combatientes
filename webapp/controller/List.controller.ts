@@ -922,6 +922,19 @@ export default class List extends Controller {
         advertencias.push(`Fila ${fila}: no se encontrÃ³ madre con placa ${registro.madrePlaca}.`);
       }
 
+      if (padre && padre.placa === placa) {
+        errores.push(`Fila ${fila}: un ave no puede ser su propio padre.`);
+        continue;
+      }
+      if (madre && madre.placa === placa) {
+        errores.push(`Fila ${fila}: un ave no puede ser su propia madre.`);
+        continue;
+      }
+      if (payload.padre_ID && payload.madre_ID && payload.padre_ID === payload.madre_ID) {
+        errores.push(`Fila ${fila}: el padre y la madre no pueden ser la misma ave.`);
+        continue;
+      }
+
       try {
         const response = await fetch(`${this.baseUrl}/Aves`, {
           method: "POST",

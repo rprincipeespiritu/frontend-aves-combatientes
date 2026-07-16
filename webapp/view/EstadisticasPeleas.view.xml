@@ -1,0 +1,223 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.EstadisticasPeleas"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.f"
+    xmlns:graph="sap.suite.ui.commons.networkgraph"
+    xmlns:layout="sap.suite.ui.commons.networkgraph.layout">
+
+    <Page
+        title="Estadisticas de peleas genealogicas"
+        showNavButton="true"
+        navButtonPress=".onNavBack"
+        class="estadisticasPeleasPage"
+        enableScrolling="true">
+        <headerContent>
+            <Button icon="sap-icon://home" press=".onNavWelcome" type="Emphasized" />
+            <form:Avatar
+                id="userAvatar"
+                src="{user>/foto}"
+                displaySize="XS"
+                press=".onUserMenuPress"
+                class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+        </headerContent>
+
+        <content>
+            <VBox class="sapUiMediumMargin estadisticasPeleasContent" busy="{estadisticas>/busy}">
+                <Panel headerText="Seleccion de ave y alcance">
+                    <f:Form editable="true" class="sapUiSmallMargin">
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="1"
+                                singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Ave" required="true" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Input
+                                                id="inputAve"
+                                                value="{estadisticas>/aveSeleccionada/placa}"
+                                                description="{estadisticas>/aveSeleccionada/nombre}"
+                                                showValueHelp="true"
+                                                valueHelpRequest=".onValueHelpAve"
+                                                change=".onCambiarAveManual"
+                                                width="100%" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Alcance" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Select
+                                                selectedKey="{estadisticas>/alcance}"
+                                                change=".onCambiarAlcance"
+                                                width="100%">
+                                                <core:Item key="INDIVIDUO" text="Individuo seleccionado" />
+                                                <core:Item key="ASCENDIENTES" text="Ascendientes" />
+                                                <core:Item key="DESCENDIENTES" text="Descendientes" />
+                                                <core:Item key="HERMANOS_PRIMOS" text="Hermanos y primos" />
+                                            </Select>
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement
+                                        visible="{= ${estadisticas>/alcance} === 'ASCENDIENTES' || ${estadisticas>/alcance} === 'DESCENDIENTES' }">
+                                        <f:label>
+                                            <Label text="Generaciones" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Select
+                                                selectedKey="{estadisticas>/maxGeneraciones}"
+                                                change=".onCambiarMaxGeneraciones"
+                                                width="100%">
+                                                <core:Item key="1" text="1 generacion" />
+                                                <core:Item key="2" text="2 generaciones" />
+                                                <core:Item key="3" text="3 generaciones" />
+                                                <core:Item key="4" text="4 generaciones" />
+                                                <core:Item key="5" text="5 generaciones" />
+                                                <core:Item key="6" text="6 generaciones" />
+                                                <core:Item key="7" text="7 generaciones" />
+                                                <core:Item key="8" text="8 generaciones" />
+                                                <core:Item key="9" text="9 generaciones" />
+                                                <core:Item key="10" text="10 generaciones" />
+                                            </Select>
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
+                    </f:Form>
+                    <Toolbar design="Transparent">
+                        <ToolbarSpacer />
+                        <Button
+                            text="{= ${device>/system/phone} ? '' : 'Refrescar' }"
+                            icon="sap-icon://refresh"
+                            type="Emphasized"
+                            tooltip="Refrescar"
+                            press=".onRefrescar" />
+                    </Toolbar>
+                </Panel>
+
+                <Panel
+                    headerText="{estadisticas>/tituloPanel}"
+                    class="sapUiMediumMarginTop">
+                    <HBox wrap="Wrap" justifyContent="SpaceBetween" class="sapUiSmallMarginBottom estadisticasPeleasResumen">
+                        <ObjectIdentifier
+                            title="{estadisticas>/aveSeleccionada/placa}"
+                            text="{= (${estadisticas>/aveSeleccionada/nombre} || '') + (${estadisticas>/aveSeleccionada/fechaNacimientoFmt} ? ' - Nac. ' + ${estadisticas>/aveSeleccionada/fechaNacimientoFmt} : '') }" />
+                        <ObjectNumber
+                            number="{estadisticas>/resumen/total}"
+                            unit="individuos" />
+                        <ObjectNumber
+                            number="{estadisticas>/resumen/conPeleas}"
+                            unit="machos con peleas" />
+                        <ObjectStatus
+                            text="{= ${estadisticas>/resumen/totalVictorias} + ' victorias' }"
+                            state="Success" />
+                        <ObjectStatus
+                            text="{= ${estadisticas>/resumen/totalDerrotas} + ' derrotas' }"
+                            state="Error" />
+                        <ObjectStatus
+                            text="{= 'Promedio: ' + ${estadisticas>/resumen/promedioVictorias} }"
+                            state="Information" />
+                    </HBox>
+
+                    <core:Fragment
+                        fragmentName="com.rprincipees.registroavescombate.view.fragments.EstadisticasPeleasTable"
+                        type="XML" />
+                    <core:Fragment
+                        fragmentName="com.rprincipees.registroavescombate.view.fragments.EstadisticasPeleasMobileList"
+                        type="XML" />
+                </Panel>
+
+                <Panel
+                    headerText="Organigrama con estadisticas de peleas"
+                    class="sapUiMediumMarginTop estadisticasPeleasGraphPanel"
+                    visible="{= ${estadisticas>/graph/nodes/length} > 0 }">
+                    <graph:Graph
+                        id="estadisticasGraph"
+                        class="genealogyNetworkGraph estadisticasPeleasGraph"
+                        height="42rem"
+                        orientation="TopBottom"
+                        enableWheelZoom="true"
+                        nodes="{estadisticas>/graph/nodes}"
+                        lines="{estadisticas>/graph/lines}">
+                        <graph:layoutAlgorithm>
+                            <layout:LayeredLayout
+                                nodePlacement="BrandesKoepf"
+                                nodeSpacing="56"
+                                layerSpacing="92" />
+                        </graph:layoutAlgorithm>
+                        <graph:statuses>
+                            <graph:Status key="Base" title="Ave seleccionada" backgroundColor="#fff0b3"
+                                borderColor="#d99a00" />
+                            <graph:Status key="Padre" title="Padre" backgroundColor="#e5f2ff"
+                                borderColor="#0a6ed1" />
+                            <graph:Status key="Madre" title="Madre" backgroundColor="#f4e8ff"
+                                borderColor="#8a3ffc" />
+                            <graph:Status key="Descendiente" title="Descendiente" backgroundColor="#e8f5e9"
+                                borderColor="#2e7d32" />
+                            <graph:Status key="Hermano" title="Hermano" backgroundColor="#fff3e0"
+                                borderColor="#ef6c00" />
+                            <graph:Status key="Primo" title="Primo" backgroundColor="#fce4ec"
+                                borderColor="#c2185b" />
+                            <graph:Status key="Relacionado" title="Relacionado" backgroundColor="#eceff1"
+                                borderColor="#607d8b" />
+                            <graph:Status key="Linea" title="Relacion" borderColor="#6a7d90" />
+                        </graph:statuses>
+                        <graph:nodes>
+                            <graph:Node
+                                key="{estadisticas>key}"
+                                title="{estadisticas>title}"
+                                description="{estadisticas>description}"
+                                icon="{estadisticas>icon}"
+                                shape="{estadisticas>shape}"
+                                width="{estadisticas>width}"
+                                status="{estadisticas>status}"
+                                press=".onSeleccionarNodoGrafo">
+                                <graph:image>
+                                    <graph:NodeImage src="{estadisticas>image}" width="52" height="52"
+                                        visible="{= ${estadisticas>image} ? true : false}" />
+                                </graph:image>
+                                <graph:attributes>
+                                    <graph:ElementAttribute label="Rol" value="{estadisticas>rol}" />
+                                    <graph:ElementAttribute label="Nombre" value="{estadisticas>nombre}" />
+                                    <graph:ElementAttribute label="Sexo" value="{estadisticas>sexo}" />
+                                    <graph:ElementAttribute label="Estado" value="{estadisticas>estado}" />
+                                    <graph:ElementAttribute label="Peleas"
+                                        value="{estadisticas>peleasFmt}" />
+                                    <graph:ElementAttribute label="Hijos e hijas"
+                                        value="{estadisticas>hijosFmt}" />
+                                </graph:attributes>
+                            </graph:Node>
+                        </graph:nodes>
+                        <graph:lines>
+                            <graph:Line
+                                from="{estadisticas>from}"
+                                to="{estadisticas>to}"
+                                status="{estadisticas>status}"
+                                arrowPosition="End" />
+                        </graph:lines>
+                    </graph:Graph>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

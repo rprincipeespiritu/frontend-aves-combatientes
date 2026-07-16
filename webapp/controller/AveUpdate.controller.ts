@@ -233,9 +233,9 @@ export default class AveUpdate extends Controller {
             const aves: IAve[] = await response.json();
             let padres: any[]= [];
             if (helpSelected === "valueHelpPadre"){
-                padres = (aves.value || []).filter((a: any) => a.sexo === 'M' && a.padrote === true);
+                padres = (aves.value || []).filter((a: any) => a.sexo === 'M' && a.padrote === true && a.ID !== this.aveId);
             } else if(helpSelected === "valueHelpMadre"){
-                padres = (aves.value || []).filter((a: any) => a.sexo === 'H' && a.padrote === true);
+                padres = (aves.value || []).filter((a: any) => a.sexo === 'H' && a.padrote === true && a.ID !== this.aveId);
             }
             this.getView()?.setModel(new JSONModel(padres), "avesPadres");
 
@@ -266,6 +266,16 @@ export default class AveUpdate extends Controller {
             const sNombre = oSelectedItem.getTitle();
             const sPlaca = oSelectedItem.getDescription();
             const oAveSeleccionada = oSelectedItem.getBindingContext("avesPadres")?.getObject() as any;
+
+            if (oAveSeleccionada?.ID === oThat.aveId) {
+                MessageToast.show(
+                    oThat.helpSelected === "valueHelpPadre"
+                        ? "Un ave no puede ser su propio padre"
+                        : "Un ave no puede ser su propia madre",
+                );
+                return;
+            }
+
             const oModel = this.getView()?.getModel("update") as JSONModel;
             let oInput: Input | undefined;
             if(oThat.helpSelected === "valueHelpPadre") {
@@ -436,6 +446,19 @@ export default class AveUpdate extends Controller {
 
             payload.padre_ID = data.padre_ID || null;
             payload.madre_ID = data.madre_ID || null;
+
+            if (payload.padre_ID === oThat.aveId) {
+                MessageToast.show("Un ave no puede ser su propio padre");
+                return;
+            }
+            if (payload.madre_ID === oThat.aveId) {
+                MessageToast.show("Un ave no puede ser su propia madre");
+                return;
+            }
+            if (payload.padre_ID && payload.madre_ID && payload.padre_ID === payload.madre_ID) {
+                MessageToast.show("El padre y la madre no pueden ser la misma ave");
+                return;
+            }
 
             const confirmed = await ConfirmationService.confirmUpdate(
                 "el ave",

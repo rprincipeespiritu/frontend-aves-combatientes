@@ -379,6 +379,19 @@ export default class AveCreate extends Controller {
             if (data.padre_ID) payload.padre_ID = data.padre_ID;
             if (data.madre_ID) payload.madre_ID = data.madre_ID;
 
+            if (placaPadre && placaPadre === data.placa) {
+                MessageToast.show("Un ave no puede ser su propio padre");
+                return;
+            }
+            if (placaMadre && placaMadre === data.placa) {
+                MessageToast.show("Un ave no puede ser su propia madre");
+                return;
+            }
+            if (data.padre_ID && data.madre_ID && data.padre_ID === data.madre_ID) {
+                MessageToast.show("El padre y la madre no pueden ser la misma ave");
+                return;
+            }
+
             const confirmed = await ConfirmationService.confirmCreate(
                 "el ave",
                 `Placa: ${payload.placa}${payload.nombre ? `\nNombre: ${payload.nombre}` : ""}`

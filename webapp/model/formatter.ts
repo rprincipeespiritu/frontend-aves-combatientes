@@ -125,5 +125,52 @@ export default {
             .filter(Boolean);
 
         return partes.join(" ");
+    },
+
+    formatEstadoAveState(value: string | null | undefined): string {
+        const estado = String(value || "").trim().toUpperCase();
+
+        switch (estado) {
+            case "ACTIVO":
+            case "ACTIVA":
+            case "REGISTRADA_ADULTA":
+                return "Success";
+            case "FALLECIDO":
+            case "FALLECIDA":
+            case "ELIMINADO":
+                return "Error";
+            case "VENDIDO":
+            case "OBSEQUIADO":
+                return "Warning";
+            case "PRESTADO":
+            case "RETIRADO":
+                return "Information";
+            default:
+                return "Information";
+        }
+    },
+
+    formatEstadoAveText(value: string | null | undefined): string {
+        if (!value) {
+            return "-";
+        }
+
+        const estado = String(value).trim().toUpperCase();
+        const labels: Record<string, string> = {
+            ACTIVO: "Activo",
+            ACTIVA: "Activa",
+            FALLECIDO: "Fallecido",
+            FALLECIDA: "Fallecida",
+            VENDIDO: "Vendido",
+            PRESTADO: "Prestado",
+            RETIRADO: "Retirado",
+            REGISTRADA_ADULTA: "Registrada adulta",
+            OBSEQUIADO: "Obsequiado",
+            ELIMINADO: "Eliminado",
+            ENTRENAMIENTO: "En entrenamiento",
+            COMPETENCIA: "En competencia",
+        };
+
+        return labels[estado] || formatEnumText(value);
     }
 };

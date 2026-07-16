@@ -245,6 +245,11 @@
           "target": "TargetGenealogia"
         },
         {
+          "pattern": "estadisticas-peleas:?query:",
+          "name": "RouteEstadisticasPeleas",
+          "target": "TargetEstadisticasPeleas"
+        },
+        {
           "pattern": "lineas",
           "name": "RouteLineaGallos",
           "target": "TargetLineaGallos"
@@ -367,6 +372,10 @@
         "TargetGenealogia": {
           "id": "Genealogia",
           "viewName": "Genealogia"
+        },
+        "TargetEstadisticasPeleas": {
+          "id": "EstadisticasPeleas",
+          "viewName": "EstadisticasPeleas"
         },
         "TargetLineaGallos": {
           "id": "LineaGallos",
