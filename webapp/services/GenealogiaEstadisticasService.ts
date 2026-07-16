@@ -291,7 +291,7 @@ export class GenealogiaEstadisticasService {
     const textos: Record<AlcanceEstadisticas, string> = {
       INDIVIDUO: "Seleccione una ave para ver sus estadisticas.",
       ASCENDIENTES: "No hay ascendientes registrados para esta ave.",
-      DESCENDIENTES: "No hay descendientes registrados para esta ave.",
+      DESCENDIENTES: "No hay descendientes adultos registrados para esta ave.",
       HERMANOS_PRIMOS: "No hay hermanos ni primos registrados para esta ave.",
     };
 
@@ -786,31 +786,6 @@ export class GenealogiaEstadisticasService {
             ),
           );
           siguienteNivel.push(hijo.ID);
-        });
-
-        this.crias.forEach((cria) => {
-          if (cria.padre_ID !== idNodo && cria.madre_ID !== idNodo) return;
-          if (cria.aveGenerada_ID && this.avesPorId.has(cria.aveGenerada_ID)) return;
-
-          const key = `cria-${cria.ID}`;
-          if (map.has(key)) return;
-
-          map.set(key, {
-            ID: cria.ID,
-            placa: cria.cintillo || "Cria",
-            nombre: cria.nombre || "Sin nombre",
-            sexo: cria.sexo || "",
-            sexoFmt: this.formatearSexo(cria.sexo),
-            parentesco: this.getTituloDescendiente(generacion, cria.sexo),
-            generacion,
-            estado: cria.estado || "",
-            victorias: null,
-            derrotas: null,
-            totalPeleas: null,
-            porcentajeVictorias: "",
-            muestraPeleas: false,
-            esAve: false,
-          });
         });
       });
 

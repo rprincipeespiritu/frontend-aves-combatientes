@@ -12,7 +12,7 @@
         width="100%"
         fixedLayout="false">
         <columns>
-            <Column><Text text="Placa / Cintillo" /></Column>
+            <Column><Text text="Placa" /></Column>
             <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Nombre" /></Column>
             <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Genero" /></Column>
             <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Parentesco" /></Column>
