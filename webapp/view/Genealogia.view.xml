@@ -26,39 +26,39 @@
             <VBox class="sapUiMediumMargin" busy="{genealogia>/busy}">
                 <Panel headerText="Seleccion de ave">
                     <f:Form editable="true" class="sapUiSmallMargin">
-                      <f:layout>
-                        <f:ResponsiveGridLayout
-                          labelSpanXL="3"
-                          labelSpanL="3"
-                          labelSpanM="4"
-                          labelSpanS="12"
-                          emptySpanXL="0"
-                          emptySpanL="0"
-                          emptySpanM="0"
-                          emptySpanS="0"
-                          columnsXL="3"
-                          columnsL="3"
-                          columnsM="2"
-                          singleContainerFullSize="false" />
-                      </f:layout>
-                      <f:formContainers>
-                        <f:FormContainer>
-                          <f:formElements>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Ave" />
-                              </f:label>
-                              <f:fields>
-                                <Input
-                                    id="inputAve"
-                                    placeholder="Seleccionar Ave"
-                                    value="{genealogia>/placa}"
-                                    description="{genealogia>/nombre}"
-                                    showValueHelp="true"
-                                    valueHelpOnly="true"
-                                    valueHelpRequest="onValueHelpAve"
-                                    width="100%" />
-                                <!-- <Select
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="4"
+                            labelSpanS="12"
+                            emptySpanXL="0"
+                            emptySpanL="0"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="2"
+                            columnsL="2"
+                            columnsM="1"
+                            singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Ave" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Input
+                                                id="inputAve"
+                                                placeholder="Seleccionar Ave"
+                                                value="{genealogia>/placa}"
+                                                description="{genealogia>/nombre}"
+                                                showValueHelp="true"
+                                                valueHelpOnly="true"
+                                                valueHelpRequest="onValueHelpAve"
+                                                width="100%" />
+                                            <!-- <Select
                                     selectedKey="{genealogia>/aveSeleccionadaId}"
                                     change=".onSeleccionarAve"
                                     items="{genealogia>/aves}">
@@ -66,27 +66,80 @@
                                         key="{genealogia>ID}"
                                         text="{= ${genealogia>placa} + ' - ' + (${genealogia>nombre} || 'Sin nombre') }" />
                                 </Select> -->
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Generaciones" />
-                              </f:label>
-                              <f:fields>
-                                <ObjectStatus text="Hasta 5 generaciones" state="Information" />
-                              </f:fields>
-                            </f:FormElement>
-                            <f:FormElement>
-                              <f:label>
-                                <Label text="Ancestros encontrados" />
-                              </f:label>
-                              <f:fields>
-                                <ObjectNumber number="{genealogia>/resumen/ancestrosIdentificados}" />
-                              </f:fields>
-                            </f:FormElement>
-                          </f:formElements>
-                        </f:FormContainer>
-                      </f:formContainers>
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Vista del organigrama" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Select
+                                                selectedKey="{genealogia>/direccionArbol}"
+                                                change=".onCambiarDireccionArbol"
+                                                width="100%">
+                                                <core:Item key="ASCENDENCIA" text="Ascendencia (padres y ancestros)" />
+                                                <core:Item key="DESCENDENCIA" text="Descendencia (hijos y nietos)" />
+                                            </Select>
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Padrote" />
+                                        </f:label>
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{= ${genealogia>/aveSeleccionada/padrote} ? 'Si' : 'No' }"
+                                                state="{= ${genealogia>/aveSeleccionada/padrote} ? 'Success' : 'None' }" />
+                                        </f:fields>
+                                    </f:FormElement>                                    
+                                </f:formElements>
+                            </f:FormContainer>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Genero" />
+                                        </f:label>
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{genealogia>/aveSeleccionada/sexoFmt}"
+                                                state="Information" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label text="Generaciones" />
+                                        </f:label>
+                                        <f:fields>
+                                            <Select
+                                                selectedKey="{genealogia>/maxGeneraciones}"
+                                                change=".onCambiarMaxGeneraciones"
+                                                width="100%">
+                                                <core:Item key="1" text="1 generacion" />
+                                                <core:Item key="2" text="2 generaciones" />
+                                                <core:Item key="3" text="3 generaciones" />
+                                                <core:Item key="4" text="4 generaciones" />
+                                                <core:Item key="5" text="5 generaciones" />
+                                                <core:Item key="6" text="6 generaciones" />
+                                                <core:Item key="7" text="7 generaciones" />
+                                                <core:Item key="8" text="8 generaciones" />
+                                                <core:Item key="9" text="9 generaciones" />
+                                                <core:Item key="10" text="10 generaciones" />
+                                            </Select>
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
+                                            <Label
+                                                text="{= ${genealogia>/direccionArbol} === 'DESCENDENCIA' ? 'Descendientes encontrados' : 'Ancestros encontrados' }" />
+                                        </f:label>
+                                        <f:fields>
+                                            <ObjectNumber number="{genealogia>/resumen/registrosArbol}" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
                     </f:Form>
 
                     <Toolbar>
@@ -104,11 +157,8 @@
                             title="{genealogia>/aveSeleccionada/placa}"
                             text="{= ${genealogia>/aveSeleccionada/nombre} + (${genealogia>/aveSeleccionada/fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>/aveSeleccionada/fechaNacimientoFmt} : '') }" />
                         <ObjectStatus
-                            text="{genealogia>/aveSeleccionada/estado}"
-                            state="{= ${genealogia>/aveSeleccionada/estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
-                        <ObjectNumber
-                            number="{genealogia>/resumen/registrosFaltantes}"
-                            unit="registros faltantes" />
+                            text="{path: 'genealogia>/aveSeleccionada/estado', formatter: '.formatearEstadoAveText'}"
+                            state="{path: 'genealogia>/aveSeleccionada/estado', formatter: '.formatearEstadoState'}" />
                         <ObjectNumber
                             number="{genealogia>/resumen/hermanosCompletos}"
                             unit="hermanos completos" />
@@ -119,6 +169,19 @@
                             number="{genealogia>/resumen/mediosHermanosMadre}"
                             unit="medios por madre" />
                     </HBox>
+                </Panel>
+
+                <Panel headerText="Rendimiento en peleas" class="sapUiMediumMarginTop">
+                    <VBox class="sapUiSmallMargin">
+                        <Text
+                            text="Analice el rendimiento en peleas del individuo, sus ascendientes, descendientes, hermanos y primos para evaluar si esta criando ganadores."
+                            class="sapUiSmallMarginBottom" />
+                        <Button
+                            text="Ver estadisticas de peleas"
+                            icon="sap-icon://chart-axis"
+                            type="Emphasized"
+                            press=".onVerEstadisticasPeleas" />
+                    </VBox>
                 </Panel>
 
                 <HBox
@@ -141,15 +204,15 @@
                                     class="sapUiSmallMargin">
                                     <ObjectIdentifier
                                         title="{genealogia>placa}"
-                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') + ' | ' + (${genealogia>peleasFmt} || '0V / 0D') + ' | ' + (${genealogia>hijosFmt} || '0 hijos') }" />
                                     <HBox alignItems="Center">
                                         <ObjectStatus
                                             text="{genealogia>sexoFmt}"
                                             state="Information"
                                             class="sapUiSmallMarginEnd" />
                                         <ObjectStatus
-                                            text="{genealogia>estado}"
-                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                            text="{path: 'genealogia>estado', formatter: '.formatearEstadoAveText'}"
+                                            state="{path: 'genealogia>estado', formatter: '.formatearEstadoState'}" />
                                     </HBox>
                                 </HBox>
                             </CustomListItem>
@@ -172,15 +235,15 @@
                                     class="sapUiSmallMargin">
                                     <ObjectIdentifier
                                         title="{genealogia>placa}"
-                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') + ' | ' + (${genealogia>peleasFmt} || '0V / 0D') + ' | ' + (${genealogia>hijosFmt} || '0 hijos') }" />
                                     <HBox alignItems="Center">
                                         <ObjectStatus
                                             text="{genealogia>sexoFmt}"
                                             state="Information"
                                             class="sapUiSmallMarginEnd" />
                                         <ObjectStatus
-                                            text="{genealogia>estado}"
-                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                            text="{path: 'genealogia>estado', formatter: '.formatearEstadoAveText'}"
+                                            state="{path: 'genealogia>estado', formatter: '.formatearEstadoState'}" />
                                     </HBox>
                                 </HBox>
                             </CustomListItem>
@@ -203,15 +266,15 @@
                                     class="sapUiSmallMargin">
                                     <ObjectIdentifier
                                         title="{genealogia>placa}"
-                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') }" />
+                                        text="{= (${genealogia>nombre} || 'Sin nombre') + (${genealogia>fechaNacimientoFmt} ? ' - Nac. ' + ${genealogia>fechaNacimientoFmt} : '') + ' | ' + (${genealogia>peleasFmt} || '0V / 0D') + ' | ' + (${genealogia>hijosFmt} || '0 hijos') }" />
                                     <HBox alignItems="Center">
                                         <ObjectStatus
                                             text="{genealogia>sexoFmt}"
                                             state="Information"
                                             class="sapUiSmallMarginEnd" />
                                         <ObjectStatus
-                                            text="{genealogia>estado}"
-                                            state="{= ${genealogia>estado} === 'ACTIVO' ? 'Success' : 'Warning' }" />
+                                            text="{path: 'genealogia>estado', formatter: '.formatearEstadoAveText'}"
+                                            state="{path: 'genealogia>estado', formatter: '.formatearEstadoState'}" />
                                     </HBox>
                                 </HBox>
                             </CustomListItem>
@@ -234,10 +297,16 @@
                             layerSpacing="92" />
                     </graph:layoutAlgorithm>
                     <graph:statuses>
-                        <graph:Status key="Base" title="Ave seleccionada" backgroundColor="#fff0b3" borderColor="#d99a00" />
-                        <graph:Status key="Padre" title="Padre" backgroundColor="#e5f2ff" borderColor="#0a6ed1" />
-                        <graph:Status key="Madre" title="Madre" backgroundColor="#f4e8ff" borderColor="#8a3ffc" />
-                        <graph:Status key="Faltante" title="Sin registro" backgroundColor="#f2f4f5" borderColor="#89919a" />
+                        <graph:Status key="Base" title="Ave seleccionada" backgroundColor="#fff0b3"
+                            borderColor="#d99a00" />
+                        <graph:Status key="Padre" title="Padre" backgroundColor="#e5f2ff"
+                            borderColor="#0a6ed1" />
+                        <graph:Status key="Madre" title="Madre" backgroundColor="#f4e8ff"
+                            borderColor="#8a3ffc" />
+                        <graph:Status key="Descendiente" title="Descendiente" backgroundColor="#e8f5e9"
+                            borderColor="#2e7d32" />
+                        <graph:Status key="Faltante" title="Sin registro" backgroundColor="#f2f4f5"
+                            borderColor="#89919a" />
                         <graph:Status key="Linea" title="Relacion" borderColor="#6a7d90" />
                     </graph:statuses>
                     <graph:nodes>
@@ -251,13 +320,18 @@
                             status="{genealogia>status}"
                             press=".onVerImagenAve">
                             <graph:image>
-                                <graph:NodeImage src="{genealogia>image}" width="52" height="52" visible="{= ${genealogia>image} ? true : false}"/>
+                                <graph:NodeImage src="{genealogia>image}" width="52" height="52"
+                                    visible="{= ${genealogia>image} ? true : false}" />
                             </graph:image>
                             <graph:attributes>
                                 <graph:ElementAttribute label="Rol" value="{genealogia>rol}" />
                                 <graph:ElementAttribute label="Nombre" value="{genealogia>nombre}" />
                                 <graph:ElementAttribute label="Sexo" value="{genealogia>sexo}" />
                                 <graph:ElementAttribute label="Estado" value="{genealogia>estado}" />
+                                <graph:ElementAttribute label="Peleas"
+                                    value="{genealogia>peleasFmt}" />
+                                <graph:ElementAttribute label="Hijos e hijas"
+                                    value="{genealogia>hijosFmt}" />
                             </graph:attributes>
                         </graph:Node>
                     </graph:nodes>
@@ -273,8 +347,8 @@
         </content>
         <footer>
             <Toolbar>
-                <ToolbarSpacer/>                
-                <Button text="Cancelar" press="onNavBack"/>
+                <ToolbarSpacer />
+                <Button text="Cancelar" press="onNavBack" />
             </Toolbar>
         </footer>
     </Page>

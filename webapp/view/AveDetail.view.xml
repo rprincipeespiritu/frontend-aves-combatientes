@@ -39,11 +39,9 @@
                         <ObjectStatus
                             text="{
                                     path: 'detail>/estado',
-                                    formatter: '.formatearEstado'
+                                    formatter: '.formatearEstadoAveText'
                                 }"
-                            state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
-                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
-                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
+                            state="{path: 'detail>/estado', formatter: '.formatearEstadoState'}" />
                     </VBox>
                 </HBox>
 
@@ -110,11 +108,9 @@
                                             <ObjectStatus
                                                 text="{
                                                     path: 'detail>/estado',
-                                                    formatter: '.formatearEstado'
+                                                    formatter: '.formatearEstadoAveText'
                                                 }"
-                                                state="{= ${detail>/estado} === 'ACTIVO' ? 'Success' :
-                                                   ${detail>/estado} === 'VENDIDO' ? 'Warning' :
-                                                   ${detail>/estado} === 'FALLECIDO' ? 'Error' : 'None'}" />
+                                                state="{path: 'detail>/estado', formatter: '.formatearEstadoState'}" />
                                         </f:fields>
                                     </f:FormElement>
                                     <f:FormElement label="Fecha de fallecimiento"

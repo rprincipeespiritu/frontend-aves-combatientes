@@ -224,11 +224,8 @@
 
                                         <ObjectStatus text="{
                                             path: 'aves>estado',
-                                            formatter: '.formatearEstado'
-                                        }" state="{= ${aves>estado} === 'ACTIVO' ? 'Success' :
-                                                ${aves>estado} === 'PRESTADO' ? 'Information' :
-                                                ${aves>estado} === 'RETIRADO' ? 'Information' :
-                                                ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}" />
+                                            formatter: '.formatearEstadoAveText'
+                                        }" state="{path: 'aves>estado', formatter: '.formatearEstadoState'}" />
 
                                         <CheckBox selected="{aves>padrote}" editable="false" />
 
@@ -355,12 +352,9 @@
                                                 <ObjectStatus
                                                     text="{
                                                         path: 'aves>estado',
-                                                        formatter: '.formatearEstado'
+                                                        formatter: '.formatearEstadoAveText'
                                                     }"
-                                                    state="{= ${aves>estado} === 'ACTIVO' ? 'Success' :
-                                                        ${aves>estado} === 'PRESTADO' ? 'Information' :
-                                                        ${aves>estado} === 'RETIRADO' ? 'Information' :
-                                                        ${aves>estado} === 'VENDIDO' ? 'Warning' : 'Error'}" />
+                                                    state="{path: 'aves>estado', formatter: '.formatearEstadoState'}" />
                                             </VBox>
                                             <!-- <VBox class="aveAdultaMobileField">
                                                 <Label text="Cria" />

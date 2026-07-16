@@ -135,14 +135,14 @@
                                 <Text text="{detalle>/combate/lugar}" />
                               </f:fields>
                             </f:FormElement>
-                            <f:FormElement>
+                            <!-- <f:FormElement>
                               <f:label>
                                 <Label text="Metodo" />
                               </f:label>
                               <f:fields>
                                 <Text text="{detalle>/combate/metodoVictoria}" />
                               </f:fields>
-                            </f:FormElement>
+                            </f:FormElement> -->
                             <f:FormElement>
                               <f:label>
                                 <Label text="Lesiones" />

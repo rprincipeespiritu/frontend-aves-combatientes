@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Table
+        items="{estadisticas>/filas}"
+        noDataText="{estadisticas>/noDataText}"
+        growing="true"
+        growingScrollToLoad="true"
+        visible="{= !${estadisticas>/vistaCompacta} }"
+        class="estadisticasPeleasTable"
+        width="100%"
+        fixedLayout="false">
+        <columns>
+            <Column><Text text="Placa / Cintillo" /></Column>
+            <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Nombre" /></Column>
+            <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Genero" /></Column>
+            <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Parentesco" /></Column>
+            <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Generacion" /></Column>
+            <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Estado" /></Column>
+            <Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="Victorias" /></Column>
+            <Column hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="Derrotas" /></Column>
+            <Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="Total peleas" /></Column>
+            <Column hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="% Victorias" /></Column>
+        </columns>
+        <items>
+            <ColumnListItem type="Active" press=".onSeleccionarFila">
+                <cells>
+                    <Text text="{estadisticas>placa}" />
+                    <Text text="{estadisticas>nombre}" />
+                    <Text text="{estadisticas>sexoFmt}" />
+                    <Text text="{estadisticas>parentesco}" />
+                    <Text text="{= ${estadisticas>generacion} > 0 ? ${estadisticas>generacion} : '-' }" />
+                    <ObjectStatus
+                        text="{path: 'estadisticas>estado', formatter: '.formatearEstadoAveText'}"
+                        state="{path: 'estadisticas>estado', formatter: '.formatearEstadoState'}" />
+                    <ObjectStatus
+                        text="{estadisticas>victorias}"
+                        state="Success"
+                        visible="{estadisticas>muestraPeleas}" />
+                    <ObjectStatus
+                        text="{estadisticas>derrotas}"
+                        state="Error"
+                        visible="{estadisticas>muestraPeleas}" />
+                    <ObjectNumber
+                        number="{estadisticas>totalPeleas}"
+                        visible="{estadisticas>muestraPeleas}" />
+                    <ObjectStatus
+                        text="{estadisticas>porcentajeVictorias}"
+                        state="Success"
+                        visible="{estadisticas>muestraPeleas}" />
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

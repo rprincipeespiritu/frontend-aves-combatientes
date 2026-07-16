@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <List
+        items="{estadisticas>/filas}"
+        noDataText="{estadisticas>/noDataText}"
+        visible="{estadisticas>/vistaCompacta}"
+        width="100%"
+        class="estadisticasPeleasMobileList">
+        <items>
+            <CustomListItem type="Active" press=".onSeleccionarFila" class="estadisticasPeleasMobileItem">
+                <VBox class="estadisticasPeleasMobileCard" width="100%">
+                    <HBox alignItems="Start" justifyContent="SpaceBetween" width="100%" class="estadisticasPeleasMobileHeader">
+                        <VBox class="estadisticasPeleasMobileIdentity">
+                            <Text text="{estadisticas>nombre}" wrapping="true" class="estadisticasPeleasMobileTitle" />
+                            <HBox alignItems="Center" wrap="Wrap" class="estadisticasPeleasMobilePlacaRow">
+                                <Label text="Placa:" />
+                                <ObjectStatus text="{estadisticas>placa}" state="Information" />
+                            </HBox>
+                        </VBox>
+                        <ObjectStatus
+                            text="{path: 'estadisticas>estado', formatter: '.formatearEstadoAveText'}"
+                            state="{path: 'estadisticas>estado', formatter: '.formatearEstadoState'}" />
+                    </HBox>
+
+                    <FlexBox wrap="Wrap" width="100%" renderType="Div" class="estadisticasPeleasMobileGrid">
+                        <VBox class="estadisticasPeleasMobileField">
+                            <Label text="Genero" />
+                            <Text text="{estadisticas>sexoFmt}" />
+                        </VBox>
+                        <VBox class="estadisticasPeleasMobileField">
+                            <Label text="Parentesco" />
+                            <Text text="{estadisticas>parentesco}" wrapping="true" />
+                        </VBox>
+                        <VBox class="estadisticasPeleasMobileField">
+                            <Label text="Generacion" />
+                            <Text text="{= ${estadisticas>generacion} > 0 ? ${estadisticas>generacion} : '-' }" />
+                        </VBox>
+                    </FlexBox>
+
+                    <FlexBox wrap="Wrap" width="100%" class="estadisticasPeleasMobileStats" visible="{estadisticas>muestraPeleas}">
+                        <ObjectStatus text="{= ${estadisticas>victorias} + ' victorias' }" state="Success" />
+                        <ObjectStatus text="{= ${estadisticas>derrotas} + ' derrotas' }" state="Error" />
+                        <ObjectStatus text="{= ${estadisticas>totalPeleas} + ' peleas' }" state="Information" />
+                        <ObjectStatus text="{estadisticas>porcentajeVictorias}" state="Success" />
+                    </FlexBox>
+                    <Text
+                        text="Sin estadisticas de peleas (hembra o sin registros)"
+                        visible="{= !${estadisticas>muestraPeleas} }"
+                        class="estadisticasPeleasMobileMuted sapUiTinyMarginTop" />
+                </VBox>
+            </CustomListItem>
+        </items>
+    </List>
+</core:FragmentDefinition>

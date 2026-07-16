@@ -168,8 +168,8 @@
                                         <Text text="{pollitos>madre/nombre}" />
                                     </VBox>
                                     <ObjectStatus
-                                        text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
-                                        state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+                                        text="{path: 'pollitos>estado', formatter: '.formatearEstadoAveText'}"
+                                        state="{path: 'pollitos>estado', formatter: '.formatearEstadoState'}" />
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -214,8 +214,8 @@
                                         <VBox alignItems="End" class="pollitoMobileEstado">
                                             <Label text="Estado" design="Bold" />
                                             <ObjectStatus
-                                                text="{path: 'pollitos>estado', formatter: '.formatearEstado'}"
-                                                state="{= ${pollitos>estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${pollitos>estado} === 'FALLECIDO' ? 'Error' : ( ${pollitos>estado} === 'VENDIDO' || ${pollitos>estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+                                                text="{path: 'pollitos>estado', formatter: '.formatearEstadoAveText'}"
+                                                state="{path: 'pollitos>estado', formatter: '.formatearEstadoState'}" />
                                         </VBox>
                                     </HBox>
 

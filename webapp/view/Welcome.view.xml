@@ -118,7 +118,15 @@
                             <TileContent>
                                 <ImageContent src="images/icons/genealogy.svg" />                                
                             </TileContent>
-                        </GenericTile>                        
+                        </GenericTile>
+
+                        <GenericTile class="sapUiSmallMarginTop" header="Estadisticas de peleas"
+                            subheader="Rendimiento genealogico" press="onVerEstadisticasPeleas"
+                            visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
+                            <TileContent>
+                                <ImageContent src="images/icons/combats.svg" />
+                            </TileContent>
+                        </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Combates"
                             subheader="Registro de peleas" press="onVerCombates"
