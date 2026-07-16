@@ -21,7 +21,7 @@ import {
 } from "../services/GenealogiaEstadisticasService";
 
 export default class EstadisticasPeleas extends Controller {
-  private baseUrl = "http://localhost:4004/api/avecombatiente";
+  private baseUrl: string = window.APP_CONFIG?.API_BASE_URL || "";
   private authService: AuthService;
   private genealogiaService = new GenealogiaEstadisticasService();
   private aveIdInicial = "";
