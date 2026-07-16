@@ -8,7 +8,7 @@
   --app-teal: #13b8a6;
   --app-green: #2fb86f;
   --app-amber: #f7b731;
-  --app-rose: #f05d7b;
+  --app-rose: #e53935;
   --app-surface: rgba(255, 255, 255, 0.92);
   --app-border: rgba(42, 88, 135, 0.18);
   --app-shadow: 0 0.9rem 2rem rgba(21, 47, 80, 0.14);
@@ -1475,6 +1475,104 @@
   color: var(--app-muted);
 }
 
+.estadisticasPeleasTable {
+  width: 100%;
+}
+
+.estadisticasPeleasTable .sapMListTbl {
+  min-width: 100%;
+}
+
+.estadisticasPeleasResumen {
+  gap: 0.75rem;
+}
+
+.estadisticasPeleasResumen .sapMObjectIdentifier,
+.estadisticasPeleasResumen .sapMObjectNumber,
+.estadisticasPeleasResumen .sapMObjStatus {
+  margin-bottom: 0.25rem;
+}
+
+.estadisticasPeleasMobileList {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.estadisticasPeleasMobileItem,
+.estadisticasPeleasMobileItem .sapMLIBContent {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.estadisticasPeleasMobileCard {
+  box-sizing: border-box;
+  padding: 0.75rem 0.85rem;
+  width: 100%;
+}
+
+.estadisticasPeleasMobileHeader {
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.estadisticasPeleasMobileIdentity {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.estadisticasPeleasMobileTitle {
+  color: var(--app-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.estadisticasPeleasMobilePlacaRow {
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.estadisticasPeleasMobilePlacaRow .sapMLabel {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+}
+
+.estadisticasPeleasMobileGrid {
+  column-gap: 0.85rem;
+  row-gap: 0.6rem;
+}
+
+.estadisticasPeleasMobileField {
+  box-sizing: border-box;
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 6.8rem;
+}
+
+.estadisticasPeleasMobileField .sapMLabel {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+}
+
+.estadisticasPeleasMobileField .sapMText {
+  font-size: 0.84rem;
+  line-height: 1.25;
+}
+
+.estadisticasPeleasMobileStats {
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.estadisticasPeleasMobileMuted {
+  color: var(--app-muted);
+  font-size: 0.82rem;
+}
+
+.estadisticasPeleasGraphPanel .sapMPanelContent {
+  overflow: auto;
+}
+
 .genealogiaImageViewer {
   align-items: center;
   background: #f7fbff;
@@ -1658,6 +1756,61 @@
   .planCruceMeta,
   .planCrucePercent {
     font-size: 0.76rem;
+  }
+
+  .estadisticasPeleasPage .sapMBarTitle {
+    white-space: normal;
+  }
+
+  .estadisticasPeleasContent.sapUiMediumMargin {
+    margin: 0.75rem !important;
+  }
+
+  .estadisticasPeleasContent .sapMPanelContent {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+
+  .estadisticasPeleasTable {
+    display: none !important;
+  }
+
+  .estadisticasPeleasMobileList {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .estadisticasPeleasMobileField {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: calc(50% - 0.35rem);
+  }
+
+  .estadisticasPeleasMobileStats .sapMObjStatus {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: calc(50% - 0.35rem);
+  }
+
+  .estadisticasPeleasResumen {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .estadisticasPeleasResumen .sapMObjectIdentifier,
+  .estadisticasPeleasResumen .sapMObjectIdentifierTitle,
+  .estadisticasPeleasResumen .sapMObjectIdentifierText {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .estadisticasPeleasGraph,
+  .estadisticasPeleasGraphPanel .genealogyNetworkGraph {
+    height: 28rem !important;
+    min-height: 22rem;
+  }
+
+  .estadisticasPeleasGraphPanel .sapSuiteUiCommonsNetworkGraphDivNode {
+    max-width: calc(100vw - 2.5rem);
   }
 
 }

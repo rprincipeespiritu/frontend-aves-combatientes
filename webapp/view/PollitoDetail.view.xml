@@ -27,7 +27,7 @@
             <Text text="{detail>/nombre}" />
             <ObjectStatus
               text="{detail>/estadoTexto}"
-              state="{= ${detail>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${detail>/estado} === 'FALLECIDO' ? 'Error' : ( ${detail>/estado} === 'VENDIDO' || ${detail>/estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+              state="{path: 'detail>/estado', formatter: '.formatearEstadoState'}" />
           </VBox>
         </HBox>
 
@@ -74,7 +74,7 @@
                     <f:fields>
                       <ObjectStatus
                         text="{detail>/estadoTexto}"
-                        state="{= ${detail>/estado} === 'REGISTRADA_ADULTA' ? 'Success' : (${detail>/estado} === 'FALLECIDO' ? 'Error' : ( ${detail>/estado} === 'VENDIDO' || ${detail>/estado} === 'OBSEQUIADO' ? 'Warning' : 'Information'))}" />
+                        state="{path: 'detail>/estado', formatter: '.formatearEstadoState'}" />
                     </f:fields>
                   </f:FormElement>
                   <f:FormElement>

@@ -21,7 +21,9 @@
 
                     <StandardListItem
                             title="{avesPadres>nombre}"
-                            description="{avesPadres>placa}" />
+                            description="{avesPadres>placa}"
+                            info="{= ${avesPadres>sexo} === 'M' ? 'Macho' : (${avesPadres>sexo} === 'H' ? 'Hembra' : '') }"
+                            infoState="Information" />
 
                 </List>
 
