@@ -42,13 +42,7 @@ export default class AveCreate extends Controller {
             oRouter?.navTo("RouteLogin");
             return;
         } else {
-            const sUserData = localStorage.getItem("auth_user");
-
-            if (sUserData) {
-                const oUser = JSON.parse(sUserData);
-                const oUserModel = new JSONModel(oUser);
-                this.getView()?.setModel(oUserModel, "user");
-            }
+    this.bindUserModel();
 
             const oModel = new JSONModel({
                 placa: "", nombre: "", apodo: "", sexo: "M",
@@ -76,6 +70,7 @@ export default class AveCreate extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {

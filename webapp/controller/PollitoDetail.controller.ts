@@ -42,10 +42,7 @@ export default class PollitoDetail extends Controller {
             return;
         }
 
-        const userData = localStorage.getItem("auth_user");
-        if (userData) {
-            this.getView()?.setModel(new JSONModel(JSON.parse(userData)), "user");
-        }
+        this.bindUserModel();
 
         this.pollitoId = event.getParameter("arguments")?.pollitoId || "";
         this.getView()?.setModel(new JSONModel({ busy: true }), "detail");
@@ -306,6 +303,7 @@ export default class PollitoDetail extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const source = oEvent.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {

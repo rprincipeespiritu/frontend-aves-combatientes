@@ -1,19 +1,82 @@
 <core:FragmentDefinition
         xmlns="sap.m"
-        xmlns:core="sap.ui.core">
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.f">
 
-    <ActionSheet id="userMenuSheet" placement="Bottom" title="Datos del Usuario" class="userMenuMobileSheet">
-        <buttons>
-            <Button text="{user>/nombre} {user>/apellido}" icon="sap-icon://account" enabled="false" />
-            <Button text="{user>/email}" icon="sap-icon://email" enabled="false" />
-            <Button
-                text="{= 'Plan ' + ${planIndicator>/text} }"
-                icon="{planIndicator>/icon}"
-                visible="{planIndicator>/visible}"
-                enabled="false" />
-            <Button text="Suscripcion" icon="sap-icon://credit-card" press="onSubscriptionSettings" />
-            <Button text="Configuracion de cuenta" icon="sap-icon://action-settings" press="onAccountSettings" />
-            <Button text="Cerrar sesion" icon="sap-icon://log" press="onLogout" />
-        </buttons>
-    </ActionSheet>
+    <ResponsivePopover
+            id="userMenuSheet"
+            class="userMenuPopover userMenuMobilePopover"
+            showHeader="false"
+            placement="Bottom"
+            contentWidth="20rem"
+            horizontalScrolling="false"
+            verticalScrolling="false">
+
+        <VBox class="userMenuCard">
+            <VBox alignItems="Center" class="userMenuAvatarWrap">
+                <f:Avatar
+                        src="{user>/foto}"
+                        displaySize="L"
+                        displayShape="Circle"
+                        press="onSubirFotoPerfil"
+                        class="userMenuAvatar" />
+                <HBox alignItems="Center" justifyContent="Center" class="userMenuAvatarActions">
+                    <Button
+                            icon="sap-icon://camera"
+                            type="Emphasized"
+                            tooltip="Subir o cambiar foto"
+                            press="onSubirFotoPerfil"
+                            class="userMenuAvatarActionBtn" />
+                    <Button
+                            icon="sap-icon://delete"
+                            type="Transparent"
+                            tooltip="Eliminar foto"
+                            press="onEliminarFotoPerfil"
+                            visible="{= !!${user>/fotoUrl} }"
+                            class="userMenuAvatarActionBtn userMenuAvatarDeleteBtn" />
+                </HBox>
+                <Link text="Cambiar foto de perfil" press="onSubirFotoPerfil" class="userMenuAvatarLink" />
+            </VBox>
+
+            <VBox alignItems="Center" class="userMenuIdentity">
+                <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" class="userMenuName" />
+                <Text text="{user>/email}" textAlign="Center" class="userMenuEmail" />
+                <ObjectStatus
+                        text="{= 'Plan ' + ${planIndicator>/text} }"
+                        icon="{planIndicator>/icon}"
+                        state="{planIndicator>/state}"
+                        visible="{planIndicator>/visible}"
+                        class="userMenuPlanStatus" />
+                <Text
+                        text="{= ${planIndicator>/diasRestantes} !== undefined ? ${planIndicator>/diasRestantes} + ' dias restantes' : '' }"
+                        visible="{= ${planIndicator>/visible} &amp;&amp; ${planIndicator>/diasRestantes} !== undefined }"
+                        textAlign="Center"
+                        class="userMenuPlanDays" />
+                <Button
+                        text="Suscripcion"
+                        type="Transparent"
+                        icon="sap-icon://credit-card"
+                        press="onSubscriptionSettings"
+                        class="userMenuSubscriptionLink" />
+            </VBox>
+
+            <VBox class="userMenuActions">
+                <Button
+                        text="Configuracion de cuenta"
+                        type="Transparent"
+                        icon="sap-icon://action-settings"
+                        press="onAccountSettings"
+                        width="100%"
+                        class="userMenuActionButton" />
+
+                <Button
+                        text="Cerrar sesion"
+                        type="Emphasized"
+                        icon="sap-icon://log"
+                        press="onLogout"
+                        width="100%"
+                        class="userMenuLogoutButton" />
+            </VBox>
+        </VBox>
+    </ResponsivePopover>
 </core:FragmentDefinition>

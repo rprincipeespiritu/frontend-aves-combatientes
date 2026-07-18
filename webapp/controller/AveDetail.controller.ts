@@ -41,13 +41,7 @@ export default class AveDetail extends Controller {
             oRouter?.navTo("RouteLogin");
             return;
         }
-        const sUserData = localStorage.getItem("auth_user");
-
-        if (sUserData) {
-            const oUser = JSON.parse(sUserData);
-            const oUserModel = new JSONModel(oUser);
-            this.getView()?.setModel(oUserModel, "user");
-        }
+    this.bindUserModel();
 
         this.aveId = oEvent.getParameter("arguments").aveId;
 
@@ -161,6 +155,7 @@ export default class AveDetail extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {
@@ -338,7 +333,7 @@ export default class AveDetail extends Controller {
             nombreArchivo: item.titulo || "Imagen del ave",
             nombreVisual: this.obtenerNombreSinExtension(item.titulo || "Imagen del ave"),
             urlArchivo: item.urlSharepoint,
-            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint),
+            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint, "IMAGEN"),
             estadoArchivoState: this.obtenerEstadoArchivoState(item.urlSharepoint),
             estadoArchivoIcon: this.obtenerEstadoArchivoIcon(item.urlSharepoint)
         }));
@@ -349,7 +344,7 @@ export default class AveDetail extends Controller {
             nombreArchivo: item.titulo || "Video del ave",
             nombreVisual: this.obtenerNombreSinExtension(item.titulo || "Video del ave"),
             urlArchivo: item.urlSharepoint,
-            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint),
+            estadoArchivoTexto: this.obtenerEstadoArchivoTexto(item.urlSharepoint, "VIDEO"),
             estadoArchivoState: this.obtenerEstadoArchivoState(item.urlSharepoint),
             estadoArchivoIcon: this.obtenerEstadoArchivoIcon(item.urlSharepoint)
         }));
@@ -379,10 +374,13 @@ export default class AveDetail extends Controller {
         }
     }
 
-    private obtenerEstadoArchivoTexto(url?: string): string {
+    private obtenerEstadoArchivoTexto(url?: string, tipo?: string): string {
         if (!url || String(url).startsWith("pending-upload://")) return "Pendiente";
-        if (String(url).includes(".s3.")) return "Video registrado";
-        return "Registrado";
+        const esVideo = tipo === "VIDEO";
+        if (String(url).includes(".s3.")) {
+            return esVideo ? "Video registrado" : "Imagen registrada";
+        }
+        return esVideo ? "Video registrado" : tipo === "IMAGEN" ? "Imagen registrada" : "Registrado";
     }
 
     private obtenerEstadoArchivoState(url?: string): string {

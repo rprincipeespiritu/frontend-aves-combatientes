@@ -1,10 +1,15 @@
 import BaseComponent from "sap/ui/core/UIComponent";
 import Controller from "sap/ui/core/mvc/Controller";
-import { createDeviceModel } from "./model/models";
-import formatter from "./model/formatter";
+import View from "sap/ui/core/mvc/View";
+import App from "sap/m/App";
+import EventBus from "sap/ui/core/EventBus";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import MessageBox from "sap/m/MessageBox";
 import MessageToast from "sap/m/MessageToast";
 import BusyDialog from "sap/m/BusyDialog";
+import { createDeviceModel } from "./model/models";
+import formatter from "./model/formatter";
+import { AuthService, Usuario } from "./services/AuthService";
 
 type PlanIndicatorData = {
   visible: boolean;
@@ -105,7 +110,14 @@ export default class Component extends BaseComponent {
     super.init();
     this.installGlobalFetchBusyDialog();
     this.installGlobalAccountSettingsHandler();
+    this.installGlobalProfilePhotoHandlers();
     this.installGlobalFormatters();
+    this.subscribeUserProfileUpdates();
+    void AuthService.getInstance().ensureUserPhotoDisplay().then((user) => {
+      if (user) {
+        this.propagateUserModelToViews(user);
+      }
+    });
 
     // set the device model
     this.setModel(createDeviceModel(), "device");
@@ -186,6 +198,175 @@ export default class Component extends BaseComponent {
         this.getOwnerComponent?.()?.getRouter?.()?.navTo("RouteSuscripcion");
       };
     }
+
+    if (!controllerPrototype.bindUserModel) {
+      controllerPrototype.bindUserModel = function (): void {
+        AuthService.getInstance().bindUserModelToView(this.getView?.());
+      };
+    }
+  }
+
+  private installGlobalProfilePhotoHandlers(): void {
+    const controllerPrototype = Controller.prototype as any;
+    const authService = AuthService.getInstance();
+    const component = this;
+
+    const syncUserModel = (controller: any, user: Usuario): void => {
+      const view = controller.getView?.();
+      if (!view) return;
+
+      const userModel = view.getModel("user") as JSONModel | undefined;
+      if (!userModel) {
+        view.setModel(new JSONModel({ ...user }), "user");
+        return;
+      }
+
+      userModel.setData({ ...user });
+    };
+
+    const procesarArchivoPerfil = async function (this: any, file: File): Promise<void> {
+      const busy = new BusyDialog({
+        title: "Procesando",
+        text: "Subiendo foto de perfil...",
+      });
+      busy.open();
+
+      try {
+        const result = await authService.subirFotoPerfil(file);
+        if (!result.success) {
+          throw new Error(result.error || result.message || "No se pudo actualizar la foto de perfil");
+        }
+
+        const user = authService.getCurrentUser();
+        if (user) {
+          syncUserModel(this, user);
+        }
+
+        MessageToast.show(result.message || "Foto de perfil actualizada");
+      } catch (error: any) {
+        MessageBox.error(error.message || "No se pudo actualizar la foto de perfil");
+      } finally {
+        busy.close();
+        busy.destroy();
+      }
+    };
+
+    const abrirSelectorFoto = function (this: any): void {
+      const controller = this;
+
+      component.abrirSelectorFotoNativo((file) => {
+        controller._oUserMenuPopover?.close?.();
+        controller._oUserMenuSheet?.close?.();
+        void procesarArchivoPerfil.call(controller, file);
+      });
+    };
+
+    if (!controllerPrototype.onSubirFotoPerfil) {
+      controllerPrototype.onSubirFotoPerfil = function (): void {
+        abrirSelectorFoto.call(this);
+      };
+    }
+
+    if (!controllerPrototype.onSeleccionarFotoPerfil) {
+      controllerPrototype.onSeleccionarFotoPerfil = async function (oEvent: any): Promise<void> {
+        const files = oEvent.getParameter("files") as FileList | undefined;
+        const file = files?.[0];
+        if (!file) return;
+        await procesarArchivoPerfil.call(this, file);
+        oEvent.getSource()?.clear?.();
+      };
+    }
+
+    if (!controllerPrototype.onEliminarFotoPerfil) {
+      controllerPrototype.onEliminarFotoPerfil = async function (): Promise<void> {
+        const confirmado = await new Promise<boolean>((resolve) => {
+          MessageBox.confirm("Desea eliminar la foto de perfil?", {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            onClose: (action) => resolve(action === MessageBox.Action.OK),
+          });
+        });
+
+        if (!confirmado) return;
+
+        const busy = new BusyDialog({
+          title: "Procesando",
+          text: "Eliminando foto de perfil...",
+        });
+        busy.open();
+
+        try {
+          const result = await authService.eliminarFotoPerfil();
+          if (!result.success) {
+            throw new Error(result.error || result.message || "No se pudo eliminar la foto de perfil");
+          }
+
+          const user = authService.getCurrentUser();
+          if (user) {
+            syncUserModel(this, user);
+          }
+
+          MessageToast.show(result.message || "Foto de perfil eliminada");
+        } catch (error: any) {
+          MessageBox.error(error.message || "No se pudo eliminar la foto de perfil");
+        } finally {
+          busy.close();
+          busy.destroy();
+        }
+      };
+    }
+  }
+
+  private abrirSelectorFotoNativo(onFileSelected: (file: File) => void): void {
+    if (typeof document === "undefined") return;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/jpeg,image/png,image/webp,image/jpg";
+    input.style.display = "none";
+
+    input.addEventListener("change", () => {
+      const file = input.files?.[0];
+      if (file) {
+        onFileSelected(file);
+      }
+      input.remove();
+    }, { once: true });
+
+    document.body.appendChild(input);
+    input.click();
+  }
+
+  private subscribeUserProfileUpdates(): void {
+    EventBus.getInstance().subscribe("app", "userProfileUpdated", (_channel, _event, data: { user?: Usuario }) => {
+      if (!data?.user) return;
+      this.propagateUserModelToViews(data.user);
+    });
+  }
+
+  private setUserModelOnView(view: View, user: Usuario): void {
+    const userModel = view.getModel("user") as JSONModel | undefined;
+    if (!userModel) {
+      view.setModel(new JSONModel({ ...user }), "user");
+      return;
+    }
+
+    userModel.setData({ ...user });
+  }
+
+  private propagateUserModelToViews(user: Usuario): void {
+    const core = sap.ui.getCore();
+    Object.keys(core.mElements || {}).forEach((elementId) => {
+      const element = core.byId(elementId);
+      if (element instanceof View) {
+        this.setUserModelOnView(element, user);
+      }
+    });
+
+    const appControl = this.byId("app") as App;
+    const currentPage = appControl?.getCurrentPage?.();
+    if (currentPage instanceof View) {
+      this.setUserModelOnView(currentPage, user);
+    }
   }
 
   private installGlobalFormatters(): void {
@@ -204,6 +385,23 @@ export default class Component extends BaseComponent {
     const routeName = String(event.getParameter("name") || "");
     const subscription = await this.loadPlanIndicator();
     this.validateRouteAccess(routeName, subscription);
+    void this.refreshAuthenticatedUserPhoto();
+  }
+
+  private async refreshAuthenticatedUserPhoto(): Promise<void> {
+    const authService = AuthService.getInstance();
+    if (!authService.isAuthenticated()) return;
+
+    const user = await authService.ensureUserPhotoDisplay();
+    if (!user) return;
+
+    const propagate = (): void => {
+      this.propagateUserModelToViews(user);
+    };
+
+    propagate();
+    window.setTimeout(propagate, 0);
+    window.setTimeout(propagate, 300);
   }
 
   public async loadPlanIndicator(): Promise<PlanIndicatorData> {

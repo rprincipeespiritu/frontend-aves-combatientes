@@ -1,3 +1,7 @@
+import EventBus from "sap/ui/core/EventBus";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import View from "sap/ui/core/mvc/View";
+
 export interface LoginData {
     email: string;
     password: string;
@@ -21,6 +25,8 @@ export interface Usuario {
     apellido: string;
     telefono?: string;
     direccion?: string;
+    fotoUrl?: string;
+    foto?: string;
     rol: string;
     activo: boolean;
 }
@@ -38,6 +44,7 @@ export interface AuthResponse {
     estado?: string;
     telefono?: string;
     direccion?: string;
+    fotoUrl?: string;
     message?: string;
     error?: string;
     data?: any;
@@ -56,6 +63,7 @@ export class AuthService {
     private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
     private token: string | null = null;
     private usuario: Usuario | null = null;
+    private fotoDisplayCache: { fotoUrl: string; displayUrl: string; expiresAt: number } | null = null;
 
     private constructor() {
         // Cargar token del localStorage al inicializar
@@ -84,16 +92,18 @@ export class AuthService {
 
             if (result.success && result.nombre) {
                 this.token = result.token;
-                let user = {
-                    _id: result.userId,
-                    username: result.username,
-                    nombre: result.nombre,
-                    apellido: result.apellido,
-                    email: result.email,
-                    rol: result.rol,
-                    activo: result.activo
+                let user: Usuario = {
+                    _id: result.userId || "",
+                    username: result.username || "",
+                    nombre: result.nombre || "",
+                    apellido: result.apellido || "",
+                    email: result.email || "",
+                    rol: result.rol || "",
+                    activo: result.activo ?? true,
+                    fotoUrl: result.fotoUrl || "",
                 };
 
+                user = await this.aplicarFotoDisplayAlUsuario(user);
                 this.usuario = user;
                 this.guardarTokenEnStorage();
                 this.guardarUsuarioEnStorage();
@@ -241,6 +251,7 @@ export class AuthService {
         } finally {
             this.token = null;
             this.usuario = null;
+            this.fotoDisplayCache = null;
             this.stopInactivityTimer();
             this.limpiarStorage();
         }
@@ -270,8 +281,9 @@ export class AuthService {
 
             const result = await response.json();
             if (result.success) {
-                this.usuario = this.mapPerfilToUsuario(result);
+                this.usuario = await this.aplicarFotoDisplayAlUsuario(this.mapPerfilToUsuario(result));
                 this.guardarUsuarioEnStorage();
+                this.notificarActualizacionPerfil(this.usuario);
                 return this.usuario;
             }
 
@@ -305,8 +317,9 @@ export class AuthService {
             const result: AuthResponse = await response.json();
 
             if (result.success) {
-                this.usuario = this.mapPerfilToUsuario(result);
+                this.usuario = await this.aplicarFotoDisplayAlUsuario(this.mapPerfilToUsuario(result));
                 this.guardarUsuarioEnStorage();
+                this.notificarActualizacionPerfil(this.usuario);
             }
 
             return result;
@@ -318,6 +331,110 @@ export class AuthService {
                 error: 'Error de conexión'
             };
         }
+    }
+
+    public async subirFotoPerfil(file: File): Promise<AuthResponse> {
+        if (!this.token) {
+            return {
+                success: false,
+                error: 'No hay sesión activa'
+            };
+        }
+
+        if (!file.type.startsWith("image/")) {
+            return {
+                success: false,
+                error: "El archivo seleccionado no es una imagen valida"
+            };
+        }
+
+        try {
+            const preparacion = await this.prepararCargaFotoUsuario(file);
+            if (!preparacion.success || !preparacion.uploadUrl || !preparacion.fileUrl) {
+                return {
+                    success: false,
+                    error: preparacion.error || preparacion.message || "No se pudo preparar la carga de la foto"
+                };
+            }
+
+            await this.subirArchivoAS3(preparacion.uploadUrl, file, file.type);
+
+            const response = await fetch(`${this.baseUrl}/actualizarFotoPerfil`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({ fotoUrl: preparacion.fileUrl })
+            });
+
+            const result: AuthResponse = await response.json();
+            if (!result.success) {
+                return {
+                    success: false,
+                    error: result.error || result.message || "No se pudo actualizar la foto de perfil"
+                };
+            }
+
+            this.fotoDisplayCache = null;
+            this.usuario = await this.aplicarFotoDisplayAlUsuario(this.mapPerfilToUsuario(result));
+            this.guardarUsuarioEnStorage();
+            this.notificarActualizacionPerfil(this.usuario);
+            return result;
+        } catch (error: any) {
+            console.error('Error subiendo foto de perfil:', error);
+            return {
+                success: false,
+                error: error.message || 'Error de conexión'
+            };
+        }
+    }
+
+    public async eliminarFotoPerfil(): Promise<AuthResponse> {
+        if (!this.token) {
+            return {
+                success: false,
+                error: 'No hay sesión activa'
+            };
+        }
+
+        try {
+            const response = await fetch(`${this.baseUrl}/eliminarFotoPerfil`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({})
+            });
+
+            const result: AuthResponse = await response.json();
+            if (!result.success) {
+                return {
+                    success: false,
+                    error: result.error || result.message || "No se pudo eliminar la foto de perfil"
+                };
+            }
+
+            this.fotoDisplayCache = null;
+            this.usuario = this.mapPerfilToUsuario(result);
+            this.usuario.foto = "";
+            this.guardarUsuarioEnStorage();
+            this.notificarActualizacionPerfil(this.usuario);
+            return result;
+        } catch (error: any) {
+            console.error('Error eliminando foto de perfil:', error);
+            return {
+                success: false,
+                error: error.message || 'Error de conexión'
+            };
+        }
+    }
+
+    public async aplicarFotoDisplayAlUsuario(usuario: Usuario): Promise<Usuario> {
+        const enriched = { ...usuario };
+        enriched.foto = await this.resolverFotoDisplayUrl(enriched.fotoUrl);
+        return enriched;
     }
 
     // Cambiar contraseña
@@ -391,6 +508,49 @@ export class AuthService {
         return this.usuario;
     }
 
+    public setCurrentUser(user: Usuario): void {
+        this.usuario = user;
+        this.guardarUsuarioEnStorage();
+    }
+
+    public async ensureUserPhotoDisplay(): Promise<Usuario | null> {
+        if (!this.token) {
+            return null;
+        }
+
+        if (this.usuario?.fotoUrl) {
+            const enriched = await this.aplicarFotoDisplayAlUsuario(this.usuario);
+            this.setCurrentUser(enriched);
+            return enriched;
+        }
+
+        if (this.usuario) {
+            return { ...this.usuario, foto: this.usuario.foto || "" };
+        }
+
+        return this.obtenerPerfil();
+    }
+
+    public bindUserModelToView(view: View | null | undefined): void {
+        if (!view) {
+            return;
+        }
+
+        void this.ensureUserPhotoDisplay().then((user) => {
+            if (!user) {
+                return;
+            }
+
+            const userModel = view.getModel("user") as JSONModel | undefined;
+            if (!userModel) {
+                view.setModel(new JSONModel({ ...user }), "user");
+                return;
+            }
+
+            userModel.setData({ ...user });
+        });
+    }
+
     // Verificar rol
     public hasRole(rol: string): boolean {
         return this.usuario?.rol === rol;
@@ -450,7 +610,8 @@ export class AuthService {
 
     private guardarUsuarioEnStorage(): void {
         if (typeof Storage !== "undefined" && this.usuario) {
-            localStorage.setItem('auth_user', JSON.stringify(this.usuario));
+            const { foto, ...persistible } = this.usuario;
+            localStorage.setItem("auth_user", JSON.stringify(persistible));
         }
     }
 
@@ -471,9 +632,102 @@ export class AuthService {
             apellido: result.apellido || "",
             telefono: result.telefono || "",
             direccion: result.direccion || "",
+            fotoUrl: result.fotoUrl || this.usuario?.fotoUrl || "",
             rol: result.rol || "",
             activo: result.estado ? result.estado === "ACTIVO" : this.usuario?.activo ?? true
         };
+    }
+
+    private async prepararCargaFotoUsuario(file: File): Promise<AuthResponse & {
+        uploadUrl?: string;
+        fileUrl?: string;
+    }> {
+        const response = await fetch(`${this.baseUrl}/prepararCargaFotoUsuario`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.token}`,
+            },
+            body: JSON.stringify({
+                nombreArchivo: file.name,
+                mimeType: file.type,
+                tamanioBytes: file.size,
+            }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            return {
+                success: false,
+                error: data.error?.message || data.message || "No se pudo preparar la carga de la foto",
+            };
+        }
+
+        return data;
+    }
+
+    private async subirArchivoAS3(uploadUrl: string, file: File, mimeType: string): Promise<void> {
+        const response = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": mimeType,
+            },
+            body: file,
+        });
+
+        if (!response.ok) {
+            throw new Error("No se pudo subir la foto a AWS S3.");
+        }
+    }
+
+    private async resolverFotoDisplayUrl(fotoUrl?: string): Promise<string> {
+        if (!fotoUrl) return "";
+
+        if (
+            this.fotoDisplayCache
+            && this.fotoDisplayCache.fotoUrl === fotoUrl
+            && Date.now() < this.fotoDisplayCache.expiresAt
+        ) {
+            return this.fotoDisplayCache.displayUrl;
+        }
+
+        if (!String(fotoUrl).includes(".s3.")) {
+            return fotoUrl;
+        }
+
+        if (!this.token) return "";
+
+        try {
+            const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.token}`,
+                },
+                body: JSON.stringify({ fileUrl: fotoUrl }),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                return "";
+            }
+
+            const displayUrl = data.downloadUrl || fotoUrl;
+            this.fotoDisplayCache = {
+                fotoUrl,
+                displayUrl,
+                expiresAt: Date.now() + 14 * 60 * 1000,
+            };
+            return displayUrl;
+        } catch {
+            return "";
+        }
+    }
+
+    private notificarActualizacionPerfil(usuario: Usuario | null): void {
+        if (typeof window === "undefined" || !usuario) return;
+
+        EventBus.getInstance().publish("app", "userProfileUpdated", { user: usuario });
     }
 
     public iniciarTimeoutInactividad(onTimeout?: () => void): void {

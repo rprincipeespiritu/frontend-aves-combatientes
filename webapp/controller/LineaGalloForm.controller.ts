@@ -52,12 +52,7 @@ export default class LineaGalloForm extends Controller {
                 return;
             }
 
-            const sUserData = localStorage.getItem("auth_user");
-            if (sUserData) {
-                const oUser = JSON.parse(sUserData);
-                const oUserModel = new JSONModel(oUser);
-                this.getView()?.setModel(oUserModel, "user");
-            }
+    this.bindUserModel();
 
             const oViewModel = new JSONModel();
 
@@ -88,12 +83,7 @@ export default class LineaGalloForm extends Controller {
             return;
         }
 
-        const sUserData = localStorage.getItem("auth_user");
-        if (sUserData) {
-            const oUser = JSON.parse(sUserData);
-            const oUserModel = new JSONModel(oUser);
-            this.getView()?.setModel(oUserModel, "user");
-        }
+    this.bindUserModel();
 
         const oViewModel = new JSONModel();
         oViewModel.setData({
@@ -301,6 +291,7 @@ export default class LineaGalloForm extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {

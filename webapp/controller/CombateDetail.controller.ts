@@ -30,10 +30,7 @@ export default class CombateDetail extends Controller {
       return;
     }
 
-    const userData = localStorage.getItem("auth_user");
-    if (userData) {
-      this.getView()?.setModel(new JSONModel(JSON.parse(userData)), "user");
-    }
+    this.bindUserModel();
 
     this.combateId = oEvent.getParameter("arguments").id;
     this.getView()?.setModel(new JSONModel({
@@ -298,6 +295,7 @@ export default class CombateDetail extends Controller {
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
     const source = oEvent.getSource() as Control;
+    this.bindUserModel();
 
     if (Device.system.phone) {
       if (!this._oUserMenuSheet) {
