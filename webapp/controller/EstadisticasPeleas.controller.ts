@@ -91,10 +91,7 @@ export default class EstadisticasPeleas extends Controller {
       return;
     }
 
-    const sUserData = localStorage.getItem("auth_user");
-    if (sUserData) {
-      this.getView()?.setModel(new JSONModel(JSON.parse(sUserData)), "user");
-    }
+    this.bindUserModel();
 
     const oArguments = oEvent.getParameter("arguments") || {};
     const query = oArguments["?query"] || {};
@@ -170,6 +167,7 @@ export default class EstadisticasPeleas extends Controller {
     oModel.setProperty("/aveSeleccionada", {
       ...ave,
       fechaNacimientoFmt: this.genealogiaService.formatearFecha(ave.fechaNacimiento),
+      sexoFmt: this.genealogiaService.formatearSexo(ave.sexo),
     });
 
     const oInput = this.byId("inputAve") as Input;
@@ -339,6 +337,7 @@ export default class EstadisticasPeleas extends Controller {
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
     const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
     if (Device.system.phone) {
       if (!this._oUserMenuSheet) {

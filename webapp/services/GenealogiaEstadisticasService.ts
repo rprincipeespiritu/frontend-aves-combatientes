@@ -236,7 +236,6 @@ export class GenealogiaEstadisticasService {
     const conPeleas = machos.filter((fila) => (fila.totalPeleas || 0) > 0);
     const totalVictorias = machos.reduce((sum, fila) => sum + (fila.victorias || 0), 0);
     const totalDerrotas = machos.reduce((sum, fila) => sum + (fila.derrotas || 0), 0);
-    const totalPeleas = machos.reduce((sum, fila) => sum + (fila.totalPeleas || 0), 0);
 
     return {
       total: filas.length,
@@ -246,8 +245,8 @@ export class GenealogiaEstadisticasService {
       totalVictorias,
       totalDerrotas,
       promedioVictorias:
-        totalPeleas > 0
-          ? `${((totalVictorias / totalPeleas) * 100).toFixed(1)}%`
+        machos.length > 0
+          ? `${((totalVictorias / machos.length) * 100).toFixed(1)}%`
           : "0%",
     };
   }

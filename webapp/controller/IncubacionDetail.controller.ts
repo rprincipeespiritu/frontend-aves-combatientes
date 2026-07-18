@@ -61,12 +61,7 @@ export default class IncubacionDetail extends Controller {
             return;
         }
 
-        const sUserData = localStorage.getItem("auth_user");
-        if (sUserData) {
-            const oUser = JSON.parse(sUserData);
-            const oUserModel = new JSONModel(oUser);
-            this.getView()?.setModel(oUserModel, "user");
-        }
+    this.bindUserModel();
 
 
         const args = oEvent.getParameter("arguments") as { id?: string };
@@ -82,6 +77,7 @@ export default class IncubacionDetail extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = (oEvent as any)?.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {

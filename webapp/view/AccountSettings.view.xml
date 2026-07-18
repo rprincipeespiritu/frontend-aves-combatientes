@@ -21,15 +21,30 @@
 
         <content>
             <VBox class="sapUiMediumMargin" busy="{account>/busy}">
-                <HBox wrap="Wrap" alignItems="Center" class="sapUiMediumMarginBottom">
+                <HBox wrap="Wrap" alignItems="Center" class="sapUiMediumMarginBottom accountSettingsPhotoRow">
                     <Avatar
                         src="{user>/foto}"
                         displaySize="L"
                         displayShape="Circle"
-                        class="sapUiMediumMarginEnd" />
-                    <VBox>
+                        class="sapUiMediumMarginEnd accountSettingsAvatar" />
+                    <VBox class="accountSettingsPhotoActions">
                         <Title text="{= ${account>/perfil/nombre} + ' ' + ${account>/perfil/apellido} }" level="H2" />
-                        <ObjectStatus text="{account>/perfil/email}" state="Information" />
+                        <ObjectStatus text="{account>/perfil/email}" state="Information" class="sapUiTinyMarginBottom" />
+                        <HBox wrap="Wrap">
+                            <Button
+                                text="Subir o cambiar foto"
+                                icon="sap-icon://camera"
+                                type="Emphasized"
+                                press=".onSubirFotoPerfil"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                            <Button
+                                text="Eliminar foto"
+                                icon="sap-icon://delete"
+                                type="Transparent"
+                                press=".onEliminarFotoPerfil"
+                                visible="{= !!${user>/fotoUrl} }"
+                                class="sapUiTinyMarginBottom" />
+                        </HBox>
                     </VBox>
                 </HBox>
 
