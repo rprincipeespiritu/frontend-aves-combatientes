@@ -55,7 +55,7 @@ export default class AccountSettings extends Controller {
     if (!userData) return;
 
     const user = JSON.parse(userData);
-    this.getView()?.setModel(new JSONModel(user), "user");
+    this.bindUserModel();
     const oModel = this.getView()?.getModel("account") as JSONModel;
     oModel.setProperty("/perfil", {
       username: user.username || "",
@@ -113,10 +113,7 @@ export default class AccountSettings extends Controller {
         throw new Error(result.error || result.message || "No se pudo actualizar el perfil");
       }
 
-      const userData = localStorage.getItem("auth_user");
-      if (userData) {
-        this.getView()?.setModel(new JSONModel(JSON.parse(userData)), "user");
-      }
+      this.bindUserModel();
 
       MessageToast.show(result.message || "Perfil actualizado");
     } catch (error: any) {
@@ -174,6 +171,7 @@ export default class AccountSettings extends Controller {
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
     const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
     if (Device.system.phone) {
       if (!this._oUserMenuSheet) {

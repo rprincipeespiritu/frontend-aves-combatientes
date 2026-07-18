@@ -13,13 +13,30 @@
             verticalScrolling="false">
 
         <VBox class="userMenuCard">
-            <HBox justifyContent="Center" class="userMenuAvatarWrap">
+            <VBox alignItems="Center" class="userMenuAvatarWrap">
                 <f:Avatar
                         src="{user>/foto}"
                         displaySize="L"
                         displayShape="Circle"
+                        press="onSubirFotoPerfil"
                         class="userMenuAvatar" />
-            </HBox>
+                <HBox alignItems="Center" justifyContent="Center" class="userMenuAvatarActions">
+                    <Button
+                            icon="sap-icon://camera"
+                            type="Emphasized"
+                            tooltip="Subir o cambiar foto"
+                            press="onSubirFotoPerfil"
+                            class="userMenuAvatarActionBtn" />
+                    <Button
+                            icon="sap-icon://delete"
+                            type="Transparent"
+                            tooltip="Eliminar foto"
+                            press="onEliminarFotoPerfil"
+                            visible="{= !!${user>/fotoUrl} }"
+                            class="userMenuAvatarActionBtn userMenuAvatarDeleteBtn" />
+                </HBox>
+                <Link text="Cambiar foto de perfil" press="onSubirFotoPerfil" class="userMenuAvatarLink" />
+            </VBox>
 
             <VBox alignItems="Center" class="userMenuIdentity">
                 <Title text="{user>/nombre} {user>/apellido}" level="H4" textAlign="Center" class="userMenuName" />

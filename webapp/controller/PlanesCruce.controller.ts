@@ -36,12 +36,7 @@ export default class PlanesCruce extends Controller {
       return;
     }
 
-    const sUserData = localStorage.getItem("auth_user");
-    if (sUserData) {
-      const oUser = JSON.parse(sUserData);
-      const oUserModel = new JSONModel(oUser);
-      this.getView()?.setModel(oUserModel, "user");
-    }
+    this.bindUserModel();
 
     this.getView()?.setModel(
       new JSONModel({
@@ -272,6 +267,7 @@ Detalle del cruce:
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
     const oSource = (oEvent as any)?.getSource() as Control;
+    this.bindUserModel();
 
     if (Device.system.phone) {
       if (!this._oUserMenuSheet) {

@@ -51,10 +51,7 @@ export default class Pollitos extends Controller {
             return;
         }
 
-        const sUserData = localStorage.getItem("auth_user");
-        if (sUserData) {
-            this.getView()?.setModel(new JSONModel(JSON.parse(sUserData)), "user");
-        }
+        this.bindUserModel();
 
         this.getView()?.setModel(new JSONModel({ selectedIndex: -1, busy: false }), "table");
         this.cargarPollitos();
@@ -532,6 +529,7 @@ export default class Pollitos extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {

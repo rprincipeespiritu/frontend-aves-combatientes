@@ -125,10 +125,7 @@ export default class CombateForm extends Controller {
       return false;
     }
 
-    const userData = localStorage.getItem("auth_user");
-    if (userData) {
-      this.getView()?.setModel(new JSONModel(JSON.parse(userData)), "user");
-    }
+    this.bindUserModel();
 
     return true;
   }
@@ -801,6 +798,7 @@ export default class CombateForm extends Controller {
 
   public async onUserMenuPress(oEvent: Event): Promise<void> {
     const oSource = oEvent.getSource() as Control;
+    this.bindUserModel();
 
     if (Device.system.phone) {
       if (!this._oUserMenuSheet) {

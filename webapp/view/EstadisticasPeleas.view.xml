@@ -63,6 +63,16 @@
                                     </f:FormElement>
                                     <f:FormElement>
                                         <f:label>
+                                            <Label text="Genero" />
+                                        </f:label>
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{estadisticas>/aveSeleccionada/sexoFmt}"
+                                                state="Information" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement>
+                                        <f:label>
                                             <Label text="Padrote" />
                                         </f:label>
                                         <f:fields>
