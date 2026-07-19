@@ -200,6 +200,13 @@ export default class Component extends BaseComponent {
       };
     }
 
+    if (!controllerPrototype.onCerrarUserMenu) {
+      controllerPrototype.onCerrarUserMenu = function (): void {
+        this._oUserMenuPopover?.close?.();
+        this._oUserMenuSheet?.close?.();
+      };
+    }
+
     if (!controllerPrototype.bindUserModel) {
       controllerPrototype.bindUserModel = function (): void {
         AuthService.getInstance().bindUserModelToView(this.getView?.());
