@@ -1144,8 +1144,14 @@
     width: 100%;
   }
 
-  .userMenuMobilePopover .userMenuLogoutButton .sapMBtnInner {
+  .userMenuMobilePopover .userMenuLogoutButton .sapMBtnInner,
+  .userMenuMobilePopover .userMenuDismissButton .sapMBtnInner {
     min-height: 2.75rem;
+  }
+
+  .userMenuMobilePopover .userMenuCloseButton .sapMBtnInner {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
   }
 }
 
