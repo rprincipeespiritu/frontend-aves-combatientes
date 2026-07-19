@@ -6,29 +6,12 @@
     <ResponsivePopover
             id="userMenuSheet"
             class="userMenuPopover userMenuMobilePopover"
-            showHeader="true"
-            title="Mi cuenta"
+            showHeader="false"
             placement="Bottom"
             contentWidth="20rem"
             horizontalScrolling="false"
             verticalScrolling="true"
             modal="true">
-
-        <customHeader>
-            <Bar>
-                <contentMiddle>
-                    <Title text="Mi cuenta" level="H5" />
-                </contentMiddle>
-                <contentRight>
-                    <Button
-                            icon="sap-icon://decline"
-                            type="Transparent"
-                            tooltip="Cerrar"
-                            press="onCerrarUserMenu"
-                            class="userMenuCloseButton" />
-                </contentRight>
-            </Bar>
-        </customHeader>
 
         <VBox class="userMenuCard">
             <VBox alignItems="Center" class="userMenuAvatarWrap">
@@ -90,7 +73,6 @@
                 <Button
                         text="Cerrar"
                         type="Transparent"
-                        icon="sap-icon://decline"
                         press="onCerrarUserMenu"
                         width="100%"
                         class="userMenuActionButton userMenuDismissButton" />
