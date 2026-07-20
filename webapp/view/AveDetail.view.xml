@@ -27,7 +27,7 @@
                         decorative="false"
                         alt="{= ${detail>/placa} + ' ' + ${detail>/nombre} }"
                         press=".onVerFotoPrincipal"
-                        class="avePrincipalHeaderImage sapUiMediumMarginEnd" />
+                        class="avePrincipalHeaderImage imageClickable sapUiMediumMarginEnd" />
                     <!-- <Avatar
                         icon="sap-icon://picture"
                         displaySize="XL"
@@ -96,7 +96,7 @@
                                     </f:FormElement>
                                     <f:FormElement label="Cría">
                                         <f:fields>
-                                            <CheckBox selected="{detail>/cria}" editable="false" />
+                                            <CheckBox selected="{detail>/cria}" editable="false" class="formCheckBoxField" />
                                         </f:fields>
                                     </f:FormElement>
                                 </f:formElements>
@@ -113,24 +113,9 @@
                                                 state="{path: 'detail>/estado', formatter: '.formatearEstadoState'}" />
                                         </f:fields>
                                     </f:FormElement>
-                                    <f:FormElement label="Fecha de fallecimiento"
-                                        visible="{= ${detail>/estado} === 'FALLECIDO' }">
-                                        <f:fields>
-                                            <Text
-                                                text="{
-                                                    path: 'detail>/fechaFallecimiento',
-                                                    formatter: '.formatearFecha'
-                                                }" />
-                                        </f:fields>
-                                    </f:FormElement>
                                     <f:FormElement label="Ubicación">
                                         <f:fields>
                                             <Text text="{detail>/ubicacion}" />
-                                        </f:fields>
-                                    </f:FormElement>
-                                    <f:FormElement label="Padrote">
-                                        <f:fields>
-                                            <CheckBox selected="{detail>/padrote}" editable="false" />
                                         </f:fields>
                                     </f:FormElement>
                                     <f:FormElement label="Calificación">
@@ -139,6 +124,28 @@
                                                 text="{
                                                     path: 'detail>/categoria',
                                                     formatter: '.formatearCategoria'
+                                                }" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Plan de Cruce">
+                                        <f:fields>
+                                            <ObjectStatus
+                                                text="{= ${detail>/planesCruceTexto} || '-' }"
+                                                state="Information" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Padrote">
+                                        <f:fields>
+                                            <CheckBox selected="{detail>/padrote}" editable="false" class="formCheckBoxField" />
+                                        </f:fields>
+                                    </f:FormElement>
+                                    <f:FormElement label="Fecha de fallecimiento"
+                                        visible="{= ${detail>/estado} === 'FALLECIDO' }">
+                                        <f:fields>
+                                            <Text
+                                                text="{
+                                                    path: 'detail>/fechaFallecimiento',
+                                                    formatter: '.formatearFecha'
                                                 }" />
                                         </f:fields>
                                     </f:FormElement>
@@ -536,7 +543,7 @@
                 </Panel>
 
                 <!-- Pesajes recientes -->
-                <!-- <Panel headerText="Pesajes Recientes" expandable="true" expanded="false"
+                <!-- <Panel headerText="Pesajes Recientes" expandable="true" expanded="true"
                 class="sapUiSmallMarginTop">
                     <headerToolbar>
                         <Toolbar>
@@ -575,7 +582,7 @@
                 </Panel>-->
 
                 <!-- Peleas recientes -->
-                <!-- <Panel headerText="Peleas" expandable="true" expanded="false"
+                <!-- <Panel headerText="Peleas" expandable="true" expanded="true"
                 class="sapUiSmallMarginTop">
                     <Table items="{detail>/peleas}" noDataText="Sin peleas registradas">
                         <columns>

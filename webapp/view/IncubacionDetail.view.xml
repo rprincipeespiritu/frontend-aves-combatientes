@@ -151,22 +151,25 @@
                         visible="{= !${device>/system/phone} }"
                         busy="{view>/busy}">
                         <columns>
-                            <Column width="26%">
+                            <Column width="22%">
                                 <Text text="Padre" />
                             </Column>
-                            <Column width="26%">
+                            <Column width="22%">
                                 <Text text="Madre" />
                             </Column>
-                            <Column hAlign="Center" width="12rem">
+                            <Column demandPopin="true" minScreenWidth="Tablet" width="18%">
+                                <Text text="Plan de Cruce" />
+                            </Column>
+                            <Column hAlign="Center" width="10rem">
                                 <Text text="Total Huevos" />
                             </Column>
-                            <Column hAlign="Center" width="10rem">
+                            <Column hAlign="Center" width="8rem">
                                 <Text text="Fértiles" />
                             </Column>
-                            <Column hAlign="Center" width="10rem">
+                            <Column hAlign="Center" width="8rem">
                                 <Text text="Nacidos" />
                             </Column>
-                            <Column hAlign="Center" width="13rem">
+                            <Column hAlign="Center" width="11rem">
                                 <Text text="No Eclosionados" />
                             </Column>
                         </columns>
@@ -175,6 +178,7 @@
                                 <cells>
                                     <ObjectIdentifier title="{view>placaPadre}" text="{view>nombrePadre}" />
                                     <ObjectIdentifier title="{view>placaMadre}" text="{view>nombreMadre}" />
+                                    <Text text="{= ${view>planCruceCodigo} || '-' }" />
                                     <ObjectNumber number="{view>totalHuevos}" textAlign="Center" />
                                     <ObjectNumber number="{view>huevosFertiles}" textAlign="Center" />
                                     <ObjectNumber number="{view>huevosEclosionados}" textAlign="Center" />
@@ -193,7 +197,9 @@
                                 <Text
                                     text="{= 'Padre: ' + (${view>placaPadre} || '-') + ' - ' + (${view>nombrePadre} || '-') }" />
                                 <Text
-                                    text="{= 'Madre: ' + (${view>placaMadre} || '-') + ' - ' + (${view>nombreMadre} || '-') }"
+                                    text="{= 'Madre: ' + (${view>placaMadre} || '-') + ' - ' + (${view>nombreMadre} || '-') }" />
+                                <Text
+                                    text="{= 'Plan de Cruce: ' + (${view>planCruceCodigo} || '-') }"
                                     class="sapUiTinyMarginBottom" />
                                 <HBox justifyContent="SpaceBetween" wrap="Wrap">
                                     <ObjectStatus text="{= 'Total: ' + (${view>totalHuevos} || 0) }" state="Information" />

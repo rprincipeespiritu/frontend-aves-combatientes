@@ -149,6 +149,7 @@ export default class IncubacionDetail extends Controller {
                 element.nombreMadre = element.madre?.nombre || element.madre?.apodo || element.nombreMadre || "";
                 element.padreResumen = this.formatAveResumen(element.placaPadre, element.nombrePadre);
                 element.madreResumen = this.formatAveResumen(element.placaMadre, element.nombreMadre);
+                element.planCruceCodigo = element.planCruce?.codigo || element.planCruceCodigo || "";
             }
 
             oModel.setProperty("/incubacion", {
