@@ -28,7 +28,7 @@
                     <Button text="Refrescar" icon="sap-icon://refresh" press="onRefrescar" />
                 </OverflowToolbar>
 
-                <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
+                <Panel headerText="Filtros" expandable="true" expanded="true" width="100%">
                     <content>
                         <form:Form editable="true" class="sapUiSmallMargin">
                             <form:layout>

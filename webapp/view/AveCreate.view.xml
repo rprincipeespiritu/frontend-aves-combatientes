@@ -69,6 +69,14 @@
                   </f:FormElement>
                   <f:FormElement>
                     <f:label>
+                      <Label text="Cría" />
+                    </f:label>
+                    <f:fields>
+                      <CheckBox selected="{create>/cria}" class="formCheckBoxField" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
                       <Label text="Género" required="true" />
                     </f:label>
                     <f:fields>
@@ -76,14 +84,6 @@
                         <core:Item key="M" text="Macho" />
                         <core:Item key="H" text="Hembra" />
                       </Select>
-                    </f:fields>
-                  </f:FormElement>
-                  <f:FormElement>
-                    <f:label>
-                      <Label text="Cría" />
-                    </f:label>
-                    <f:fields>
-                      <CheckBox selected="{create>/cria}" />
                     </f:fields>
                   </f:FormElement>
                 </f:formElements>
@@ -104,34 +104,12 @@
                       </Select>
                     </f:fields>
                   </f:FormElement>
-                  <f:FormElement visible="{= ${create>/estado} === 'FALLECIDO' }">
-                    <f:label>
-                      <Label text="Fecha de fallecimiento" required="true"
-                        visible="{= ${create>/estado} === 'FALLECIDO' }" />
-                    </f:label>
-                    <f:fields>
-                      <DatePicker value="{create>/fechaFallecimiento}"
-                        valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
-                        placeholder="Seleccionar fecha"
-                        valueState="{create>/fechaFallecimientoState}"
-                        valueStateText="La fecha de fallecimiento es requerida"
-                        visible="{= ${create>/estado} === 'FALLECIDO' }" />
-                    </f:fields>
-                  </f:FormElement>
                   <f:FormElement>
                     <f:label>
                       <Label text="Ubicación" />
                     </f:label>
                     <f:fields>
                       <Input value="{create>/ubicacion}" placeholder="Ubicación actual" />
-                    </f:fields>
-                  </f:FormElement>
-                  <f:FormElement>
-                    <f:label>
-                      <Label text="Padrote" />
-                    </f:label>
-                    <f:fields>
-                      <CheckBox selected="{create>/padrote}" />
                     </f:fields>
                   </f:FormElement>
                   <f:FormElement>
@@ -146,6 +124,28 @@
                         <core:Item key="EXCELENTE" text="Excelente" />
                         <core:Item key="EXTRAORDINARIO" text="Extraordinario" />
                       </Select>
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Padrote" />
+                    </f:label>
+                    <f:fields>
+                      <CheckBox selected="{create>/padrote}" class="formCheckBoxField" />
+                    </f:fields>
+                  </f:FormElement>
+                  <f:FormElement visible="{= ${create>/estado} === 'FALLECIDO' }">
+                    <f:label>
+                      <Label text="Fecha de fallecimiento" required="true"
+                        visible="{= ${create>/estado} === 'FALLECIDO' }" />
+                    </f:label>
+                    <f:fields>
+                      <DatePicker value="{create>/fechaFallecimiento}"
+                        valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"
+                        placeholder="Seleccionar fecha"
+                        valueState="{create>/fechaFallecimientoState}"
+                        valueStateText="La fecha de fallecimiento es requerida"
+                        visible="{= ${create>/estado} === 'FALLECIDO' }" />
                     </f:fields>
                   </f:FormElement>
                 </f:formElements>

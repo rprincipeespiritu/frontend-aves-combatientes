@@ -18,15 +18,22 @@
                         src="{user>/foto}"
                         displaySize="L"
                         displayShape="Circle"
-                        press="onSubirFotoPerfil"
-                        class="userMenuAvatar" />
+                        press="onVerFotoPerfilAmpliada"
+                        tooltip="Ver foto ampliada"
+                        class="userMenuAvatar imageClickable" />
                 <HBox alignItems="Center" justifyContent="Center" class="userMenuAvatarActions">
+                    <Button
+                            icon="sap-icon://upload"
+                            type="Emphasized"
+                            tooltip="Subir imagen desde archivo"
+                            press="onSubirFotoPerfil"
+                            class="userMenuAvatarActionBtn userMenuAvatarUploadBtn" />
                     <Button
                             icon="sap-icon://camera"
                             type="Emphasized"
-                            tooltip="Subir o cambiar foto"
-                            press="onSubirFotoPerfil"
-                            class="userMenuAvatarActionBtn" />
+                            tooltip="Tomar foto con la cámara"
+                            press="onTomarFotoPerfil"
+                            class="userMenuAvatarActionBtn userMenuAvatarCameraBtn" />
                     <Button
                             icon="sap-icon://delete"
                             type="Transparent"
@@ -35,7 +42,6 @@
                             visible="{= !!${user>/fotoUrl} }"
                             class="userMenuAvatarActionBtn userMenuAvatarDeleteBtn" />
                 </HBox>
-                <Link text="Cambiar foto de perfil" press="onSubirFotoPerfil" class="userMenuAvatarLink" />
             </VBox>
 
             <VBox alignItems="Center" class="userMenuIdentity">

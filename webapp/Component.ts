@@ -7,6 +7,8 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageBox from "sap/m/MessageBox";
 import MessageToast from "sap/m/MessageToast";
 import BusyDialog from "sap/m/BusyDialog";
+import Dialog from "sap/m/Dialog";
+import Fragment from "sap/ui/core/Fragment";
 import { createDeviceModel } from "./model/models";
 import formatter from "./model/formatter";
 import { AuthService, Usuario } from "./services/AuthService";
@@ -112,6 +114,7 @@ export default class Component extends BaseComponent {
     this.installGlobalFetchBusyDialog();
     this.installGlobalAccountSettingsHandler();
     this.installGlobalProfilePhotoHandlers();
+    this.installGlobalImageLightbox();
     this.installGlobalFormatters();
     this.subscribeUserProfileUpdates();
     void AuthService.getInstance().ensureUserPhotoDisplay().then((user) => {
@@ -251,6 +254,21 @@ export default class Component extends BaseComponent {
         }
 
         MessageToast.show(result.message || "Foto de perfil actualizada");
+
+        const lightboxModel = this.getView?.()?.getModel("imageLightbox") as JSONModel | undefined;
+        if (lightboxModel?.getProperty("/esFotoPerfil") && user?.foto) {
+          const safeUrl = String(user.foto)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+          lightboxModel.setProperty(
+            "/html",
+            `<div class="aveMediaViewer imageLightboxViewer"><img src="${safeUrl}" alt="Foto de perfil" /></div>`
+          );
+          lightboxModel.setProperty("/puedeEliminar", !!user.fotoUrl);
+        }
       } catch (error: any) {
         MessageBox.error(error.message || "No se pudo actualizar la foto de perfil");
       } finally {
@@ -269,6 +287,21 @@ export default class Component extends BaseComponent {
       });
     };
 
+    const abrirCamaraFoto = function (this: any): void {
+      const controller = this;
+      controller._oUserMenuPopover?.close?.();
+      controller._oUserMenuSheet?.close?.();
+      void component.abrirCapturaCamaraPerfil(controller, (file) => {
+        void procesarArchivoPerfil.call(controller, file);
+      });
+    };
+
+    if (!controllerPrototype.onTomarFotoPerfil) {
+      controllerPrototype.onTomarFotoPerfil = function (): void {
+        abrirCamaraFoto.call(this);
+      };
+    }
+
     if (!controllerPrototype.onSubirFotoPerfil) {
       controllerPrototype.onSubirFotoPerfil = function (): void {
         abrirSelectorFoto.call(this);
@@ -285,12 +318,31 @@ export default class Component extends BaseComponent {
       };
     }
 
+    if (!controllerPrototype.onConfirmarCapturaCamara) {
+      controllerPrototype.onConfirmarCapturaCamara = function (this: any): void {
+        void component.confirmarCapturaCamara(this);
+      };
+    }
+
+    if (!controllerPrototype.onCancelarCapturaCamara) {
+      controllerPrototype.onCancelarCapturaCamara = function (this: any): void {
+        component.detenerCamara();
+        this._oCameraCaptureDialog?.close();
+      };
+    }
+
+    if (!controllerPrototype.onCameraCaptureDialogClosed) {
+      controllerPrototype.onCameraCaptureDialogClosed = function (): void {
+        component.detenerCamara();
+      };
+    }
+
     if (!controllerPrototype.onEliminarFotoPerfil) {
       controllerPrototype.onEliminarFotoPerfil = async function (): Promise<void> {
         const confirmado = await new Promise<boolean>((resolve) => {
           MessageBox.confirm("Desea eliminar la foto de perfil?", {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-            onClose: (action) => resolve(action === MessageBox.Action.OK),
+            onClose: (action: string) => resolve(action === MessageBox.Action.OK),
           });
         });
 
@@ -314,6 +366,11 @@ export default class Component extends BaseComponent {
           }
 
           MessageToast.show(result.message || "Foto de perfil eliminada");
+
+          const lightboxModel = this.getView?.()?.getModel("imageLightbox") as JSONModel | undefined;
+          if (lightboxModel?.getProperty("/esFotoPerfil")) {
+            this.onCerrarImagenAmpliada?.();
+          }
         } catch (error: any) {
           MessageBox.error(error.message || "No se pudo eliminar la foto de perfil");
         } finally {
@@ -322,6 +379,248 @@ export default class Component extends BaseComponent {
         }
       };
     }
+  }
+
+  private installGlobalImageLightbox(): void {
+    const controllerPrototype = Controller.prototype as any;
+
+    const escapeHtml = (value: string): string =>
+      String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    if (!controllerPrototype.mostrarImagenAmpliada) {
+      controllerPrototype.mostrarImagenAmpliada = async function (
+        this: any,
+        url: string,
+        title = "Imagen",
+        options?: { esFotoPerfil?: boolean }
+      ): Promise<void> {
+        if (!url) {
+          MessageToast.show("No hay imagen para mostrar");
+          return;
+        }
+
+        const view = this.getView?.();
+        if (!view) return;
+
+        const esFotoPerfil = !!options?.esFotoPerfil;
+        const user = AuthService.getInstance().getCurrentUser();
+        const safeUrl = escapeHtml(url);
+        const safeTitle = escapeHtml(title);
+        view.setModel(
+          new JSONModel({
+            title,
+            esFotoPerfil,
+            puedeEliminar: esFotoPerfil && !!user?.fotoUrl,
+            html: `<div class="aveMediaViewer imageLightboxViewer"><img src="${safeUrl}" alt="${safeTitle}" /></div>`,
+          }),
+          "imageLightbox"
+        );
+
+        if (!this._oImageLightboxDialog) {
+          this._oImageLightboxDialog = (await Fragment.load({
+            id: view.getId(),
+            name: "com.rprincipees.registroavescombate.view.fragments.ImageLightboxDialog",
+            controller: this,
+          })) as Dialog;
+          view.addDependent(this._oImageLightboxDialog);
+        }
+
+        this._oImageLightboxDialog.open();
+      };
+    }
+
+    if (!controllerPrototype.onVerFotoPerfilAmpliada) {
+      controllerPrototype.onVerFotoPerfilAmpliada = function (this: any): void {
+        const user = AuthService.getInstance().getCurrentUser();
+        const url = user?.foto || "";
+        if (!url) {
+          MessageToast.show("No hay foto de perfil para mostrar");
+          return;
+        }
+        void this.mostrarImagenAmpliada(url, "Foto de perfil", { esFotoPerfil: true });
+      };
+    }
+
+    if (!controllerPrototype.onVerImagenAmpliada) {
+      controllerPrototype.onVerImagenAmpliada = function (this: any, oEvent: any): void {
+        const source = oEvent.getSource?.();
+        const url = source?.getSrc?.() || "";
+        if (!url) {
+          MessageToast.show("No hay imagen para mostrar");
+          return;
+        }
+        const tooltip = source?.getTooltip?.();
+        const alt = source?.getAlt?.();
+        const title =
+          (typeof tooltip === "string" && tooltip) ||
+          (typeof alt === "string" && alt) ||
+          "Imagen";
+        void this.mostrarImagenAmpliada(url, title);
+      };
+    }
+
+    if (!controllerPrototype.onCambiarFotoDesdeLightbox) {
+      controllerPrototype.onCambiarFotoDesdeLightbox = function (this: any): void {
+        this.onTomarFotoPerfil?.();
+      };
+    }
+
+    if (!controllerPrototype.onSubirFotoDesdeLightbox) {
+      controllerPrototype.onSubirFotoDesdeLightbox = function (this: any): void {
+        this.onSubirFotoPerfil?.();
+      };
+    }
+
+    if (!controllerPrototype.onEliminarFotoDesdeLightbox) {
+      controllerPrototype.onEliminarFotoDesdeLightbox = function (this: any): void {
+        void this.onEliminarFotoPerfil?.();
+      };
+    }
+
+    if (!controllerPrototype.onCerrarImagenAmpliada) {
+      controllerPrototype.onCerrarImagenAmpliada = function (this: any): void {
+        this._oImageLightboxDialog?.close();
+        const model = this.getView?.()?.getModel("imageLightbox") as JSONModel | undefined;
+        model?.setProperty("/html", "");
+        model?.setProperty("/esFotoPerfil", false);
+        model?.setProperty("/puedeEliminar", false);
+      };
+    }
+  }
+
+  private cameraStream: MediaStream | null = null;
+
+  private detenerCamara(): void {
+    this.cameraStream?.getTracks().forEach((track) => track.stop());
+    this.cameraStream = null;
+  }
+
+  private async abrirCapturaCamaraPerfil(
+    controller: any,
+    onCaptured: (file: File) => void
+  ): Promise<void> {
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      MessageBox.warning(
+        "Este equipo no permite usar la cámara desde el navegador. Se abrirá el selector de archivos."
+      );
+      this.abrirSelectorFotoNativo(onCaptured);
+      return;
+    }
+
+    const view = controller.getView?.();
+    if (!view) return;
+
+    view.setModel(
+      new JSONModel({
+        listo: false,
+        mensaje: "Iniciando cámara...",
+        html: `<div class="cameraCapturePreview"><video class="cameraCaptureVideo" autoplay playsinline muted></video><canvas class="cameraCaptureCanvas" hidden></canvas></div>`,
+      }),
+      "cameraCapture"
+    );
+
+    controller._cameraCaptureCallback = onCaptured;
+
+    if (!controller._oCameraCaptureDialog) {
+      controller._oCameraCaptureDialog = (await Fragment.load({
+        id: view.getId(),
+        name: "com.rprincipees.registroavescombate.view.fragments.CameraCaptureDialog",
+        controller,
+      })) as Dialog;
+      view.addDependent(controller._oCameraCaptureDialog);
+    }
+
+    controller._oCameraCaptureDialog.open();
+
+    const model = view.getModel("cameraCapture") as JSONModel;
+    try {
+      this.detenerCamara();
+      this.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      });
+
+      // Esperar a que el HTML del video esté en el DOM
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 80);
+      });
+
+      const video = controller._oCameraCaptureDialog
+        ?.getDomRef()
+        ?.querySelector(".cameraCaptureVideo") as HTMLVideoElement | null;
+
+      if (!video) {
+        throw new Error("No se pudo inicializar la vista de la cámara");
+      }
+
+      video.srcObject = this.cameraStream;
+      await video.play();
+      model.setProperty("/listo", true);
+      model.setProperty("/mensaje", "");
+    } catch (error: any) {
+      this.detenerCamara();
+      model.setProperty("/listo", false);
+      model.setProperty("/mensaje", "No se pudo acceder a la cámara.");
+      MessageBox.error(
+        error?.message ||
+          "No se pudo acceder a la cámara. Verifique los permisos del navegador."
+      );
+      controller._oCameraCaptureDialog?.close();
+    }
+  }
+
+  private async confirmarCapturaCamara(controller: any): Promise<void> {
+    const dialog = controller._oCameraCaptureDialog as Dialog | undefined;
+    const video = dialog
+      ?.getDomRef()
+      ?.querySelector(".cameraCaptureVideo") as HTMLVideoElement | null;
+    const canvas = dialog
+      ?.getDomRef()
+      ?.querySelector(".cameraCaptureCanvas") as HTMLCanvasElement | null;
+
+    if (!video || !canvas) {
+      MessageToast.show("La cámara aún no está lista");
+      return;
+    }
+
+    const width = video.videoWidth || 640;
+    const height = video.videoHeight || 480;
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      MessageBox.error("No se pudo capturar la imagen");
+      return;
+    }
+
+    context.drawImage(video, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((result) => resolve(result), "image/jpeg", 0.92);
+    });
+
+    if (!blob) {
+      MessageBox.error("No se pudo generar la foto");
+      return;
+    }
+
+    const file = new File([blob], `foto-perfil-${Date.now()}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    this.detenerCamara();
+    dialog?.close();
+    controller._cameraCaptureCallback?.(file);
+    controller._cameraCaptureCallback = undefined;
   }
 
   private abrirSelectorFotoNativo(onFileSelected: (file: File) => void): void {

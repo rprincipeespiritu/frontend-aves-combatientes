@@ -43,6 +43,7 @@ export interface IIncubacion {
   madre_ID: string;
   placaMadre?: string;
   detalles?: IIncubacionDetalle[];
+  planesCruceTexto?: string;
   success: boolean;
   message?: string;
   error?: string | {
@@ -151,10 +152,10 @@ export default class IncubacionService {
   }
 
   public async list(): Promise<IIncubacion[]> {
-    let url = `${this.baseUrl}/IncubacionesActivas?$orderby=fechaIncubacion desc`;
+    let url = `${this.baseUrl}/IncubacionesActivas?$expand=detalles($expand=planCruce)&$orderby=fechaIncubacion desc`;
     let proceso = localStorage.getItem("filterIncProceso");
     if (proceso) {
-      url = `${this.baseUrl}/IncubacionesActivas?$filter=estado eq '${proceso}'&$orderby=fechaIncubacion desc`;
+      url = `${this.baseUrl}/IncubacionesActivas?$expand=detalles($expand=planCruce)&$filter=estado eq '${proceso}'&$orderby=fechaIncubacion desc`;
     }
     const response = await fetch(url, {
       method: "GET",
@@ -171,7 +172,24 @@ export default class IncubacionService {
       );
     }
 
-    return data.value || [];
+    return (data.value || []).map((incubacion: IIncubacion) =>
+      this.enrichIncubacionPlanCruce(incubacion),
+    );
+  }
+
+  private enrichIncubacionPlanCruce(incubacion: IIncubacion): IIncubacion {
+    const codigos = Array.from(
+      new Set(
+        (incubacion.detalles || [])
+          .map((detalle) => detalle.planCruce?.codigo || "")
+          .filter(Boolean),
+      ),
+    );
+
+    return {
+      ...incubacion,
+      planesCruceTexto: codigos.join(", "),
+    };
   }
 
   public async getById(id: string): Promise<IIncubacion> {

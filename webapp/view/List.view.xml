@@ -24,7 +24,7 @@
                 </OverflowToolbar>
 
                 <!-- Panel de filtros -->
-                <Panel headerText="Filtros" expandable="true" expanded="false" width="100%">
+                <Panel headerText="Filtros" expandable="true" expanded="true" width="100%">
 
                     <content>
                         <form:Form editable="true" class="sapUiSmallMargin">
@@ -194,7 +194,8 @@
                                         displaySize="S"
                                         tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
                                         visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
-                                        press="onVerImagenAve" />
+                                        press="onVerImagenAve"
+                                        class="imageClickable" />
 
                                         <ObjectStatus text="{
                                             path: 'aves>placa'
@@ -291,7 +292,7 @@
                                             tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
                                             visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
                                             press="onVerImagenAve"
-                                            class="aveAdultaMobileAvatar" />
+                                            class="aveAdultaMobileAvatar imageClickable" />
                                             <VBox class="aveAdultaMobileIdentity">
                                                 <Text
                                                     text="{= ${aves>nombre} || 'Sin nombre' }"

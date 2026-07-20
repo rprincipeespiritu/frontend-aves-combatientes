@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="imageLightboxDialog"
+        title="{imageLightbox>/title}"
+        class="imageLightboxDialog"
+        contentWidth="52rem"
+        contentHeight="36rem"
+        stretchOnPhone="true"
+        resizable="true"
+        draggable="true"
+        horizontalScrolling="false"
+        verticalScrolling="false">
+        <content>
+            <VBox fitContainer="true" justifyContent="Center" alignItems="Center" class="imageLightboxContent">
+                <core:HTML content="{imageLightbox>/html}" />
+            </VBox>
+        </content>
+        <buttons>
+            <Button
+                icon="sap-icon://upload"
+                tooltip="Subir imagen desde archivo"
+                type="Transparent"
+                visible="{imageLightbox>/esFotoPerfil}"
+                press="onSubirFotoDesdeLightbox"
+                class="imageLightboxActionBtn" />
+            <Button
+                icon="sap-icon://camera"
+                tooltip="Tomar foto con la cámara"
+                type="Transparent"
+                visible="{imageLightbox>/esFotoPerfil}"
+                press="onCambiarFotoDesdeLightbox"
+                class="imageLightboxActionBtn" />
+            <Button
+                icon="sap-icon://delete"
+                tooltip="Eliminar foto"
+                type="Transparent"
+                visible="{= ${imageLightbox>/esFotoPerfil} &amp;&amp; ${imageLightbox>/puedeEliminar} }"
+                press="onEliminarFotoDesdeLightbox"
+                class="imageLightboxActionBtn" />
+            <Button text="Cerrar" type="Emphasized" press="onCerrarImagenAmpliada" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

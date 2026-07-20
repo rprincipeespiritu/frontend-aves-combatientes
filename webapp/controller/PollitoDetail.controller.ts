@@ -18,6 +18,7 @@ import Device from "sap/ui/Device";
 import Control from "sap/ui/core/Control";
 import { AuthService } from "../services/AuthService";
 import ConfirmationService from "../services/ConfirmationService";
+import { resolverPlanesCruceTexto } from "../services/PlanCruceLookupService";
 import Select from "sap/m/Select";
 import Item from "sap/ui/core/Item";
 
@@ -68,11 +69,19 @@ export default class PollitoDetail extends Controller {
             }
 
             const data = await response.json();
+            const planesCruceTexto = await resolverPlanesCruceTexto({
+                baseUrl: this.baseUrl,
+                token: this.authService.getToken(),
+                padreId: data.padre_ID || data.padre?.ID,
+                madreId: data.madre_ID || data.madre?.ID,
+            });
+
             model.setData({
                 ...data,
                 busy: false,
                 identificador: this.formatearIdentificador(data),
-                estadoTexto: this.formatearEstado(data.estado)
+                estadoTexto: this.formatearEstado(data.estado),
+                planesCruceTexto: planesCruceTexto || "-",
             });
         } catch (error) {
             MessageBox.error("No se pudo cargar el detalle del pollito");

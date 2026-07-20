@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="cameraCaptureDialog"
+        title="Tomar foto de perfil"
+        class="cameraCaptureDialog"
+        contentWidth="28rem"
+        stretchOnPhone="true"
+        resizable="false"
+        draggable="true"
+        horizontalScrolling="false"
+        verticalScrolling="false"
+        afterClose="onCameraCaptureDialogClosed">
+        <content>
+            <VBox alignItems="Center" justifyContent="Center" class="cameraCaptureContent sapUiSmallMargin">
+                <core:HTML content="{cameraCapture>/html}" sanitizeContent="false" />
+                <Text
+                    text="{cameraCapture>/mensaje}"
+                    visible="{= !!${cameraCapture>/mensaje} }"
+                    textAlign="Center"
+                    class="sapUiTinyMarginTop" />
+            </VBox>
+        </content>
+        <buttons>
+            <Button
+                text="Tomar foto"
+                icon="sap-icon://camera"
+                type="Emphasized"
+                enabled="{cameraCapture>/listo}"
+                press="onConfirmarCapturaCamara" />
+            <Button text="Cancelar" press="onCancelarCapturaCamara" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
