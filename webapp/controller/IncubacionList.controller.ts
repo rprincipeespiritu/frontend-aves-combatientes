@@ -174,6 +174,7 @@ export default class IncubacionList extends Controller {
 
   public onLimpiarFiltros(): void {
     (this.byId("searchField") as SearchField)?.setValue("");
+    (this.byId("planCruceFilter") as SearchField)?.setValue("");
     (this.byId("estadoFilter") as ComboBox)?.setSelectedKey("");
     (this.byId("fechaDesdeFilter") as DatePicker)?.setDateValue(null);
     (this.byId("fechaHastaFilter") as DatePicker)?.setDateValue(null);
@@ -185,6 +186,7 @@ export default class IncubacionList extends Controller {
     const oBinding = oTable?.getBinding("items") as any;
     const aFilters: Filter[] = [];
     const sBusqueda = ((this.byId("searchField") as SearchField)?.getValue() || "").trim();
+    const sPlanCruce = ((this.byId("planCruceFilter") as SearchField)?.getValue() || "").trim();
     const sEstado = (this.byId("estadoFilter") as ComboBox)?.getSelectedKey();
     const dDesde = (this.byId("fechaDesdeFilter") as DatePicker)?.getDateValue();
     const dHasta = (this.byId("fechaHastaFilter") as DatePicker)?.getDateValue();
@@ -195,10 +197,15 @@ export default class IncubacionList extends Controller {
           filters: [
             new Filter("codigo", FilterOperator.Contains, sBusqueda),
             new Filter("estado", FilterOperator.Contains, sBusqueda.toUpperCase()),
+            new Filter("planesCruceTexto", FilterOperator.Contains, sBusqueda),
           ],
           and: false,
         }),
       );
+    }
+
+    if (sPlanCruce) {
+      aFilters.push(new Filter("planesCruceTexto", FilterOperator.Contains, sPlanCruce));
     }
 
     if (sEstado) {

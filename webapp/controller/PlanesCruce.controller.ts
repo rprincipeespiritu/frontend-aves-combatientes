@@ -9,6 +9,7 @@ import Device from "sap/ui/Device";
 import Fragment from "sap/ui/core/Fragment";
 import ActionSheet from "sap/m/ActionSheet";
 import Popover from "sap/m/Popover";
+import Spreadsheet from "sap/ui/export/Spreadsheet";
 import { AuthService } from "../services/AuthService";
 import formatter from "../model/formatter";
 import { ParentescoAve } from "../types/Models";
@@ -40,6 +41,11 @@ export default class PlanesCruce extends Controller {
     this.getView()?.setModel(
       new JSONModel({
         data: [],
+        todosPlanes: [],
+        filtros: {
+          codigo: "",
+          padres: "",
+        },
       }),
       "planes",
     );
@@ -63,8 +69,10 @@ export default class PlanesCruce extends Controller {
       );
 
       const data = await response.json();
+      const planes = this.normalizarPlanesDuplicados(data.value || []);
 
-      oModel.setProperty("/data", this.normalizarPlanesDuplicados(data.value || []));
+      oModel.setProperty("/todosPlanes", planes);
+      this.aplicarFiltrosPlanes();
     } catch (error) {
       MessageBox.error("Error al cargar planes de cruce.");
     }
@@ -108,6 +116,110 @@ Detalle del cruce:
       this.getOwnerComponent() as UIComponent
     )?.getRouter() as Router;
     oRouter?.navTo("RouteLineaGallos");
+  }
+
+  public onFiltrarPlanes(): void {
+    this.aplicarFiltrosPlanes();
+  }
+
+  public onLimpiarFiltros(): void {
+    const oModel = this.getView()?.getModel("planes") as JSONModel;
+    oModel.setProperty("/filtros", {
+      codigo: "",
+      padres: "",
+    });
+    this.aplicarFiltrosPlanes();
+  }
+
+  private aplicarFiltrosPlanes(): void {
+    const oModel = this.getView()?.getModel("planes") as JSONModel;
+    const todosPlanes = oModel.getProperty("/todosPlanes") || [];
+    const filtros = oModel.getProperty("/filtros") || {};
+    const codigoFiltro = this.normalizarTexto(filtros.codigo);
+    const padresFiltro = this.normalizarTexto(filtros.padres);
+
+    const planesFiltrados = todosPlanes.filter((plan: any) => {
+      const coincideCodigo =
+        !codigoFiltro || this.normalizarTexto(plan.codigo || "").includes(codigoFiltro);
+
+      if (!coincideCodigo) {
+        return false;
+      }
+
+      if (!padresFiltro) {
+        return true;
+      }
+
+      const textoPadres = this.normalizarTexto([
+        plan.macho?.placa,
+        plan.macho?.nombre,
+        plan.macho?.apodo,
+        plan.hembra?.placa,
+        plan.hembra?.nombre,
+        plan.hembra?.apodo,
+      ].filter(Boolean).join(" "));
+
+      return textoPadres.includes(padresFiltro);
+    });
+
+    oModel.setProperty("/data", planesFiltrados);
+  }
+
+  private normalizarTexto(valor?: string): string {
+    return String(valor || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
+  public onExportarExcel(): void {
+    const oModel = this.getView()?.getModel("planes") as JSONModel;
+    const planes = oModel?.getProperty("/data") || [];
+
+    if (!planes.length) {
+      MessageToast.show("No hay planes de cruce para exportar");
+      return;
+    }
+
+    const data = planes.map((plan: any) => ({
+      codigo: plan.codigo || "Sin codigo",
+      tipo: formatter.formatTipoFormacionCruceTexto(plan.tipoCruce, plan.linea?.nombre),
+      machoPlaca: plan.macho?.placa || "",
+      machoNombre: formatter.formatAveNombre(plan.macho?.nombre, plan.macho?.apodo),
+      hembraPlaca: plan.hembra?.placa || "",
+      hembraNombre: formatter.formatAveNombre(plan.hembra?.nombre, plan.hembra?.apodo),
+      parentesco: this.formatearParentesco(plan.tipoParentesco as ParentescoAve),
+      riesgo: formatter.formatNivelRiesgoTexto(plan.nivelRiesgo),
+      decision: formatter.formatDecisionTexto(plan.decision),
+      fecha: plan.fechaPropuesta || "",
+      recomendacion: plan.recomendacion || "",
+    }));
+
+    const sheet = new Spreadsheet({
+      workbook: {
+        columns: [
+          { label: "Codigo", property: "codigo" },
+          { label: "Tipo", property: "tipo" },
+          { label: "Macho (placa)", property: "machoPlaca" },
+          { label: "Macho (nombre)", property: "machoNombre" },
+          { label: "Hembra (placa)", property: "hembraPlaca" },
+          { label: "Hembra (nombre)", property: "hembraNombre" },
+          { label: "Parentesco", property: "parentesco" },
+          { label: "Riesgo", property: "riesgo" },
+          { label: "Decision", property: "decision" },
+          { label: "Fecha", property: "fecha" },
+          { label: "Recomendacion", property: "recomendacion" },
+        ],
+      },
+      dataSource: data,
+      fileName: "Planes_de_Cruce.xlsx",
+    });
+
+    sheet
+      .build()
+      .catch(() => MessageBox.error("No se pudo generar el archivo Excel"))
+      .finally(() => sheet.destroy());
   }
 
   private normalizarPlanesDuplicados(planes: any[]): any[] {

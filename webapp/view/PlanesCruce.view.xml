@@ -3,7 +3,8 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.f">
+    xmlns:form="sap.f"
+    xmlns:layout="sap.ui.layout.form">
 
     <Page
         title="Planes de Cruce"
@@ -26,22 +27,88 @@
                     <Title text="Historial de Cruces" class="planesCruceHeaderTitle" />
                     <HBox class="planesCruceHeaderActions" wrap="Wrap" justifyContent="End">
                         <Button
-                            text="Guia"
+                            text="{= ${device>/system/phone} ? '' : 'Guia' }"
                             icon="sap-icon://sys-help"
                             type="Transparent"
+                            tooltip="Guia"
                             press=".onOpenLineageGuide" />
                         <Button
-                            text="Cruce abierto"
+                            text="{= ${device>/system/phone} ? '' : 'Cruce abierto' }"
                             icon="sap-icon://chain-link"
                             type="Transparent"
+                            tooltip="Cruce abierto"
                             press=".onNuevoCruceAbierto" />
                         <Button
-                            text="Nuevo Plan por Linaje"
+                            text="{= ${device>/system/phone} ? '' : 'Nuevo Plan por Linaje' }"
                             icon="sap-icon://add"
                             type="Emphasized"
+                            tooltip="Nuevo Plan por Linaje"
                             press=".onNuevoPlan" />
                     </HBox>
                 </VBox>
+
+                <Panel
+                    headerText="Filtros"
+                    expandable="true"
+                    expanded="true"
+                    width="100%"
+                    class="sapUiSmallMarginTop">
+                    <layout:Form editable="true" class="sapUiSmallMargin">
+                        <layout:layout>
+                            <layout:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="1"
+                                singleContainerFullSize="true" />
+                        </layout:layout>
+                        <layout:formContainers>
+                            <layout:FormContainer>
+                                <layout:formElements>
+                                    <layout:FormElement label="Codigo">
+                                        <layout:fields>
+                                            <SearchField
+                                                width="100%"
+                                                placeholder="Buscar por codigo"
+                                                value="{planes>/filtros/codigo}"
+                                                liveChange=".onFiltrarPlanes"
+                                                search=".onFiltrarPlanes" />
+                                        </layout:fields>
+                                    </layout:FormElement>
+                                </layout:formElements>
+                            </layout:FormContainer>
+                            <layout:FormContainer>
+                                <layout:formElements>
+                                    <layout:FormElement label="Nombre de padres">
+                                        <layout:fields>
+                                            <SearchField
+                                                width="100%"
+                                                placeholder="Nombre o placa de macho/hembra"
+                                                value="{planes>/filtros/padres}"
+                                                liveChange=".onFiltrarPlanes"
+                                                search=".onFiltrarPlanes" />
+                                        </layout:fields>
+                                    </layout:FormElement>
+                                    <layout:FormElement>
+                                        <layout:fields>
+                                            <Button
+                                                text="Limpiar filtros"
+                                                icon="sap-icon://clear-filter"
+                                                press=".onLimpiarFiltros" />
+                                        </layout:fields>
+                                    </layout:FormElement>
+                                </layout:formElements>
+                            </layout:FormContainer>
+                        </layout:formContainers>
+                    </layout:Form>
+                </Panel>
 
                 <!-- Tabla -->
                 <Table
@@ -54,35 +121,42 @@
                     <headerToolbar>
                         <OverflowToolbar>
                             <Title text="Planes de Cruce ({= ${planes>/data}.length})" />
+                            <ToolbarSpacer />
+                            <Button
+                                text="{= ${device>/system/phone} ? '' : 'Exportar Excel' }"
+                                icon="sap-icon://excel-attachment"
+                                type="Transparent"
+                                tooltip="Exportar Excel"
+                                press=".onExportarExcel" />
                         </OverflowToolbar>
                     </headerToolbar>
 
                     <columns>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column>
                             <Text text="Codigo" />
                         </Column>
-                        <Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                             <Text text="Tipo" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                             <Text text="Macho" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                             <Text text="Hembra" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="Inline">
                             <Text text="Parentesco" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                             <Text text="Riesgo" />
                         </Column>
                         <Column>
                             <Text text="Decision" />
                         </Column>
-                        <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="Inline">
                             <Text text="Fecha" />
                         </Column>
-                        <Column hAlign="Center" width="8rem">
+                        <Column hAlign="End" width="7rem">
                             <Text text="Acciones" />
                         </Column>
                     </columns>
@@ -90,7 +164,7 @@
                     <items>
                         <ColumnListItem type="Active" press=".onSelectPlan">
                             <cells>
-                                <Text text="{= ${planes>codigo} || 'Sin codigo' }" />
+                                <Text text="{= ${planes>codigo} || 'Sin codigo' }" wrapping="true" />
                                 <ObjectStatus
                                     text="{
                                         parts: [
@@ -136,7 +210,7 @@
                                     text="{ path: 'planes>decision', formatter: '.formatter.formatDecisionTexto' }"
                                     state="{ path: 'planes>decision', formatter: '.formatter.formatDecisionState' }" />
                                 <Text text="{planes>fechaPropuesta}" />
-                                <HBox justifyContent="Center">
+                                <HBox justifyContent="End" wrap="Wrap">
                                     <Button
                                         icon="sap-icon://edit"
                                         type="Emphasized"

@@ -15,6 +15,7 @@ import BusyDialog from "sap/m/BusyDialog";
 import {CategoriaAve, EstadoAve, IAve, SexoAve} from "com/rprincipees/registroavescombate/types/Models";
 import formatter from "../model/formatter";
 import ConfirmationService from "../services/ConfirmationService";
+import { resolverPlanesCruceTexto } from "../services/PlanCruceLookupService";
 
 export default class AveDetail extends Controller {
     private authService: AuthService;
@@ -223,12 +224,14 @@ export default class AveDetail extends Controller {
                 colorNombre: ave.color?.nombre || "",
                 padreNombre: ave.padre ? `${ave.padre.placa} - ${ave.padre.nombre || ""}` : "Sin registro",
                 madreNombre: ave.madre ? `${ave.madre.placa} - ${ave.madre.nombre || ""}` : "Sin registro",
+                planesCruceTexto: "",
                 fotoPrincipal: "",
                 pesajes: ave.pesajes || [],
                 peleas: ave.peleas || [],
                 editMode: false
             });
 
+            await this.cargarPlanesCruce(ave);
             await this.cargarEvaluaciones();
             await this.cargarEvaluacionesPleito();
             await this.cargarComposicionLineas();
@@ -237,6 +240,17 @@ export default class AveDetail extends Controller {
         } catch (error) {
             MessageBox.error("Error cargando el ave");
         }
+    }
+
+    private async cargarPlanesCruce(ave: any): Promise<void> {
+        const oModel = this.getView()?.getModel("detail") as JSONModel;
+        const texto = await resolverPlanesCruceTexto({
+            baseUrl: this.baseUrl,
+            token: this.authService.getToken(),
+            padreId: ave?.padre_ID || ave?.padre?.ID,
+            madreId: ave?.madre_ID || ave?.madre?.ID,
+        });
+        oModel.setProperty("/planesCruceTexto", texto || "-");
     }
 
     private async cargarComposicionLineas(): Promise<void> {

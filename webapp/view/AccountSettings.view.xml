@@ -26,15 +26,23 @@
                         src="{user>/foto}"
                         displaySize="L"
                         displayShape="Circle"
-                        class="sapUiMediumMarginEnd accountSettingsAvatar" />
+                        press=".onVerFotoPerfilAmpliada"
+                        tooltip="Ver foto ampliada"
+                        class="sapUiMediumMarginEnd accountSettingsAvatar imageClickable" />
                     <VBox class="accountSettingsPhotoActions">
                         <Title text="{= ${account>/perfil/nombre} + ' ' + ${account>/perfil/apellido} }" level="H2" />
                         <ObjectStatus text="{account>/perfil/email}" state="Information" class="sapUiTinyMarginBottom" />
                         <HBox wrap="Wrap">
                             <Button
-                                text="Subir o cambiar foto"
+                                text="Tomar foto"
                                 icon="sap-icon://camera"
                                 type="Emphasized"
+                                press=".onTomarFotoPerfil"
+                                class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+                            <Button
+                                text="Subir desde archivo"
+                                icon="sap-icon://upload"
+                                type="Transparent"
                                 press=".onSubirFotoPerfil"
                                 class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
                             <Button

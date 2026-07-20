@@ -129,6 +129,16 @@
                       <Text text="{detail>/ubicacion}" />
                     </f:fields>
                   </f:FormElement>
+                  <f:FormElement>
+                    <f:label>
+                      <Label text="Plan de Cruce" />
+                    </f:label>
+                    <f:fields>
+                      <ObjectStatus
+                        text="{= ${detail>/planesCruceTexto} || '-' }"
+                        state="Information" />
+                    </f:fields>
+                  </f:FormElement>
                 </f:formElements>
               </f:FormContainer>
             </f:formContainers>
