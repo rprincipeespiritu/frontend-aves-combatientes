@@ -82,9 +82,16 @@
                     </f:formContainers>
                 </f:Form>
 
+                <ScrollContainer
+                    width="100%"
+                    vertical="true"
+                    horizontal="true"
+                    class="listadoTablaScroll sapUiMediumMarginTop">
                 <Table
                     items="{detalle>/planes}"
-                    growing="true">
+                    growing="true"
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    class="listadoTabla">
                     <headerToolbar>
                         <OverflowToolbar>
                             <Title text="Planes de Cruce ({= ${detalle>/planes}.length})" />
@@ -194,6 +201,7 @@
                     </items>
 
                 </Table>
+                </ScrollContainer>
 
             </VBox>
         </content>

@@ -111,12 +111,18 @@
                 </Panel>
 
                 <!-- Tabla -->
+                <ScrollContainer
+                    width="100%"
+                    vertical="true"
+                    horizontal="true"
+                    class="listadoTablaScroll sapUiMediumMarginTop">
                 <Table
                     id="planesTable"
                     width="100%"
                     inset="false"
                     items="{planes>/data}"
-                    class="sapUiMediumMarginTop">
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    class="listadoTabla">
 
                     <headerToolbar>
                         <OverflowToolbar>
@@ -227,6 +233,7 @@
                     </items>
 
                 </Table>
+                </ScrollContainer>
 
             </VBox>
         </content>

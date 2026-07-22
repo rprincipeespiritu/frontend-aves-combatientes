@@ -45,7 +45,7 @@
                                             </ComboBox>
                                         </form:fields>
                                     </form:FormElement>
-                                    <form:FormElement label="Plan de Cruce">
+                                    <!-- <form:FormElement label="Plan de Cruce">
                                         <form:fields>
                                             <SearchField
                                                 id="planCruceFilter"
@@ -54,7 +54,7 @@
                                                 search="onBuscar"
                                                 liveChange="onBuscar" />
                                         </form:fields>
-                                    </form:FormElement>
+                                    </form:FormElement> -->
                                 </form:formElements>
                             </form:FormContainer>
                             <form:FormContainer>
@@ -89,7 +89,17 @@
                     </form:Form>
                 </content>
             </Panel>
-            <Table id="tblIncubaciones" items="{view>/incubaciones}" busy="{view>/busy}">
+            <ScrollContainer
+                width="100%"
+                vertical="true"
+                horizontal="true"
+                class="listadoTablaScroll sapUiMediumMarginTop">
+            <Table
+                id="tblIncubaciones"
+                items="{view>/incubaciones}"
+                busy="{view>/busy}"
+                sticky="ColumnHeaders,HeaderToolbar"
+                class="listadoTabla">
                 <headerToolbar>
                     <OverflowToolbar>
                         <Title text="Incubaciones Registradas ({view>/filteredCount})"/>
@@ -102,9 +112,9 @@
                     <Column>
                         <Text text="Código" />
                     </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
+                    <!-- <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                         <Text text="Plan de Cruce" />
-                    </Column>
+                    </Column> -->
                     <Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                         <Text text="Fecha Incubación" />
                     </Column>
@@ -126,7 +136,7 @@
                     <ColumnListItem type="Active" press="onDetail">
                         <cells>
                             <Text text="{view>codigo}" wrapping="true" />
-                            <Text text="{= ${view>planesCruceTexto} || '-' }" wrapping="true" />
+                            <!-- <Text text="{= ${view>planesCruceTexto} || '-' }" wrapping="true" /> -->
                             <ObjectStatus text="{ path: 'view>fechaIncubacion', formatter: '.formatter.formatDateTime' }" state="Information" />
                             <Text text="{ path: 'view>fechaPreNacimiento', formatter: '.formatter.formatDateTime' }" />
                             <Text text="{ path: 'view>fechaEclosion', formatter: '.formatter.formatDateTime' }" />
@@ -146,6 +156,7 @@
                     </ColumnListItem>
                 </items>
             </Table>
+            </ScrollContainer>
         </content>
         <footer>
             <Toolbar>

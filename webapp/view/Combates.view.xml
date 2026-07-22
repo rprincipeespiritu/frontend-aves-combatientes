@@ -104,11 +104,18 @@
                         </form:formContainers>
                     </form:Form>
                 </Panel>
+                <ScrollContainer
+                    width="100%"
+                    vertical="true"
+                    horizontal="true"
+                    class="listadoTablaScroll sapUiMediumMarginTop">
                 <Table
                     items="{combates>/combates}"
                     growing="true"
                     growingScrollToLoad="true"
-                    noDataText="Sin combates registrados">
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    noDataText="Sin combates registrados"
+                    class="listadoTabla">
                     <headerToolbar>
                         <OverflowToolbar>
                             <Title text="Combates registrados ({= ${combates>/combates}.length})" />
@@ -159,6 +166,7 @@
                         </ColumnListItem>
                     </items>
                 </Table>
+                </ScrollContainer>
             </VBox>
         </content>
         <footer>

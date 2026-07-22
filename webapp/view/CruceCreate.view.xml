@@ -1,132 +1,134 @@
-<mvc:View
-        controllerName="com.rprincipees.registroavescombate.controller.CruceCreate"
+<mvc:View controllerName="com.rprincipees.registroavescombate.controller.CruceCreate"
         xmlns:mvc="sap.ui.core.mvc"
         xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
         xmlns:core="sap.ui.core"
         xmlns:form="sap.f">
 
-    <Page
-            title="{cruce>/titulo}"
-            showNavButton="true"
-            navButtonPress=".onNavBack">
-        <headerContent>
-            <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
-            <form:Avatar
-                    id="userAvatar"
-                    src="{user>/foto}"
-                    displaySize="XS"
-                    press="onUserMenuPress"
-                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
-        </headerContent>
+        <Page title="{cruce>/titulo}" showNavButton="true" navButtonPress=".onNavBack" class="cruceCreatePage">
+                <headerContent>
+                        <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized"/>
+                        <form:Avatar id="userAvatar" src="{user>/foto}" displaySize="XS" press="onUserMenuPress" class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
+                </headerContent>
 
-        <content>
-            <VBox class="sapUiMediumMargin">
+                <content>
+                        <VBox class="sapUiMediumMargin cruceCreateContent">
 
-                <Panel headerText="Selección de reproductores">
-                    <VBox class="sapUiMediumMargin">
+                                <Panel headerText="Información del linaje" visible="{cruce>/linajeVisible}" class="cruceLinajeInfoPanel">
+                                        <VBox class="sapUiSmallMargin">
+                                                <Title text="{cruce>/linaje/nombre}" level="H4" wrapping="true" class="sapUiTinyMarginBottom" />
+                                                <ObjectStatus title="Objetivo" text="{= ${cruce>/linaje/objetivo} || 'Sin objetivo registrado' }" state="Information" class="sapUiTinyMarginBottom cruceLinajeStatus" />
+                                                <Text text="{cruce>/linaje/descripcion}" wrapping="true" visible="{= !!${cruce>/linaje/descripcion} }" class="sapUiTinyMarginBottom" />
+                                                <HBox wrap="Wrap" width="100%" class="cruceLinajeFundadores">
+                                                        <VBox width="100%" class="cruceLinajeFundadorItem sapUiTinyMarginBottom">
+                                                                <Label text="Padre fundador" />
+                                                                <ObjectStatus text="{cruce>/linaje/fundadorTexto}" state="Success" icon="sap-icon://family-care" class="cruceLinajeStatus" />
+                                                        </VBox>
+                                                        <VBox width="100%" class="cruceLinajeFundadorItem sapUiTinyMarginBottom">
+                                                                <Label text="Madre fundadora" />
+                                                                <ObjectStatus text="{cruce>/linaje/fundadoraTexto}" state="Success" icon="sap-icon://family-care" class="cruceLinajeStatus" />
+                                                        </VBox>
+                                                </HBox>
+                                                <MessageStrip text="Para continuar el linaje, al menos uno de los reproductores debe aportar continuidad respecto a estos padres fundadores (mínimo 25% proyectado en la descendencia)." type="Information" showIcon="true" class="sapUiSmallMarginTop cruceLinajeHint" />
+                                        </VBox>
+                                </Panel>
 
-                        <Label text="Macho" required="true"/>
-                        <Input
-                                id="inputPadreLinea"
-                                placeholder="Seleccionar Macho"
-                                value="{cruce>/padrePlaca}"
-                                description="{cruce>/padreNombre}"
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="onValueHelpPadre"
-                                width="100%" />
+                                <Panel headerText="Selección de reproductores" class="sapUiMediumMarginTop">
+                                        <f:Form editable="true" class="sapUiSmallMargin">
+                                                <f:layout>
+                                                        <f:ResponsiveGridLayout
+                                                                columnsXL="2"
+                                                                columnsL="2"
+                                                                columnsM="1"
+                                                                labelSpanXL="3"
+                                                                labelSpanL="3"
+                                                                labelSpanM="12"
+                                                                labelSpanS="12"
+                                                                emptySpanXL="0"
+                                                                emptySpanL="0"
+                                                                emptySpanM="0"
+                                                                emptySpanS="0"
+                                                                adjustLabelSpan="false"
+                                                                singleContainerFullSize="true" />
+                                                </f:layout>
+                                                <f:formContainers>
+                                                        <f:FormContainer>
+                                                                <f:formElements>
+                                                                        <f:FormElement label="Macho" required="true">
+                                                                                <f:fields>
+                                                                                        <Input id="inputPadreLinea" placeholder="Seleccionar Macho" value="{cruce>/padrePlaca}" description="{cruce>/padreNombre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpPadre" width="100%" />
+                                                                                </f:fields>
+                                                                        </f:FormElement>
+                                                                        <f:FormElement label="Hembra" required="true">
+                                                                                <f:fields>
+                                                                                        <Input id="inputMadreLinea" placeholder="Seleccionar Hembra" value="{cruce>/madrePlaca}" description="{cruce>/madreNombre}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onValueHelpMadre" width="100%" />
+                                                                                </f:fields>
+                                                                        </f:FormElement>
+                                                                </f:formElements>
+                                                        </f:FormContainer>
+                                                        <f:FormContainer>
+                                                                <f:formElements>
+                                                                        <f:FormElement label="Parentesco calculado">
+                                                                                <f:fields>
+                                                                                        <Input value="{cruce>/parentescoTexto}" editable="false" busy="{cruce>/analisisEnCurso}" placeholder="Se calculará automáticamente" width="100%"/>
+                                                                                </f:fields>
+                                                                        </f:FormElement>
+                                                                        <f:FormElement label="Objetivo del cruce">
+                                                                                <f:fields>
+                                                                                        <TextArea width="100%" rows="{= ${device>/system/phone} ? 4 : 3 }" growing="true" growingMaxLines="8" value="{cruce>/objetivoCruce}" placeholder="Ejemplo: fijar velocidad, corte, casta, tamaño, fertilidad..." />
+                                                                                </f:fields>
+                                                                        </f:FormElement>
+                                                                </f:formElements>
+                                                        </f:FormContainer>
+                                                </f:formContainers>
+                                        </f:Form>
+                                        <HBox justifyContent="End" wrap="Wrap" class="sapUiSmallMargin cruceAnalizarActions">
+                                                <Button
+                                                        text="{= ${device>/system/phone} ? 'Analizar' : 'Analizar cruce' }"
+                                                        type="Emphasized"
+                                                        icon="sap-icon://decision"
+                                                        press=".onAnalizarCruce"
+                                                        class="cruceAnalizarBtn" />
+                                        </HBox>
+                                </Panel>
 
-                        <Label text="Hembra" class="sapUiSmallMarginTop" required="true"/>
-                        <Input
-                                id="inputMadreLinea"
-                                placeholder="Seleccionar Hembra"
-                                value="{cruce>/madrePlaca}"
-                                description="{cruce>/madreNombre}"
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="onValueHelpMadre"
-                                width="100%" />
+                                <Panel headerText="Resultado del análisis" visible="{cruce>/resultadoVisible}" class="sapUiMediumMarginTop">
+                                        <VBox class="sapUiSmallMargin cruceResultadoBox">
+                                                <ObjectStatus title="Tipo de formación" text="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceTexto' }" state="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceState' }" class="cruceLinajeStatus sapUiTinyMarginBottom" />
+                                                <ObjectStatus title="Nivel de riesgo" text="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }" state="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" class="cruceLinajeStatus sapUiTinyMarginBottom" />
+                                                <ObjectStatus title="Decision sugerida" text="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionTexto' }" state="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionState' }" class="cruceLinajeStatus sapUiTinyMarginBottom" />
+                                                <ObjectNumber number="{cruce>/resultado/porcentaje}" unit="% consanguinidad" class="sapUiTinyMarginBottom"/>
+                                                <ObjectStatus visible="{= !${cruce>/cruceAbierto} &amp;&amp; ${cruce>/resultado/porcentajeLinajeProyectado} !== undefined }" title="Continuidad del linaje" text="{= ${cruce>/resultado/porcentajeLinajeProyectado} + '% proyectado (minimo ' + ${cruce>/resultado/porcentajeMinimoLinaje} + '%)' }" state="{= ${cruce>/resultado/cumplePorcentajeLinaje} ? 'Success' : 'Error' }" class="cruceLinajeStatus sapUiTinyMarginBottom" />
+                                                <Text text="{cruce>/resultado/descripcion}" wrapping="true" />
+                                                <MessageStrip text="{cruce>/resultado/recomendacion}" type="{cruce>/resultado/messageType}" showIcon="true" class="sapUiSmallMarginTop"/>
+                                        </VBox>
+                                </Panel>
 
-                        <Button
-                                text="Analizar cruce"
-                                type="Emphasized"
-                                icon="sap-icon://decision"
-                                press=".onAnalizarCruce"
-                                class="sapUiMediumMarginTop"/>
-
-                        <Label text="Parentesco calculado" class="sapUiSmallMarginTop"/>
-                        <Input
-                                value="{cruce>/parentescoTexto}"
-                                editable="false"
-                                busy="{cruce>/analisisEnCurso}"
-                                placeholder="Se calculará automáticamente"/>
-
-                        <Label text="Objetivo del cruce" class="sapUiSmallMarginTop"/>
-                        <TextArea
-                                width="100%"
-                                rows="3"
-                                value="{cruce>/objetivoCruce}"
-                                placeholder="Ejemplo: fijar velocidad, corte, casta, tamaño, fertilidad..." />                        
-
-                    </VBox>
-                </Panel>
-
-                <Panel
-                        headerText="Resultado del análisis"
-                        visible="{cruce>/resultadoVisible}"
-                        class="sapUiMediumMarginTop">
-
-                    <VBox class="sapUiMediumMargin">
-
-                        <ObjectStatus
-                                title="Tipo de formación"
-                                text="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceTexto' }"
-                                state="{ path: 'cruce>/resultado/tipoCruce', formatter: '.formatter.formatTipoFormacionCruceState' }" />
-
-                        <ObjectStatus
-                                title="Nivel de riesgo"
-                                text="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoTexto' }"
-                                state="{ path: 'cruce>/resultado/nivelRiesgo', formatter: '.formatter.formatNivelRiesgoState' }" />
-
-                        <ObjectStatus
-                                title="Decision sugerida"
-                                text="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionTexto' }"
-                                state="{ path: 'cruce>/resultado/decision', formatter: '.formatter.formatDecisionState' }" />
-
-                        <ObjectNumber
-                                number="{cruce>/resultado/porcentaje}"
-                                unit="% consanguinidad"/>
-
-                        <ObjectStatus
-                                visible="{= !${cruce>/cruceAbierto} &amp;&amp; ${cruce>/resultado/porcentajeLinajeProyectado} !== undefined }"
-                                title="Continuidad del linaje"
-                                text="{= ${cruce>/resultado/porcentajeLinajeProyectado} + '% proyectado (minimo ' + ${cruce>/resultado/porcentajeMinimoLinaje} + '%)' }"
-                                state="{= ${cruce>/resultado/cumplePorcentajeLinaje} ? 'Success' : 'Error' }" />
-
-                        <Text text="{cruce>/resultado/descripcion}" />
-
-                        <MessageStrip
-                                text="{cruce>/resultado/recomendacion}"
-                                type="{cruce>/resultado/messageType}"
-                                showIcon="true"
-                                class="sapUiSmallMarginTop"/>                        
-
-                    </VBox>
-                </Panel>
-
-            </VBox>
-        </content>
-        <footer>
-            <Toolbar>
-                <ToolbarSpacer/>
-                <Button
-                                visible="{cruce>/resultadoVisible}"
-                                text="{cruce>/guardarTexto}"
-                                type="Emphasized"
-                                icon="sap-icon://save"
-                                press=".onGuardarPlanCruce"/>
-                <Button text="Cancelar" press="onNavBack"/>
-            </Toolbar>
-        </footer>
-    </Page>
+                        </VBox>
+                </content>
+                <footer>
+                        <Toolbar class="cruceCreateFooter">
+                                <ToolbarSpacer/>
+                                <Button
+                                        visible="{cruce>/puedeGuardar}"
+                                        text="{= ${device>/system/phone} ? '' : ${cruce>/guardarTexto} }"
+                                        tooltip="{cruce>/guardarTexto}"
+                                        type="Emphasized"
+                                        icon="sap-icon://save"
+                                        press=".onGuardarPlanCruce"/>
+                                <Button
+                                        visible="{cruce>/mostrarCruceAbierto}"
+                                        text="{= ${device>/system/phone} ? '' : 'Cruce abierto' }"
+                                        type="Emphasized"
+                                        icon="sap-icon://journey-change"
+                                        press=".onContinuarComoCruceAbierto"
+                                        tooltip="Guardar este cruce como Cruce abierto"/>
+                                <Button
+                                        text="{= ${device>/system/phone} ? '' : 'Cancelar' }"
+                                        icon="{= ${device>/system/phone} ? 'sap-icon://nav-back' : '' }"
+                                        tooltip="Cancelar"
+                                        press="onNavBack"/>
+                        </Toolbar>
+                </footer>
+        </Page>
 </mvc:View>
