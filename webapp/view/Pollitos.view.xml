@@ -95,15 +95,21 @@
                         </form:Form>
                     </content>
                 </Panel>
-                <Panel>
+                <ScrollContainer
+                    id="pollitosTableScroll"
+                    width="100%"
+                    vertical="true"
+                    horizontal="true"
+                    visible="{= !${device>/system/phone} }"
+                    class="listadoTablaScroll sapUiMediumMarginTop">
                     <Table
                         id="pollitosTable"
                         width="100%"
                         inset="false"
                         busy="{table>/busy}"
                         items="{pollitos>/value}"
-                        visible="{= !${device>/system/phone} }"
-                        class="sapUiMediumMarginTop">
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        class="listadoTabla">
 
                         <headerToolbar>
                             <OverflowToolbar>
@@ -174,6 +180,7 @@
                             </ColumnListItem>
                         </items>
                     </Table>
+                </ScrollContainer>
 
                     <List
                         id="pollitosMobileList"
@@ -246,7 +253,6 @@
                             </CustomListItem>
                         </items>
                     </List>
-                </Panel>
             </VBox>
         </content>
 

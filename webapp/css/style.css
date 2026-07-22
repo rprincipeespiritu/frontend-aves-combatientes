@@ -1651,6 +1651,130 @@
   color: var(--app-muted);
 }
 
+.cruceLinajeInfoPanel .cruceLinajeFundadores {
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.cruceLinajeInfoPanel .sapMObjStatusTitle {
+  font-weight: 600;
+}
+
+.cruceLinajeStatus,
+.cruceLinajeStatus .sapMObjStatusText,
+.cruceLinajeHint .sapMMsgStripMessage {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.cruceLinajeFundadorItem {
+  min-width: min(100%, 16rem);
+  flex: 1 1 14rem;
+}
+
+.cruceAnalizarBtn {
+  min-width: 8rem;
+}
+
+.cruceCreateFooter {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+@media (max-width: 767px) {
+  .cruceCreateContent.sapUiMediumMargin {
+    margin: 0.75rem !important;
+  }
+
+  .cruceLinajeFundadores {
+    flex-direction: column;
+  }
+
+  .cruceLinajeFundadorItem {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .cruceAnalizarActions {
+    justify-content: stretch;
+  }
+
+  .cruceAnalizarBtn {
+    width: 100%;
+  }
+
+  .cruceAnalizarBtn .sapMBtnInner {
+    width: 100%;
+  }
+
+  .cruceCreateFooter .sapMBtn {
+    min-height: 2.5rem;
+  }
+
+  .listadoTablaScroll,
+  .avesAdultasTableScroll {
+    --listado-tabla-visible-rows: 4;
+    --listado-tabla-row-h: 3.75rem;
+    height: min(
+      55vh,
+      calc(
+        var(--listado-tabla-toolbar-h) + var(--listado-tabla-header-h) +
+          (var(--listado-tabla-row-h) * var(--listado-tabla-visible-rows))
+      )
+    ) !important;
+    max-height: 55vh;
+    min-height: 12rem;
+  }
+}
+
+/* Tablas de listado: scroll propio, cabecera fija y ~6 filas visibles */
+.listadoTablaScroll,
+.avesAdultasTableScroll {
+  --listado-tabla-toolbar-h: 3rem;
+  --listado-tabla-header-h: 2.75rem;
+  --listado-tabla-row-h: 4.25rem;
+  --listado-tabla-visible-rows: 6;
+
+  width: 100% !important;
+  height: calc(
+    var(--listado-tabla-toolbar-h) + var(--listado-tabla-header-h) +
+      (var(--listado-tabla-row-h) * var(--listado-tabla-visible-rows))
+  ) !important;
+  max-height: calc(
+    var(--listado-tabla-toolbar-h) + var(--listado-tabla-header-h) +
+      (var(--listado-tabla-row-h) * var(--listado-tabla-visible-rows))
+  );
+  min-height: calc(
+    var(--listado-tabla-toolbar-h) + var(--listado-tabla-header-h) +
+      (var(--listado-tabla-row-h) * var(--listado-tabla-visible-rows))
+  );
+}
+
+.listadoTablaScroll > .sapMScrollContScroll,
+.avesAdultasTableScroll > .sapMScrollContScroll {
+  min-width: 100%;
+}
+
+.listadoTabla .sapMListTblHeader,
+.listadoTabla .sapMListTblHeaderCell,
+.listadoTabla .sapMListHdr,
+.listadoTabla .sapMListHdrTBar,
+.avesAdultasTable .sapMListTblHeader,
+.avesAdultasTable .sapMListTblHeaderCell,
+.avesAdultasTable .sapMListHdr,
+.avesAdultasTable .sapMListHdrTBar {
+  background-color: var(--sapList_HeaderBackground, #fff);
+  z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .listadoTablaScroll,
+  .avesAdultasTableScroll {
+    --listado-tabla-row-h: 4rem;
+  }
+}
+
 .avesAdultasMobileList {
   border-radius: 0.75rem;
   overflow: hidden;

@@ -92,11 +92,18 @@
                         <Text text="Registros: {reportes>/totalRegistros}" />
                     </Toolbar>
 
+                    <ScrollContainer
+                        width="100%"
+                        vertical="true"
+                        horizontal="true"
+                        class="listadoTablaScroll">
                     <Table
                         items="{reportes>/rows}"
                         noDataText="Sin datos para mostrar"
                         growing="true"
-                        growingThreshold="25">
+                        growingThreshold="25"
+                        sticky="ColumnHeaders"
+                        class="listadoTabla">
                         <columns>
                             <Column>
                                 <Text text="{reportes>/columnasVista/fecha}" />
@@ -144,6 +151,7 @@
                             </ColumnListItem>
                         </items>
                     </Table>
+                    </ScrollContainer>
                 </Panel>
 
             </VBox>
