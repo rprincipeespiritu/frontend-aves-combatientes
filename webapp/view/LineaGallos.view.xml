@@ -20,10 +20,17 @@
 
         <content>
             <VBox class="sapUiMediumMargin">
+                <ScrollContainer
+                        width="100%"
+                        vertical="true"
+                        horizontal="true"
+                        class="listadoTablaScroll">
                 <Table
                         items="{lineas>/data}"
                         growing="true"
-                        growingScrollToLoad="true">
+                        growingScrollToLoad="true"
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        class="listadoTabla">
                     <headerToolbar>
                         <OverflowToolbar>
                             <Title text="Linajes registrados ({= ${lineas>/data}.length})"/>
@@ -83,6 +90,7 @@
                     </items>
 
                 </Table>
+                </ScrollContainer>
 
             </VBox>
         </content>

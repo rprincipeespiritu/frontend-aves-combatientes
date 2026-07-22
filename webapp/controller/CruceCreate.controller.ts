@@ -63,7 +63,17 @@ export default class CruceCreate extends Controller {
             parentescoTexto: "",
             objetivoCruce: "",
             resultadoVisible: false,
+            puedeGuardar: false,
+            mostrarCruceAbierto: false,
             analisisEnCurso: false,
+            linajeVisible: false,
+            linaje: {
+                nombre: "",
+                objetivo: "",
+                descripcion: "",
+                fundadorTexto: "",
+                fundadoraTexto: "",
+            },
             machos: [],
             hembras: [],
             tiposParentesco: [
@@ -93,18 +103,24 @@ export default class CruceCreate extends Controller {
         const oModel = this.getView()?.getModel("cruce") as JSONModel;
 
         try {
-            const response = await fetch(`${this.baseUrl}/LineasAves('${this.lineaId}')`, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
-                    "Content-Type": "application/json"
+            const response = await fetch(
+                `${this.baseUrl}/LineasAves('${this.lineaId}')?$expand=aveFundador,aveFundadora`,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+                        "Content-Type": "application/json"
+                    }
                 }
-            });
+            );
 
             if (!response.ok) return;
 
             const linea = await response.json();
             const cruceAbierto = linea?.nombre === "Cruce abierto";
             const editMode = !!this.planId;
+            const fundadorTexto = this.formatearAveFundadora(linea?.aveFundador);
+            const fundadoraTexto = this.formatearAveFundadora(linea?.aveFundadora);
+
             oModel.setProperty("/cruceAbierto", cruceAbierto);
             oModel.setProperty(
                 "/titulo",
@@ -114,10 +130,28 @@ export default class CruceCreate extends Controller {
             );
             oModel.setProperty("/guardarTexto", editMode ? "Actualizar Plan de Cruce" : "Guardar Plan de Cruce");
             oModel.setProperty("/editMode", editMode);
+            oModel.setProperty("/linajeVisible", !cruceAbierto);
+            oModel.setProperty("/linaje", {
+                nombre: linea?.nombre || "",
+                objetivo: linea?.objetivo || "",
+                descripcion: linea?.descripcion || "",
+                fundadorTexto: fundadorTexto || "Sin padre fundador registrado",
+                fundadoraTexto: fundadoraTexto || "Sin madre fundadora registrada",
+                fundadorId: linea?.aveFundador?.ID || linea?.aveFundador_ID || "",
+                fundadoraId: linea?.aveFundadora?.ID || linea?.aveFundadora_ID || "",
+            });
         } catch (error) {
             oModel.setProperty("/cruceAbierto", false);
             oModel.setProperty("/titulo", "Nuevo Plan de Cruce");
+            oModel.setProperty("/linajeVisible", false);
         }
+    }
+
+    private formatearAveFundadora(ave: any): string {
+        if (!ave) return "";
+        const placa = ave.placa || "";
+        const nombre = ave.nombre || ave.apodo || "";
+        return [placa, nombre].filter(Boolean).join(" - ");
     }
 
     private async cargarPlanCruce(): Promise<void> {
@@ -148,6 +182,8 @@ export default class CruceCreate extends Controller {
             oModel.setProperty("/parentescoTexto", parentescoTexto);
             oModel.setProperty("/objetivoCruce", plan.objetivoCruce || "");
             oModel.setProperty("/resultadoVisible", true);
+            oModel.setProperty("/puedeGuardar", true);
+            oModel.setProperty("/mostrarCruceAbierto", false);
             oModel.setProperty("/resultado", {
                 tipoCruce: plan.tipoCruce,
                 nivelRiesgo: plan.nivelRiesgo,
@@ -249,6 +285,10 @@ export default class CruceCreate extends Controller {
         oModel.setProperty("/tipoParentesco", tipo);
     }
 
+    private esSinParentesco(tipoParentesco: string): boolean {
+        return !tipoParentesco || tipoParentesco === "SIN_PARENTESCO";
+    }
+
     private obtenerTextoParentesco(tipoParentesco: string): string {
         const oModel = this.getView()?.getModel("cruce") as JSONModel;
         const tiposParentesco = oModel.getProperty("/tiposParentesco") || [];
@@ -263,6 +303,8 @@ export default class CruceCreate extends Controller {
         oModel.setProperty("/parentescoTexto", "");
         oModel.setProperty("/resultado", {});
         oModel.setProperty("/resultadoVisible", false);
+        oModel.setProperty("/puedeGuardar", false);
+        oModel.setProperty("/mostrarCruceAbierto", false);
     }
 
     private async analizarParentescoAutomatico(mostrarMensajes: boolean): Promise<boolean> {
@@ -304,10 +346,25 @@ export default class CruceCreate extends Controller {
             oModel.setProperty("/resultado", resultado);
             oModel.setProperty("/resultadoVisible", true);
 
-            if (!data.cruceAbierto && resultado.cumplePorcentajeLinaje === false && mostrarMensajes) {
+            const linajeInsuficiente =
+                !data.cruceAbierto && resultado.cumplePorcentajeLinaje === false;
+            const sinParentesco = this.esSinParentesco(resultado.tipoParentesco);
+            const puedeCruceAbierto = linajeInsuficiente && sinParentesco;
+
+            oModel.setProperty("/puedeGuardar", !linajeInsuficiente);
+            oModel.setProperty("/mostrarCruceAbierto", puedeCruceAbierto);
+
+            if (linajeInsuficiente && mostrarMensajes) {
+                const mensajeBase =
+                    `La descendencia proyectada tendría ${resultado.porcentajeLinajeProyectado}% del linaje. ` +
+                    `Se requiere al menos ${resultado.porcentajeMinimoLinaje}% para continuar trabajándolo.\n\n` +
+                    `Elija al menos a uno de los padres fundadores o descendientes cuyos hijos hereden al menos ` +
+                    `${resultado.porcentajeMinimoLinaje}% del linaje de los padres.`;
+
                 MessageBox.warning(
-                    `La descendencia proyectada tendria ${resultado.porcentajeLinajeProyectado}% del linaje. ` +
-                    `Se requiere al menos ${resultado.porcentajeMinimoLinaje}% para continuar trabajandolo.`
+                    sinParentesco
+                        ? `${mensajeBase}\n\nSi no desea continuar el linaje, puede registrarlo como Cruce abierto.`
+                        : `${mensajeBase}\n\nEste cruce tiene parentesco (${parentescoTexto}); no puede guardarse como Cruce abierto.`
                 );
             }
             return true;
@@ -367,10 +424,29 @@ export default class CruceCreate extends Controller {
         }
 
         if (!oModel.getProperty("/cruceAbierto") && resultado.cumplePorcentajeLinaje === false) {
-            MessageBox.warning(
-                `Este cruce proyecta ${resultado.porcentajeLinajeProyectado}% del linaje y el minimo aceptable es ` +
-                `${resultado.porcentajeMinimoLinaje}%. Selecciona otros reproductores.`
+            const sinParentesco = this.esSinParentesco(
+                resultado.tipoParentesco || oModel.getProperty("/tipoParentesco")
             );
+            const mensaje =
+                `Este cruce proyecta ${resultado.porcentajeLinajeProyectado}% del linaje y el minimo aceptable es ` +
+                `${resultado.porcentajeMinimoLinaje}%. Selecciona otros reproductores.`;
+
+            if (sinParentesco) {
+                MessageBox.warning(mensaje, {
+                    title: "Advertencia",
+                    actions: ["Cruce abierto", MessageBox.Action.CANCEL],
+                    emphasizedAction: "Cruce abierto",
+                    onClose: (action: string) => {
+                        if (action === "Cruce abierto") {
+                            void this.continuarComoCruceAbierto();
+                        }
+                    },
+                });
+            } else {
+                MessageBox.warning(
+                    `${mensaje}\n\nEste cruce tiene parentesco; no puede guardarse como Cruce abierto.`
+                );
+            }
             return;
         }
 
@@ -428,6 +504,63 @@ export default class CruceCreate extends Controller {
 
         } catch (error2) {
             MessageBox.error(error?.error?.message || "No se pudo guardar el plan de cruce.");
+        }
+    }
+
+    public onContinuarComoCruceAbierto(): void {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        const tipoParentesco =
+            oModel?.getProperty("/tipoParentesco") ||
+            oModel?.getProperty("/resultado/tipoParentesco");
+
+        if (!this.esSinParentesco(tipoParentesco)) {
+            MessageBox.warning(
+                `Este cruce tiene parentesco (${this.obtenerTextoParentesco(tipoParentesco)}); ` +
+                `no puede registrarse como Cruce abierto. Seleccione otros reproductores.`
+            );
+            return;
+        }
+
+        void this.continuarComoCruceAbierto();
+    }
+
+    private async continuarComoCruceAbierto(): Promise<void> {
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+
+        try {
+            const response = await fetch(`${this.baseUrl}/obtenerLineaCruceAbierto`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data?.lineaId) {
+                throw new Error(data?.error?.message || "No se pudo preparar el cruce abierto.");
+            }
+
+            this.lineaId = data.lineaId;
+            const editMode = !!oModel.getProperty("/editMode");
+            oModel.setProperty("/cruceAbierto", true);
+            oModel.setProperty("/linajeVisible", false);
+            oModel.setProperty(
+                "/titulo",
+                editMode ? "Editar Cruce Abierto" : "Nuevo Cruce Abierto"
+            );
+            oModel.setProperty(
+                "/guardarTexto",
+                editMode ? "Actualizar Plan de Cruce" : "Guardar Plan de Cruce"
+            );
+            oModel.setProperty("/puedeGuardar", true);
+            oModel.setProperty("/mostrarCruceAbierto", false);
+
+            MessageToast.show("Se continuará como Cruce abierto.");
+            await this.onGuardarPlanCruce();
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudo iniciar el cruce abierto.");
         }
     }
 

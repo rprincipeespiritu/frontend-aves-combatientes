@@ -111,17 +111,21 @@
                     </content>
                 </Panel>
 
-                <Panel>
-                    <VBox>
-
-                        <!-- Tabla -->
+                <!-- Tabla desktop: scroll propio para mantener cabecera fija -->
+                <ScrollContainer
+                    id="avesTableScroll"
+                    width="100%"
+                    vertical="true"
+                    horizontal="true"
+                    visible="{= !${device>/system/phone} }"
+                    class="listadoTablaScroll avesAdultasTableScroll sapUiMediumMarginTop">
                         <Table
                             id="avesTable"
                             width="100%"
                             inset="false"
                             items="{aves>/value}"
-                            visible="{= !${device>/system/phone} }"
-                            class="sapUiMediumMarginTop">
+                            sticky="ColumnHeaders,HeaderToolbar"
+                            class="listadoTabla avesAdultasTable">
 
                             <headerToolbar>
                                 <OverflowToolbar>
@@ -251,6 +255,7 @@
                                 </ColumnListItem>
                             </items>
                         </Table>
+                </ScrollContainer>
 
                         <List
                             id="avesMobileList"
@@ -380,8 +385,6 @@
                                 </CustomListItem>
                             </items>
                         </List>
-                    </VBox>
-                </Panel>
             </VBox>
         </content>
         <footer>
