@@ -168,7 +168,7 @@
                     </columns>
 
                     <items>
-                        <ColumnListItem type="Active" press=".onSelectPlan">
+                        <ColumnListItem type="Navigation" press=".onSelectPlan">
                             <cells>
                                 <Text text="{= ${planes>codigo} || 'Sin codigo' }" wrapping="true" />
                                 <ObjectStatus

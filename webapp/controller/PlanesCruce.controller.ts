@@ -80,7 +80,7 @@ export default class PlanesCruce extends Controller {
     }
   }
 
-  public onSelectPlan(oEvent: any): void {
+  public async onSelectPlan(oEvent: any): Promise<void> {
     const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
     const oContext = oItem?.getBindingContext("planes");
 
@@ -92,12 +92,34 @@ export default class PlanesCruce extends Controller {
     }
 
     const oPlan = oContext.getObject();
+    if (!oPlan?.ID) {
+      MessageBox.warning("No se pudo identificar el plan seleccionado.");
+      return;
+    }
 
-    const parentesco = this.formatearParentesco(oPlan.tipoParentesco as ParentescoAve);
-    const tipoCruce = formatter.formatTipoFormacionCruceTexto(oPlan.tipoCruce, oPlan.linea?.nombre);
-    const riesgo = formatter.formatNivelRiesgoTexto(oPlan.nivelRiesgo);
-    MessageBox.information(
-      `Codigo: ${oPlan.codigo || ""}
+    const lineaId = oPlan.linea_ID || oPlan.linea?.ID;
+    const oRouter = (
+      this.getOwnerComponent() as UIComponent
+    )?.getRouter() as Router;
+
+    try {
+      const perteneceALinaje = lineaId
+        ? await this.perteneceAModuloLinaje(lineaId, oPlan.linea)
+        : false;
+
+      if (perteneceALinaje && lineaId) {
+        oRouter?.navTo("RouteLineaGallosCruceDetail", {
+          lineaId,
+          planId: oPlan.ID,
+        });
+        return;
+      }
+
+      const parentesco = this.formatearParentesco(oPlan.tipoParentesco as ParentescoAve);
+      const tipoCruce = formatter.formatTipoFormacionCruceTexto(oPlan.tipoCruce, oPlan.linea?.nombre);
+      const riesgo = formatter.formatNivelRiesgoTexto(oPlan.nivelRiesgo);
+      MessageBox.information(
+        `Codigo: ${oPlan.codigo || ""}
 
 Detalle del cruce:
                     
@@ -110,7 +132,38 @@ Detalle del cruce:
 
         Recomendación:
         ${oPlan.recomendacion}`,
+      );
+    } catch (error: any) {
+      MessageBox.error(
+        error?.message || "No se pudo abrir el detalle del plan seleccionado.",
+      );
+    }
+  }
+
+  private async perteneceAModuloLinaje(lineaId: string, lineaExpandida?: any): Promise<boolean> {
+    if (!lineaId) return false;
+
+    if (lineaExpandida?.nombre === "Cruce abierto" || lineaExpandida?.estado === "ELIMINADO") {
+      return false;
+    }
+
+    const response = await fetch(
+      `http://localhost:4004/api/avecombatiente/LineasAvesActivas?$select=ID,nombre&$filter=ID eq '${lineaId}'`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "Content-Type": "application/json",
+        },
+      },
     );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const data = await response.json();
+    const lineas = data.value || [];
+    return lineas.some((linea: any) => linea.ID === lineaId && linea.nombre !== "Cruce abierto");
   }
 
   public onNuevoPlan(): void {
@@ -437,7 +490,7 @@ Detalle del cruce:
 
   public formatearParentesco(parentesco: ParentescoAve): string {
     const parentescos = {
-      [ParentescoAve.AbuelaNieto]: "Abuela Niet0",
+      [ParentescoAve.AbuelaNieto]: "Abuela × nieto",
       [ParentescoAve.AbueloNieta]: "Abuelo Nieta",
       [ParentescoAve.MadreHijo]: "Madre Hijo",
       [ParentescoAve.MedioHermanos]: "Medio Hermanos",
