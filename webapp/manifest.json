@@ -278,6 +278,11 @@
           "pattern": "lineas-gallos/{lineaId}/cruce/{planId}/edit",
           "name": "RouteLineaGallosCruceEdit",
           "target": "TargetLineaGallosCruceCreate"
+        },
+        {
+          "pattern": "lineas-gallos/{lineaId}/cruce/{planId}",
+          "name": "RouteLineaGallosCruceDetail",
+          "target": "TargetLineaGallosCruceCreate"
         }
       ],
       "targets": {

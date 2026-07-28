@@ -155,6 +155,19 @@ export default class LineaGalloDetail extends Controller {
     });
   }
 
+  public onVerDetallePlan(oEvent: any): void {
+    const plan = oEvent.getSource()?.getBindingContext("detalle")?.getObject();
+    if (!plan?.ID) return;
+
+    const oRouter = (
+      this.getOwnerComponent() as UIComponent
+    )?.getRouter() as Router;
+    oRouter?.navTo("RouteLineaGallosCruceDetail", {
+      lineaId: this.lineaId,
+      planId: plan.ID,
+    });
+  }
+
   public onEditarPlan(oEvent: any): void {
     const plan = oEvent.getSource()?.getBindingContext("detalle")?.getObject();
     if (!plan?.ID) return;
@@ -299,7 +312,7 @@ export default class LineaGalloDetail extends Controller {
 
   public formatearParentesco(parentesco: ParentescoAve): string {
     const parentescos = {
-      [ParentescoAve.AbuelaNieto]: "Abuela Niet0",
+      [ParentescoAve.AbuelaNieto]: "Abuela × nieto",
       [ParentescoAve.AbueloNieta]: "Abuelo Nieta",
       [ParentescoAve.MadreHijo]: "Madre Hijo",
       [ParentescoAve.MedioHermanos]: "Medio Hermanos",

@@ -213,20 +213,6 @@
                 <f:formElements>
                   <f:FormElement>
                     <f:label>
-                      <Label text="Línea principal" />
-                    </f:label>
-                    <f:fields>
-                      <ComboBox
-                        selectedKey="{update>/linea_ID}"
-                        placeholder="Selecciona una línea"
-                        showClearIcon="true"
-                        items="{lineas>/}">
-                        <core:Item key="{lineas>ID}" text="{lineas>nombre}" />
-                      </ComboBox>
-                    </f:fields>
-                  </f:FormElement>
-                  <f:FormElement>
-                    <f:label>
                       <Label text="Fecha Nacimiento" required="true" />
                     </f:label>
                     <f:fields>

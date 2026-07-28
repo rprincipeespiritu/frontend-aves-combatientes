@@ -1673,8 +1673,29 @@
   flex: 1 1 14rem;
 }
 
+.cruceSangreLinajeBox {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--sapGroup_ContentBorderColor, #d9d9d9);
+  border-radius: 0.5rem;
+  background: var(--sapGroup_ContentBackground, #fafafa);
+}
+
+.cruceSangreLinajeItems {
+  gap: 1rem;
+}
+
+.cruceSangreLinajeItem {
+  min-width: min(100%, 12rem);
+  flex: 1 1 10rem;
+}
+
 .cruceAnalizarBtn {
   min-width: 8rem;
+}
+
+.cruceParentescoHint {
+  display: inline-block;
+  max-width: 100%;
 }
 
 .cruceCreateFooter {
@@ -1692,6 +1713,15 @@
   }
 
   .cruceLinajeFundadorItem {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .cruceSangreLinajeItems {
+    flex-direction: column;
+  }
+
+  .cruceSangreLinajeItem {
     min-width: 100%;
     width: 100%;
   }

@@ -136,7 +136,7 @@
                     </columns>
 
                     <items>
-                        <ColumnListItem>
+                        <ColumnListItem type="Navigation" press=".onVerDetallePlan">
                             <cells>
                                 <Text text="{detalle>codigo}" />
                                 <ObjectIdentifier

@@ -67,6 +67,8 @@ export default class Component extends BaseComponent {
     RouteEstadisticasPeleas: "LineasAves",
     RoutePlanesCruce: "PlanesCruces",
     RoutelineaGallosCruceCreate: "PlanesCruces",
+    RouteLineaGallosCruceEdit: "PlanesCruces",
+    RouteLineaGallosCruceDetail: "PlanesCruces",
     RouteReportes: "Historial",
     RouteCombates: "Peleas",
     RouteCombateCreate: "Peleas",

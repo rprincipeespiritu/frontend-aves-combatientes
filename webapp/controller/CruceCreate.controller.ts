@@ -38,6 +38,7 @@ export default class CruceCreate extends Controller {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.getRoute("RoutelineaGallosCruceCreate")?.attachPatternMatched(this.onRouteMatched, this);
         oRouter?.getRoute("RouteLineaGallosCruceEdit")?.attachPatternMatched(this.onRouteMatched, this);
+        oRouter?.getRoute("RouteLineaGallosCruceDetail")?.attachPatternMatched(this.onRouteMatched, this);
 
     }
 
@@ -51,10 +52,14 @@ export default class CruceCreate extends Controller {
 
     this.bindUserModel();
 
+        const routeName = oEvent.getParameter("name") || oEvent.getSource()?.getName?.() || "";
+        const soloLectura = routeName === "RouteLineaGallosCruceDetail";
+
         this.getView()?.setModel(new JSONModel({
             titulo: "Nuevo Plan de Cruce",
             guardarTexto: "Guardar Plan de Cruce",
             editMode: false,
+            soloLectura,
             cruceAbierto: false,
             macho_ID: "",
             hembra_ID: "",
@@ -118,15 +123,18 @@ export default class CruceCreate extends Controller {
             const linea = await response.json();
             const cruceAbierto = linea?.nombre === "Cruce abierto";
             const editMode = !!this.planId;
+            const soloLectura = !!oModel.getProperty("/soloLectura");
             const fundadorTexto = this.formatearAveFundadora(linea?.aveFundador);
             const fundadoraTexto = this.formatearAveFundadora(linea?.aveFundadora);
 
             oModel.setProperty("/cruceAbierto", cruceAbierto);
             oModel.setProperty(
                 "/titulo",
-                editMode
-                    ? (cruceAbierto ? "Editar Cruce Abierto" : "Editar Plan de Cruce")
-                    : (cruceAbierto ? "Nuevo Cruce Abierto" : "Nuevo Plan de Cruce")
+                soloLectura
+                    ? (cruceAbierto ? "Detalle de Cruce Abierto" : "Detalle de Plan de Cruce")
+                    : editMode
+                        ? (cruceAbierto ? "Editar Cruce Abierto" : "Editar Plan de Cruce")
+                        : (cruceAbierto ? "Nuevo Cruce Abierto" : "Nuevo Plan de Cruce")
             );
             oModel.setProperty("/guardarTexto", editMode ? "Actualizar Plan de Cruce" : "Guardar Plan de Cruce");
             oModel.setProperty("/editMode", editMode);
@@ -182,7 +190,7 @@ export default class CruceCreate extends Controller {
             oModel.setProperty("/parentescoTexto", parentescoTexto);
             oModel.setProperty("/objetivoCruce", plan.objetivoCruce || "");
             oModel.setProperty("/resultadoVisible", true);
-            oModel.setProperty("/puedeGuardar", true);
+            oModel.setProperty("/puedeGuardar", !oModel.getProperty("/soloLectura"));
             oModel.setProperty("/mostrarCruceAbierto", false);
             oModel.setProperty("/resultado", {
                 tipoCruce: plan.tipoCruce,
@@ -194,6 +202,13 @@ export default class CruceCreate extends Controller {
                 descripcion: parentescoTexto,
                 messageType: plan.nivelRiesgo === "ALTO" ? "Error" : plan.nivelRiesgo === "MODERADO" ? "Warning" : "Success",
             });
+
+            // Recalcular aporte de sangre al linaje (macho, hembra y descendencia).
+            await this.analizarParentescoAutomatico(false);
+            if (oModel.getProperty("/soloLectura")) {
+                oModel.setProperty("/puedeGuardar", false);
+                oModel.setProperty("/mostrarCruceAbierto", false);
+            }
         } catch (error: any) {
             MessageBox.error(error.message || "No se pudo cargar el plan de cruce.");
             this.onNavBack();
@@ -351,8 +366,8 @@ export default class CruceCreate extends Controller {
             const sinParentesco = this.esSinParentesco(resultado.tipoParentesco);
             const puedeCruceAbierto = linajeInsuficiente && sinParentesco;
 
-            oModel.setProperty("/puedeGuardar", !linajeInsuficiente);
-            oModel.setProperty("/mostrarCruceAbierto", puedeCruceAbierto);
+            oModel.setProperty("/puedeGuardar", !linajeInsuficiente && !data.soloLectura);
+            oModel.setProperty("/mostrarCruceAbierto", puedeCruceAbierto && !data.soloLectura);
 
             if (linajeInsuficiente && mostrarMensajes) {
                 const mensajeBase =
@@ -608,6 +623,32 @@ export default class CruceCreate extends Controller {
             this._oUserMenuPopover.openBy(oSource);
         }
 
+    }
+
+    public onIrAEditarPlan(): void {
+        if (!this.planId || !this.lineaId) return;
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        oRouter?.navTo("RouteLineaGallosCruceEdit", {
+            lineaId: this.lineaId,
+            planId: this.planId,
+        });
+    }
+
+    public onAbrirArbolGenealogico(): void {
+        const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
+        const oModel = this.getView()?.getModel("cruce") as JSONModel;
+        const aveId = oModel?.getProperty("/macho_ID") || oModel?.getProperty("/hembra_ID");
+
+        if (aveId) {
+            oRouter?.navTo("RouteGenealogia", {
+                "?query": {
+                    aveId
+                }
+            });
+            return;
+        }
+
+        oRouter?.navTo("RouteGenealogia");
     }
 
     public onNavBack(): void {

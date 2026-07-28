@@ -157,12 +157,67 @@ export default class LineaGalloForm extends Controller {
         }
     }
 
+    private async _obtenerLineasFundadasPorAve(aveId: string): Promise<Array<{ ID: string; nombre: string }>> {
+        if (!aveId) return [];
+
+        const response = await fetch(
+            `${this.baseUrl}/LineasAves?$select=ID,nombre&$filter=estado ne 'ELIMINADO' and (aveFundador_ID eq '${aveId}' or aveFundadora_ID eq '${aveId}')`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${this.authService.getToken()}`,
+                    "Content-Type": "application/json",
+                },
+            },
+        );
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(
+                data?.error?.message || data?.message || "No se pudo validar los fundadores de la línea",
+            );
+        }
+
+        return data.value || [];
+    }
+
+    private async _validarExclusividadFundadores(
+        fundadorId?: string | null,
+        fundadoraId?: string | null,
+        fundadorPlaca?: string,
+        fundadoraPlaca?: string,
+    ): Promise<string | null> {
+        const candidatos = [
+            { id: fundadorId, placa: fundadorPlaca, rol: "padre fundador" },
+            { id: fundadoraId, placa: fundadoraPlaca, rol: "madre fundadora" },
+        ].filter((item) => !!item.id);
+
+        for (const candidato of candidatos) {
+            const lineas = await this._obtenerLineasFundadasPorAve(candidato.id as string);
+            const conflicto = lineas.find((linea) => !this.lineaId || linea.ID !== this.lineaId);
+            if (!conflicto) continue;
+
+            const etiqueta = candidato.placa || candidato.id;
+            return `El ave ${etiqueta} ya es ${candidato.rol} de la línea "${conflicto.nombre}". Un mismo ejemplar no puede fundar más de una línea; sí puede usarse como refresco de sangre o en cruces abiertos.`;
+        }
+
+        return null;
+    }
+
+    private async _parseErrorResponse(response: Response, fallback: string): Promise<string> {
+        try {
+            const data = await response.json();
+            return data?.error?.message || data?.message || fallback;
+        } catch {
+            return fallback;
+        }
+    }
+
     public async onGuardar(): Promise<void> {
 
         const oThat = this;
         const oModel = this.getView()?.getModel("linea") as JSONModel;
         const data = oModel.getData();
-        const token = localStorage.getItem("token");
 
         if (!data.nombre) {
             MessageBox.warning("Ingresa el nombre de la línea.");
@@ -194,23 +249,47 @@ export default class LineaGalloForm extends Controller {
         let oPadre: IAve[];
         if (aMachos.length > 0 && placaPadre) {
             oPadre = aMachos.filter((a: any) => a.placa === placaPadre);
-            data.aveFundador_ID = oPadre[0].ID;
+            data.aveFundador_ID = oPadre[0]?.ID || null;
+            if (placaPadre && !data.aveFundador_ID) {
+                MessageBox.warning("No se encontró el padre fundador seleccionado.");
+                return;
+            }
         }
 
-        //const oInputMadre = oThat.byId("idMadre") as Input;
         const placaMadre = data.aveFundadoraPlaca;
         const oHembrasModel = oThat.getView()?.getModel("avesHembras") as JSONModel;
         const aHembras = oHembrasModel.getData() as any[];
         let oMadre: IAve[];
         if (aHembras.length > 0 && placaMadre) {
             oMadre = aHembras.filter((a: any) => a.placa === placaMadre);
-            data.aveFundadora_ID = oMadre[0].ID;
+            data.aveFundadora_ID = oMadre[0]?.ID || null;
+            if (placaMadre && !data.aveFundadora_ID) {
+                MessageBox.warning("No se encontró la madre fundadora seleccionada.");
+                return;
+            }
         }
 
         if (data.aveFundador_ID) payload.aveFundador_ID = data.aveFundador_ID;
         if (data.aveFundadora_ID) payload.aveFundadora_ID = data.aveFundadora_ID;
 
-        let response = null;
+        try {
+            const conflictoFundadores = await this._validarExclusividadFundadores(
+                payload.aveFundador_ID,
+                payload.aveFundadora_ID,
+                placaPadre,
+                placaMadre,
+            );
+            if (conflictoFundadores) {
+                MessageBox.warning(conflictoFundadores);
+                return;
+            }
+        } catch (error) {
+            MessageBox.error(
+                error instanceof Error ? error.message : "No se pudo validar los fundadores de la línea",
+            );
+            return;
+        }
+
         if(this.lineaId){
             //update
             MessageBox.information("¿Está seguro que desea actualizar el registro?", {
@@ -218,32 +297,38 @@ export default class LineaGalloForm extends Controller {
                 emphasizedAction: MessageBox.Action.OK,
                 onClose: async function (sAction: string) {
                     if (sAction === "OK") {
+                        try {
+                            const response = await fetch(`${oThat.baseUrl}/LineasAves('${oThat.lineaId}')`, {
+                                method: "PATCH",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${oThat.authService.getToken()}`
+                                },
+                                body: JSON.stringify(payload)
+                            });
 
-                        const response = await fetch(`${oThat.baseUrl}/LineasAves('${oThat.lineaId}')`, {
-                            method: "PATCH",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${oThat.authService.getToken()}`
-                            },
-                            body: JSON.stringify(payload)
-                        });
+                            if (!response.ok) {
+                                const mensaje = await oThat._parseErrorResponse(
+                                    response,
+                                    "No se pudo actualizar el registro",
+                                );
+                                MessageBox.error(mensaje);
+                                return;
+                            }
 
-                        if (!response.ok) {
-                            throw new Error(
-                                response?.error?.message ||
-                                response?.message ||
-                                "No se pudo actualizar el registro",
+                            MessageBox.success("¡Línea actualizada exitosamente!", {
+                                actions: [MessageBox.Action.OK],
+                                emphasizedAction: MessageBox.Action.OK,
+                                onClose: function () {
+                                    oThat.getOwnerComponent()?.getRouter().navTo("RouteLineaGallos");
+                                },
+                                dependentOn: oThat.getView()
+                            });
+                        } catch (error) {
+                            MessageBox.error(
+                                error instanceof Error ? error.message : "No se pudo actualizar el registro",
                             );
                         }
-
-                        MessageBox.success("¡Línea actualizada exitosamente!", {
-                            actions: [MessageBox.Action.OK],
-                            emphasizedAction: MessageBox.Action.OK,
-                            onClose: function (sAction: string) {
-                                oThat.getOwnerComponent()?.getRouter().navTo("RouteLineaGallos");
-                            },
-                            dependentOn: oThat.getView()
-                        });
                     }
                 },
                 dependentOn: this.getView()
@@ -255,32 +340,38 @@ export default class LineaGalloForm extends Controller {
                 emphasizedAction: MessageBox.Action.OK,
                 onClose: async function (sAction: string) {
                     if (sAction === "OK") {
+                        try {
+                            const response = await fetch(`${oThat.baseUrl}/LineasAves`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${oThat.authService.getToken()}`
+                                },
+                                body: JSON.stringify(payload)
+                            });
 
-                        const response = await fetch(`${oThat.baseUrl}/LineasAves`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${oThat.authService.getToken()}`
-                            },
-                            body: JSON.stringify(payload)
-                        });
+                            if (!response.ok) {
+                                const mensaje = await oThat._parseErrorResponse(
+                                    response,
+                                    "No se pudo crear el registro",
+                                );
+                                MessageBox.error(mensaje);
+                                return;
+                            }
 
-                        if (!response.ok) {
-                            throw new Error(
-                                response?.error?.message ||
-                                response?.message ||
-                                "No se pudo crear el registro",
+                            MessageBox.success("¡Línea creada exitosamente!", {
+                                actions: [MessageBox.Action.OK],
+                                emphasizedAction: MessageBox.Action.OK,
+                                onClose: function () {
+                                    oThat.getOwnerComponent()?.getRouter().navTo("RouteLineaGallos");
+                                },
+                                dependentOn: oThat.getView()
+                            });
+                        } catch (error) {
+                            MessageBox.error(
+                                error instanceof Error ? error.message : "No se pudo crear el registro",
                             );
                         }
-
-                        MessageBox.success("¡Línea creada exitosamente!", {
-                            actions: [MessageBox.Action.OK],
-                            emphasizedAction: MessageBox.Action.OK,
-                            onClose: function (sAction: string) {
-                                oThat.getOwnerComponent()?.getRouter().navTo("RouteLineaGallos");
-                            },
-                            dependentOn: oThat.getView()
-                        });
                     }
                 },
                 dependentOn: this.getView()
