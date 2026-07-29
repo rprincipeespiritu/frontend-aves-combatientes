@@ -148,7 +148,7 @@ Detalle del cruce:
     }
 
     const response = await fetch(
-      `http://localhost:4004/api/avecombatiente/LineasAvesActivas?$select=ID,nombre&$filter=ID eq '${lineaId}'`,
+      `${this.baseUrl}/LineasAvesActivas?$select=ID,nombre&$filter=ID eq '${lineaId}'`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,

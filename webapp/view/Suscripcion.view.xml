@@ -80,6 +80,11 @@
                 </Panel>
 
                 <Panel headerText="Planes disponibles" class="sapUiMediumMarginTop">
+                    <MessageStrip
+                        text="Los planes de pago se activan con Mercado Pago. Al volver del pago, pulsa Refrescar para ver el estado actualizado."
+                        type="Information"
+                        showIcon="true"
+                        class="sapUiSmallMargin" />
                     <HBox wrap="Wrap" justifyContent="SpaceAround">
                         <Panel headerText="Basico" width="20rem" class="sapUiSmallMargin">
                             <VBox class="sapUiMediumMargin">
@@ -88,7 +93,7 @@
                                 <Text text="200 aves jovenes" />
                                 <Text text="50 incubaciones" />
                                 <ObjectNumber number="19" unit="PEN / mes" />
-                                <Button text="Activar Basico" type="Emphasized" press=".onActivarBasico" />
+                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarBasico" />
                             </VBox>
                         </Panel>
 
@@ -101,7 +106,7 @@
                                 <Text text="Genealogía" />
                                 <Text text="Reportes" />
                                 <ObjectNumber number="49" unit="PEN / mes" />
-                                <Button text="Activar Pro" type="Emphasized" press=".onActivarPro" />
+                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPro" />
                             </VBox>
                         </Panel>
 
@@ -116,7 +121,7 @@
                                 <Text text="Combates" />
                                 <Text text="Fotos y videos" />
                                 <ObjectNumber number="99" unit="PEN / mes" />
-                                <Button text="Activar Premium" type="Emphasized" press=".onActivarPremium" />
+                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPremium" />
                             </VBox>
                         </Panel>
                     </HBox>

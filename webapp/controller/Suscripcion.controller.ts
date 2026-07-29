@@ -48,7 +48,9 @@ export default class Suscripcion extends Controller {
 
         this.bindUserModel();
 
-        void this.cargarSuscripcion();
+        void this.cargarSuscripcion().then(async () => {
+            await (this.getOwnerComponent() as any)?.loadPlanIndicator?.();
+        });
     };
 
     private getHeaders(): HeadersInit {
@@ -94,51 +96,62 @@ export default class Suscripcion extends Controller {
     }
 
     public onActivarBasico(): void {
-        this.confirmarActivacion("BASICO");
+        this.confirmarSuscripcionMercadoPago("BASICO");
     }
 
     public onActivarPro(): void {
-        this.confirmarActivacion("PRO");
+        this.confirmarSuscripcionMercadoPago("PRO");
     }
 
     public onActivarPremium(): void {
-        this.confirmarActivacion("PREMIUM");
+        this.confirmarSuscripcionMercadoPago("PREMIUM");
     }
 
-    private confirmarActivacion(plan: string): void {
-        MessageBox.confirm(`Deseas activar el plan ${plan} en modo local para probar accesos?`, {
-            title: "Activar plan local",
-            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-            emphasizedAction: MessageBox.Action.OK,
-            onClose: (action: string) => {
-                if (action === MessageBox.Action.OK) {
-                    void this.activarSuscripcionLocal(plan);
-                }
+    private confirmarSuscripcionMercadoPago(plan: string): void {
+        const precios: Record<string, number> = { BASICO: 19, PRO: 49, PREMIUM: 99 };
+        const precio = precios[plan] || 0;
+
+        MessageBox.confirm(
+            `Seras redirigido a Mercado Pago para suscribirte al plan ${plan} (${precio} PEN / mes).\n\n` +
+            `Si ya tienes un plan vigente, se mantendra activo hasta confirmar el pago.`,
+            {
+                title: "Suscribirse con Mercado Pago",
+                actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                emphasizedAction: MessageBox.Action.OK,
+                onClose: (action: string) => {
+                    if (action === MessageBox.Action.OK) {
+                        void this.crearCheckoutMercadoPago(plan);
+                    }
+                },
             },
-        });
+        );
     }
 
-    private async activarSuscripcionLocal(plan: string): Promise<void> {
+    private async crearCheckoutMercadoPago(plan: string): Promise<void> {
         const oModel = this.getView()?.getModel("suscripcion") as JSONModel;
         oModel.setProperty("/busy", true);
 
         try {
-            const response = await fetch(`${this.baseUrl}/activarSuscripcion`, {
+            const response = await fetch(`${this.baseUrl}/crearCheckoutMercadoPago`, {
                 method: "POST",
                 headers: this.getHeaders(),
-                body: JSON.stringify({ plan, meses: 1 }),
+                body: JSON.stringify({ plan }),
             });
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data?.error?.message || data?.message || "No se pudo activar la suscripcion");
+                throw new Error(data?.error?.message || data?.message || "No se pudo crear el checkout de Mercado Pago");
             }
 
-            MessageToast.show(data.message || "Plan local activado");
-            await this.cargarSuscripcion();
-            await (this.getOwnerComponent() as any)?.loadPlanIndicator?.();
+            const checkoutUrl = data.checkoutUrl || data.initPoint || data.sandboxInitPoint;
+            if (!checkoutUrl) {
+                throw new Error("Mercado Pago no devolvio una URL de pago.");
+            }
+
+            MessageToast.show(data.message || "Redirigiendo a Mercado Pago...");
+            window.location.href = checkoutUrl;
         } catch (error: any) {
-            MessageBox.error(error.message || "No se pudo activar la suscripcion");
+            MessageBox.error(error.message || "No se pudo iniciar el pago con Mercado Pago");
         } finally {
             oModel.setProperty("/busy", false);
         }
