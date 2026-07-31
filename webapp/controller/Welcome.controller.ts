@@ -77,7 +77,8 @@ export default class Welcome extends Controller {
       suscripcionDias: 0,
       plan: "",
       estadoSuscripcion: "",
-      accesoSuscripcion: false
+      accesoSuscripcion: false,
+      multimediaPremium: false
     });
 
     this.getOwnerComponent()?.setModel(oDashboardModel, "dashboard");
@@ -134,7 +135,8 @@ export default class Welcome extends Controller {
         suscripcionDias: oModel.getProperty("/suscripcionDias") || 0,
         plan: oData.plan,
         estadoSuscripcion: oData.estado,
-        accesoSuscripcion: this.tieneAccesoSuscripcion(oData.estado, oData.diasRestantes)
+        accesoSuscripcion: this.tieneAccesoSuscripcion(oData.estado, oData.diasRestantes),
+        multimediaPremium: this.tieneMultimediaPremium(oData.plan, oData.estado, oData.diasRestantes)
       });
       void this._cargarSuscripcionResumen();
     } catch (error: any) {
@@ -172,6 +174,11 @@ export default class Welcome extends Controller {
       oModel.setProperty(
         "/accesoSuscripcion",
         oData.tieneSuscripcion !== false && this.tieneAccesoSuscripcion(oData.estado, oData.diasRestantes),
+      );
+      oModel.setProperty(
+        "/multimediaPremium",
+        oData.tieneSuscripcion !== false &&
+          this.tieneMultimediaPremium(oData.plan, oData.estado, oData.diasRestantes),
       );
 
       if (oData.tieneSuscripcion === false) {
@@ -278,6 +285,13 @@ export default class Welcome extends Controller {
 
   private tieneAccesoSuscripcion(estado: string, diasRestantes: number): boolean {
     return ["ACTIVA", "CANCELADA"].includes(estado) && Number(diasRestantes || 0) >= 0;
+  }
+
+  private tieneMultimediaPremium(plan: string, estado: string, diasRestantes: number): boolean {
+    return (
+      this.tieneAccesoSuscripcion(estado, diasRestantes) &&
+      ["PRUEBA", "PREMIUM"].includes(String(plan || "").toUpperCase())
+    );
   }
 
   private _mapEstadoTexto(sEstado: string): string {

@@ -138,7 +138,8 @@ export default class AveDetail extends Controller {
                 data.tieneSuscripcion !== false &&
                 ["ACTIVA", "CANCELADA"].includes(data.estado) &&
                 Number(data.diasRestantes || 0) >= 0;
-            const multimediaPremium = tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan);
+            const multimediaPremium =
+                tieneAcceso && ["PRUEBA", "PREMIUM"].includes(String(data.plan || "").toUpperCase());
 
             oModel.setProperty("/plan", data.plan || "");
             oModel.setProperty("/estadoSuscripcion", data.estado || "");
@@ -892,7 +893,7 @@ export default class AveDetail extends Controller {
 
     public async onArchivosAveDetailChange(oEvent: any): Promise<void> {
         if (!this.getDashboardModel().getProperty("/multimediaPremium")) {
-            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium.");
+            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium o Prueba.");
             this.limpiarUploaderArchivosAveDetail();
             return;
         }
@@ -991,7 +992,7 @@ export default class AveDetail extends Controller {
 
     public async onVerArchivoAve(oEvent: Event): Promise<void> {
         if (!this.getDashboardModel().getProperty("/multimediaPremium")) {
-            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium.");
+            MessageBox.warning("Las fotos y videos solo estan disponibles para el plan Premium o Prueba.");
             return;
         }
 

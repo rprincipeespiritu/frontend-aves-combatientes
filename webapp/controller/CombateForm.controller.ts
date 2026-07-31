@@ -112,7 +112,10 @@ export default class CombateForm extends Controller {
       model.setProperty("/plan", data.plan || "");
       model.setProperty("/estadoSuscripcion", data.estado || "");
       model.setProperty("/accesoSuscripcion", tieneAcceso);
-      model.setProperty("/multimediaPremium", tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan));
+      model.setProperty(
+        "/multimediaPremium",
+        tieneAcceso && ["PRUEBA", "PREMIUM"].includes(String(data.plan || "").toUpperCase()),
+      );
       model.refresh(true);
     } catch (error) {
       // La carga del formulario no depende del resumen de suscripcion.
@@ -620,7 +623,7 @@ export default class CombateForm extends Controller {
 
   public onVideoSeleccionado(oEvent: any): void {
     if (!this.getDashboardModel().getProperty("/multimediaPremium")) {
-      MessageBox.warning("Los videos solo estan disponibles para el plan Premium.");
+      MessageBox.warning("Los videos solo estan disponibles para el plan Premium o Prueba.");
       this.onQuitarVideo();
       return;
     }
