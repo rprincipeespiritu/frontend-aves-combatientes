@@ -113,6 +113,7 @@
                         <Panel headerText="Premium" width="20rem" class="sapUiSmallMargin">
                             <VBox class="sapUiMediumMargin">
                                 <ObjectStatus text="Uso ilimitado" state="Success" />
+                                <Text text="Mismos privilegios que el Plan Prueba" />
                                 <Text text="Aves adultas ilimitadas" />
                                 <Text text="Aves jovenes ilimitadas" />
                                 <Text text="Incubaciones ilimitadas" />
