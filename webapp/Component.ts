@@ -37,6 +37,7 @@ export default class Component extends BaseComponent {
   private static fetchBusyDialogOpened = false;
   private readonly publicRoutes = new Set([
     "RouteLogin",
+    "RouteLanding",
     "RouteRegister",
     "RouteForgotPassword",
     "RouteResetPassword",

@@ -2,13 +2,13 @@ import Controller from "sap/ui/core/mvc/Controller";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import MessageToast from "sap/m/MessageToast";
 import MessageBox from "sap/m/MessageBox";
-import MessageStrip from "sap/m/MessageStrip";
 import BusyIndicator from "sap/m/BusyIndicator";
 import UIComponent from "sap/ui/core/UIComponent";
 import Router from "sap/ui/core/routing/Router";
 import CheckBox from "sap/m/CheckBox";
 import ProgressIndicator from "sap/m/ProgressIndicator";
 import { AuthService } from "../services/AuthService";
+import { MetaPixelService } from "../services/MetaPixelService";
 
 // Interfaces para el registro
 interface RegisterData {
@@ -84,6 +84,7 @@ export default class Register extends Controller {
             const result = await this.authService.registrarUsuario(registerData);
 
             if (result.success) {
+                MetaPixelService.trackCompleteRegistration();
 
                 MessageBox.success("¡Tu cuenta fue creada correctamente. Revisa tu correo para activarla.!", {
                     actions: [MessageBox.Action.OK],
@@ -341,13 +342,12 @@ export default class Register extends Controller {
     }
 
     private showError(message: string): void {
-        const oMessageStrip = this.byId("registerErrorMessage") as MessageStrip;
-        oMessageStrip.setText(message);
-        oMessageStrip.setVisible(true);
-
-        setTimeout(() => {
-            oMessageStrip.setVisible(false);
-        }, 8000);
+        MessageBox.error(message || "Error creando la cuenta", {
+            title: "No se pudo crear la cuenta",
+            actions: [MessageBox.Action.OK],
+            emphasizedAction: MessageBox.Action.OK,
+            dependentOn: this.getView(),
+        });
     }
 
     private setRegisterBusy(busy: boolean): void {

@@ -1,0 +1,75 @@
+<mvc:View
+    controllerName="com.rprincipees.registroavescombate.controller.Landing"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Page showHeader="false" class="landingPage" backgroundDesign="Transparent">
+        <content>
+            <VBox class="landingShell">
+                <VBox class="landingHero" renderType="Bare">
+                    <core:HTML content="&lt;div class='landingHeroMedia' aria-hidden='true'&gt;&lt;/div&gt;" />
+                    <VBox class="landingHeroCopy" justifyContent="Center">
+                        <Text text="LinajeGallo" wrapping="true" class="landingBrand" />
+                        <Text
+                            text="Controla tu plantel avícola desde la web y dispositivos móviles"
+                            wrapping="true"
+                            class="landingHeadline" />
+                        <Text
+                            text="Pedigrí, incubación, genealogía y seguimiento de tu criadero en un solo sistema. Prueba gratis 60 días en Perú."
+                            wrapping="true"
+                            class="landingLead" />
+                        <HBox class="landingCtas" wrap="Wrap" alignItems="Center">
+                            <Button
+                                text="Probar 60 días gratis"
+                                type="Emphasized"
+                                class="landingPrimaryCta"
+                                press=".onCrearCuenta" />
+                            <Button
+                                text="Ya tengo cuenta"
+                                type="Transparent"
+                                class="landingSecondaryCta"
+                                press=".onIniciarSesion" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <VBox class="landingSection">
+                    <Text text="Todo lo que necesitas para gestionar tu criadero" wrapping="true" class="landingSectionTitle" />
+                    <Text
+                        text="El plan de prueba incluye los mismos privilegios del plan Premium."
+                        wrapping="true"
+                        class="landingSectionLead" />
+                    <HBox class="landingBenefits" wrap="Wrap" justifyContent="SpaceBetween">
+                        <VBox class="landingBenefit">
+                            <Image src="images/icons/adult-bird.svg" class="landingBenefitIcon" densityAware="false" />
+                            <Title text="Plantel adulto" level="H3" />
+                            <Text text="Registra placas, linaje, fotos y estado de cada ave." />
+                        </VBox>
+                        <VBox class="landingBenefit">
+                            <Image src="images/icons/incubation-eggs.svg" class="landingBenefitIcon" densityAware="false" />
+                            <Title text="Incubación" level="H3" />
+                            <Text text="Programa nidadas y sigue eclosiones sin perder historial." />
+                        </VBox>
+                        <VBox class="landingBenefit">
+                            <Image src="images/icons/genealogy.svg" class="landingBenefitIcon" densityAware="false" />
+                            <Title text="Genealogía" level="H3" />
+                            <Text text="Visualiza parentesco y toma mejores decisiones de cruce." />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox class="landingClosing" alignItems="Center">
+                    <Text text="Empieza hoy en Perú" wrapping="true" class="landingSectionTitle" />
+                    <Text text="Sin tarjeta para la prueba. Cancela cuando quieras." wrapping="true" class="landingSectionLead" />
+                    <Button
+                        text="Crear mi cuenta gratis"
+                        type="Emphasized"
+                        class="landingPrimaryCta"
+                        press=".onCrearCuenta" />
+                </VBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
