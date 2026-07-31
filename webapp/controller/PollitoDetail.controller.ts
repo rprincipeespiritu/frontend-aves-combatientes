@@ -341,7 +341,7 @@ export default class PollitoDetail extends Controller {
     public async onLogout(): Promise<void> {
         await this.authService.logout();
         MessageToast.show("Sesion cerrada exitosamente");
-        (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+        (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
     }
 
     public onVerAve(): void {

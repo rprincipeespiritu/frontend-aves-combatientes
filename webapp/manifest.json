@@ -84,8 +84,15 @@
       },
       "routes": [
         {
-          "name": "RouteLogin",
+          "name": "RouteLanding",
           "pattern": "",
+          "target": [
+            "TargetLanding"
+          ]
+        },
+        {
+          "name": "RouteLogin",
+          "pattern": "login",
           "target": [
             "TargetLogin"
           ]
@@ -289,6 +296,10 @@
         "TargetLogin": {
           "id": "Login",
           "name": "Login"
+        },
+        "TargetLanding": {
+          "id": "Landing",
+          "name": "Landing"
         },
         "TargetRegister": {
           "id": "Register",

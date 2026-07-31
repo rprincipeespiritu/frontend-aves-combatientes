@@ -18,7 +18,7 @@
             <ScrollContainer height="100%" vertical="true" horizontal="false">
                 <VBox class="welcomePageContent sapUiMediumMargin">
                     <HBox width="100%" wrap="Wrap" justifyContent="Center" alignItems="Center">
-                        <Title text="Gestión de Aves Combatientes" level="H1" class="homeMainTitle" />
+                        <Title text="Registro y Linaje de Aves" level="H1" class="homeMainTitle" />
                     </HBox>
                     <!-- HERO / BIENVENIDA -->
                     <Panel class="welcomeHeroPanel sapUiResponsiveMargin sapUiNoContentPadding">
@@ -32,7 +32,7 @@
                                     visible="{dashboard>/accesoSuscripcion}">
                                     <Button text="Agregar Ave Adulta" type="Emphasized" icon="sap-icon://add"
                                         press="onNavNewBird" class="heroActionButton" />
-                                    <Button text="Agregar Ave jóven" type="Emphasized"
+                                    <Button text="Agregar Ave Jóven o Recién Nacido" type="Emphasized"
                                         icon="sap-icon://add"
                                         press="onNavNewPollito" class="heroActionButton" />
                                     <Button text="Agregar Incubación" type="Emphasized"
@@ -120,8 +120,8 @@
                             </TileContent>
                         </GenericTile>
 
-                        <GenericTile class="sapUiSmallMarginTop" header="Estadisticas de peleas"
-                            subheader="Rendimiento genealogico" press="onVerEstadisticasPeleas"
+                        <GenericTile class="sapUiSmallMarginTop" header="Estadísticas"
+                            subheader="Rendimiento por linaje" press="onVerEstadisticasPeleas"
                             visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PRO' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <ImageContent src="images/icons/combats.svg" />
@@ -129,7 +129,7 @@
                         </GenericTile>
 
                         <GenericTile class="sapUiSmallMarginTop" header="Combates"
-                            subheader="Registro de peleas" press="onVerCombates"
+                            subheader="Historial de encuentros" press="onVerCombates"
                             visible="{= ${dashboard>/accesoSuscripcion} &amp;&amp; (${dashboard>/plan} === 'PRUEBA' || ${dashboard>/plan} === 'PREMIUM') }">
                             <TileContent>
                                 <NumericContent value="{dashboard>/totalCombates}"

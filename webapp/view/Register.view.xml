@@ -16,8 +16,6 @@
 
                         <content>
                             <VBox class="sapUiMediumMargin">
-                                <MessageStrip id="registerErrorMessage" text="" type="Error" visible="false" class="sapUiMediumMarginBottom"/>
-
                                 <f:Form editable="true" class="sapUiSmallMargin">
                                   <f:layout>
                                     <f:ResponsiveGridLayout
