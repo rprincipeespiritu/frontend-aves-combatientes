@@ -139,7 +139,7 @@
                             </headerToolbar>
 
                             <columns>
-                                <Column width="5rem" hAlign="Center" visible="{= ${planIndicator>/plan} === 'PREMIUM' }">
+                                <Column width="5rem" hAlign="Center" visible="{= ${planIndicator>/plan} === 'PREMIUM' || ${planIndicator>/plan} === 'PRUEBA' }">
                                     <Text text="Imagen" />
                                 </Column>
 
@@ -197,7 +197,7 @@
                                         displayShape="Circle"
                                         displaySize="S"
                                         tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
-                                        visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
+                                        visible="{= ${planIndicator>/plan} === 'PREMIUM' || ${planIndicator>/plan} === 'PRUEBA' }"
                                         press="onVerImagenAve"
                                         class="imageClickable" />
 
@@ -295,7 +295,7 @@
                                             displayShape="Circle"
                                             displaySize="S"
                                             tooltip="{= ${aves>fotoPrincipal} ? 'Ver imagen principal' : 'Sin imagen principal' }"
-                                            visible="{= ${planIndicator>/plan} === 'PREMIUM' }"
+                                            visible="{= ${planIndicator>/plan} === 'PREMIUM' || ${planIndicator>/plan} === 'PRUEBA' }"
                                             press="onVerImagenAve"
                                             class="aveAdultaMobileAvatar imageClickable" />
                                             <VBox class="aveAdultaMobileIdentity">

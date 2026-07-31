@@ -759,7 +759,7 @@ export default class IncubacionForm extends Controller {
         ["ACTIVA", "CANCELADA"].includes(data.estado) &&
         Number(data.diasRestantes || 0) >= 0;
       const multimediaPremium =
-        tieneAcceso && ["PRUEBA", "PREMIUM"].includes(data.plan);
+        tieneAcceso && ["PRUEBA", "PREMIUM"].includes(String(data.plan || "").toUpperCase());
 
       oModel.setProperty("/plan", data.plan || "");
       oModel.setProperty("/estadoSuscripcion", data.estado || "");
