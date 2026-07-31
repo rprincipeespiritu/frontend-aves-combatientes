@@ -127,7 +127,7 @@ export default class IncubacionDetail extends Controller {
             const oRouter = (
                 this.getOwnerComponent() as UIComponent
             )?.getRouter() as Router;
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
         } catch (error) {
             MessageBox.error("Error al cerrar sesión.");
         }

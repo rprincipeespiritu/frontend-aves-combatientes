@@ -154,7 +154,7 @@ export default class AveUpdate extends Controller {
             MessageToast.show("Sesión cerrada exitosamente");
 
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
 
             // Verificar que el método existe antes de llamarlo
             const oOwner = this.getOwnerComponent() as any;

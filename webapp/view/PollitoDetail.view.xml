@@ -5,7 +5,7 @@
   xmlns:f="sap.ui.layout.form"
   xmlns:form="sap.f">
 
-  <Page title="Detalle del Ave Jóven" showNavButton="true" navButtonPress="onNavBack"
+  <Page title="Detalle del Ave Jóven o Recién Nacido" showNavButton="true" navButtonPress="onNavBack"
     busy="{detail>/busy}">
     <headerContent>
       <Button icon="sap-icon://home" press="onNavWelcome" type="Emphasized" />

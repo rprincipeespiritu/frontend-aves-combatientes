@@ -385,6 +385,6 @@ export default class Combates extends Controller {
   public async onLogout(): Promise<void> {
     await this.authService.logout();
     const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter() as Router;
-    oRouter?.navTo("RouteLogin");
+    oRouter?.navTo("RouteLanding");
   }
 }

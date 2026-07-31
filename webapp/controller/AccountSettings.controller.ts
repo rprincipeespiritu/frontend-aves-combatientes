@@ -216,7 +216,7 @@ export default class AccountSettings extends Controller {
     try {
       await this.authService.logout();
       MessageToast.show("Sesion cerrada exitosamente");
-      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
       (this.getOwnerComponent() as any)?.updateUserModel?.();
     } catch (error) {
       MessageToast.show("Error cerrando sesion");
