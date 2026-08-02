@@ -13,8 +13,9 @@ export default class App extends Controller {
         const authService = AuthService.getInstance();
         authService.iniciarTimeoutInactividad(() => {
             MessageToast.show("Sesion cerrada por inactividad.");
-            const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-            oRouter?.navTo("RouteLogin");
+            const oComponent = this.getOwnerComponent() as UIComponent & { updateUserModel?: () => void };
+            oComponent?.updateUserModel?.();
+            oComponent?.getRouter()?.navTo("RouteLanding", {}, true);
         });
     }
 }
