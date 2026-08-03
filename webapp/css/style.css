@@ -585,8 +585,8 @@
 }
 
 .userMenuAvatarWrap {
-  margin-bottom: 0.75rem;
-  gap: 0.45rem;
+  margin-bottom: 1.15rem;
+  gap: 0.55rem;
 }
 
 .userMenuAvatar {
@@ -597,8 +597,9 @@
 }
 
 .userMenuAvatarActions {
-  gap: 0.35rem;
-  margin-top: 0.15rem;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.25rem;
   flex-wrap: wrap;
 }
 
@@ -660,7 +661,9 @@
 }
 
 .userMenuIdentity {
+  margin-top: 0.35rem;
   margin-bottom: 1rem;
+  gap: 0.35rem;
 }
 
 .userMenuName {
@@ -670,6 +673,7 @@
   font-weight: 900;
   line-height: 1.25;
   white-space: normal;
+  margin-top: 0.25rem !important;
 }
 
 .userMenuEmail {
@@ -908,11 +912,12 @@
   }
 
   .userMenuAvatarWrap {
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
   }
 
   .userMenuAvatarActions {
     gap: 0.5rem;
+    margin-bottom: 0.35rem;
   }
 
   .userMenuAvatarActionBtn .sapMBtnInner {
@@ -1295,10 +1300,22 @@
 
   .userMenuMobilePopover .userMenuAvatarWrap {
     width: 100%;
+    margin-bottom: 1.35rem;
   }
 
   .userMenuMobilePopover .userMenuAvatarActions {
     gap: 0.55rem;
+    margin-top: 0.45rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .userMenuMobilePopover .userMenuIdentity {
+    margin-top: 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .userMenuMobilePopover .userMenuName {
+    margin-top: 0.35rem !important;
   }
 
   .userMenuMobilePopover .userMenuAvatarActionBtn .sapMBtnInner {

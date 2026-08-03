@@ -26,7 +26,7 @@ export default class CombateDetail extends Controller {
 
   private onRouteMatched = async (oEvent: any): Promise<void> => {
     if (!this.authService.isAuthenticated()) {
-      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
       return;
     }
 

@@ -810,16 +810,22 @@ export default class Component extends BaseComponent {
   }
 
   private validateRouteAccess(routeName: string, subscription: PlanIndicatorData): void {
-    if (!routeName || this.publicRoutes.has(routeName) || this.unrestrictedRoutes.has(routeName)) {
+    if (!routeName || this.publicRoutes.has(routeName)) {
+      return;
+    }
+
+    // Sin sesion: cualquier ruta privada (incluye welcome al refrescar) va al landing.
+    if (!localStorage.getItem("auth_token")) {
+      this.getRouter().navTo("RouteLanding", {}, true);
+      return;
+    }
+
+    if (this.unrestrictedRoutes.has(routeName)) {
       return;
     }
 
     const moduleName = this.routeModuleMap[routeName];
     if (!moduleName) {
-      return;
-    }
-
-    if (!localStorage.getItem("auth_token")) {
       return;
     }
 

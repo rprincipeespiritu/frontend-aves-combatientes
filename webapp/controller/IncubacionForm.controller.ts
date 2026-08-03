@@ -574,7 +574,7 @@ export default class IncubacionForm extends Controller {
     try {
       if (!this.authService.isAuthenticated()) {
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-        oRouter?.navTo("RouteLogin");
+        oRouter?.navTo("RouteLanding");
         return;
       }
 
@@ -613,7 +613,7 @@ export default class IncubacionForm extends Controller {
   private async _onEditMatched(oEvent: any): Promise<void> {
     if (!this.authService.isAuthenticated()) {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-      oRouter?.navTo("RouteLogin");
+      oRouter?.navTo("RouteLanding");
       return;
     }
 
@@ -670,7 +670,7 @@ export default class IncubacionForm extends Controller {
   private async _onReprogramarMatched(oEvent: any): Promise<void> {
     if (!this.authService.isAuthenticated()) {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-      oRouter?.navTo("RouteLogin");
+      oRouter?.navTo("RouteLanding");
       return;
     }
 

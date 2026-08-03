@@ -36,7 +36,7 @@ export default class LineaGalloDetail extends Controller {
   private async onRouteMatched(oEvent: any): Promise<void> {
     if (!this.authService.isAuthenticated()) {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-      oRouter?.navTo("RouteLogin");
+      oRouter?.navTo("RouteLanding");
       return;
     }
 

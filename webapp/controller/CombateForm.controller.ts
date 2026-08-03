@@ -124,7 +124,7 @@ export default class CombateForm extends Controller {
 
   private prepararSesion(): boolean {
     if (!this.authService.isAuthenticated()) {
-      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+      (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
       return false;
     }
 

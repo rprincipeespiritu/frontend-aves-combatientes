@@ -80,7 +80,7 @@ export default class List extends Controller {
     console.log("Main Controller initialized with TypeScript");
     if (!this.authService.isAuthenticated()) {
       const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-      oRouter?.navTo("RouteLogin");
+      oRouter?.navTo("RouteLanding");
       return;
     }
 

@@ -11,11 +11,21 @@ export default class App extends Controller {
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
         const authService = AuthService.getInstance();
-        authService.iniciarTimeoutInactividad(() => {
-            MessageToast.show("Sesion cerrada por inactividad.");
+        const irAlLanding = (mensaje?: string): void => {
+            if (mensaje) {
+                MessageToast.show(mensaje);
+            }
             const oComponent = this.getOwnerComponent() as UIComponent & { updateUserModel?: () => void };
             oComponent?.updateUserModel?.();
             oComponent?.getRouter()?.navTo("RouteLanding", {}, true);
+        };
+
+        authService.setOnSessionEnded(() => {
+            irAlLanding("Sesion finalizada. Vuelve a iniciar sesion.");
+        });
+
+        authService.iniciarTimeoutInactividad(() => {
+            irAlLanding("Sesion cerrada por inactividad.");
         });
     }
 }

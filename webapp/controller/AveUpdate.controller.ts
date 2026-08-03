@@ -40,7 +40,7 @@ export default class AveUpdate extends Controller {
         const oThat = this;
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
             return;
         } else {
 

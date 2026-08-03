@@ -36,7 +36,7 @@ export default class PollitoForm extends Controller {
 
     private onRouteMatched = (oEvent: any): void => {
         if (!this.authService.isAuthenticated()) {
-            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
             return;
         }
 
