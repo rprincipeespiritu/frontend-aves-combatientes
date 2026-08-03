@@ -37,7 +37,7 @@ export default class LineaGallos extends Controller {
 
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
             return;
         }
 

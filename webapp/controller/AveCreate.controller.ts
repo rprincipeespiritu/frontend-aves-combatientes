@@ -39,7 +39,7 @@ export default class AveCreate extends Controller {
     private onRouteMatched = (oEvent: any): void => {
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
             return;
         } else {
     this.bindUserModel();

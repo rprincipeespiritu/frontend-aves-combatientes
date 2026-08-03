@@ -48,7 +48,7 @@ export default class LineaGalloForm extends Controller {
         try {
             if (!this.authService.isAuthenticated()) {
                 const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-                oRouter?.navTo("RouteLogin");
+                oRouter?.navTo("RouteLanding");
                 return;
             }
 
@@ -79,7 +79,7 @@ export default class LineaGalloForm extends Controller {
     private async _onEditMatched(oEvent: any): Promise<void> {
         if (!this.authService.isAuthenticated()) {
             const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
-            oRouter?.navTo("RouteLogin");
+            oRouter?.navTo("RouteLanding");
             return;
         }
 
