@@ -44,7 +44,7 @@ export default class Reportes extends Controller {
     if (!this.authService.isAuthenticated()) {
       (this.getOwnerComponent() as UIComponent)
         ?.getRouter()
-        ?.navTo("RouteLogin");
+        ?.navTo("RouteLanding");
       return;
     }
 

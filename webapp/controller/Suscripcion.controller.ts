@@ -42,7 +42,7 @@ export default class Suscripcion extends Controller {
 
     private onRouteMatched = (): void => {
         if (!this.authService.isAuthenticated()) {
-            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLogin");
+            (this.getOwnerComponent() as UIComponent)?.getRouter()?.navTo("RouteLanding");
             return;
         }       
 

@@ -60,6 +60,7 @@ export class AuthService {
     private inactivityStarted: boolean = false;
     private inactivityClosing: boolean = false;
     private onInactivityTimeout?: () => void;
+    private onSessionEnded?: () => void;
     private _token: string = "";    
     private token: string | null = null;
     private usuario: Usuario | null = null;
@@ -274,7 +275,7 @@ export class AuthService {
             if (!response.ok) {
                 if (response.status === 401) {
                     // Token expirado
-                    this.logout();
+                    await this.cerrarSesionExpirada();
                 }
                 return null;
             }
@@ -579,7 +580,7 @@ export class AuthService {
 
         if (response.status === 401) {
             // Token expirado, logout automático
-            await this.logout();
+            await this.cerrarSesionExpirada();
             throw new Error('Sesión expirada');
         }
 
@@ -730,6 +731,10 @@ export class AuthService {
         EventBus.getInstance().publish("app", "userProfileUpdated", { user: usuario });
     }
 
+    public setOnSessionEnded(callback?: () => void): void {
+        this.onSessionEnded = callback;
+    }
+
     public iniciarTimeoutInactividad(onTimeout?: () => void): void {
         this.onInactivityTimeout = onTimeout;
 
@@ -851,6 +856,14 @@ export class AuthService {
         this.inactivityClosing = true;
         await this.logout();
         this.onInactivityTimeout?.();
+        this.inactivityClosing = false;
+    }
+
+    private async cerrarSesionExpirada(): Promise<void> {
+        if (this.inactivityClosing) return;
+        this.inactivityClosing = true;
+        await this.logout();
+        this.onSessionEnded?.();
         this.inactivityClosing = false;
     }
 
