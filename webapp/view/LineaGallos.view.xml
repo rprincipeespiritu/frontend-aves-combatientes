@@ -81,8 +81,8 @@
                                     }" state="{= ${lineas>estado} === 'ACTIVA' ? 'Success' :
                                              ${lineas>estado} === 'INACTIVA' ? 'Warning' : 'Error'}"/>
                                 <HBox>
-                                    <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" enabled="{= ${lineas>estado} !== 'INACTIVA' &amp;&amp; ${view>estado} !== 'ELIMINADA' }" />
-                                    <Button icon="sap-icon://delete" type="Transparent" press="onDelete" />
+                                    <Button icon="sap-icon://edit" type="Emphasized" press="onEdit" enabled="{= ${lineas>estado} !== 'ELIMINADO' }" />
+                                    <Button icon="sap-icon://delete" type="Transparent" press="onDelete" enabled="{= ${lineas>estado} !== 'ELIMINADO' }" />
                                     <Button icon="sap-icon://detail-view" type="Emphasized" press="onDetail"/>
                                 </HBox>
                             </cells>

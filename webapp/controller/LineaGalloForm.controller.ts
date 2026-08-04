@@ -204,6 +204,143 @@ export default class LineaGalloForm extends Controller {
         return null;
     }
 
+    private getAuthHeaders(): HeadersInit {
+        return {
+            Authorization: `Bearer ${this.authService.getToken()}`,
+            "Content-Type": "application/json",
+        };
+    }
+
+    private async _recolectarAncestrosIds(aveId: string, maxGeneraciones = 10): Promise<Map<string, { ID: string; placa?: string; nombre?: string }>> {
+        const mapa = new Map<string, { ID: string; placa?: string; nombre?: string }>();
+        const cola: Array<{ id: string; distancia: number }> = [{ id: aveId, distancia: 0 }];
+        const visitados = new Set<string>();
+
+        while (cola.length) {
+            const actual = cola.shift();
+            if (!actual?.id || visitados.has(actual.id) || actual.distancia > maxGeneraciones) {
+                continue;
+            }
+            visitados.add(actual.id);
+
+            const response = await fetch(
+                `${this.baseUrl}/Aves('${actual.id}')?$select=ID,placa,nombre,padre_ID,madre_ID,linea_ID`,
+                { headers: this.getAuthHeaders() },
+            );
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data?.error?.message || data?.message || "No se pudo validar la ascendencia del fundador");
+            }
+
+            mapa.set(data.ID, { ID: data.ID, placa: data.placa, nombre: data.nombre });
+            (mapa.get(data.ID) as any).linea_ID = data.linea_ID;
+
+            if (actual.distancia < maxGeneraciones) {
+                if (data.padre_ID) cola.push({ id: data.padre_ID, distancia: actual.distancia + 1 });
+                if (data.madre_ID) cola.push({ id: data.madre_ID, distancia: actual.distancia + 1 });
+            }
+        }
+
+        return mapa;
+    }
+
+    private async _validarLinajeLimpioFundadores(
+        fundadorId?: string | null,
+        fundadoraId?: string | null,
+        fundadorPlaca?: string,
+        fundadoraPlaca?: string,
+    ): Promise<string | null> {
+        const candidatos = [
+            { id: fundadorId, placa: fundadorPlaca },
+            { id: fundadoraId, placa: fundadoraPlaca },
+        ].filter((item) => !!item.id) as Array<{ id: string; placa?: string }>;
+
+        if (!candidatos.length) return null;
+
+        const lineasResponse = await fetch(
+            `${this.baseUrl}/LineasAves?$select=ID,nombre,estado,aveFundador_ID,aveFundadora_ID&$filter=estado ne 'ELIMINADO'`,
+            { headers: this.getAuthHeaders() },
+        );
+        const lineasData = await lineasResponse.json();
+        if (!lineasResponse.ok) {
+            throw new Error(lineasData?.error?.message || lineasData?.message || "No se pudo validar las líneas existentes");
+        }
+
+        const lineas = (lineasData.value || []) as Array<{
+            ID: string;
+            nombre: string;
+            aveFundador_ID?: string;
+            aveFundadora_ID?: string;
+        }>;
+        const lineasPorId = new Map(lineas.map((linea) => [linea.ID, linea]));
+        const esCruceAbierto = (nombre?: string) => String(nombre || "").trim().toLowerCase() === "cruce abierto";
+
+        for (const candidato of candidatos) {
+            const ancestros = await this._recolectarAncestrosIds(candidato.id);
+            const ancestroIds = Array.from(ancestros.keys());
+            const etiquetaFundador = candidato.placa || (ancestros.get(candidato.id)?.placa) || candidato.id;
+
+            for (const ancestroId of ancestroIds) {
+                const ancestro = ancestros.get(ancestroId) as any;
+                const lineaId = ancestro?.linea_ID;
+                if (!lineaId) continue;
+                if (this.lineaId && lineaId === this.lineaId) continue;
+
+                const linea = lineasPorId.get(lineaId);
+                if (!linea || esCruceAbierto(linea.nombre)) continue;
+
+                const etiquetaAncestro = ancestro.placa || ancestro.nombre || ancestroId;
+                if (ancestroId === candidato.id) {
+                    return `La nueva línea debe ser limpia. El ave ${etiquetaFundador} ya pertenece a la línea "${linea.nombre}".`;
+                }
+                return `La nueva línea debe ser limpia. El ave ${etiquetaFundador} tiene en su ascendencia a ${etiquetaAncestro}, que pertenece a la línea "${linea.nombre}".`;
+            }
+
+            if (ancestroIds.length) {
+                const filtros = ancestroIds.map((id) => `ave_ID eq ${id}`).join(" or ");
+                const compResponse = await fetch(
+                    `${this.baseUrl}/ComposicionesLineaAve?$select=ave_ID,linea_ID,porcentaje&$filter=(${filtros})`,
+                    { headers: this.getAuthHeaders() },
+                );
+                const compData = await compResponse.json();
+                if (!compResponse.ok) {
+                    throw new Error(compData?.error?.message || compData?.message || "No se pudo validar la composición de los fundadores");
+                }
+
+                for (const comp of compData.value || []) {
+                    if (Number(comp.porcentaje || 0) <= 0) continue;
+                    if (this.lineaId && comp.linea_ID === this.lineaId) continue;
+
+                    const linea = lineasPorId.get(comp.linea_ID);
+                    if (!linea || esCruceAbierto(linea.nombre)) continue;
+
+                    const ancestro = ancestros.get(comp.ave_ID);
+                    const etiquetaAncestro = ancestro?.placa || ancestro?.nombre || comp.ave_ID;
+                    if (comp.ave_ID === candidato.id) {
+                        return `La nueva línea debe ser limpia. El ave ${etiquetaFundador} ya tiene composición de la línea "${linea.nombre}".`;
+                    }
+                    return `La nueva línea debe ser limpia. El ave ${etiquetaFundador} tiene en su ascendencia a ${etiquetaAncestro}, con composición de la línea "${linea.nombre}".`;
+                }
+            }
+
+            for (const ancestroId of ancestroIds) {
+                if (ancestroId === candidato.id) continue;
+                const fundadas = lineas.filter(
+                    (linea) =>
+                        linea.aveFundador_ID === ancestroId || linea.aveFundadora_ID === ancestroId,
+                );
+                const conflicto = fundadas.find((linea) => !this.lineaId || linea.ID !== this.lineaId);
+                if (!conflicto) continue;
+
+                const ancestro = ancestros.get(ancestroId);
+                const etiquetaAncestro = ancestro?.placa || ancestro?.nombre || ancestroId;
+                return `La nueva línea debe ser limpia. El ave ${etiquetaFundador} tiene en su ascendencia a ${etiquetaAncestro}, fundador(a) de la línea "${conflicto.nombre}".`;
+            }
+        }
+
+        return null;
+    }
+
     private async _parseErrorResponse(response: Response, fallback: string): Promise<string> {
         try {
             const data = await response.json();
@@ -281,6 +418,17 @@ export default class LineaGalloForm extends Controller {
             );
             if (conflictoFundadores) {
                 MessageBox.warning(conflictoFundadores);
+                return;
+            }
+
+            const conflictoLinaje = await this._validarLinajeLimpioFundadores(
+                payload.aveFundador_ID,
+                payload.aveFundadora_ID,
+                placaPadre,
+                placaMadre,
+            );
+            if (conflictoLinaje) {
+                MessageBox.warning(conflictoLinaje);
                 return;
             }
         } catch (error) {
