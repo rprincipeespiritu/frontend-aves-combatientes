@@ -137,13 +137,14 @@ export default class IncubacionList extends Controller {
             })
           });
 
+          const oResult = await response.json().catch(() => ({}));
           if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            throw new Error(
+              oResult?.error?.message || oResult?.message || `HTTP ${response.status}`,
+            );
           }
 
-          const oResult = await response.json();
-          MessageToast.show("Incubación eliminada");
-
+          MessageToast.show(oResult?.message || "Incubación eliminada");
           await this._loadData();
         } catch (error) {
           MessageBox.error(
