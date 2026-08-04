@@ -388,20 +388,19 @@ export default class Genealogia extends Controller {
   }
 
   private async firmarFotosGenealogiaEnLotes(aves: IAveGenealogia[]): Promise<void> {
-    const lote = 6;
-    for (let i = 0; i < aves.length; i += lote) {
-      const chunk = aves.slice(i, i + lote);
-      await Promise.all(
-        chunk.map(async (ave: any) => {
-          const raw = ave.fotoPrincipalRawUrl || "";
-          if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
-            return;
-          }
-          const firmada = await this.obtenerUrlFotoNodo(raw);
-          ave.fotoPrincipalUrl = firmada;
-          this.avesPorId.set(ave.ID, ave);
-        }),
-      );
+    const urls = aves
+      .map((ave: any) => ave.fotoPrincipalRawUrl || "")
+      .filter((url: string) => url && String(url).includes(".s3."));
+    if (!urls.length) return;
+
+    const firmadas = await this.authService.obtenerUrlsLecturaS3(urls);
+    for (const ave of aves as any[]) {
+      const raw = ave.fotoPrincipalRawUrl || "";
+      if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
+        continue;
+      }
+      ave.fotoPrincipalUrl = firmadas.get(raw) || "";
+      this.avesPorId.set(ave.ID, ave);
     }
     (this.getView()?.getModel("genealogia") as JSONModel | undefined)?.refresh(true);
   }
@@ -1250,18 +1249,12 @@ export default class Genealogia extends Controller {
   private async obtenerUrlVisualizacionArchivo(url: string): Promise<string> {
     if (!url || !String(url).includes(".s3.")) return url;
 
-    const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
-      method: "POST",
-      headers: this.getHeaders(),
-      body: JSON.stringify({ fileUrl: url }),
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error?.message || data?.message || "No se pudo preparar la imagen.");
+    const firmadas = await this.authService.obtenerUrlsLecturaS3([url]);
+    const downloadUrl = firmadas.get(url) || "";
+    if (!downloadUrl) {
+      throw new Error("No se pudo preparar la imagen.");
     }
-
-    return data.downloadUrl || url;
+    return downloadUrl;
   }
 
   private async obtenerUrlFotoNodo(url: string): Promise<string> {

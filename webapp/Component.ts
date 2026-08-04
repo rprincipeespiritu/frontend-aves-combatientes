@@ -38,7 +38,7 @@ export default class Component extends BaseComponent {
   private static readonly PLAN_CACHE_MS = 45_000;
   private userPhotoPropagated = false;
   private static readonly SILENT_FETCH_PATTERNS = [
-    /obtenerUrlLecturaS3/i,
+    /obtenerUrls?LecturaS3/i,
     /obtenerSuscripcionActual/i,
     /obtenerDashboard/i,
     /obtenerPerfil/i,

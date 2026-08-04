@@ -248,34 +248,26 @@ export default class List extends Controller {
   }
 
   private async firmarFotosPrincipalesEnLotes(aves: any[]): Promise<void> {
-    const lote = 6;
-    for (let i = 0; i < aves.length; i += lote) {
-      const chunk = aves.slice(i, i + lote);
-      await Promise.all(chunk.map(async (ave: any) => {
-        const raw = ave.fotoPrincipalRaw || "";
-        if (!raw || !String(raw).includes(".s3.")) {
-          return;
-        }
-        ave.fotoPrincipal = await this.obtenerUrlVisualizacionFoto(raw);
-      }));
-      (this.getView()?.getModel("aves") as JSONModel | undefined)?.refresh(true);
+    const urls = aves
+      .map((ave: any) => ave.fotoPrincipalRaw || "")
+      .filter((url: string) => url && String(url).includes(".s3."));
+    if (!urls.length) return;
+
+    const firmadas = await this.authService.obtenerUrlsLecturaS3(urls);
+    for (const ave of aves) {
+      const raw = ave.fotoPrincipalRaw || "";
+      if (!raw || !String(raw).includes(".s3.")) continue;
+      ave.fotoPrincipal = firmadas.get(raw) || "";
     }
+    (this.getView()?.getModel("aves") as JSONModel | undefined)?.refresh(true);
   }
 
   private async obtenerUrlVisualizacionFoto(url: string): Promise<string> {
     if (!url || !String(url).includes(".s3.")) return url;
 
     try {
-      const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.authService.getToken()}`
-        },
-        body: JSON.stringify({ fileUrl: url })
-      });
-      const data = await response.json();
-      return response.ok ? data.downloadUrl || url : "";
+      const firmadas = await this.authService.obtenerUrlsLecturaS3([url]);
+      return firmadas.get(url) || "";
     } catch {
       return "";
     }

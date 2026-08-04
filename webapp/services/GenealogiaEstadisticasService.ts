@@ -204,20 +204,19 @@ export class GenealogiaEstadisticasService {
   }
 
   private async firmarFotosEnLotes(aves: Array<IAveGenealogia & { fotoPrincipalRawUrl?: string }>): Promise<void> {
-    const lote = 6;
-    for (let i = 0; i < aves.length; i += lote) {
-      const chunk = aves.slice(i, i + lote);
-      await Promise.all(
-        chunk.map(async (ave) => {
-          const raw = ave.fotoPrincipalRawUrl || "";
-          if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
-            return;
-          }
-          const firmada = await this.obtenerUrlFotoNodo(raw);
-          ave.fotoPrincipalUrl = firmada;
-          this.avesPorId.set(ave.ID, ave);
-        }),
-      );
+    const urls = aves
+      .map((ave) => ave.fotoPrincipalRawUrl || "")
+      .filter((url) => url && String(url).includes(".s3."));
+    if (!urls.length) return;
+
+    const firmadas = await this.obtenerUrlsLecturaS3Batch(urls);
+    for (const ave of aves) {
+      const raw = ave.fotoPrincipalRawUrl || "";
+      if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
+        continue;
+      }
+      ave.fotoPrincipalUrl = firmadas.get(raw) || "";
+      this.avesPorId.set(ave.ID, ave);
     }
   }
 
@@ -642,23 +641,47 @@ export class GenealogiaEstadisticasService {
     return value.replace(/[^A-Za-z0-9_-]/g, "_");
   }
 
+  private async obtenerUrlsLecturaS3Batch(fileUrls: string[]): Promise<Map<string, string>> {
+    const resultado = new Map<string, string>();
+    const unicas = [...new Set(
+      (fileUrls || [])
+        .map((url) => String(url || "").trim())
+        .filter((url) => url && url.includes(".s3.")),
+    )];
+    if (!unicas.length) return resultado;
+
+    const MAX = 100;
+    for (let i = 0; i < unicas.length; i += MAX) {
+      const chunk = unicas.slice(i, i + MAX);
+      const response = await fetch(`${this.baseUrl}/obtenerUrlsLecturaS3`, {
+        method: "POST",
+        headers: this.headers,
+        body: JSON.stringify({ fileUrls: chunk }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error?.message || data?.message || "No se pudo preparar las imagenes.");
+      }
+      for (const item of data.items || []) {
+        if (item?.fileUrl && item?.downloadUrl) {
+          resultado.set(item.fileUrl, item.downloadUrl);
+        }
+      }
+    }
+    return resultado;
+  }
+
   private async obtenerUrlVisualizacionArchivo(url: string): Promise<string> {
     if (!url || !String(url).includes(".s3.")) {
       return url;
     }
 
-    const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify({ fileUrl: url }),
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error?.message || data?.message || "No se pudo preparar la imagen.");
+    const firmadas = await this.obtenerUrlsLecturaS3Batch([url]);
+    const downloadUrl = firmadas.get(url) || "";
+    if (!downloadUrl) {
+      throw new Error("No se pudo preparar la imagen.");
     }
-
-    return data.downloadUrl || url;
+    return downloadUrl;
   }
 
   private async obtenerUrlFotoNodo(url: string): Promise<string> {
