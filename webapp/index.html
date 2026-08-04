@@ -14,19 +14,20 @@
     <link rel="shortcut icon" href="images/icons/app-logo-2.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://sapui5.hana.ondemand.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
     <!-- Meta Pixel: pega tu ID de Events Manager (solo números). Déjalo vacío hasta tenerlo. -->
     <script>
         window.__META_PIXEL_ID__ = "";
     </script>
 
-    <!-- Cargar UI5 desde CDN -->
+    <!-- Bootstrap mínimo: suite.ui.commons se carga lazy al abrir Genealogía/Estadísticas -->
     <script
         id="sap-ui-bootstrap"
         src="https://sapui5.hana.ondemand.com/1.139.0/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
-        data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.layout,sap.suite.ui.commons"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.layout"
         data-sap-ui-resourceroots='{
             "com.rprincipees.registroavescombate": "./"
         }'

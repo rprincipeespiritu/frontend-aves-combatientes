@@ -232,16 +232,34 @@ export default class List extends Controller {
 
       const mockAves: any = await response.json();
       mockAves.value = (mockAves.value || []).filter((ave: any) => ave.etapaVida !== "POLLITO");
-      await Promise.all(mockAves.value.map(async (ave: any) => {
+      mockAves.value.forEach((ave: any) => {
         const fotoPrincipal = (ave.fotos || []).find((foto: any) => foto.esPrincipal);
         const urlFoto = fotoPrincipal?.thumbnailUrl || fotoPrincipal?.urlSharepoint || "";
-        ave.fotoPrincipal = await this.obtenerUrlVisualizacionFoto(urlFoto);
-      }));
+        ave.fotoPrincipalRaw = urlFoto;
+        // Pintar lista de inmediato; firmar S3 en background.
+        ave.fotoPrincipal = urlFoto && !String(urlFoto).includes(".s3.") ? urlFoto : "";
+      });
       mockAves.value.sort((a: any, b: any) => this.obtenerTiempoFecha(b.fechaNacimiento) - this.obtenerTiempoFecha(a.fechaNacimiento));
       mockAves.filteredCount = mockAves.value.length;
       const oAvesModel = new JSONModel(mockAves)
       this.getView()?.setModel(oAvesModel, "aves");
+      void this.firmarFotosPrincipalesEnLotes(mockAves.value);
     } catch (error) { }
+  }
+
+  private async firmarFotosPrincipalesEnLotes(aves: any[]): Promise<void> {
+    const lote = 6;
+    for (let i = 0; i < aves.length; i += lote) {
+      const chunk = aves.slice(i, i + lote);
+      await Promise.all(chunk.map(async (ave: any) => {
+        const raw = ave.fotoPrincipalRaw || "";
+        if (!raw || !String(raw).includes(".s3.")) {
+          return;
+        }
+        ave.fotoPrincipal = await this.obtenerUrlVisualizacionFoto(raw);
+      }));
+      (this.getView()?.getModel("aves") as JSONModel | undefined)?.refresh(true);
+    }
   }
 
   private async obtenerUrlVisualizacionFoto(url: string): Promise<string> {
@@ -271,7 +289,12 @@ export default class List extends Controller {
     }, 100);
 
     const ave = oEvent.getSource().getBindingContext("aves")?.getObject() as any;
-    if (!ave?.fotoPrincipal) {
+    let urlImagen = ave?.fotoPrincipal || "";
+    if (!urlImagen && ave?.fotoPrincipalRaw) {
+      urlImagen = await this.obtenerUrlVisualizacionFoto(ave.fotoPrincipalRaw);
+      ave.fotoPrincipal = urlImagen;
+    }
+    if (!urlImagen) {
       MessageBox.information("Esta ave no tiene una imagen principal registrada.");
       return;
     }
@@ -280,7 +303,7 @@ export default class List extends Controller {
     this.getView()?.setModel(new JSONModel({
       title: titulo,
       nombreArchivo: "Imagen principal",
-      html: `<div class="aveMediaViewer"><img src="${this.escapeHtml(ave.fotoPrincipal)}" alt="${this.escapeHtml(titulo)}" /></div>`
+      html: `<div class="aveMediaViewer"><img src="${this.escapeHtml(urlImagen)}" alt="${this.escapeHtml(titulo)}" /></div>`
     }), "imagenAveViewer");
 
     if (!this._oImagenAveDialog) {

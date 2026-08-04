@@ -2448,6 +2448,14 @@
   50% { transform: translateY(-2px); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .landingHeroMedia,
+  .landingPrimaryCta.sapMBtn,
+  .landingHeroCopy {
+    animation: none !important;
+  }
+}
+
 @media (max-width: 720px) {
   .landingHero {
     min-height: 88vh;

@@ -32,6 +32,7 @@ interface IAveGenealogia {
     thumbnailUrl?: string;
     urlSharepoint?: string;
   }>;
+  fotoPrincipalRawUrl?: string;
   fotoPrincipalUrl?: string;
 }
 
@@ -344,20 +345,23 @@ export default class Genealogia extends Controller {
         );
       }
 
-      const aves = await Promise.all((data.value || []).map(async (ave: IAveGenealogia) => {
+      // No firmar S3 aquí: permite pintar genealogía sin esperar N requests.
+      const aves = (data.value || []).map((ave: IAveGenealogia) => {
         const fotoPrincipal = (ave.fotos || []).find((foto: any) => foto.esPrincipal) || ave.fotos?.[0];
         const fotoPrincipalRawUrl =
           fotoPrincipal?.thumbnailUrl ||
           fotoPrincipal?.urlSharepoint ||
           "";
 
-        const fotoPrincipalUrl = await this.obtenerUrlFotoNodo(fotoPrincipalRawUrl);
-
         return {
           ...ave,
-          fotoPrincipalUrl,
+          fotoPrincipalRawUrl,
+          fotoPrincipalUrl:
+            fotoPrincipalRawUrl && !String(fotoPrincipalRawUrl).includes(".s3.")
+              ? fotoPrincipalRawUrl
+              : "",
         };
-      }));
+      });
       this.avesPorId = new Map(
         aves.map((ave: IAveGenealogia) => [ave.ID, ave]),
       );
@@ -375,11 +379,31 @@ export default class Genealogia extends Controller {
       if (aveSeleccionadaId) {
         this.seleccionarAve(aveSeleccionadaId);
       }
+      void this.firmarFotosGenealogiaEnLotes(aves);
     } catch (error: any) {
       MessageBox.error(error.message || "No se pudo cargar genealogia");
     } finally {
       oModel.setProperty("/busy", false);
     }
+  }
+
+  private async firmarFotosGenealogiaEnLotes(aves: IAveGenealogia[]): Promise<void> {
+    const lote = 6;
+    for (let i = 0; i < aves.length; i += lote) {
+      const chunk = aves.slice(i, i + lote);
+      await Promise.all(
+        chunk.map(async (ave: any) => {
+          const raw = ave.fotoPrincipalRawUrl || "";
+          if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
+            return;
+          }
+          const firmada = await this.obtenerUrlFotoNodo(raw);
+          ave.fotoPrincipalUrl = firmada;
+          this.avesPorId.set(ave.ID, ave);
+        }),
+      );
+    }
+    (this.getView()?.getModel("genealogia") as JSONModel | undefined)?.refresh(true);
   }
 
   private async cargarEstadisticasPeleas(): Promise<void> {
