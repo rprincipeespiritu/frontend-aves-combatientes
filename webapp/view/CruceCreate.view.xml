@@ -15,21 +15,21 @@
                         <VBox class="sapUiMediumMargin cruceCreateContent">
 
                                 <Panel headerText="Información del linaje" visible="{cruce>/linajeVisible}" class="cruceLinajeInfoPanel">
-                                        <VBox class="sapUiSmallMargin">
+                                        <VBox class="cruceLinajeInfoBody">
                                                 <Title text="{cruce>/linaje/nombre}" level="H4" wrapping="true" class="sapUiTinyMarginBottom" />
                                                 <ObjectStatus title="Objetivo" text="{= ${cruce>/linaje/objetivo} || 'Sin objetivo registrado' }" state="Information" class="sapUiTinyMarginBottom cruceLinajeStatus" />
                                                 <Text text="{cruce>/linaje/descripcion}" wrapping="true" visible="{= !!${cruce>/linaje/descripcion} }" class="sapUiTinyMarginBottom" />
-                                                <HBox wrap="Wrap" width="100%" class="cruceLinajeFundadores">
-                                                        <VBox width="100%" class="cruceLinajeFundadorItem sapUiTinyMarginBottom">
+                                                <VBox width="100%" class="cruceLinajeFundadores">
+                                                        <VBox width="100%" class="cruceLinajeFundadorItem">
                                                                 <Label text="Padre fundador" />
                                                                 <ObjectStatus text="{cruce>/linaje/fundadorTexto}" state="Success" icon="sap-icon://family-care" class="cruceLinajeStatus" />
                                                         </VBox>
-                                                        <VBox width="100%" class="cruceLinajeFundadorItem sapUiTinyMarginBottom">
+                                                        <VBox width="100%" class="cruceLinajeFundadorItem">
                                                                 <Label text="Madre fundadora" />
                                                                 <ObjectStatus text="{cruce>/linaje/fundadoraTexto}" state="Success" icon="sap-icon://family-care" class="cruceLinajeStatus" />
                                                         </VBox>
-                                                </HBox>
-                                                <MessageStrip text="Para continuar el linaje, al menos uno de los reproductores debe aportar continuidad respecto a estos padres fundadores (mínimo 25% proyectado en la descendencia)." type="Information" showIcon="true" class="sapUiSmallMarginTop cruceLinajeHint" />
+                                                </VBox>
+                                                <MessageStrip text="Para continuar el linaje, al menos uno de los reproductores debe aportar continuidad respecto a estos padres fundadores (mínimo 25% proyectado en la descendencia)." type="Information" showIcon="true" class="sapUiTinyMarginTop cruceLinajeHint" />
                                         </VBox>
                                 </Panel>
 
@@ -118,20 +118,20 @@
                                                 <ObjectNumber number="{cruce>/resultado/porcentaje}" unit="% consanguinidad" class="sapUiTinyMarginBottom"/>
                                                 <VBox visible="{= !${cruce>/cruceAbierto} &amp;&amp; ${cruce>/resultado/porcentajeLinajeProyectado} !== undefined &amp;&amp; ${cruce>/resultado/porcentajeLinajeProyectado} !== null }" class="sapUiSmallMarginTop sapUiSmallMarginBottom cruceSangreLinajeBox">
                                                         <Title text="Aporte de sangre al linaje" level="H5" class="sapUiTinyMarginBottom" />
-                                                        <HBox wrap="Wrap" width="100%" class="cruceSangreLinajeItems">
-                                                                <VBox class="cruceSangreLinajeItem sapUiTinyMarginBottom">
+                                                        <VBox width="100%" class="cruceSangreLinajeItems">
+                                                                <VBox class="cruceSangreLinajeItem">
                                                                         <Label text="Sangre aportada por el macho" />
                                                                         <ObjectNumber number="{cruce>/resultado/porcentajeMachoLinaje}" unit="%" state="{= ${cruce>/resultado/porcentajeMachoLinaje} &gt; 0 ? 'Success' : 'None' }" />
                                                                 </VBox>
-                                                                <VBox class="cruceSangreLinajeItem sapUiTinyMarginBottom">
+                                                                <VBox class="cruceSangreLinajeItem">
                                                                         <Label text="Sangre aportada por la hembra" />
                                                                         <ObjectNumber number="{cruce>/resultado/porcentajeHembraLinaje}" unit="%" state="{= ${cruce>/resultado/porcentajeHembraLinaje} &gt; 0 ? 'Success' : 'None' }" />
                                                                 </VBox>
-                                                                <VBox class="cruceSangreLinajeItem sapUiTinyMarginBottom">
+                                                                <VBox class="cruceSangreLinajeItem">
                                                                         <Label text="Sangre proyectada en la descendencia" />
                                                                         <ObjectNumber number="{cruce>/resultado/porcentajeLinajeProyectado}" unit="%" state="{= ${cruce>/resultado/cumplePorcentajeLinaje} ? 'Success' : 'Error' }" />
                                                                 </VBox>
-                                                        </HBox>
+                                                        </VBox>
                                                         <ObjectStatus
                                                                 title="Continuidad del linaje"
                                                                 text="{= ${cruce>/resultado/cumplePorcentajeLinaje} ? 'Cumple el mínimo de ' + ${cruce>/resultado/porcentajeMinimoLinaje} + '%' : 'No cumple el mínimo de ' + ${cruce>/resultado/porcentajeMinimoLinaje} + '%' }"

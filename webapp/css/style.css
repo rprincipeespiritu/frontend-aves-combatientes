@@ -1668,9 +1668,43 @@
   color: var(--app-muted);
 }
 
+.cruceCreatePage .cruceCreateContent,
+.cruceLinajeInfoPanel,
+.cruceLinajeInfoPanel .sapMPanelContent,
+.cruceLinajeInfoPanel .cruceLinajeInfoBody {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.cruceLinajeInfoPanel .sapMPanelContent {
+  padding: 0 !important;
+}
+
+.cruceLinajeInfoPanel .cruceLinajeInfoBody {
+  padding: 0.75rem 1rem 1rem;
+  gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .cruceLinajeInfoPanel .cruceLinajeFundadores {
-  gap: 1rem;
-  margin-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.cruceLinajeInfoPanel .cruceLinajeFundadores > .sapMFlexItem,
+.cruceSangreLinajeItems > .sapMFlexItem {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
 }
 
 .cruceLinajeInfoPanel .sapMObjStatusTitle {
@@ -1686,8 +1720,11 @@
 }
 
 .cruceLinajeFundadorItem {
-  min-width: min(100%, 16rem);
-  flex: 1 1 14rem;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  flex: 0 0 auto !important;
+  gap: 0.15rem;
 }
 
 .cruceSangreLinajeBox {
@@ -1698,12 +1735,19 @@
 }
 
 .cruceSangreLinajeItems {
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  height: auto !important;
 }
 
 .cruceSangreLinajeItem {
-  min-width: min(100%, 12rem);
-  flex: 1 1 10rem;
+  width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
+  flex: 0 0 auto !important;
+  gap: 0.1rem;
 }
 
 .cruceAnalizarBtn {
@@ -1722,25 +1766,20 @@
 
 @media (max-width: 767px) {
   .cruceCreateContent.sapUiMediumMargin {
-    margin: 0.75rem !important;
+    margin: 0.5rem !important;
   }
 
-  .cruceLinajeFundadores {
-    flex-direction: column;
+  .cruceLinajeInfoPanel .cruceLinajeInfoBody {
+    padding: 0.5rem 0.75rem 0.75rem;
   }
 
-  .cruceLinajeFundadorItem {
-    min-width: 100%;
-    width: 100%;
-  }
-
-  .cruceSangreLinajeItems {
-    flex-direction: column;
-  }
-
+  .cruceLinajeFundadores,
+  .cruceSangreLinajeItems,
+  .cruceLinajeFundadorItem,
   .cruceSangreLinajeItem {
-    min-width: 100%;
-    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    flex: 0 0 auto !important;
   }
 
   .cruceAnalizarActions {
@@ -1772,6 +1811,31 @@
     ) !important;
     max-height: 55vh;
     min-height: 12rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .cruceLinajeInfoPanel .cruceLinajeFundadores {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .cruceLinajeFundadorItem {
+    flex: 1 1 14rem !important;
+    min-width: min(100%, 14rem);
+    max-width: 100%;
+  }
+
+  .cruceSangreLinajeItems {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .cruceSangreLinajeItem {
+    flex: 1 1 10rem !important;
+    min-width: min(100%, 10rem);
   }
 }
 
