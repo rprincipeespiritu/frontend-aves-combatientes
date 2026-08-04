@@ -419,30 +419,27 @@ export default class List extends Controller {
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      const oResult = await response.json().catch(() => ({}));
 
-      const oResult = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          oResult?.error?.message || oResult?.message || `HTTP ${response.status}`,
+        );
+      }
 
       if (oResult?.success) {
         MessageToast.show("Ave eliminada exitosamente");
-        /*const oTable = this.byId("avesTable") as any;
-        oTable?.removeSelections?.(true);
-        const oTableModel = this.getView()?.getModel("table") as JSONModel;
-        oTableModel?.setProperty("/selectedIndex", -1);
-        oTableModel?.setProperty("/selected", false);
-        oTableModel?.setProperty("/selectedItem", null);
-         */
         this.initializeData();
       } else {
-        MessageToast.show(oResult?.message || "No se pudo eliminar");
+        MessageBox.error(oResult?.message || "No se pudo eliminar");
       }
 
 
     } catch (error) {
       console.error("Error eliminando ave:", error);
-      MessageBox.error("Error al eliminar el ave");
+      MessageBox.error(
+        error instanceof Error ? error.message : "Error al eliminar el ave",
+      );
     }
   }
 

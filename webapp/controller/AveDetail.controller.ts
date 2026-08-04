@@ -501,30 +501,34 @@ export default class AveDetail extends Controller {
                 })
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            const oResult = await response.json().catch(() => ({}));
 
-            const oResult = await response.json();
+            if (!response.ok) {
+                throw new Error(
+                    oResult?.error?.message || oResult?.message || `HTTP ${response.status}`,
+                );
+            }
 
             if (oResult?.success) {
                 MessageBox.success("¡Ave eliminada exitosamente!", {
                     actions: [MessageBox.Action.OK],
                     emphasizedAction: MessageBox.Action.OK,
-                    onClose: function (sAction) {
+                    onClose: function () {
                         oRouter.navTo("RouteList");
                     },
                     dependentOn: this.getView()
                 });
 
             } else {
-                MessageToast.show(oResult?.message || "No se pudo eliminar");
+                MessageBox.error(oResult?.message || "No se pudo eliminar");
             }
 
 
         } catch (error) {
             console.error("Error eliminando ave:", error);
-            MessageBox.error("Error al eliminar el ave");
+            MessageBox.error(
+                error instanceof Error ? error.message : "Error al eliminar el ave",
+            );
         }
     }
 

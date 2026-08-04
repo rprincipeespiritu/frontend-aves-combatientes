@@ -160,19 +160,19 @@ export default class LineaGallos extends Controller {
         const oContext = oEvent.getSource().getBindingContext("lineas");
         const oItem = oContext.getObject() as Linea;
 
-        if(oItem.estado !== 'INACTIVA'){
-            MessageBox.error("Solo se puede eliminar el registro en estado 'Cancelada'" );
-            return
+        if (oItem.estado === "ELIMINADO") {
+            MessageBox.error("Esta línea ya está eliminada.");
+            return;
         }
 
-        MessageBox.confirm(`¿Eliminar la incubación ${oItem.ID}?`, {
+        const nombreLinea = oItem.nombre || oItem.ID;
+        MessageBox.confirm(`¿Eliminar la línea "${nombreLinea}"?`, {
             onClose: async (sAction: string) => {
                 if (sAction !== MessageBox.Action.OK) {
                     return;
                 }
 
                 try {
-
                     const response = await fetch(`${this.baseUrl}/eliminarLineaAve`, {
                         method: "POST",
                         headers: {
@@ -184,30 +184,25 @@ export default class LineaGallos extends Controller {
                         })
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+                    const oResult = await response.json().catch(() => ({}));
 
-                    const oResult = await response.json();
+                    if (!response.ok) {
+                        throw new Error(
+                            oResult?.error?.message || oResult?.message || `HTTP ${response.status}`,
+                        );
+                    }
 
                     if (oResult?.success) {
                         MessageToast.show("Línea eliminada exitosamente");
-                        /*const oTable = this.byId("avesTable") as any;
-                        oTable?.removeSelections?.(true);
-                        const oTableModel = this.getView()?.getModel("table") as JSONModel;
-                        oTableModel?.setProperty("/selectedIndex", -1);
-                        oTableModel?.setProperty("/selected", false);
-                        oTableModel?.setProperty("/selectedItem", null);
-                         */
                         this.cargarLineas();
                     } else {
-                        MessageToast.show(oResult?.message || "No se pudo eliminar");
+                        MessageBox.error(oResult?.message || "No se pudo eliminar la línea");
                     }
-
-
                 } catch (error) {
                     console.error("Error eliminando línea:", error);
-                    MessageBox.error("Error al eliminar el línea");
+                    MessageBox.error(
+                        error instanceof Error ? error.message : "Error al eliminar la línea",
+                    );
                 }
             },
         });
