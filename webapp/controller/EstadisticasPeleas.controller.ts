@@ -130,7 +130,9 @@ export default class EstadisticasPeleas extends Controller {
     oModel.setProperty("/busy", true);
 
     try {
-      await this.genealogiaService.cargarDatos(this.baseUrl, this.getHeaders());
+      await this.genealogiaService.cargarDatos(this.baseUrl, this.getHeaders(), () => {
+        this.actualizarTabla();
+      });
 
       const aves = this.genealogiaService.getAves();
       const aveSeleccionadaId = this.genealogiaService

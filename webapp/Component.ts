@@ -34,6 +34,23 @@ export default class Component extends BaseComponent {
   private static pendingFetchRequests = 0;
   private static fetchWrapped = false;
   private static fetchBusyDialogOpened = false;
+  private planIndicatorCache: { token: string; data: PlanIndicatorData; expiresAt: number } | null = null;
+  private static readonly PLAN_CACHE_MS = 45_000;
+  private userPhotoPropagated = false;
+  private static readonly SILENT_FETCH_PATTERNS = [
+    /obtenerUrlLecturaS3/i,
+    /obtenerSuscripcionActual/i,
+    /obtenerDashboard/i,
+    /obtenerPerfil/i,
+    /login\b/i,
+    /AvesActivas/i,
+    /Aves\?/i,
+    /Crias/i,
+    /Peleas/i,
+    /Incubaciones/i,
+    /LineasAves/i,
+    /PlanesCruces/i,
+  ];
   private readonly publicRoutes = new Set([
     "RouteLogin",
     "RouteLanding",
@@ -119,8 +136,10 @@ export default class Component extends BaseComponent {
     this.installGlobalImageLightbox();
     this.installGlobalFormatters();
     this.subscribeUserProfileUpdates();
+    // Foto de perfil en background; no bloquea first paint.
     void AuthService.getInstance().ensureUserPhotoDisplay().then((user) => {
       if (user) {
+        this.userPhotoPropagated = true;
         this.propagateUserModelToViews(user);
       }
     });
@@ -152,13 +171,36 @@ export default class Component extends BaseComponent {
     Component.fetchWrapped = true;
 
     window.fetch = async (...args: Parameters<typeof fetch>): Promise<Response> => {
-      this.openFetchBusyDialog();
+      const showBusy = this.shouldShowGlobalBusy(args[0], args[1]);
+      if (showBusy) {
+        this.openFetchBusyDialog();
+      }
       try {
         return await nativeFetch(...args);
       } finally {
-        this.closeFetchBusyDialog();
+        if (showBusy) {
+          this.closeFetchBusyDialog();
+        }
       }
     };
+  }
+
+  private shouldShowGlobalBusy(input: RequestInfo | URL, init?: RequestInit): boolean {
+    const method = String(
+      init?.method || (typeof Request !== "undefined" && input instanceof Request ? input.method : "GET"),
+    ).toUpperCase();
+    const url = typeof input === "string"
+      ? input
+      : input instanceof URL
+        ? input.href
+        : (input as Request).url;
+
+    // Lecturas y acciones de consulta no deben bloquear la UI.
+    if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
+      return false;
+    }
+
+    return !Component.SILENT_FETCH_PATTERNS.some((pattern) => pattern.test(url));
   }
 
   private openFetchBusyDialog(): void {
@@ -692,38 +734,63 @@ export default class Component extends BaseComponent {
 
   private async onRouteMatched(event: any): Promise<void> {
     const routeName = String(event.getParameter("name") || "");
+
+    // Rutas públicas: no bloquear el render esperando suscripción.
+    if (this.publicRoutes.has(routeName)) {
+      if (!localStorage.getItem("auth_token")) {
+        this.planIndicatorCache = null;
+        this.userPhotoPropagated = false;
+      }
+      return;
+    }
+
+    if (!localStorage.getItem("auth_token")) {
+      this.planIndicatorCache = null;
+      this.userPhotoPropagated = false;
+      this.getRouter().navTo("RouteLanding", {}, true);
+      return;
+    }
+
     const subscription = await this.loadPlanIndicator();
     this.validateRouteAccess(routeName, subscription);
     void this.refreshAuthenticatedUserPhoto();
   }
 
   private async refreshAuthenticatedUserPhoto(): Promise<void> {
+    if (this.userPhotoPropagated) return;
+
     const authService = AuthService.getInstance();
     if (!authService.isAuthenticated()) return;
 
     const user = await authService.ensureUserPhotoDisplay();
     if (!user) return;
 
-    const propagate = (): void => {
-      this.propagateUserModelToViews(user);
-    };
-
-    propagate();
-    window.setTimeout(propagate, 0);
-    window.setTimeout(propagate, 300);
+    this.userPhotoPropagated = true;
+    this.propagateUserModelToViews(user);
   }
 
-  public async loadPlanIndicator(): Promise<PlanIndicatorData> {
-    const token = localStorage.getItem("auth_token");
+  public async loadPlanIndicator(force = false): Promise<PlanIndicatorData> {
+    const token = localStorage.getItem("auth_token") || "";
     const oModel = this.getModel("planIndicator") as JSONModel;
 
     if (!token) {
+      this.planIndicatorCache = null;
       const indicator = {
         ...this.getPlanIndicatorData("", false),
         tieneSuscripcion: false,
       };
       oModel.setData(indicator);
       return indicator;
+    }
+
+    if (
+      !force &&
+      this.planIndicatorCache &&
+      this.planIndicatorCache.token === token &&
+      Date.now() < this.planIndicatorCache.expiresAt
+    ) {
+      oModel.setData(this.planIndicatorCache.data);
+      return this.planIndicatorCache.data;
     }
 
     try {
@@ -737,25 +804,30 @@ export default class Component extends BaseComponent {
       });
       const data = await response.json();
 
+      let indicator: PlanIndicatorData;
       if (!response.ok || data.tieneSuscripcion === false) {
-        const indicator = {
+        indicator = {
           ...this.getPlanIndicatorData(""),
           tieneSuscripcion: false,
           estado: data.estado,
           diasRestantes: data.diasRestantes,
         };
-        oModel.setData(indicator);
-        return indicator;
+      } else {
+        const plan = String(data.plan || "").toUpperCase();
+        indicator = {
+          ...this.getPlanIndicatorData(plan),
+          tieneSuscripcion: true,
+          estado: data.estado,
+          diasRestantes: data.diasRestantes,
+        };
       }
 
-      const plan = String(data.plan || "").toUpperCase();
-      const indicator = {
-        ...this.getPlanIndicatorData(plan),
-        tieneSuscripcion: true,
-        estado: data.estado,
-        diasRestantes: data.diasRestantes,
-      };
       oModel.setData(indicator);
+      this.planIndicatorCache = {
+        token,
+        data: indicator,
+        expiresAt: Date.now() + Component.PLAN_CACHE_MS,
+      };
       return indicator;
     } catch (error) {
       const indicator = {

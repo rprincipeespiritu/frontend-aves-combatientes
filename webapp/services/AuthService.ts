@@ -62,7 +62,12 @@ export class AuthService {
     
     private baseUrl: string = 'http://localhost:4004/api/avecombatiente';
     private onSessionEnded?: () => void;
-    private _token: string = ""; 
+    private lastActivityAt = 0;
+    private lastActivityPersistAt = 0;
+    private lastTimerResetAt = 0;
+    private static readonly ACTIVITY_PERSIST_MS = 30_000;
+    private static readonly ACTIVITY_TIMER_RESET_MS = 5_000;
+    private _token: string = "";
     private token: string | null = null;
     private usuario: Usuario | null = null;
     private fotoDisplayCache: { fotoUrl: string; displayUrl: string; expiresAt: number } | null = null;
@@ -745,7 +750,8 @@ export class AuthService {
         }
 
         this.inactivityStarted = true;
-        const eventos = ["click", "keydown", "mousemove", "mousedown", "scroll", "touchstart"];
+        // Evitar mousemove: genera jank al escribir localStorage en cada movimiento.
+        const eventos = ["click", "keydown", "pointerdown", "touchstart", "scroll"];
         eventos.forEach((evento) => {
             window.addEventListener(evento, this.registrarActividad, { passive: true });
         });
@@ -763,13 +769,24 @@ export class AuthService {
         }
 
         this.marcarActividad();
-        this.resetInactivityTimer();
+        const now = Date.now();
+        if (now - this.lastTimerResetAt >= AuthService.ACTIVITY_TIMER_RESET_MS) {
+            this.lastTimerResetAt = now;
+            this.resetInactivityTimer();
+        }
     };
 
     private marcarActividad(): void {
-        if (typeof Storage !== "undefined") {
-            localStorage.setItem("auth_last_activity", String(Date.now()));
+        const now = Date.now();
+        this.lastActivityAt = now;
+        if (typeof Storage === "undefined") {
+            return;
         }
+        if (now - this.lastActivityPersistAt < AuthService.ACTIVITY_PERSIST_MS) {
+            return;
+        }
+        this.lastActivityPersistAt = now;
+        localStorage.setItem("auth_last_activity", String(now));
     }
 
     private resetInactivityTimer(): void {
@@ -783,12 +800,13 @@ export class AuthService {
             return;
         }
 
-        const lastActivityStored = localStorage.getItem("auth_last_activity");
-        if (!lastActivityStored) {
+        if (!this.lastActivityAt && !localStorage.getItem("auth_last_activity")) {
             this.marcarActividad();
         }
 
-        const lastActivity = Number(localStorage.getItem("auth_last_activity") || Date.now());
+        const lastActivity =
+            Math.max(this.lastActivityAt, Number(localStorage.getItem("auth_last_activity") || 0)) ||
+            Date.now();
         const elapsed = Date.now() - lastActivity;
         const remaining = Math.max(this.inactivityTimeoutMs - elapsed, 0);
 
@@ -829,7 +847,10 @@ export class AuthService {
             return;
         }
 
-        const lastActivity = Number(localStorage.getItem("auth_last_activity") || 0);
+        const lastActivity = Math.max(
+            this.lastActivityAt,
+            Number(localStorage.getItem("auth_last_activity") || 0),
+        );
         if (!lastActivity) {
             this.marcarActividad();
             this.resetInactivityTimer();

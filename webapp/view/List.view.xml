@@ -124,6 +124,9 @@
                             width="100%"
                             inset="false"
                             items="{aves>/value}"
+                            growing="true"
+                            growingThreshold="25"
+                            growingScrollToLoad="true"
                             sticky="ColumnHeaders,HeaderToolbar"
                             class="listadoTabla avesAdultasTable">
 
@@ -260,6 +263,9 @@
                         <List
                             id="avesMobileList"
                             items="{aves>/value}"
+                            growing="true"
+                            growingThreshold="20"
+                            growingScrollToLoad="true"
                             noDataText="Sin datos"
                             visible="{device>/system/phone}"
                             class="avesAdultasMobileList sapUiSmallMarginTop">
