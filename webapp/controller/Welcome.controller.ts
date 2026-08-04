@@ -147,47 +147,75 @@ export default class Welcome extends Controller {
 
   private async _cargarSuscripcionResumen(): Promise<void> {
     try {
-      const oResponse = await fetch(
-        `${this.baseUrl}/obtenerSuscripcionActual`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}),
-        },
-      );
-
-      const oData = await oResponse.json();
-      if (!oResponse.ok) return;
-
       const oModel = this.getOwnerComponent()?.getModel("dashboard") as JSONModel;
+      const planIndicator = this.getOwnerComponent()?.getModel("planIndicator") as JSONModel;
+      const cachedPlan = String(planIndicator?.getProperty("/plan") || "");
+      const cachedTiene = planIndicator?.getProperty("/tieneSuscripcion");
+      const cachedEstado = String(planIndicator?.getProperty("/estado") || "");
+      const cachedDias = Number(planIndicator?.getProperty("/diasRestantes") ?? NaN);
+
+      // Reutilizar cache del Component si ya se cargó la suscripción.
+      if (cachedTiene === true && cachedPlan) {
+        oModel.setProperty(
+          "/suscripcionTexto",
+          `${this.formatearPlanSucripcion(cachedPlan as PlanSuscripcion) || ""} - ${this.formatearEstadoSuscripcion(cachedEstado as EstadoSuscripcion) || ""}`,
+        );
+        oModel.setProperty("/suscripcionDias", Number.isFinite(cachedDias) ? cachedDias : 0);
+        oModel.setProperty("/plan", cachedPlan);
+        oModel.setProperty("/estadoSuscripcion", cachedEstado);
+        oModel.setProperty(
+          "/accesoSuscripcion",
+          this.tieneAccesoSuscripcion(cachedEstado, cachedDias),
+        );
+        oModel.setProperty(
+          "/multimediaPremium",
+          this.tieneMultimediaPremium(cachedPlan, cachedEstado, cachedDias),
+        );
+        oModel.refresh();
+        return;
+      }
+
+      if (cachedTiene === false) {
+        oModel.setProperty("/suscripcionTexto", "Sin suscripción");
+        oModel.setProperty("/suscripcionDias", Number.isFinite(cachedDias) ? cachedDias : 0);
+        oModel.setProperty("/plan", "");
+        oModel.setProperty("/estadoSuscripcion", cachedEstado);
+        oModel.setProperty("/accesoSuscripcion", false);
+        oModel.setProperty("/multimediaPremium", false);
+        oModel.refresh();
+        void this.mostrarPopupTrialObligatorio();
+        return;
+      }
+
+      const oComponent = this.getOwnerComponent() as any;
+      const indicator = await oComponent?.loadPlanIndicator?.(false);
+      if (!indicator) return;
+
       oModel.setProperty(
         "/suscripcionTexto",
-        oData.tieneSuscripcion === false
+        indicator.tieneSuscripcion === false
           ? "Sin suscripción"
-          : `${this.formatearPlanSucripcion(oData.plan) || ""} - ${this.formatearEstadoSuscripcion(oData.estado) || ""}`,
+          : `${this.formatearPlanSucripcion(indicator.plan) || ""} - ${this.formatearEstadoSuscripcion(indicator.estado) || ""}`,
       );
-      oModel.setProperty("/suscripcionDias", oData.diasRestantes || 0);
-      oModel.setProperty("/plan", oData.plan || "");
-      oModel.setProperty("/estadoSuscripcion", oData.estado || "");
+      oModel.setProperty("/suscripcionDias", indicator.diasRestantes || 0);
+      oModel.setProperty("/plan", indicator.plan || "");
+      oModel.setProperty("/estadoSuscripcion", indicator.estado || "");
       oModel.setProperty(
         "/accesoSuscripcion",
-        oData.tieneSuscripcion !== false && this.tieneAccesoSuscripcion(oData.estado, oData.diasRestantes),
+        indicator.tieneSuscripcion !== false &&
+          this.tieneAccesoSuscripcion(indicator.estado, indicator.diasRestantes),
       );
       oModel.setProperty(
         "/multimediaPremium",
-        oData.tieneSuscripcion !== false &&
-          this.tieneMultimediaPremium(oData.plan, oData.estado, oData.diasRestantes),
+        indicator.tieneSuscripcion !== false &&
+          this.tieneMultimediaPremium(indicator.plan, indicator.estado, indicator.diasRestantes),
       );
 
-      if (oData.tieneSuscripcion === false) {
+      if (indicator.tieneSuscripcion === false) {
         void this.mostrarPopupTrialObligatorio();
       }
 
       oModel.refresh();
-
     } catch (error) {
       // El dashboard puede mostrarse aunque falle este resumen.
     }

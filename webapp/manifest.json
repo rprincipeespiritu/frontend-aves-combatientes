@@ -43,8 +43,12 @@
         "sap.f": {},
         "sap.ui.unified": {},
         "sap.tnt": {},
-        "sap.suite.ui.commons": {},
-        "sap.ui.export": {}
+        "sap.suite.ui.commons": {
+          "lazy": true
+        },
+        "sap.ui.export": {
+          "lazy": true
+        }
       }
     },
     "contentDensities": {

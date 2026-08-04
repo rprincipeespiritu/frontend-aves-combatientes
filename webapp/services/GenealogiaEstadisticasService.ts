@@ -8,6 +8,7 @@ export interface IAveGenealogia {
   padre_ID?: string;
   madre_ID?: string;
   padrote?: boolean;
+  fotoPrincipalRawUrl?: string;
   fotoPrincipalUrl?: string;
 }
 
@@ -137,6 +138,7 @@ export class GenealogiaEstadisticasService {
   public async cargarDatos(
     baseUrl: string,
     headers: HeadersInit,
+    onFotosListas?: () => void,
   ): Promise<void> {
     this.baseUrl = baseUrl;
     this.headers = headers;
@@ -175,25 +177,48 @@ export class GenealogiaEstadisticasService {
       );
     }
 
-    const aves = await Promise.all(
-      (avesData.value || []).map(async (ave: IAveGenealogia & { fotos?: Array<{ thumbnailUrl?: string; urlSharepoint?: string; esPrincipal?: boolean }> }) => {
+    // Diferir firmas S3: el grafo puede construirse sin bloquear N requests.
+    const aves = (avesData.value || []).map(
+      (ave: IAveGenealogia & { fotos?: Array<{ thumbnailUrl?: string; urlSharepoint?: string; esPrincipal?: boolean }> }) => {
         const fotoPrincipal = (ave.fotos || []).find((foto) => foto.esPrincipal) || ave.fotos?.[0];
         const fotoPrincipalRawUrl =
           fotoPrincipal?.thumbnailUrl ||
           fotoPrincipal?.urlSharepoint ||
           "";
-        const fotoPrincipalUrl = await this.obtenerUrlFotoNodo(fotoPrincipalRawUrl);
 
         return {
           ...ave,
-          fotoPrincipalUrl,
+          fotoPrincipalRawUrl,
+          fotoPrincipalUrl:
+            fotoPrincipalRawUrl && !String(fotoPrincipalRawUrl).includes(".s3.")
+              ? fotoPrincipalRawUrl
+              : "",
         };
-      }),
+      },
     );
 
     this.avesPorId = new Map(aves.map((ave) => [ave.ID, ave]));
     this.crias = criasData.value || [];
     this.estadisticasPorAveId = this.construirMapaPeleas(peleasData.value || []);
+    void this.firmarFotosEnLotes(aves).then(() => onFotosListas?.());
+  }
+
+  private async firmarFotosEnLotes(aves: Array<IAveGenealogia & { fotoPrincipalRawUrl?: string }>): Promise<void> {
+    const lote = 6;
+    for (let i = 0; i < aves.length; i += lote) {
+      const chunk = aves.slice(i, i + lote);
+      await Promise.all(
+        chunk.map(async (ave) => {
+          const raw = ave.fotoPrincipalRawUrl || "";
+          if (!raw || !String(raw).includes(".s3.") || ave.fotoPrincipalUrl) {
+            return;
+          }
+          const firmada = await this.obtenerUrlFotoNodo(raw);
+          ave.fotoPrincipalUrl = firmada;
+          this.avesPorId.set(ave.ID, ave);
+        }),
+      );
+    }
   }
 
   public normalizarMaxGeneraciones(value: number): number {
