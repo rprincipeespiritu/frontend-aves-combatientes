@@ -15,6 +15,7 @@ export default class Suscripcion extends Controller {
     private authService: AuthService;
     private _oUserMenuPopover: any;
     private _oUserMenuSheet: any;
+    private _oMercadoPagoDialog: any;
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
@@ -110,24 +111,55 @@ export default class Suscripcion extends Controller {
     private confirmarSuscripcionMercadoPago(plan: string): void {
         const precios: Record<string, number> = { BASICO: 19, PRO: 49, PREMIUM: 99 };
         const precio = precios[plan] || 0;
+        const oModel = this.getView()?.getModel("suscripcion") as JSONModel;
+        const userEmail = String(
+            (this.getView()?.getModel("user") as JSONModel)?.getProperty("/email") || "",
+        ).trim();
 
-        MessageBox.confirm(
-            `Seras redirigido a Mercado Pago para suscribirte al plan ${plan} (${precio} PEN / mes).\n\n` +
-            `Si ya tienes un plan vigente, se mantendra activo hasta confirmar el pago.`,
-            {
-                title: "Suscribirse con Mercado Pago",
-                actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                emphasizedAction: MessageBox.Action.OK,
-                onClose: (action: string) => {
-                    if (action === MessageBox.Action.OK) {
-                        void this.crearCheckoutMercadoPago(plan);
-                    }
-                },
-            },
-        );
+        oModel.setProperty("/checkoutPlan", plan);
+        oModel.setProperty("/checkoutPrecio", precio);
+        oModel.setProperty("/payerEmail", userEmail);
+
+        void this.abrirDialogoCheckoutMercadoPago();
     }
 
-    private async crearCheckoutMercadoPago(plan: string): Promise<void> {
+    private async abrirDialogoCheckoutMercadoPago(): Promise<void> {
+        if (!this._oMercadoPagoDialog) {
+            const oFragment = await Fragment.load({
+                id: this.getView()?.getId(),
+                name: "com.rprincipees.registroavescombate.view.fragments.MercadoPagoCheckoutDialog",
+                controller: this,
+            });
+            this._oMercadoPagoDialog = oFragment;
+            this.getView()?.addDependent(this._oMercadoPagoDialog);
+        }
+        this._oMercadoPagoDialog.open();
+    }
+
+    public onCancelarCheckoutMercadoPago(): void {
+        this._oMercadoPagoDialog?.close();
+    }
+
+    public onConfirmarCheckoutMercadoPago(): void {
+        const oModel = this.getView()?.getModel("suscripcion") as JSONModel;
+        const plan = String(oModel.getProperty("/checkoutPlan") || "");
+        const payerEmail = String(oModel.getProperty("/payerEmail") || "").trim();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payerEmail);
+
+        if (!plan) {
+            MessageBox.error("No se selecciono un plan.");
+            return;
+        }
+        if (!emailOk) {
+            MessageBox.error("Ingresa un e-mail valido de Mercado Pago.");
+            return;
+        }
+
+        this._oMercadoPagoDialog?.close();
+        void this.crearCheckoutMercadoPago(plan, payerEmail);
+    }
+
+    private async crearCheckoutMercadoPago(plan: string, payerEmail: string): Promise<void> {
         const oModel = this.getView()?.getModel("suscripcion") as JSONModel;
         oModel.setProperty("/busy", true);
 
@@ -135,7 +167,7 @@ export default class Suscripcion extends Controller {
             const response = await fetch(`${this.baseUrl}/crearCheckoutMercadoPago`, {
                 method: "POST",
                 headers: this.getHeaders(),
-                body: JSON.stringify({ plan }),
+                body: JSON.stringify({ plan, payerEmail }),
             });
             const data = await response.json();
 

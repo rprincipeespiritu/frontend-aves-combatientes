@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        title="Suscribirse con Mercado Pago"
+        contentWidth="28rem"
+        stretchOnPhone="true"
+        class="mercadoPagoCheckoutDialog">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Text
+                    text="Mercado Pago valida que el e-mail de tu cuenta de pago coincida con el de la suscripción."
+                    class="sapUiTinyMarginBottom" />
+                <Text
+                    text="Usa el mismo e-mail con el que iniciarás sesión en Mercado Pago (no necesariamente el de LinajeGallo)."
+                    class="sapUiSmallMarginBottom" />
+                <Label text="E-mail de Mercado Pago" labelFor="inputPayerEmailMp" required="true" />
+                <Input
+                    id="inputPayerEmailMp"
+                    type="Email"
+                    value="{suscripcion>/payerEmail}"
+                    placeholder="correo@ejemplo.com"
+                    width="100%" />
+                <Text
+                    text="{= 'Plan: ' + ${suscripcion>/checkoutPlan} + ' (' + ${suscripcion>/checkoutPrecio} + ' PEN / mes)' }"
+                    class="sapUiSmallMarginTop" />
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Continuar" type="Emphasized" press=".onConfirmarCheckoutMercadoPago" />
+        </beginButton>
+        <endButton>
+            <Button text="Cancelar" press=".onCancelarCheckoutMercadoPago" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

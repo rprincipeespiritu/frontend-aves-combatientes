@@ -81,7 +81,7 @@
 
                 <Panel headerText="Planes disponibles" class="sapUiMediumMarginTop">
                     <MessageStrip
-                        text="Los planes de pago se activan con Mercado Pago. Al volver del pago, pulsa Refrescar para ver el estado actualizado."
+                        text="Los planes de pago se activan con Mercado Pago. Debes iniciar sesión en Mercado Pago con el mismo e-mail que indiques al suscribirte. Al volver del pago, pulsa Refrescar."
                         type="Information"
                         showIcon="true"
                         class="sapUiSmallMargin" />
