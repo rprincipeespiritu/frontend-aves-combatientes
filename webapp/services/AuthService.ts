@@ -686,6 +686,51 @@ export class AuthService {
         }
     }
 
+    /**
+     * Firma varias URLs S3 en una sola llamada (max 100 por request en backend).
+     * Retorna mapa fileUrl -> downloadUrl.
+     */
+    public async obtenerUrlsLecturaS3(fileUrls: string[]): Promise<Map<string, string>> {
+        const resultado = new Map<string, string>();
+        const unicas = [...new Set(
+            (fileUrls || [])
+                .map((url) => String(url || "").trim())
+                .filter((url) => url && url.includes(".s3.")),
+        )];
+
+        if (!unicas.length || !this.token) {
+            return resultado;
+        }
+
+        const MAX = 100;
+        for (let i = 0; i < unicas.length; i += MAX) {
+            const chunk = unicas.slice(i, i + MAX);
+            try {
+                const response = await fetch(`${this.baseUrl}/obtenerUrlsLecturaS3`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${this.token}`,
+                    },
+                    body: JSON.stringify({ fileUrls: chunk }),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    continue;
+                }
+                for (const item of data.items || []) {
+                    if (item?.fileUrl && item?.downloadUrl) {
+                        resultado.set(item.fileUrl, item.downloadUrl);
+                    }
+                }
+            } catch {
+                // continuar con el siguiente lote
+            }
+        }
+
+        return resultado;
+    }
+
     private async resolverFotoDisplayUrl(fotoUrl?: string): Promise<string> {
         if (!fotoUrl) return "";
 
@@ -704,21 +749,12 @@ export class AuthService {
         if (!this.token) return "";
 
         try {
-            const response = await fetch(`${this.baseUrl}/obtenerUrlLecturaS3`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${this.token}`,
-                },
-                body: JSON.stringify({ fileUrl: fotoUrl }),
-            });
-            const data = await response.json();
-
-            if (!response.ok) {
+            const firmadas = await this.obtenerUrlsLecturaS3([fotoUrl]);
+            const displayUrl = firmadas.get(fotoUrl) || "";
+            if (!displayUrl) {
                 return "";
             }
 
-            const displayUrl = data.downloadUrl || fotoUrl;
             this.fotoDisplayCache = {
                 fotoUrl,
                 displayUrl,
