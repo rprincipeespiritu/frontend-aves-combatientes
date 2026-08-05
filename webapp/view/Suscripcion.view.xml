@@ -80,11 +80,11 @@
                 </Panel>
 
                 <Panel headerText="Planes disponibles" class="sapUiMediumMarginTop">
-                    <MessageStrip
-                        text="Los planes de pago se activan con Mercado Pago. Debes iniciar sesión en Mercado Pago con el mismo e-mail que indiques al suscribirte. Al volver del pago, pulsa Refrescar."
+                    <!-- <MessageStrip
+                        text="Los planes se pagan con Mercado Pago (con cuenta o solo con tarjeta). Al pagar, usa el mismo e-mail de tu cuenta LinajeGallo. Al volver, pulsa Refrescar."
                         type="Information"
                         showIcon="true"
-                        class="sapUiSmallMargin" />
+                        class="sapUiSmallMargin" /> -->
                     <HBox wrap="Wrap" justifyContent="SpaceAround">
                         <Panel headerText="Basico" width="20rem" class="sapUiSmallMargin">
                             <VBox class="sapUiMediumMargin">
