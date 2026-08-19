@@ -79,11 +79,19 @@ export default class Welcome extends Controller {
       plan: "",
       estadoSuscripcion: "",
       accesoSuscripcion: false,
-      multimediaPremium: false
+      multimediaPremium: false,
+      contactoTelefono: "",
+      contactoWhatsapp: "",
+      contactoWhatsappUrl: "",
+      contactoTipo: "SUGERENCIA",
+      contactoTelefonoUsuario: "",
+      contactoMensaje: "",
+      contactoEnviando: false
     });
 
     this.getOwnerComponent()?.setModel(oDashboardModel, "dashboard");
     this._cargarDashboard();
+    void this._cargarDatosContacto();
   };
 
   private async _cargarDashboard(): Promise<void> {
@@ -218,6 +226,73 @@ export default class Welcome extends Controller {
       oModel.refresh();
     } catch (error) {
       // El dashboard puede mostrarse aunque falle este resumen.
+    }
+  }
+
+  private async _cargarDatosContacto(): Promise<void> {
+    try {
+      const oResponse = await fetch(`${this.baseUrl}/obtenerDatosContacto`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      const oData = await oResponse.json();
+      if (!oResponse.ok) {
+        return;
+      }
+
+      const oModel = this.getOwnerComponent()?.getModel("dashboard") as JSONModel;
+      oModel.setProperty("/contactoTelefono", oData.telefono || "");
+      oModel.setProperty("/contactoWhatsapp", oData.whatsapp || "");
+      oModel.setProperty("/contactoWhatsappUrl", oData.whatsappUrl || "");
+    } catch (_error) {
+      // El formulario sigue disponible aunque fallen telefono/WhatsApp.
+    }
+  }
+
+  public async onEnviarQuejaSugerencia(): Promise<void> {
+    const oModel = this.getOwnerComponent()?.getModel("dashboard") as JSONModel;
+    const tipo = String(oModel.getProperty("/contactoTipo") || "SUGERENCIA");
+    const mensaje = String(oModel.getProperty("/contactoMensaje") || "").trim();
+    const telefonoContacto = String(oModel.getProperty("/contactoTelefonoUsuario") || "").trim();
+
+    if (mensaje.length < 10) {
+      MessageToast.show("Escribe un mensaje de al menos 10 caracteres.");
+      return;
+    }
+
+    oModel.setProperty("/contactoEnviando", true);
+    try {
+      const oResponse = await fetch(`${this.baseUrl}/enviarQuejaSugerencia`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tipo,
+          mensaje,
+          telefonoContacto,
+        }),
+      });
+
+      const oData = await oResponse.json();
+      if (!oResponse.ok) {
+        throw new Error(oData?.error?.message || "No se pudo enviar el mensaje");
+      }
+
+      MessageToast.show(oData.message || "Mensaje enviado");
+      oModel.setProperty("/contactoMensaje", "");
+      oModel.setProperty("/contactoTelefonoUsuario", "");
+      oModel.setProperty("/contactoTipo", "SUGERENCIA");
+    } catch (error: any) {
+      MessageBox.error(error?.message || "No se pudo enviar el mensaje");
+    } finally {
+      oModel.setProperty("/contactoEnviando", false);
     }
   }
 

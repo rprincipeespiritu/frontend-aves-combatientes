@@ -230,7 +230,44 @@
 .panelSpacing {
   min-width: min(100%, 34rem);
   flex: 1 1 34rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-bottom: 1rem;
+}
+
+.welcomeCentralBlock {
+  width: 100%;
+  align-items: stretch;
+}
+
+.welcomeCentralBlock > .sapMFlexItem {
+  flex: 1 1 34rem;
+  min-width: min(100%, 34rem);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.welcomeCentralBlock .panelSpacing,
+.welcomeCentralBlock .sapMPanel,
+.welcomeCentralBlock .sapMList,
+.welcomeCentralBlock .sapMListUl {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.contactSupportPanel {
+  width: 100%;
+  max-width: 100%;
+}
+
+.contactSupportBody {
+  gap: 0.25rem;
+}
+
+.contactSupportChannels .sapMLnk {
+  font-weight: 700;
 }
 
 .combateDetailContent {
@@ -335,6 +372,19 @@
 @media (max-width: 600px) {
   .welcomePageContent.sapUiMediumMargin {
     margin: 0.75rem !important;
+  }
+
+  .welcomeCentralBlock > .sapMFlexItem {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .welcomeCentralBlock .panelSpacing {
+    flex: 1 1 100%;
+    min-width: 100%;
+    width: 100% !important;
   }
 
   .welcomeHeroPanel.sapUiResponsiveMargin {
