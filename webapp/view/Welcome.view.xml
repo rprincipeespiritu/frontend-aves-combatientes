@@ -24,9 +24,9 @@
                     <Panel class="welcomeHeroPanel sapUiResponsiveMargin sapUiNoContentPadding">
                         <content>
                             <VBox class="dashboardHero sapUiMediumMargin" wrap="Wrap">
-                                <Title text="Gestiona tu criadero de forma inteligente" level="H2" />
+                                <Title text="Controla tu criadero de forma fácil y eficiente" level="H2" />
                                 <Text
-                                    text="Controla aves, incubaciones y seguimiento reproductivo desde un solo lugar."
+                                    text="Controla el registro de aves adultas y jóvenes, linajes, planes de cruce, incubaciones, genealogía, combates, estadísticas y reportes."
                                     class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
                                 <HBox class="heroActionBar sapUiSmallMarginTop" wrap="Wrap"
                                     visible="{dashboard>/accesoSuscripcion}">
@@ -162,13 +162,14 @@
                     </VBox>
 
                     <!-- BLOQUE CENTRAL -->
-                    <HBox wrap="Wrap" class="sapUiMediumMarginTop" justifyContent="SpaceBetween" visible="{dashboard>/accesoSuscripcion}">
+                    <HBox wrap="Wrap" class="sapUiMediumMarginTop welcomeCentralBlock" justifyContent="SpaceBetween" visible="{dashboard>/accesoSuscripcion}">
 
                         <!-- INCUBACIONES RECIENTES -->
-                        <Panel headerText="Incubaciones recientes" width="auto" class="panelSpacing">
+                        <Panel headerText="Incubaciones recientes" width="100%" class="panelSpacing">
                             <content>
                                 <Table items="{dashboard>/incubacionesRecientes}"
-                                    noDataText="Sin incubaciones recientes">
+                                    noDataText="Sin incubaciones recientes"
+                                    width="100%">
                                     <columns>
                                         <Column>
                                             <Text text="Código" />
@@ -198,9 +199,9 @@
                         </Panel>
 
                         <!-- RESUMEN / ATAJOS -->
-                        <Panel headerText="Resumen rápido" width="auto" class="panelSpacing">
+                        <Panel headerText="Resumen rápido" width="100%" class="panelSpacing">
                             <content>
-                                <List>
+                                <List width="100%">
                                     <StandardListItem
                                         title="Aves activas"
                                         info="{dashboard>/totalAvesActivas}"
@@ -221,6 +222,64 @@
                             </content>
                         </Panel>
                     </HBox>
+
+                    <!-- CONTACTO / QUEJAS Y SUGERENCIAS -->
+                    <Panel headerText="Quejas, sugerencias y contacto" width="100%" class="panelSpacing contactSupportPanel">
+                        <content>
+                            <VBox class="contactSupportBody" width="100%">
+                                <Text
+                                    text="Cuéntanos qué mejorar o reporta un problema."
+                                    class="sapUiSmallMarginBottom" />
+
+                                <HBox wrap="Wrap" class="contactSupportChannels sapUiSmallMarginBottom" visible="{= !!(${dashboard>/contactoTelefono} || ${dashboard>/contactoWhatsappUrl}) }">
+                                    <Link
+                                        text="{= 'Llamar: ' + ${dashboard>/contactoTelefono} }"
+                                        href="{= 'tel:' + ${dashboard>/contactoTelefono} }"
+                                        target="_blank"
+                                        visible="{= !!${dashboard>/contactoTelefono} }"
+                                        class="sapUiSmallMarginEnd sapUiSmallMarginBottom" />
+                                    <Link
+                                        text="Escribir por WhatsApp"
+                                        href="{dashboard>/contactoWhatsappUrl}"
+                                        target="_blank"
+                                        visible="{= !!${dashboard>/contactoWhatsappUrl} }"
+                                        class="sapUiSmallMarginBottom" />
+                                </HBox>
+
+                                <Label text="Tipo" labelFor="contactoTipo" />
+                                <Select id="contactoTipo" width="100%" selectedKey="{dashboard>/contactoTipo}" class="sapUiSmallMarginBottom">
+                                    <core:Item key="SUGERENCIA" text="Sugerencia" />
+                                    <core:Item key="QUEJA" text="Queja" />
+                                </Select>
+
+                                <!-- <Label text="Teléfono o WhatsApp (opcional)" labelFor="contactoTelefonoUsuario" />
+                                <Input
+                                    id="contactoTelefonoUsuario"
+                                    width="100%"
+                                    value="{dashboard>/contactoTelefonoUsuario}"
+                                    placeholder="Ej. 999 999 999"
+                                    class="sapUiSmallMarginBottom" /> -->
+
+                                <Label text="Mensaje" labelFor="contactoMensaje" required="true" />
+                                <TextArea
+                                    id="contactoMensaje"
+                                    width="100%"
+                                    rows="4"
+                                    value="{dashboard>/contactoMensaje}"
+                                    placeholder="Describe tu queja o sugerencia..."
+                                    growing="true"
+                                    growingMaxLines="8"
+                                    class="sapUiSmallMarginBottom" />
+
+                                <Button
+                                    text="Enviar mensaje"
+                                    type="Emphasized"
+                                    icon="sap-icon://email"
+                                    press=".onEnviarQuejaSugerencia"
+                                    enabled="{= !${dashboard>/contactoEnviando} }" />
+                            </VBox>
+                        </content>
+                    </Panel>
 
                 </VBox>
             </ScrollContainer>

@@ -230,7 +230,44 @@
 .panelSpacing {
   min-width: min(100%, 34rem);
   flex: 1 1 34rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-bottom: 1rem;
+}
+
+.welcomeCentralBlock {
+  width: 100%;
+  align-items: stretch;
+}
+
+.welcomeCentralBlock > .sapMFlexItem {
+  flex: 1 1 34rem;
+  min-width: min(100%, 34rem);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.welcomeCentralBlock .panelSpacing,
+.welcomeCentralBlock .sapMPanel,
+.welcomeCentralBlock .sapMList,
+.welcomeCentralBlock .sapMListUl {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.contactSupportPanel {
+  width: 100%;
+  max-width: 100%;
+}
+
+.contactSupportBody {
+  gap: 0.25rem;
+}
+
+.contactSupportChannels .sapMLnk {
+  font-weight: 700;
 }
 
 .combateDetailContent {
@@ -335,6 +372,19 @@
 @media (max-width: 600px) {
   .welcomePageContent.sapUiMediumMargin {
     margin: 0.75rem !important;
+  }
+
+  .welcomeCentralBlock > .sapMFlexItem {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .welcomeCentralBlock .panelSpacing {
+    flex: 1 1 100%;
+    min-width: 100%;
+    width: 100% !important;
   }
 
   .welcomeHeroPanel.sapUiResponsiveMargin {
@@ -1408,6 +1458,40 @@
   row-gap: 0.75rem;
 }
 
+.suscripcionPageContent {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suscripcionPlanesPanel .sapMPanelContent {
+  padding: 0.5rem !important;
+}
+
+.suscripcionPlanesList {
+  width: 100%;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.suscripcionPlanCard {
+  box-sizing: border-box;
+  flex: 1 1 18rem;
+  max-width: 22rem;
+  min-width: min(100%, 16rem);
+  width: 100% !important;
+  margin: 0.35rem !important;
+}
+
+.suscripcionPlanCard .sapMPanelContent {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suscripcionPlanBtn,
+.suscripcionPlanBtn .sapMBtnInner {
+  width: 100%;
+}
+
 .planesCruceHeaderActions,
 .incubacionDetailFooter {
   column-gap: 0.35rem;
@@ -2103,8 +2187,12 @@
 }
 
 @media (max-width: 37.5rem) {
+  .suscripcionPageContent.sapUiMediumMargin {
+    margin: 0.5rem !important;
+  }
+
   .suscripcionStatusContent.sapUiMediumMargin {
-    margin: 0.9rem !important;
+    margin: 0.75rem !important;
   }
 
   .suscripcionStatusHeader {
@@ -2130,6 +2218,29 @@
   .suscripcionDates .sapMObjectIdentifier {
     margin-right: 0 !important;
     min-width: 6rem;
+  }
+
+  .suscripcionPlanesList {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .suscripcionPlanesList > .sapMFlexItem {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+  }
+
+  .suscripcionPlanCard {
+    flex: 0 0 auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 0 0.65rem !important;
+  }
+
+  .suscripcionUsoTiles {
+    justify-content: center !important;
   }
 
   .planesCruceHeader {
