@@ -17,7 +17,7 @@
         </headerContent>
 
         <content>
-            <Panel headerText="Filtros" expandable="true" expanded="{= ${device>/system/phone} ? 'false' : 'true'}" width="100%">
+            <Panel headerText="Filtros" expandable="true" expanded="{= ${device>/system/phone} ? false : true}" width="100%">
                 <content>
                     <form:Form editable="true" class="sapUiSmallMargin">
                         <form:layout>
