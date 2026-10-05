@@ -73,7 +73,7 @@
                         </f:FormElement>
                         <f:FormElement>
                           <f:label>
-                            <Label text="Fecha Eclosión Estimada" />
+                            <Label text="Fecha Nacimiento Estimada" />
                           </f:label>
                           <f:fields>
                             <DateTimePicker id="DTP3" editable="false"

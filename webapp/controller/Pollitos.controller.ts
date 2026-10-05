@@ -183,7 +183,7 @@ export default class Pollitos extends Controller {
                 title: "Registrar como ave adulta",
                 contentWidth: "28rem",
                 content: [
-                    new VBox({                        
+                    new VBox({
                         items: [
                             new Text({ text: "Confirme el registro como ave adulta e ingrese la placa." }),
                             new Label({ text: "Placa del ave", required: true, class: "sapUiSmallMarginTop" }),
@@ -258,6 +258,7 @@ export default class Pollitos extends Controller {
         const color = (this.byId("colorFilter") as any).getValue();
         const padre = (this.byId("padreFilter") as any).getValue();
         const madre = (this.byId("madreFilter") as any).getValue();
+        const sEstado = (this.byId("estadoFilter") as ComboBox)?.getSelectedKey();
         const filters: Filter[] = [];
 
         if (search) {
@@ -289,6 +290,10 @@ export default class Pollitos extends Controller {
                 ],
                 and: false
             }));
+        }
+
+        if (sEstado) {
+            filters.push(new Filter("estado", FilterOperator.EQ, sEstado));
         }
 
         aBindings.forEach((oBinding: any) => oBinding?.filter(filters));
@@ -489,21 +494,21 @@ export default class Pollitos extends Controller {
 
     public formatearFecha(fecha: string | Date): string {
         if (!fecha) {
-          return "";
+            return "";
         }
-    
+
         if (typeof fecha === "string") {
-          const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
-          if (match) {
-            return `${match[3]}/${match[2]}/${match[1]}`;
-          }
+            const match = fecha.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (match) {
+                return `${match[3]}/${match[2]}/${match[1]}`;
+            }
         }
-    
+
         const date = fecha instanceof Date ? fecha : new Date(fecha);
         if (isNaN(date.getTime())) {
-          return "";
+            return "";
         }
-    
+
         return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
     }
 
@@ -529,7 +534,7 @@ export default class Pollitos extends Controller {
 
     public async onUserMenuPress(oEvent: Event): Promise<void> {
         const oSource = oEvent.getSource() as Control;
-    this.bindUserModel();
+        this.bindUserModel();
 
         if (Device.system.phone) {
             if (!this._oUserMenuSheet) {
@@ -592,5 +597,5 @@ export default class Pollitos extends Controller {
             MessageToast.show("Error cerrando sesión");
         }
     }
-    
+
 }
