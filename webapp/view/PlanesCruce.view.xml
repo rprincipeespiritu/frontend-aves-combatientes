@@ -50,7 +50,7 @@
                 <Panel
                     headerText="Filtros"
                     expandable="true"
-                    expanded="{= ${device>/system/phone} ? 'false' : 'true'}"
+                    expanded="{= ${device>/system/phone} ? false : true}"
                     width="100%"
                     class="sapUiSmallMarginTop">
                     <layout:Form editable="true" class="sapUiSmallMargin">
