@@ -17,7 +17,7 @@
         </headerContent>
 
         <content>
-            <Panel headerText="Filtros" expandable="true" expanded="true" width="100%">
+            <Panel headerText="Filtros" expandable="true" expanded="{= ${device>/system/phone} ? 'false' : 'true'}" width="100%">
                 <content>
                     <form:Form editable="true" class="sapUiSmallMargin">
                         <form:layout>
@@ -122,7 +122,7 @@
                         <Text text="Fecha Pre-Nacimiento" />
                     </Column>
                     <Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="Inline">
-                        <Text text="Fecha Eclosión" />
+                        <Text text="Fecha Nacimiento" />
                     </Column>
                     <Column>
                         <Text text="Estado" />
