@@ -28,7 +28,7 @@
                     <Button text="Refrescar" icon="sap-icon://refresh" press="onRefrescar" />
                 </OverflowToolbar>
 
-                <Panel headerText="Filtros" expandable="true" expanded="true" width="100%">
+                <Panel headerText="Filtros" expandable="true" expanded="{= ${device>/system/phone} ? 'false' : 'true'}" width="100%">
                     <content>
                         <form:Form editable="true" class="sapUiSmallMargin">
                             <form:layout>
@@ -68,6 +68,16 @@
                                         <form:FormElement label="Madre">
                                             <form:fields>
                                                 <Input id="madreFilter" placeholder="Madre" width="100%" showValueHelp="true" valueHelpRequest="onValueHelpFiltroMadre" liveChange="onBuscar" />
+                                            </form:fields>
+                                        </form:FormElement>
+                                        <form:FormElement label="Estado">
+                                            <form:fields>
+                                                <ComboBox id="estadoFilter" placeholder="Filtrar por Estado" width="100%" selectionChange="onBuscar">
+                                                    <core:Item key="ACTIVO" text="Activo" />
+                                                    <core:Item key="FALLECIDO" text="Fallecido" />
+                                                    <core:Item key="VENDIDO" text="Vendido" />
+                                                    <core:Item key="OBSEQUIADO" text="Obsequiado" />
+                                                </ComboBox>
                                             </form:fields>
                                         </form:FormElement>
                                         <form:FormElement>

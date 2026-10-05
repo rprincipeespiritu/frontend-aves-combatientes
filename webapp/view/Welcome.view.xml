@@ -180,6 +180,9 @@
                                         <Column>
                                             <Text text="Fecha Incub." />
                                         </Column>
+                                        <Column>
+                                            <Text text="Fecha Nac." />
+                                        </Column>
                                     </columns>
 
                                     <items>
@@ -191,6 +194,7 @@
                                                     text="{dashboard>estadoTexto}"
                                                     state="{dashboard>estadoState}" />
                                                 <Text text="{dashboard>fechaIncubacionFmt}" />
+                                                <Text text="{dashboard>fechaNacimientoFmt}" />
                                             </cells>
                                         </ColumnListItem>
                                     </items>
