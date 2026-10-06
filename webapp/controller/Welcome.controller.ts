@@ -122,6 +122,7 @@ export default class Welcome extends Controller {
             estadoTexto: this._mapEstadoTexto(item.estado),
             estadoState: this._mapEstadoState(item.estado),
             fechaIncubacionFmt: this._formatearFecha(item.fechaIncubacion),
+            fechaEclosionFmt: this._formatearFecha(item.fechaEclosion),
           };
         },
       );
