@@ -5,11 +5,12 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 async function verify(file) {
-  let Component;
+  let exportedModule;
   let modules;
   let received;
   let failure;
-  const response = { ok: true };
+  const loginResult = { success: false, error: "Simulated response" };
+  const response = { ok: true, json: async () => loginResult };
   function UI5Stub() {}
   UI5Stub.extend = (_name, prototype) => {
     function BuiltComponent() {}
@@ -25,10 +26,11 @@ async function verify(file) {
   };
   const context = vm.createContext({
     window, URL, Request,
+    fetch: (...args) => window.fetch(...args),
     sap: { ui: {
       require: { preload: (entries) => { modules = entries; } },
       define: (dependencies, factory) => {
-        Component = factory(...dependencies.map(() => UI5Stub));
+        exportedModule = factory(...dependencies.map(() => UI5Stub));
       },
     } },
   });
@@ -37,7 +39,7 @@ async function verify(file) {
     modules["com/rprincipees/registroavescombate/Component.js"]();
   }
   let pending = 0;
-  const component = Object.create(Component.prototype);
+  const component = Object.create(exportedModule.prototype);
   component.openFetchBusyDialog = () => { pending += 1; };
   component.closeFetchBusyDialog = () => { pending -= 1; };
   component.installGlobalFetchBusyDialog();
@@ -69,7 +71,23 @@ async function verify(file) {
   failure = new Error("Simulated network failure");
   await assert.rejects(window.fetch("/write", options), (error) => error === failure);
   assert.equal(pending, 0, "busy dialog must close after failure");
-  console.log(`${file}: fetch preserves POST options, Request objects and errors`);
+  failure = undefined;
+
+  // Exercise AuthService -> global wrapper -> native fetch in both loading modes.
+  if (modules) {
+    modules["com/rprincipees/registroavescombate/services/AuthService.js"]();
+  } else {
+    vm.runInContext(fs.readFileSync(path.join(__dirname, "../dist/services/AuthService.js"), "utf8"), context, { timeout: 5000 });
+  }
+  const auth = Object.create(exportedModule.AuthService.prototype);
+  auth.baseUrl = "https://example.invalid/api/avecombatiente";
+  const credentials = { email: "test@example.invalid", password: "test-only" };
+  assert.equal(await auth.login(credentials), loginResult);
+  assert.equal(received[0], `${auth.baseUrl}/login`);
+  assert.equal(received[1].method, "POST");
+  assert.equal(received[1].headers["Content-Type"], "application/json");
+  assert.deepEqual(JSON.parse(received[1].body), credentials);
+  console.log(`${file}: login sends POST with JSON; fetch preserves options, Request objects and errors`);
 }
 
 (async () => {

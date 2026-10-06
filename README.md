@@ -24,14 +24,18 @@ An SAP Fiori application.
 ### Build de producción en Railway (rama `prd`)
 
 Usar `npm run build:prod` con `API_BASE_URL` configurada durante el build y
-`npm start` para servir `dist`. El build reemplaza la URL de la API y verifica
-que tanto `Component.js` como `Component-preload.js` conserven las opciones de
-`fetch`, sin enviar solicitudes a la API.
+`npm start` para servir `dist`. El build reemplaza la URL de la API, ofusca el
+JavaScript de la aplicación y verifica el login a través del interceptor de
+`fetch` en `Component.js` y `Component-preload.js`, sin solicitudes a la API.
 
-La ofuscación está fuera del build de producción porque transformaba el
-interceptor global de `fetch` y descartaba las opciones de la petición: el login
-llegaba como GET en lugar de POST y recibía un 405. No ejecutar `npm run obfuscate`
-sobre el artefacto que se va a desplegar hasta corregir y validar esa transformación.
+La ofuscación conserva las firmas de las llamadas y los nombres de propiedades
+usados por UI5. `controlFlowFlattening`, `deadCodeInjection` y
+`stringArrayCallsTransform` están desactivados para evitar que se pierdan opciones
+de las peticiones. Se conservan la compactación, el renombrado de variables
+locales y las cadenas codificadas, con una semilla fija para builds reproducibles.
+Las bibliotecas UI5 no se ofuscan; los `.ts` y mapas de fuentes de la aplicación
+se retiran únicamente de `dist`. La comprobación final bloquea el despliegue si
+el login deja de enviar POST, cabeceras o cuerpo JSON.
 
 ### Starting the generated app
 

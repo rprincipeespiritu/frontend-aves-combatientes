@@ -5,20 +5,25 @@ const path = require("path");
 const distPath = path.join(__dirname, "../dist");
 
 function obfuscateFile(filePath) {
-  const code = fs.readFileSync(filePath, "utf8");
+  const code = fs.readFileSync(filePath, "utf8")
+    .replace(/^\/\/# sourceMappingURL=.*$/gm, "");
 
   const result = JavaScriptObfuscator.obfuscate(code, {
     compact: true,
-    controlFlowFlattening: true,
-    controlFlowFlatteningThreshold: 0.75,
-    deadCodeInjection: true,
-    deadCodeInjectionThreshold: 0.3,
+    // Keep call signatures intact: the previous transformations dropped fetch options.
+    controlFlowFlattening: false,
+    deadCodeInjection: false,
+    stringArrayCallsTransform: false,
+    renameGlobals: false,
+    renameProperties: false,
     stringArray: true,
     stringArrayEncoding: ["base64"],
     stringArrayThreshold: 0.75,
-    rotateStringArray: true,
-    selfDefending: true,
-    disableConsoleOutput: true
+    stringArrayRotate: true,
+    selfDefending: false,
+    disableConsoleOutput: false,
+    sourceMap: false,
+    seed: 20261005
   });
 
   fs.writeFileSync(filePath, result.getObfuscatedCode(), "utf8");
@@ -34,12 +39,12 @@ function walk(dir) {
     const fullPath = path.join(dir, file);
 
     if (fs.statSync(fullPath).isDirectory()) {
-      walk(fullPath);
-    } else if (
-      file.endsWith(".js") &&
-      !file.includes("sap-ui") &&
-      !file.includes("resources")
-    ) {
+      // UI5/vendor libraries are already built and must not be transformed.
+      if (!["resources", "test-resources"].includes(file)) walk(fullPath);
+    } else if (file.endsWith(".ts") || file.endsWith(".map")) {
+      // Only generated files inside dist; do not publish unobfuscated app sources.
+      fs.unlinkSync(fullPath);
+    } else if (file.endsWith(".js") && !file.startsWith("sap-ui")) {
       console.log("Ofuscando:", fullPath);
       obfuscateFile(fullPath);
     }
