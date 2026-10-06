@@ -171,13 +171,13 @@ export default class Component extends BaseComponent {
     const nativeFetch = window.fetch.bind(window);
     Component.fetchWrapped = true;
 
-    window.fetch = async (...args: Parameters<typeof fetch>): Promise<Response> => {
-      const showBusy = this.shouldShowGlobalBusy(args[0], args[1]);
+    window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const showBusy = this.shouldShowGlobalBusy(input, init);
       if (showBusy) {
         this.openFetchBusyDialog();
       }
       try {
-        return await nativeFetch(...args);
+        return await nativeFetch(input, init);
       } finally {
         if (showBusy) {
           this.closeFetchBusyDialog();

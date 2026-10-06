@@ -22,7 +22,7 @@
   "scripts": {
     "build": "ui5 build --all --clean-dest",
     "obfuscate": "node scripts/obfuscate.js",
-    "build:prod": "ui5 build --all --clean-dest && node replace-config.js && node scripts/obfuscate.js",
+    "build:prod": "ui5 build --all --clean-dest && node replace-config.js && node scripts/verify-fetch-build.js",
     "start": "serve -s dist -l $PORT",
     "dev": "fiori run",
     "deploy": "fiori deploy",

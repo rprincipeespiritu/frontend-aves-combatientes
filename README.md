@@ -21,6 +21,18 @@
 
 An SAP Fiori application.
 
+### Build de producción en Railway (rama `prd`)
+
+Usar `npm run build:prod` con `API_BASE_URL` configurada durante el build y
+`npm start` para servir `dist`. El build reemplaza la URL de la API y verifica
+que tanto `Component.js` como `Component-preload.js` conserven las opciones de
+`fetch`, sin enviar solicitudes a la API.
+
+La ofuscación está fuera del build de producción porque transformaba el
+interceptor global de `fetch` y descartaba las opciones de la petición: el login
+llegaba como GET en lugar de POST y recibía un 405. No ejecutar `npm run obfuscate`
+sobre el artefacto que se va a desplegar hasta corregir y validar esa transformación.
+
 ### Starting the generated app
 
 -   This app has been generated using the SAP Fiori tools - App Generator, as part of the SAP Fiori tools suite.  In order to launch the generated app, simply run the following from the generated app root folder:
