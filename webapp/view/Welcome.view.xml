@@ -194,7 +194,7 @@
                                                     text="{dashboard>estadoTexto}"
                                                     state="{dashboard>estadoState}" />
                                                 <Text text="{dashboard>fechaIncubacionFmt}" />
-                                                <Text text="{dashboard>fechaNacimientoFmt}" />
+                                                <Text text="{dashboard>fechaEclosionFmt}" />
                                             </cells>
                                         </ColumnListItem>
                                     </items>

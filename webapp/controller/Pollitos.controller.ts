@@ -318,6 +318,7 @@ export default class Pollitos extends Controller {
         (this.byId("colorFilter") as any).setValue("");
         (this.byId("padreFilter") as any).setValue("");
         (this.byId("madreFilter") as any).setValue("");
+        (this.byId("estadoFilter") as any).setSelectedKey("");
         this.onBuscar();
     }
 

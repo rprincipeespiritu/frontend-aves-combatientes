@@ -73,7 +73,7 @@
                                         <form:FormElement label="Estado">
                                             <form:fields>
                                                 <ComboBox id="estadoFilter" placeholder="Filtrar por Estado" width="100%" selectionChange="onBuscar">
-                                                    <core:Item key="ACTIVO" text="Activo" />
+                                                    <core:Item key="ACTIVA" text="Activa" />
                                                     <core:Item key="FALLECIDO" text="Fallecido" />
                                                     <core:Item key="VENDIDO" text="Vendido" />
                                                     <core:Item key="OBSEQUIADO" text="Obsequiado" />
