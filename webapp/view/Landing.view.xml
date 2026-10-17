@@ -17,12 +17,12 @@
                             wrapping="true"
                             class="landingHeadline" />
                         <Text
-                            text="Pedigrí, incubación, genealogía y seguimiento de tu criadero en un solo sistema. Prueba gratis 60 días en Perú."
+                            text="Pedigrí, incubación, genealogía y seguimiento de tu criadero en un solo sistema. Prueba gratis 30 días en Perú."
                             wrapping="true"
                             class="landingLead" />
                         <HBox class="landingCtas" wrap="Wrap" alignItems="Center">
                             <Button
-                                text="Probar 60 días gratis"
+                                text="Probar 30 días gratis"
                                 type="Emphasized"
                                 class="landingPrimaryCta"
                                 press=".onCrearCuenta" />
