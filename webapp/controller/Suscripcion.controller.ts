@@ -18,6 +18,7 @@ export default class Suscripcion extends Controller {
 
     public onInit(): void {
         this.authService = AuthService.getInstance();
+        this.getView()?.setModel(new JSONModel({ disponible: false }), "planes");
 
         const oRouter = (this.getOwnerComponent() as UIComponent)?.getRouter();
         oRouter?.getRoute("RouteSuscripcion")?.attachPatternMatched(this.onRouteMatched, this);
@@ -51,7 +52,36 @@ export default class Suscripcion extends Controller {
         void this.cargarSuscripcion().then(async () => {
             await (this.getOwnerComponent() as any)?.loadPlanIndicator?.();
         });
+        void this.cargarPlanes();
     };
+
+    private async cargarPlanes(): Promise<void> {
+        const model = this.getView()?.getModel("planes") as JSONModel;
+        model.setData({ disponible: false });
+        try {
+            const response = await fetch(`${this.baseUrl}/obtenerPlanesSuscripcion`, {
+                method: "POST", headers: this.getHeaders(), body: JSON.stringify({}),
+            });
+            const data = await response.json();
+            if (!response.ok || !Array.isArray(data.planes)) {
+                throw new Error("No se pudieron consultar los precios vigentes. Pulsa Refrescar para reintentar.");
+            }
+            const catalogo: Record<string, any> = {};
+            for (const plan of data.planes) {
+                const precio = Number(plan.precioMensual);
+                if (!["BASICO", "PRO", "PREMIUM"].includes(plan.plan) || !Number.isFinite(precio) || precio <= 0 || plan.moneda !== "PEN") {
+                    throw new Error("El catalogo de precios no es valido.");
+                }
+                catalogo[plan.plan] = { ...plan, precioFmt: precio.toFixed(2) };
+            }
+            if (!["BASICO", "PRO", "PREMIUM"].every((plan) => catalogo[plan])) {
+                throw new Error("El catalogo de precios esta incompleto.");
+            }
+            model.setData({ ...catalogo, disponible: true });
+        } catch (error: any) {
+            MessageBox.error(error.message || "No se pudieron cargar los precios.");
+        }
+    }
 
     private getHeaders(): HeadersInit {
         return {
@@ -108,8 +138,9 @@ export default class Suscripcion extends Controller {
     }
 
     private confirmarSuscripcionMercadoPago(plan: string): void {
-        const precios: Record<string, number> = { BASICO: 19, PRO: 49, PREMIUM: 99 };
-        const precio = precios[plan] || 0;
+        const planes = this.getView()?.getModel("planes") as JSONModel;
+        if (!planes.getProperty("/disponible")) return;
+        const precio = planes.getProperty(`/${plan}/precioFmt`);
         const userEmail = String(
             (this.getView()?.getModel("user") as JSONModel)?.getProperty("/email") || "",
         ).trim();
@@ -236,6 +267,7 @@ export default class Suscripcion extends Controller {
 
     public onRefrescar(): void {
         void this.cargarSuscripcion();
+        void this.cargarPlanes();
     }
 
     public onNavBack(): void {

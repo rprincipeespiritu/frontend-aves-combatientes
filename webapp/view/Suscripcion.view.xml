@@ -87,8 +87,8 @@
                                 <Text text="100 aves adultas" />
                                 <Text text="200 aves jovenes" />
                                 <Text text="50 incubaciones" />
-                                <ObjectNumber number="19" unit="PEN / mes" />
-                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarBasico" width="100%" class="suscripcionPlanBtn" />
+                                <ObjectNumber number="{planes>/BASICO/precioFmt}" unit="PEN / mes" />
+                                <Button text="Suscribirse" enabled="{planes>/disponible}" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarBasico" width="100%" class="suscripcionPlanBtn" />
                             </VBox>
                         </Panel>
 
@@ -100,14 +100,14 @@
                                 <Text text="250 incubaciones" />
                                 <Text text="Genealogía" />
                                 <Text text="Reportes" />
-                                <ObjectNumber number="49" unit="PEN / mes" />
-                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPro" width="100%" class="suscripcionPlanBtn" />
+                                <ObjectNumber number="{planes>/PRO/precioFmt}" unit="PEN / mes" />
+                                <Button text="Suscribirse" enabled="{planes>/disponible}" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPro" width="100%" class="suscripcionPlanBtn" />
                             </VBox>
                         </Panel>
 
                         <Panel headerText="Premium" width="100%" class="sapUiSmallMargin suscripcionPlanCard">
                             <VBox class="sapUiMediumMargin">
-                                <ObjectStatus text="Uso ilimitado" state="Success" />
+                                <ObjectStatus text="Para criaderos grandes" state="Success" />
                                 <Text text="Mismos privilegios que el Plan Prueba" />
                                 <Text text="Aves adultas ilimitadas" />
                                 <Text text="Aves jovenes ilimitadas" />
@@ -116,8 +116,8 @@
                                 <Text text="Reportes" />
                                 <Text text="Combates" />
                                 <Text text="Fotos y videos" />
-                                <ObjectNumber number="99" unit="PEN / mes" />
-                                <Button text="Suscribirse" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPremium" width="100%" class="suscripcionPlanBtn" />
+                                <ObjectNumber number="{planes>/PREMIUM/precioFmt}" unit="PEN / mes" />
+                                <Button text="Suscribirse" enabled="{planes>/disponible}" type="Emphasized" icon="sap-icon://money-bills" press=".onActivarPremium" width="100%" class="suscripcionPlanBtn" />
                             </VBox>
                         </Panel>
                     </HBox>
